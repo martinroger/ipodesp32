@@ -6,12 +6,16 @@ BluetoothA2DPSink a2dp_sink;
 const int BUTTON = 13;
 const int BUTTON_PRESSED = 40;
 
-void connection_state_changed(esp_a2d_connection_state_t state, void *ptr){
-  Serial.println(a2dp_sink.to_str(state));
-}
+// void connection_state_changed(esp_a2d_connection_state_t state, void *ptr){
+//   Serial.println(a2dp_sink.to_str(state));
+// }
 
-void audio_state_changed(esp_a2d_audio_state_t state, void *ptr){
-  Serial.println(a2dp_sink.to_str(state));
+// void audio_state_changed(esp_a2d_audio_state_t state, void *ptr){
+//   Serial.println(a2dp_sink.to_str(state));
+// }
+
+void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
+  Serial.printf("==> AVRC metadata rsp: attribute id 0x%x, %s\n", id, text);
 }
 
 void setup() {
@@ -31,8 +35,10 @@ void setup() {
   a2dp_sink.set_i2s_config(i2s_config);
   //a2dp_sink.set_auto_reconnect(true); //Auto-reconnect
 
-  a2dp_sink.set_on_connection_state_changed(connection_state_changed);
-  a2dp_sink.set_on_audio_state_changed(audio_state_changed);
+  //a2dp_sink.set_on_connection_state_changed(connection_state_changed);
+  //a2dp_sink.set_on_audio_state_changed(audio_state_changed);
+  a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
+  a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE|ESP_AVRC_MD_ATTR_ARTIST|ESP_AVRC_MD_ATTR_ALBUM|ESP_AVRC_MD_ATTR_PLAYING_TIME);
   a2dp_sink.start("MMMH");
   Serial.println("Started");
 
@@ -40,16 +46,19 @@ void setup() {
 
 void loop() {
   delay(1000);
-  Serial.println(touchRead(BUTTON));
-  if(touchRead(BUTTON)<BUTTON_PRESSED) {
-    if(a2dp_sink.is_connected()) {
-      a2dp_sink.pause();
-      a2dp_sink.disconnect();
-    }
-    else {
-      a2dp_sink.reconnect();
-      delay(5000);
-      a2dp_sink.play();
-    }
-  }
+  // Serial.println(touchRead(BUTTON));
+  // if(touchRead(BUTTON)<BUTTON_PRESSED) {
+  //   if(a2dp_sink.is_connected()) {
+  //     a2dp_sink.pause();
+  //     delay(1500);
+  //     a2dp_sink.disconnect();
+  //   }
+  //   else {
+  //     a2dp_sink.reconnect();
+  //     delay(5000);
+  //     a2dp_sink.play();
+  //   }
+  // }
+
+
 }
