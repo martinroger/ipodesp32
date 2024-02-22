@@ -20,7 +20,8 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 
 void setup() {
   Serial.begin(115200);
-  static const i2s_config_t i2s_config = {
+  #ifdef USE_INTERNAL_DAC
+    static const i2s_config_t i2s_config = {
       .mode = (i2s_mode_t) (I2S_MODE_MASTER | I2S_MODE_TX | I2S_MODE_DAC_BUILT_IN),
       .sample_rate = 44100, // corrected by info from bluetooth
       .bits_per_sample = (i2s_bits_per_sample_t) 16, /* the DAC module will only take the 8bits from MSB */
@@ -30,8 +31,22 @@ void setup() {
       .dma_buf_count = 8,
       .dma_buf_len = 64,
       .use_apll = false
-  };
-
+    };
+  #endif
+  #ifdef USE_EXTERNAL_DAC_UDA1334A
+    static const i2s_config_t i2s_config = {
+      .mode = (i2s_mode_t) (I2S_MODE_MASTER | I2S_MODE_TX),
+      .sample_rate = 44100,
+      .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
+      .channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT,
+      .communication_format = (i2s_comm_format_t) I2S_COMM_FORMAT_STAND_MSB ,
+      .intr_alloc_flags = 0, // default interrupt priority
+      .dma_buf_count = 8,
+      .dma_buf_len = 64,
+      .use_apll = false,
+      .tx_desc_auto_clear = true // avoiding noise in case of data unavailability
+    };
+  #endif
   a2dp_sink.set_i2s_config(i2s_config);
   //a2dp_sink.set_auto_reconnect(true); //Auto-reconnect
 
