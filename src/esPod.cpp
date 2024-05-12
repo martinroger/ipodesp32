@@ -1,5 +1,32 @@
 #include "esPod.h"
 
+/*Heavily adapted from :
+https://github.com/chemicstry/A2DP_iPod
+*/
+
+//ESP32 is Little-Endian, iPod is Big-Endian
+template <typename T>
+T swap_endian(T u)
+{
+    static_assert (CHAR_BIT == 8, "CHAR_BIT != 8");
+
+    union
+    {
+        T u;
+        unsigned char u8[sizeof(T)];
+    } source, dest;
+
+    source.u = u;
+
+    for (size_t k = 0; k < sizeof(T); k++)
+        dest.u8[k] = source.u8[sizeof(T) - k - 1];
+
+    return dest.u;
+}
+
+
+
+
 esPod::esPod(Stream& targetSerial) 
     :
         #ifdef DEBUG_MODE
@@ -26,6 +53,11 @@ byte esPod::checksum(const byte *byteArray, uint32_t len)
 
 void esPod::sendPacket(const byte *byteArray, uint32_t len)
 {
+    _targetSerial.write(0xFF);
+    _targetSerial.write(0x55);
+    _targetSerial.write((byte)len);
+    _targetSerial.write(byteArray,len);
+    _targetSerial.write(esPod::checksum(byteArray,len));
 }
 
 void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
