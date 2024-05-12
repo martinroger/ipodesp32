@@ -25,8 +25,6 @@ T swap_endian(T u)
 }
 
 
-
-
 esPod::esPod(Stream& targetSerial) 
     :
         #ifdef DEBUG_MODE
@@ -60,6 +58,38 @@ void esPod::sendPacket(const byte *byteArray, uint32_t len)
     _targetSerial.write(esPod::checksum(byteArray,len));
 }
 
+void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID) {
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x00 0x02 iPodAck: ");
+    _debugSerial.print(cmdStatus,HEX);
+    _debugSerial.print(" cmd: ");
+    _debugSerial.println(cmdID,HEX);
+    #endif
+    const byte txPacket[] = {
+        0x00,
+        0x02,
+        cmdStatus,
+        cmdID
+    };
+
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+void esPod::L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte) {
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x00 0x04 ReturnExtendedInterfaceMode: ");
+    _debugSerial.println(extendedModeByte,HEX);
+    #endif
+    const byte txPacket[] = {
+        0x00,
+        0x04,
+        extendedModeByte
+    };
+
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+
 void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
 {
     byte cmdID = byteArray[0];
@@ -74,6 +104,13 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         #ifdef DEBUG_MODE
         _debugSerial.println("RequestExtendedInterfaceMode");
         #endif
+        if(_extendedInterfaceModeActive) {
+            L0x00_0x04_ReturnExtendedInterfaceMode(0x01); //Report that extended interface mode isactive
+        }
+        else
+        {
+            L0x00_0x04_ReturnExtendedInterfaceMode(0x00); //Report that extended interface mode is not active
+        }
         break;
 
     case L0x00_EnterExtendedInterfaceMode: //Mini forces extended interface mode
