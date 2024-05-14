@@ -15,6 +15,11 @@ private:
     
     //State variables
     bool _extendedInterfaceModeActive;
+
+    //metadata variables
+    uint8_t *trackTitle;
+    uint8_t *artistName;
+    uint8_t *albumName;
     
     //Packet-related 
     byte _rxBuf[1024];
