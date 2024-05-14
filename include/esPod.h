@@ -32,6 +32,7 @@ public:
     static byte checksum(const byte* byteArray, uint32_t len);
     void sendPacket(const byte* byteArray, uint32_t len);
     void L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID);
+    void L0x00_0x02_iPodAck_pending(uint32_t pendingDelayMS, byte cmdID);
     void L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte);
 
     void processLingo0x00(const byte *byteArray, uint32_t len);

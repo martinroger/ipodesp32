@@ -75,6 +75,25 @@ void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID) {
     sendPacket(txPacket,sizeof(txPacket));
 }
 
+void esPod::L0x00_0x02_iPodAck_pending(uint32_t pendingDelayMS,byte cmdID) {
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x00 0x02 iPodAck pending: ");
+    _debugSerial.print(pendingDelayMS);
+    _debugSerial.print(" cmd: ");
+    _debugSerial.println(cmdID,HEX);
+    #endif
+    const byte txPacket[] = {
+        0x00,
+        0x02,
+        iPodAck_CmdPending,
+        cmdID,
+        swap_endian(pendingDelayMS)
+    };
+
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+
 void esPod::L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte) {
     #ifdef DEBUG_MODE
     _debugSerial.print("L0x00 0x04 ReturnExtendedInterfaceMode: ");
@@ -105,7 +124,7 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         _debugSerial.println("RequestExtendedInterfaceMode");
         #endif
         if(_extendedInterfaceModeActive) {
-            L0x00_0x04_ReturnExtendedInterfaceMode(0x01); //Report that extended interface mode isactive
+            L0x00_0x04_ReturnExtendedInterfaceMode(0x01); //Report that extended interface mode is active
         }
         else
         {
@@ -117,6 +136,11 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         #ifdef DEBUG_MODE
         _debugSerial.println("EnterExtendedInterfaceMode");
         #endif
+        //Send a first iPodAck Command pending with a certain time delay
+        L0x00_0x02_iPodAck_pending(1000,cmdID);
+        //Send a second iPodAck Command with Success
+        _extendedInterfaceModeActive = true;
+        L0x00_0x02_iPodAck(iPodAck_OK,cmdID);
         break;
     
     case L0x00_RequestiPodName: //Mini requests ipod name
