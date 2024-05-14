@@ -82,15 +82,19 @@ void esPod::L0x00_0x02_iPodAck_pending(uint32_t pendingDelayMS,byte cmdID) {
     _debugSerial.print(" cmd: ");
     _debugSerial.println(cmdID,HEX);
     #endif
-    const byte txPacket[] = {
+    byte txPacket[8] = {
         0x00,
         0x02,
         iPodAck_CmdPending,
         cmdID,
-        swap_endian(pendingDelayMS)
+        (byte)((pendingDelayMS >>24)&0xFF),
+        (byte)((pendingDelayMS >>16)&0xFF),
+        (byte)((pendingDelayMS >>8)&0xFF),
+        (byte)((pendingDelayMS)&0xFF),
     };
 
-    sendPacket(txPacket,sizeof(txPacket));
+    //*(txPacket+4) = swap_endian<uint32_t>(pendingDelayMS);
+    sendPacket(txPacket,4+4);
 }
 
 
