@@ -15,6 +15,7 @@ private:
     
     //State variables
     bool _extendedInterfaceModeActive;
+    const char* _name;
 
     //metadata variables
     uint8_t *trackTitle;
@@ -34,6 +35,8 @@ public:
     void L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID);
     void L0x00_0x02_iPodAck_pending(uint32_t pendingDelayMS, byte cmdID);
     void L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte);
+
+    void L0x00_0x08_ReturniPodName();
 
     void processLingo0x00(const byte *byteArray, uint32_t len);
     void processLingo0x04(const byte* byteArray, uint32_t len);
