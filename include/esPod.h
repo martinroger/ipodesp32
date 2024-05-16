@@ -15,7 +15,7 @@ private:
     
     //State variables
     bool _extendedInterfaceModeActive;
-    const char* _name;
+    char* _name;
 
     //metadata variables
     uint8_t *trackTitle;
