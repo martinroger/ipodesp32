@@ -15,7 +15,7 @@ private:
     
     //State variables
     bool _extendedInterfaceModeActive;
-    const char* _name;
+    
 
     //metadata variables
     uint8_t *trackTitle;
@@ -28,9 +28,12 @@ private:
     uint32_t _rxCounter;
 
     //Device metadata
+    const char* _name;
     const uint8_t _SWMajor;
     const uint8_t _SWMinor;
     const uint8_t _SWrevision;
+    const char* _serialNumber;
+
 public:
     esPod(Stream& targetSerial);
     
@@ -42,6 +45,7 @@ public:
     void L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte);
     void L0x00_0x08_ReturniPodName();
     void L0x00_0x0A_ReturniPodSoftwareVersion();
+    void L0x00_0x0C_ReturniPodSerialNum();
 
     void processLingo0x00(const byte *byteArray, uint32_t len);
     void processLingo0x04(const byte* byteArray, uint32_t len);

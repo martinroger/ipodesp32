@@ -37,7 +37,8 @@ esPod::esPod(Stream& targetSerial)
         _name("ipodESP32"),
         _SWMajor(0x01),
         _SWMinor(0x03),
-        _SWrevision(0x00)
+        _SWrevision(0x00),
+        _serialNumber("AB345F7HIJK")
 {
     //Setup the metadata
     //_SWMajor = 0x01;
@@ -160,6 +161,20 @@ void esPod::L0x00_0x0A_ReturniPodSoftwareVersion() {
     sendPacket(txPacket,sizeof(txPacket));
 }
 
+void esPod::L0x00_0x0C_ReturniPodSerialNum() {
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x00 0x0C ReturniPodSerialNum: ");
+    _debugSerial.println(_serialNumber);
+    _debugSerial.println(strlen(_serialNumber));
+    #endif
+    byte txPacket[255] = { //Prealloc to len = FF
+        0x00,
+        0x0C
+    };
+    strcpy((char*)&txPacket[2],_serialNumber);
+    sendPacket(txPacket,3+strlen(_serialNumber));
+}
+
 void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
 {
     byte cmdID = byteArray[0];
@@ -214,6 +229,7 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         #ifdef DEBUG_MODE
         _debugSerial.println("RequestiPodSerialNum");
         #endif
+        L0x00_0x0C_ReturniPodSerialNum();
         break;
     
     case L0x00_RequestiPodModelNum: //Mini requests ipod Model Num
