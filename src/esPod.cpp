@@ -97,8 +97,8 @@ void esPod::L0x00_0x02_iPodAck_pending(uint32_t pendingDelayMS,byte cmdID) {
 
     //_debugSerial.println(swap_endian<uint32_t>(pendingDelayMS));
     //*(txPacket+3) = swap_endian<uint32_t>(pendingDelayMS); //Point to the value contained 3 address intervals down from txPacket
-    //*((uint32_t*)&txPacket[4]) = swap_endian<uint32_t>(pendingDelayMS);
-    txPacket[4] = swap_endian<uint32_t>(pendingDelayMS); //Trying things
+    *((uint32_t*)&txPacket[4]) = swap_endian<uint32_t>(pendingDelayMS);
+    //txPacket[4] = swap_endian<uint32_t>(pendingDelayMS); //Trying things
     // for (int i = 0; i < 20; i++)
     // {
     //     _debugSerial.println(txPacket[i],HEX);
@@ -127,16 +127,18 @@ void esPod::L0x00_0x08_ReturniPodName() {
     #ifdef DEBUG_MODE
     _debugSerial.print("L0x00 0x08 ReturniPodName: ");
     _debugSerial.println(_name);
-    _debugSerial.println(sizeof(_name));
+    //_debugSerial.println(sizeof(_name));
     _debugSerial.println(strlen(_name));
     #endif
-    char _nameProxy[] = "stuff";
-    byte txPacket[] ={ //Might need a prealloc
+    //char _nameProxy[] = "stuff";
+    byte txPacket[255] ={ //Prealloc to len = FF
         0x00,
         0x08
     };
-    *((char*)&txPacket[2]) = *_name; //BOH
-    sendPacket(txPacket,2+strlen(_name));
+    //*((char*)&txPacket[2]) = *_name; //BOH
+    //strncpy((char*)&txPacket[2],_name,strlen(_name));
+    strcpy((char*)&txPacket[2],_name);
+    sendPacket(txPacket,3+strlen(_name));
 }
 
 
@@ -167,10 +169,12 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         #ifdef DEBUG_MODE
         _debugSerial.println("EnterExtendedInterfaceMode");
         #endif
-        //Send a first iPodAck Command pending with a certain time delay
-        L0x00_0x02_iPodAck_pending(1000,cmdID);
-        //Send a second iPodAck Command with Success
-        _extendedInterfaceModeActive = true;
+        if(!_extendedInterfaceModeActive) {
+            //Send a first iPodAck Command pending with a certain time delay
+            L0x00_0x02_iPodAck_pending(1000,cmdID);
+            //Send a second iPodAck Command with Success
+            _extendedInterfaceModeActive = true;
+        }
         L0x00_0x02_iPodAck(iPodAck_OK,cmdID);
         break;
     
