@@ -34,9 +34,15 @@ esPod::esPod(Stream& targetSerial)
         _rxLen(0),
         _rxCounter(0),
         _extendedInterfaceModeActive(false),
-        _name("superlongname")
+        _name("ipodESP32"),
+        _SWMajor(0x01),
+        _SWMinor(0x03),
+        _SWrevision(0x00)
 {
-    //_name = "espod";
+    //Setup the metadata
+    //_SWMajor = 0x01;
+    //_SWMinor = 0x03;
+    //_SWrevision = 0x00;
 }
 
 //Calculates the checksum of a packet that starts from i=0 ->Lingo to i=len -> Checksum
@@ -108,7 +114,6 @@ void esPod::L0x00_0x02_iPodAck_pending(uint32_t pendingDelayMS,byte cmdID) {
     sendPacket(txPacket,4+4);
 }
 
-
 void esPod::L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte) {
     #ifdef DEBUG_MODE
     _debugSerial.print("L0x00 0x04 ReturnExtendedInterfaceMode: ");
@@ -131,7 +136,7 @@ void esPod::L0x00_0x08_ReturniPodName() {
     _debugSerial.println(strlen(_name));
     #endif
     //char _nameProxy[] = "stuff";
-    byte txPacket[255] ={ //Prealloc to len = FF
+    byte txPacket[255] = { //Prealloc to len = FF
         0x00,
         0x08
     };
@@ -141,6 +146,19 @@ void esPod::L0x00_0x08_ReturniPodName() {
     sendPacket(txPacket,3+strlen(_name));
 }
 
+void esPod::L0x00_0x0A_ReturniPodSoftwareVersion() {
+    #ifdef DEBUG_MODE
+    _debugSerial.println("L0x00 0x0A ReturniPodSoftwareVersion: 1.3.0 ");
+    #endif
+    byte txPacket[] = {
+        0x00,
+        0x0A,
+        (byte)_SWMajor,
+        (byte)_SWMinor,
+        (byte)_SWrevision
+    };
+    sendPacket(txPacket,sizeof(txPacket));
+}
 
 void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
 {
@@ -189,6 +207,7 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         #ifdef DEBUG_MODE
         _debugSerial.println("RequestiPodSoftwareVersion");
         #endif
+        L0x00_0x0A_ReturniPodSoftwareVersion();
         break;
     
     case L0x00_RequestiPodSerialNum: //Mini requests ipod Serial Num
