@@ -175,6 +175,59 @@ void esPod::L0x00_0x0C_ReturniPodSerialNum() {
     sendPacket(txPacket,3+strlen(_serialNumber));
 }
 
+void esPod::L0x00_0x0E_ReturniPodModelNum() {
+    #ifdef DEBUG_MODE
+    _debugSerial.println("L0x00 0x0E ReturniPodModelNumber PA146FD 720901 ");
+    #endif
+    byte txPacket[] = {
+        0x00,
+        0x0E,
+        0x00,0x0B,0x00,0x05,0x50,0x41,0x31,0x34,0x36,0x46,0x44,0x00
+    };
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+void esPod::L0x00_0x10_ReturnLingoProtocolVersion(byte targetLingo)
+{
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x00 0x10 ReturnLingoProtocolVersion for: ");
+    _debugSerial.println(targetLingo,HEX);
+    #endif
+    byte txPacket[] = {
+        0x00, 0x10,
+        targetLingo,
+        0x01,0x00
+    };
+    switch (targetLingo)
+    {
+    case 0x00:
+        txPacket[4] = 0x06;
+        break;
+    case 0x03:
+        txPacket[4] = 0x05;
+        break;
+    case 0x04:
+        txPacket[4] = 0x0C;
+        break;
+    default:
+        break;
+    }
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+void esPod::L0x00_0x27_GetAccessoryInfo(byte desiredInfo)
+{
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x00 0x27 GetAccessoryInfo type: ");
+    _debugSerial.println(desiredInfo,HEX);
+    #endif
+    byte txPacket[] = {
+        0x00, 0x27,
+        desiredInfo
+    };
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
 void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
 {
     byte cmdID = byteArray[0];
@@ -236,24 +289,56 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         #ifdef DEBUG_MODE
         _debugSerial.println("RequestiPodModelNum");
         #endif
+        L0x00_0x0E_ReturniPodModelNum();
         break;
     
-    case L0x00_RequestLingoProtocolVersion: //Mini Lingo Protocol Version
+    case L0x00_RequestLingoProtocolVersion: //Mini requestsLingo Protocol Version
         #ifdef DEBUG_MODE
         _debugSerial.println("RequestLingoProtocolVersion");
         #endif
+        L0x00_0x10_ReturnLingoProtocolVersion(byteArray[1]);
         break;
     
     case L0x00_IdentifyDeviceLingoes: //Mini identifies its lingoes
         #ifdef DEBUG_MODE
         _debugSerial.println("IdentifyDeviceLingoes");
         #endif
+        L0x00_0x02_iPodAck(iPodAck_OK,cmdID);//Not really relevant to do more
         break;
     
     case L0x00_RetAccessoryInfo: //Mini returns meta info
         #ifdef DEBUG_MODE
-        _debugSerial.println("RetAccessoryInfo");
+        _debugSerial.print("RetAccessoryInfo: ");
+        _debugSerial.println(byteArray[1],HEX);
         #endif
+        switch (byteArray[1])
+        {
+        case 0x00:
+            _accessoryCapabilitiesRequested = true;
+            L0x00_0x27_GetAccessoryInfo(0x01); //Request the name
+            break;
+        case 0x01:
+            _accessoryNameRequested = true;
+            L0x00_0x27_GetAccessoryInfo(0x04); //Request the firmware version
+            break;
+        case 0x04:
+            _accessoryFirmwareRequested = true;
+            L0x00_0x27_GetAccessoryInfo(0x05); //Request the hardware
+            break;
+        case 0x05:
+            _accessoryHardwareRequested = true;
+            L0x00_0x27_GetAccessoryInfo(0x06); //Request the manufacturer
+            break;
+        case 0x06:
+            _accessoryManufRequested = true;
+            L0x00_0x27_GetAccessoryInfo(0x07); //Request the model
+            break;
+        case 0x07:
+            _accessoryModelRequested = true; //End of the reactionchain
+            break;
+        default:
+            break;
+        }
         break;
     
     default:
@@ -472,4 +557,12 @@ void esPod::refresh()
         //pass to the previous received byte
         _prevRxByte = incomingByte;
     }
+
+    //Do some setup routine for handshake when not in DEBUG
+    #ifndef DEBUG_MODE
+    if(!_accessoryCapabilitiesRequested) {
+         L0x00_0x27_GetAccessoryInfo(0x00); //Start accessory handshake
+         esPod::refresh();
+    }
+    #endif
 }

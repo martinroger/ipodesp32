@@ -34,6 +34,14 @@ private:
     const uint8_t _SWrevision;
     const char* _serialNumber;
 
+    //Mini metadata
+    bool _accessoryNameRequested = false;
+    bool _accessoryCapabilitiesRequested = false;
+    bool _accessoryFirmwareRequested = false;
+    bool _accessoryManufRequested = false;
+    bool _accessoryModelRequested = false;
+    bool _accessoryHardwareRequested = false;
+
 public:
     esPod(Stream& targetSerial);
     
@@ -46,6 +54,9 @@ public:
     void L0x00_0x08_ReturniPodName();
     void L0x00_0x0A_ReturniPodSoftwareVersion();
     void L0x00_0x0C_ReturniPodSerialNum();
+    void L0x00_0x0E_ReturniPodModelNum();
+    void L0x00_0x10_ReturnLingoProtocolVersion(byte targetLingo);
+    void L0x00_0x27_GetAccessoryInfo(byte desiredInfo);
 
     void processLingo0x00(const byte *byteArray, uint32_t len);
     void processLingo0x04(const byte* byteArray, uint32_t len);
