@@ -228,6 +228,184 @@ void esPod::L0x00_0x27_GetAccessoryInfo(byte desiredInfo)
     sendPacket(txPacket,sizeof(txPacket));
 }
 
+//Moving on to L0x04
+
+void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID)
+{
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x04 0x01 iPodAck: ");
+    _debugSerial.print(cmdStatus,HEX);
+    _debugSerial.print(" cmd: ");
+    _debugSerial.println(cmdID,HEX);
+    #endif
+    const byte txPacket[] = {
+        0x04,
+        0x00,0x01,
+        cmdStatus,
+        0x00,cmdID
+    };
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief Returns the pseudo-UTF8 string for the track info types 01/05/06
+/// @param trackInfoType 
+/// @param trackInfoChars 
+void esPod::L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, char* trackInfoChars)
+{
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x04 0x0D ReturnIndexedPlayingTrackInfo type: ");
+    _debugSerial.println(trackInfoType,HEX);
+    #endif
+    byte txPacket[255] = {
+        0x04,
+        0x00,0x0D,
+        trackInfoType
+    };
+    strcpy((char*)&txPacket[4],trackInfoChars);
+    sendPacket(txPacket,4+strlen(trackInfoChars)+1);
+}
+
+/// @brief Works only for case 0x00 and 0x02
+/// @param trackInfoType 
+void esPod::L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType)
+{
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x04 0x0D ReturnIndexedPlayingTrackInfo type: ");
+    _debugSerial.println(trackInfoType,HEX);
+    #endif
+    byte txPacket_00[14] = {
+        0x04,
+        0x00,0x0D,
+        trackInfoType,
+        0x00,0x00,0x00,0x00, //This says it does not have artwork etc
+        0x00,0x00,0x00,0x00, //Track length in ms
+        0x00,0x00 //Chapter count (none)
+    };
+    *((uint32_t*)&txPacket_00[8]) = swap_endian<uint32_t>(123456);
+
+    byte txPacket_02[12] = {
+        0x04,
+        0x00,0x0D,
+        trackInfoType,
+        0x00,0x00,0x00,0x01,0x01, //First of Jan at 00:00:00
+        0x00,0x00, //year goes here
+        0x01 //it was a Monday
+    };
+    *((uint16_t*)&txPacket_02[9]) = swap_endian<uint16_t>(2001);
+    
+    switch (trackInfoType)
+    {
+    case 0x00:
+        
+        sendPacket(txPacket_00,sizeof(txPacket_00));
+        break;
+    
+    case 0x02:
+
+        sendPacket(txPacket_02,sizeof(txPacket_02));
+        break;
+    default:
+        break;
+    }
+}
+
+void esPod::L0x04_0x13_ReturnProtocolVersion()
+{
+    #ifdef DEBUG_MODE
+    _debugSerial.println("L0x04 0x13 ReturnProtocolVersion");
+    #endif
+    byte txPacket[] = {
+        0x04,
+        0x00,0x13,
+        0x01,0x0C //Protocol version 1.12
+    };
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+void esPod::L0x04_0x19_ReturnNumberCategorizedDBRecords(uint32_t categoryDBRecords)
+{
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x04 0x19 ReturnNumberCategorizedDBRecords: ");
+    _debugSerial.println(categoryDBRecords);
+    #endif
+    byte txPacket[7] = {
+        0x04,
+        0x00,0x19,
+        0x00,0x00,0x00,0x00
+    };
+    *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(categoryDBRecords);
+    sendPacket(txPacket,sizeof(txPacket));
+
+}
+
+void esPod::L0x04_0x1B_ReturnCategorizedDatabaseRecord(uint32_t index, char *recordString)
+{
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x04 0x1B ReturnCategorizedDatabaseRecord at index: ");
+    _debugSerial.print(index); _debugSerial.print(" record: ");
+    _debugSerial.println(recordString);
+    #endif
+    byte txPacket[255] = {
+        0x04,
+        0x00,0x1B,
+        0x00,0x00,0x00,0x00 //Index
+    };
+    *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(index);
+    strcpy((char*)&txPacket[7],recordString);
+    sendPacket(txPacket,7+strlen(recordString)+1);
+}
+
+void esPod::L0x04_0x1D_ReturnPlayStatus(uint32_t position, uint32_t duration, byte playStatus)
+{
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x04 0x1D ReturnPlayStatus: ");_debugSerial.print(playStatus,HEX);_debugSerial.print(" at pos: ");
+    _debugSerial.print(position); _debugSerial.print(" of ");
+    _debugSerial.println(duration);
+    #endif
+    byte txPacket[] = {
+        0x04,
+        0x00,0x1D,
+        0x00,0x00,0x00,0x00,
+        0x00,0x00,0x00,0x00,
+        playStatus
+    };
+    *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(duration);
+    *((uint32_t*)&txPacket[7]) = swap_endian<uint32_t>(position);
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+void esPod::L0x04_0x1F_ReturnCurrentPlayingTrackIndex(uint32_t trackIndex)
+{
+}
+
+void esPod::L0x04_0x21_ReturnIndexedPlayingTrackTitle(char *trackTitle)
+{
+}
+
+void esPod::L0x04_0x23_ReturnIndexedPlayingTrackArtistName(char *trackArtistName)
+{
+}
+
+void esPod::L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(char *trackAlbumName)
+{
+}
+
+void esPod::L0x04_0x27_PlayStatusNotification(byte notification, uint32_t numField)
+{
+}
+
+void esPod::L0x04_0x2D_ReturnShuffle(byte shuffleStatus)
+{
+}
+
+void esPod::L0x04_0x30_ReturnRepeat(byte repeatStatus)
+{
+}
+
+void esPod::L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks)
+{
+}
+
 void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
 {
     byte cmdID = byteArray[0];
@@ -364,6 +542,27 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         #ifdef DEBUG_MODE
         _debugSerial.println("GetIndexedPlayingTrackInfo");
         #endif
+        switch (byteArray[2])
+        {
+        case 0x00: //TrackCapabilities and Information
+            L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2]);
+            break;
+        case 0x02: //Track Release Date
+            L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2]);
+            break;
+        case 0x01:
+            L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],"PodcastName");
+            break;
+        case 0x05:
+            L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],_trackGenre);
+            break; 
+        case 0x06:
+            L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],"Composer");
+            break; 
+        default:
+            L0x04_0x01_iPodAck(iPodAck_BadParam,cmdID);
+            break;
+        }
         break;
     
     case L0x04_RequestProtocolVersion:

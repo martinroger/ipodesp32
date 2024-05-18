@@ -21,6 +21,10 @@ private:
     uint8_t *trackTitle;
     uint8_t *artistName;
     uint8_t *albumName;
+    char _trackGenre[8] = "Spotify";
+
+    //PlaybackEngine
+    byte _playStatus = 0x00; //PlayStatus, 00 Stopped, 01 Playing, 02 Paused
     
     //Packet-related 
     byte _rxBuf[1024];
@@ -57,6 +61,23 @@ public:
     void L0x00_0x0E_ReturniPodModelNum();
     void L0x00_0x10_ReturnLingoProtocolVersion(byte targetLingo);
     void L0x00_0x27_GetAccessoryInfo(byte desiredInfo);
+
+    void L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID);
+    void L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, char *trackInfoChars);
+    void L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType);
+    void L0x04_0x13_ReturnProtocolVersion();
+    void L0x04_0x19_ReturnNumberCategorizedDBRecords(uint32_t categoryDBRecords);
+    void L0x04_0x1B_ReturnCategorizedDatabaseRecord(uint32_t index, char* recordString);
+    void L0x04_0x1D_ReturnPlayStatus(uint32_t position, uint32_t duration, byte playStatus);
+    void L0x04_0x1F_ReturnCurrentPlayingTrackIndex(uint32_t trackIndex);
+    void L0x04_0x21_ReturnIndexedPlayingTrackTitle(char* trackTitle);
+    void L0x04_0x23_ReturnIndexedPlayingTrackArtistName(char* trackArtistName);
+    void L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(char* trackAlbumName);
+    void L0x04_0x27_PlayStatusNotification(byte notification, uint32_t numField);
+    void L0x04_0x2D_ReturnShuffle(byte shuffleStatus);
+    void L0x04_0x30_ReturnRepeat(byte repeatStatus);
+    void L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks);
+
 
     void processLingo0x00(const byte *byteArray, uint32_t len);
     void processLingo0x04(const byte* byteArray, uint32_t len);
