@@ -800,20 +800,41 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             break;
         case 0x02: //Stop
             _playStatus = 0x00;
+            if(_playStatusHandler) {
+                _playStatusHandler(byteArray[2]);
+            }
             break;
         case 0x03: //Next track
+            if(_playStatusHandler) {
+                _playStatusHandler(byteArray[2]);
+            }
             break;
         case 0x04: //Prev track
+            if(_playStatusHandler) {
+                _playStatusHandler(byteArray[2]);
+            }
             break;
         case 0x08: //Next track
+            if(_playStatusHandler) {
+                _playStatusHandler(byteArray[2]);
+            }
             break;
         case 0x09: //Prev track
+            if(_playStatusHandler) {
+                _playStatusHandler(byteArray[2]);
+            }
             break;
         case 0x0A: //Play
             _playStatus = 0x01;
+            if(_playStatusHandler) {
+                _playStatusHandler(byteArray[2]);
+            }
             break;
         case 0x0B: //Pause
             _playStatus = 0x02;
+            if(_playStatusHandler) {
+                _playStatusHandler(byteArray[2]);
+            }
             break;
         default:
             break;
@@ -950,10 +971,10 @@ void esPod::refresh()
 
     //Do some setup routine for handshake when not in DEBUG
     #ifndef DEBUG_MODE
-    if(!_accessoryCapabilitiesRequested) {
-         L0x00_0x27_GetAccessoryInfo(0x00); //Start accessory handshake
-         esPod::refresh();
-    }
+    // if(!_accessoryCapabilitiesRequested) {
+    //      L0x00_0x27_GetAccessoryInfo(0x00); //Start accessory handshake
+    //      //esPod::refresh();
+    // }
     #endif
 
 

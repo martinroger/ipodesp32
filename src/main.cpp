@@ -54,6 +54,12 @@ void playStatusHandler(byte playCommand) {
     //Send the prev instruction to A2DP
     a2dp_sink.previous();
     break;
+  case 0x0A: //Play
+    a2dp_sink.play();
+    break;
+  case 0x0B: //Pause
+    a2dp_sink.pause();
+    break;
   default:
     break;
   }
@@ -65,18 +71,18 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
   //Serial.printf("==> AVRC metadata rsp: attribute id 0x%x, %s\n", id, text);
   switch (id)
   {
-  case ESP_AVRC_MD_ATTR_ALBUM:
+  case 0x04:
     strcpy(espod._albumName,(char*)&text);
     break;
-  case ESP_AVRC_MD_ATTR_ARTIST:
+  case 0x02:
     strcpy(espod._artistName,(char*)&text);
     break;
-  case ESP_AVRC_MD_ATTR_TITLE:
+  case 0x01:
     strcpy(espod._trackTitle,(char*)&text);
     break;
-  case ESP_AVRC_MD_ATTR_GENRE:
-    strcpy(espod._trackGenre,(char*)&text);
-    break;
+  // case ESP_AVRC_MD_ATTR_GENRE:
+  //   strcpy(espod._trackGenre,(char*)&text);
+  //   break;
   default:
     break;
   }
@@ -131,6 +137,7 @@ void setup() {
   #else
     Serial.begin(19200);
     Serial.setRxBufferSize(4096);
+    Serial.setTxBufferSize(4096);
   #endif
   while(Serial.available()) Serial.read();
   espod.attachPlayControlHandler(playStatusHandler);
