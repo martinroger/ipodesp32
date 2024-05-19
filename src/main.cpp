@@ -17,43 +17,69 @@ Timer<millis> espodRefreshTimer = 10;
 Timer<millis> notificationsRefresh = 500;
 
 void playStatusHandler(byte playCommand) {
-  
+  #ifdef ENABLE_A2DP
   switch (playCommand)
   {
   case 0x01: //Toggle Play Pause
     if(espod._playStatus == 0x01) { //Playing
       //Send the play instruction to A2DP
+      a2dp_sink.play();
     }
     else if(espod._playStatus == 0x02) { //Paused
       //Send the pause instruction to A2DP
+      a2dp_sink.pause();
     }
     else { //Stopped
       //Send the stop instruction to A2DP
+      a2dp_sink.stop();
     }
     break;
   case 0x02: //Stop
     //Send the Stop instruction to A2DP
+    a2dp_sink.stop();
     break;
   case 0x03: //Next
     //Send the next instruction to A2DP
+    a2dp_sink.next();
     break;
   case 0x04: //Prev
     //Send the prev instruction to A2DP
+    a2dp_sink.previous();
     break;
   case 0x08: //next
     //Send the next instruction to A2DP
+    a2dp_sink.next();
     break;
   case 0x09: //Prev
     //Send the prev instruction to A2DP
+    a2dp_sink.previous();
     break;
   default:
     break;
   }
+  #endif
 }
 
 #ifdef ENABLE_A2DP
 void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
   //Serial.printf("==> AVRC metadata rsp: attribute id 0x%x, %s\n", id, text);
+  switch (id)
+  {
+  case ESP_AVRC_MD_ATTR_ALBUM:
+    strcpy(espod._albumName,(char*)&text);
+    break;
+  case ESP_AVRC_MD_ATTR_ARTIST:
+    strcpy(espod._artistName,(char*)&text);
+    break;
+  case ESP_AVRC_MD_ATTR_TITLE:
+    strcpy(espod._trackTitle,(char*)&text);
+    break;
+  case ESP_AVRC_MD_ATTR_GENRE:
+    strcpy(espod._trackGenre,(char*)&text);
+    break;
+  default:
+    break;
+  }
 }
 #endif
 
@@ -91,7 +117,7 @@ void setup() {
     //a2dp_sink.set_on_connection_state_changed(connection_state_changed);
     //a2dp_sink.set_on_audio_state_changed(audio_state_changed);
     a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
-    a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE|ESP_AVRC_MD_ATTR_ARTIST|ESP_AVRC_MD_ATTR_ALBUM|ESP_AVRC_MD_ATTR_PLAYING_TIME);
+    a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE|ESP_AVRC_MD_ATTR_ARTIST|ESP_AVRC_MD_ATTR_ALBUM|ESP_AVRC_MD_ATTR_GENRE);
     a2dp_sink.start("espiPod");
   
   #endif
@@ -107,7 +133,7 @@ void setup() {
     Serial.setRxBufferSize(4096);
   #endif
   while(Serial.available()) Serial.read();
-  
+  espod.attachPlayControlHandler(playStatusHandler);
 }
 
 void loop() {

@@ -61,6 +61,9 @@ private:
 public:
 
     esPod(Stream& targetSerial);
+    
+    void attachPlayControlHandler(playStatusHandler_t playHandler);
+    
     //Packet handling
     static byte checksum(const byte* byteArray, uint32_t len);
     void sendPacket(const byte* byteArray, uint32_t len);

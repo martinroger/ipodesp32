@@ -47,6 +47,11 @@ esPod::esPod(Stream& targetSerial)
     //_SWrevision = 0x00;
 }
 
+void esPod::attachPlayControlHandler(playStatusHandler_t playHandler)
+{
+    _playStatusHandler = playHandler;
+}
+
 //Calculates the checksum of a packet that starts from i=0 ->Lingo to i=len -> Checksum
 byte esPod::checksum(const byte* byteArray, uint32_t len)
 {
