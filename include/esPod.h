@@ -8,18 +8,9 @@ class esPod
 public:
     typedef void playStatusHandler_t(byte playControlCommand);
 
-private:
-    //Serial to the listening device
-    Stream& _targetSerial;
-    #ifdef DEBUG_MODE
-    HardwareSerial& _debugSerial;
-    #endif
-    byte _prevRxByte;
-    
     //State variables
     bool _extendedInterfaceModeActive;
     
-
     //metadata variables
     char _trackTitle[255] = "Title";
     char _artistName[255] = "Artist";
@@ -33,6 +24,16 @@ private:
     byte _playStatusNotifications = 0x00;
     byte _shuffleStatus = 0x00; //00 No Shuffle, 0x01 Tracks 0x02 Albums
     byte _repeatStatus = 0x00; //00 Repeat off, 01 One track, 02 All tracks
+
+private:
+    //Serial to the listening device
+    Stream& _targetSerial;
+    #ifdef DEBUG_MODE
+    HardwareSerial& _debugSerial;
+    #endif
+    byte _prevRxByte;
+    
+
     
     //Packet-related 
     byte _rxBuf[1024];

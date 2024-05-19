@@ -97,22 +97,9 @@ void esPod::L0x00_0x02_iPodAck_pending(uint32_t pendingDelayMS,byte cmdID) {
         0x02,
         iPodAck_CmdPending,
         cmdID
-        // (byte)((pendingDelayMS >>24)&0xFF),
-        // (byte)((pendingDelayMS >>16)&0xFF),
-        // (byte)((pendingDelayMS >>8)&0xFF),
-        // (byte)((pendingDelayMS)&0xFF)
     };
 
-    //_debugSerial.println(swap_endian<uint32_t>(pendingDelayMS));
-    //*(txPacket+3) = swap_endian<uint32_t>(pendingDelayMS); //Point to the value contained 3 address intervals down from txPacket
     *((uint32_t*)&txPacket[4]) = swap_endian<uint32_t>(pendingDelayMS);
-    //txPacket[4] = swap_endian<uint32_t>(pendingDelayMS); //Trying things
-    // for (int i = 0; i < 20; i++)
-    // {
-    //     _debugSerial.println(txPacket[i],HEX);
-    // }
-    _debugSerial.println();
-    
     sendPacket(txPacket,4+4);
 }
 
