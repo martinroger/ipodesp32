@@ -802,6 +802,9 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             if(_playStatus==0x01) _playStatus=0x02;
             else _playStatus = 0x01;
             //call PlayControlHandler()
+            if(_playStatusHandler) {
+                _playStatusHandler(byteArray[2]);
+            }
             break;
         case 0x02: //Stop
             _playStatus = 0x00;

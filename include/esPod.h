@@ -6,7 +6,7 @@
 class esPod
 {
 public:
-    typedef void playStatusHandler_t(byte playStatus);
+    typedef void playStatusHandler_t(byte playControlCommand);
 
 private:
     //Serial to the listening device
