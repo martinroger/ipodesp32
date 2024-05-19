@@ -376,34 +376,135 @@ void esPod::L0x04_0x1D_ReturnPlayStatus(uint32_t position, uint32_t duration, by
 
 void esPod::L0x04_0x1F_ReturnCurrentPlayingTrackIndex(uint32_t trackIndex)
 {
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x04 0x1F ReturnCurrentPlayingTrackIndex: ");
+    _debugSerial.println(trackIndex);
+    #endif
+    byte txPacket[] = {
+        0x04,
+        0x00,0x1F,
+        0x00,0x00,0x00,0x00
+    };
+    *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(trackIndex);
+    sendPacket(txPacket,sizeof(txPacket));
 }
 
 void esPod::L0x04_0x21_ReturnIndexedPlayingTrackTitle(char *trackTitle)
 {
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x04 0x21 ReturnIndexedPlayingTrackTitle: ");
+    _debugSerial.println(trackTitle);
+    #endif
+    byte txPacket[255] = {
+        0x04,
+        0x00,0x21
+    };
+    strcpy((char*)&txPacket[3],trackTitle);
+    sendPacket(txPacket,3+strlen(trackTitle)+1);
 }
 
 void esPod::L0x04_0x23_ReturnIndexedPlayingTrackArtistName(char *trackArtistName)
 {
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x04 0x23 ReturnIndexedPlayingTrackArtistName: ");
+    _debugSerial.println(trackArtistName);
+    #endif
+    byte txPacket[255] = {
+        0x04,
+        0x00,0x23
+    };
+    strcpy((char*)&txPacket[3],trackArtistName);
+    sendPacket(txPacket,3+strlen(trackArtistName)+1);
 }
 
 void esPod::L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(char *trackAlbumName)
 {
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x04 0x23 ReturnIndexedPlayingTrackArtistName: ");
+    _debugSerial.println(trackAlbumName);
+    #endif
+    byte txPacket[255] = {
+        0x04,
+        0x00,0x25
+    };
+    strcpy((char*)&txPacket[3],trackAlbumName);
+    sendPacket(txPacket,3+strlen(trackAlbumName)+1);
 }
 
+/// @brief Only supports currently three types : 0x00 Stopped, 0x01 Track index, 0x04 Track offset
+/// @param notification 
+/// @param numField 
 void esPod::L0x04_0x27_PlayStatusNotification(byte notification, uint32_t numField)
 {
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x04 0x27 PlayStatusNotification: ");
+    _debugSerial.println(notification,HEX);
+    #endif
+    byte txPacket[] = {
+        0x04,
+        0x00,0x27,
+        notification,
+        0x00,0x00,0x00,0x00
+    };
+    switch (notification)
+    {
+    case 0x00:
+        sendPacket(txPacket,4);
+        break;
+    case 0x01:
+        *((uint32_t*)&txPacket[4]) = swap_endian<uint32_t>(numField);
+        sendPacket(txPacket,sizeof(txPacket));
+        break;
+    case 0x04:
+        *((uint32_t*)&txPacket[4]) = swap_endian<uint32_t>(numField);
+        sendPacket(txPacket,sizeof(txPacket));
+        break;
+    default:
+        break;
+    }
 }
 
 void esPod::L0x04_0x2D_ReturnShuffle(byte shuffleStatus)
 {
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x04 0x2D ReturnShuffle: ");
+    _debugSerial.println(shuffleStatus);
+    #endif
+    byte txPacket[] = {
+        0x04,
+        0x00,0x2D,
+        shuffleStatus
+    };
+    sendPacket(txPacket,sizeof(txPacket));
 }
 
 void esPod::L0x04_0x30_ReturnRepeat(byte repeatStatus)
 {
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x04 0x30 ReturnRepeat: ");
+    _debugSerial.println(repeatStatus);
+    #endif
+    byte txPacket[] = {
+        0x04,
+        0x00,0x30,
+        repeatStatus
+    };
+    sendPacket(txPacket,sizeof(txPacket));
 }
 
 void esPod::L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks)
 {
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x04 0x36 ReturnNumPlayingTracks: ");
+    _debugSerial.println(numPlayingTracks);
+    #endif
+    byte txPacket[] = {
+        0x04,
+        0x00,0x36,
+        0x00,0x00,0x00,0x00
+    };
+    *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(numPlayingTracks);
+    sendPacket(txPacket,sizeof(txPacket));
 }
 
 void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
@@ -536,6 +637,10 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
     _debugSerial.print(cmdID,HEX);
     _debugSerial.print(" ");
     #endif
+
+    byte category;
+    uint32_t startIndex, counts;
+
     switch (cmdID)
     {
     case L0x04_GetIndexedPlayingTrackInfo:
@@ -569,110 +674,200 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         #ifdef DEBUG_MODE
         _debugSerial.println("RequestProtocolVersion");
         #endif
+        L0x04_0x13_ReturnProtocolVersion();
         break;
 
     case L0x04_ResetDBSelection:
         #ifdef DEBUG_MODE
         _debugSerial.println("ResetDBSelection");
         #endif
+        L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
         break;
 
     case L0x04_SelectDBRecord:
         #ifdef DEBUG_MODE
         _debugSerial.println("SelectDBRecord");
         #endif
+        L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
         break;
     
     case L0x04_GetNumberCategorizedDBRecords:
         #ifdef DEBUG_MODE
         _debugSerial.println("GetNumberCategorizedDBRecords");
         #endif
+        L0x04_0x19_ReturnNumberCategorizedDBRecords(1);
         break;
     
     case L0x04_RetrieveCategorizedDatabaseRecords:
         #ifdef DEBUG_MODE
         _debugSerial.println("RetrieveCategorizedDatabaseRecords");
         #endif
+        category = byteArray[2];
+        startIndex = swap_endian<uint32_t>(*(uint32_t*)&byteArray[3]);
+        counts = swap_endian<uint32_t>(*(uint32_t*)&byteArray[7]);
+        switch (category)
+        {
+        case 0x01:
+            for (uint32_t i = startIndex; i < startIndex +counts; i++)
+            {
+                L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_playList);
+            }
+            break;
+        case 0x02:
+            for (uint32_t i = startIndex; i < startIndex +counts; i++)
+            {
+                L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_artistName);
+            }
+            break;
+        case 0x03:
+            for (uint32_t i = startIndex; i < startIndex +counts; i++)
+            {
+                L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_albumName);
+            }
+            break;
+        case 0x04:
+            for (uint32_t i = startIndex; i < startIndex +counts; i++)
+            {
+                L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_trackGenre);
+            }
+            break;
+        case 0x05:
+            for (uint32_t i = startIndex; i < startIndex +counts; i++)
+            {
+                L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_trackTitle);
+            }
+            break;
+        case 0x06:
+            for (uint32_t i = startIndex; i < startIndex +counts; i++)
+            {
+                L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_composer);
+            }
+            break;
+        default:
+            break;
+        }
         break;
 
     case L0x04_GetPlayStatus:
         #ifdef DEBUG_MODE
         _debugSerial.println("GetPlayStatus");
         #endif
+        L0x04_0x1D_ReturnPlayStatus(60000,120000,_playStatus);
         break;
 
     case L0x04_GetCurrentPlayingTrackIndex:
         #ifdef DEBUG_MODE
         _debugSerial.println("GetCurrentPlayingTrackIndex");
         #endif
+        L0x04_0x1F_ReturnCurrentPlayingTrackIndex(0);
         break;
 
     case L0x04_GetIndexedPlayingTrackTitle:
         #ifdef DEBUG_MODE
         _debugSerial.println("GetIndexedPlayingTrackTitle");
         #endif
+        L0x04_0x21_ReturnIndexedPlayingTrackTitle(_trackTitle);
         break;
 
     case L0x04_GetIndexedPlayingTrackArtistName:
         #ifdef DEBUG_MODE
         _debugSerial.println("GetIndexedPlayingTrackArtistName");
         #endif
+        L0x04_0x23_ReturnIndexedPlayingTrackArtistName(_artistName);
         break;
 
     case L0x04_GetIndexedPlayingTrackAlbumName:
         #ifdef DEBUG_MODE
         _debugSerial.println("GetIndexedPlayingTrackAlbumName");
         #endif
+        L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(_albumName);
         break;
 
-    case L0x04_SetPlayStatusChangeNotification:
+    case L0x04_SetPlayStatusChangeNotification: //iPod seems to only send track index and track time offset
         #ifdef DEBUG_MODE
         _debugSerial.println("SetPlayStatusChangeNotification");
         #endif
+        _playStatusNotifications = byteArray[2];
+        L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
         break;
 
-    case L0x04_PlayControl:
+    case L0x04_PlayControl: //Will require a callback for interfacing externally for next/prev
         #ifdef DEBUG_MODE
         _debugSerial.println("PlayControl");
         #endif
+        switch (byteArray[2])
+        {
+        case 0x01:
+            if(_playStatus==0x01) _playStatus=0x02;
+            else _playStatus = 0x01;
+            //call PlayControlHandler()
+            break;
+        case 0x02: //Stop
+            _playStatus = 0x00;
+            break;
+        case 0x03: //Next track
+            break;
+        case 0x04: //Prev track
+            break;
+        case 0x08: //Next track
+            break;
+        case 0x09: //Prev track
+            break;
+        case 0x0A: //Play
+            _playStatus = 0x01;
+            break;
+        case 0x0B: //Pause
+            _playStatus = 0x02;
+            break;
+        default:
+            break;
+        }
+        L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
         break;
 
     case L0x04_GetShuffle:
         #ifdef DEBUG_MODE
         _debugSerial.println("GetShuffle");
         #endif
+        L0x04_0x2D_ReturnShuffle(_shuffleStatus);
         break;
 
     case L0x04_SetShuffle:
         #ifdef DEBUG_MODE
         _debugSerial.println("SetShuffle");
         #endif
+        _shuffleStatus = byteArray[2];
+        L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
         break;
     
     case L0x04_GetRepeat:
         #ifdef DEBUG_MODE
         _debugSerial.println("GetRepeat");
         #endif
+        L0x04_0x30_ReturnRepeat(_repeatStatus);
         break;
 
     case L0x04_SetRepeat:
         #ifdef DEBUG_MODE
         _debugSerial.println("SetRepeat");
         #endif
+        _repeatStatus = byteArray[2];
+        L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
         break;
 
     case L0x04_GetNumPlayingTracks:
         #ifdef DEBUG_MODE
         _debugSerial.println("GetNumPlayingTracks");
         #endif
+        L0x04_0x36_ReturnNumPlayingTracks(1);
         break;
 
     case L0x04_SetCurrentPlayingTrack:
         #ifdef DEBUG_MODE
         _debugSerial.println("SetCurrentPlayingTrack");
         #endif
+        L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
         break;
-
 
     default:
         break;

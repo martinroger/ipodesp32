@@ -18,13 +18,18 @@ private:
     
 
     //metadata variables
-    uint8_t *trackTitle;
-    uint8_t *artistName;
-    uint8_t *albumName;
-    char _trackGenre[8] = "Spotify";
+    char _trackTitle[255] = "Title";
+    char _artistName[255] = "Artist";
+    char _albumName[255] = "Album";
+    char _trackGenre[255] = "Genre";
+    char _playList[255] = "Spotify";
+    char _composer[255] = "Composer";
 
     //PlaybackEngine
     byte _playStatus = 0x00; //PlayStatus, 00 Stopped, 01 Playing, 02 Paused
+    byte _playStatusNotifications = 0x00;
+    byte _shuffleStatus = 0x00; //00 No Shuffle, 0x01 Tracks 0x02 Albums
+    byte _repeatStatus = 0x00; //00 Repeat off, 01 One track, 02 All tracks
     
     //Packet-related 
     byte _rxBuf[1024];
