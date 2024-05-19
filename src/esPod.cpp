@@ -38,7 +38,8 @@ esPod::esPod(Stream& targetSerial)
         _SWMajor(0x01),
         _SWMinor(0x03),
         _SWrevision(0x00),
-        _serialNumber("AB345F7HIJK")
+        _serialNumber("AB345F7HIJK"),
+        _playStatusHandler(0)
 {
     //Setup the metadata
     //_SWMajor = 0x01;
@@ -959,4 +960,13 @@ void esPod::refresh()
          esPod::refresh();
     }
     #endif
+
+
+}
+
+void esPod::cyclicNotify()
+{
+    if((_playStatus == 0x01) && (_playStatusNotifications == 0x01) && (_extendedInterfaceModeActive)) {
+        L0x04_0x27_PlayStatusNotification(0x04,60000);
+    }
 }

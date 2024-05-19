@@ -1,11 +1,14 @@
 #include <Arduino.h>
-
+#include "Arduino_Helpers.h"
+#include "AH/Timing/MillisMicrosTimer.hpp"
 #include "esPod.h"
 
 //int validChecksums = 0;
 //uint32_t packetCounter = 0;
 esPod espod(USBSerial);
 
+Timer<millis> espodRefreshTimer = 10;
+Timer<millis> notificationsRefresh = 500;
 
 void setup() {
   USBSerial.begin(19200);
@@ -20,6 +23,10 @@ void setup() {
 }
 
 void loop() {
-  espod.refresh();
-
+  if(espodRefreshTimer) {
+    espod.refresh();
+  }
+  if(notificationsRefresh) {
+    espod.cyclicNotify();
+  }
 }

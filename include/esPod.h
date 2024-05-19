@@ -5,6 +5,9 @@
 
 class esPod
 {
+public:
+    typedef void playStatusHandler_t(byte playStatus);
+
 private:
     //Serial to the listening device
     Stream& _targetSerial;
@@ -51,9 +54,12 @@ private:
     bool _accessoryModelRequested = false;
     bool _accessoryHardwareRequested = false;
 
+    //Handler functions
+    playStatusHandler_t *_playStatusHandler;
+
 public:
+
     esPod(Stream& targetSerial);
-    
     //Packet handling
     static byte checksum(const byte* byteArray, uint32_t len);
     void sendPacket(const byte* byteArray, uint32_t len);
@@ -89,6 +95,5 @@ public:
     void processPacket(const byte* byteArray,uint32_t len);
 
     void refresh();
+    void cyclicNotify();
 };
-
-
