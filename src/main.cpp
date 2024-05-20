@@ -72,13 +72,13 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
   switch (id)
   {
   case 0x04:
-    strcpy(espod._albumName,(char*)&text);
+    strcpy(espod._albumName,(char*)text);
     break;
   case 0x02:
-    strcpy(espod._artistName,(char*)&text);
+    strcpy(espod._artistName,(char*)text);
     break;
   case 0x01:
-    strcpy(espod._trackTitle,(char*)&text);
+    strcpy(espod._trackTitle,(char*)text);
     break;
   // case ESP_AVRC_MD_ATTR_GENRE:
   //   strcpy(espod._trackGenre,(char*)&text);
