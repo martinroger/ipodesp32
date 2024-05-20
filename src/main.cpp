@@ -117,6 +117,12 @@ void setup() {
         .use_apll = false,
         .tx_desc_auto_clear = true // avoiding noise in case of data unavailability
       };
+    /*
+    Default pins are as follows : 
+    WSEL  ->  GPIO 25
+    DIN   ->  GPIO 22
+    BCLK  ->  GPIO 26
+    */
     #endif
     a2dp_sink.set_i2s_config(i2s_config);
     //a2dp_sink.set_auto_reconnect(true); //Auto-reconnect
