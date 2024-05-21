@@ -10,6 +10,7 @@ public:
 
     //State variables
     bool _extendedInterfaceModeActive;
+    uint64_t lastConnected = 0;
     
     //metadata variables
     char _trackTitle[255] = "Title";
@@ -39,6 +40,8 @@ private:
     byte _rxBuf[1024];
     uint32_t _rxLen;
     uint32_t _rxCounter;
+    bool _handshakeOK = false;
+
 
     //Device metadata
     const char* _name;
@@ -61,7 +64,9 @@ private:
 public:
 
     esPod(Stream& targetSerial);
-    
+
+    void resetState();
+
     void attachPlayControlHandler(playStatusHandler_t playHandler);
     
     //Packet handling
