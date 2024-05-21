@@ -431,7 +431,7 @@ void esPod::L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(char *trackAlbumName)
     sendPacket(txPacket,3+strlen(trackAlbumName)+1);
 }
 
-/// @brief Only supports currently three types : 0x00 Stopped, 0x01 Track index, 0x04 Track offset
+/// @brief Only supports currently two types : 0x01 Track index, 0x04 Track offset
 /// @param notification 
 /// @param numField 
 void esPod::L0x04_0x27_PlayStatusNotification(byte notification, uint32_t numField)
@@ -448,9 +448,6 @@ void esPod::L0x04_0x27_PlayStatusNotification(byte notification, uint32_t numFie
     };
     switch (notification)
     {
-    case 0x00:
-        sendPacket(txPacket,4);
-        break;
     case 0x01:
         *((uint32_t*)&txPacket[4]) = swap_endian<uint32_t>(numField);
         sendPacket(txPacket,sizeof(txPacket));
@@ -462,6 +459,21 @@ void esPod::L0x04_0x27_PlayStatusNotification(byte notification, uint32_t numFie
     default:
         break;
     }
+}
+
+void esPod::L0x04_0x27_PlayStatusNotification(byte notification)
+{
+    #ifdef DEBUG_MODE
+    _debugSerial.print("L0x04 0x27 PlayStatusNotification: ");
+    _debugSerial.println(notification,HEX);
+    #endif
+    byte txPacket[] = {
+        0x04,
+        0x00,0x27,
+        notification,
+
+    };
+    sendPacket(txPacket,sizeof(txPacket));
 }
 
 void esPod::L0x04_0x2D_ReturnShuffle(byte shuffleStatus)
@@ -799,6 +811,17 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
             break;
 
+        case L0x04_PlayCurrentSelection:
+            #ifdef DEBUG_MODE
+            _debugSerial.println("PlayCurrentSelection");
+            #endif
+            _playStatus = 0x01; //Playing
+            if(_playStatusHandler) {
+                _playStatusHandler(0x0A);
+            }
+            L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
+            break;
+        
         case L0x04_PlayControl: //Will require a callback for interfacing externally for next/prev
             #ifdef DEBUG_MODE
             _debugSerial.println("PlayControl");
@@ -995,7 +1018,14 @@ void esPod::refresh()
 
 void esPod::cyclicNotify()
 {
-    if((_playStatus == 0x01) && (_playStatusNotifications == 0x01) && (_extendedInterfaceModeActive)) {
-        L0x04_0x27_PlayStatusNotification(0x04,60000);
+    if((_playStatusNotifications == 0x01) && (_extendedInterfaceModeActive)) {
+        if(_playStatus == 0x01) {
+            L0x04_0x27_PlayStatusNotification(0x04,60000); //Track offset
+            _playStatusNotificationsPaused = false;
+        }
+        if((_playStatus == 0x00) && !_playStatusNotificationsPaused) {
+            L0x04_0x27_PlayStatusNotification(0x00); //Stopped playback
+            _playStatusNotificationsPaused = true;
+        }
     }
 }

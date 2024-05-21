@@ -10,6 +10,7 @@
 #define L0x04_GetIndexedPlayingTrackArtistName      0x22
 #define L0x04_GetIndexedPlayingTrackAlbumName       0x24
 #define L0x04_SetPlayStatusChangeNotification       0x26
+#define L0x04_PlayCurrentSelection                  0x28
 #define L0x04_PlayControl                           0x29
 #define L0x04_GetShuffle                            0x2C
 #define L0x04_SetShuffle                            0x2E

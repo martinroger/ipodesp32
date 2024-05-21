@@ -23,6 +23,7 @@ public:
     //PlaybackEngine
     byte _playStatus = 0x00; //PlayStatus, 00 Stopped, 01 Playing, 02 Paused
     byte _playStatusNotifications = 0x00;
+    bool _playStatusNotificationsPaused = false;
     byte _shuffleStatus = 0x00; //00 No Shuffle, 0x01 Tracks 0x02 Albums
     byte _repeatStatus = 0x00; //00 Repeat off, 01 One track, 02 All tracks
 
@@ -94,6 +95,7 @@ public:
     void L0x04_0x23_ReturnIndexedPlayingTrackArtistName(char* trackArtistName);
     void L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(char* trackAlbumName);
     void L0x04_0x27_PlayStatusNotification(byte notification, uint32_t numField);
+    void L0x04_0x27_PlayStatusNotification(byte notification);
     void L0x04_0x2D_ReturnShuffle(byte shuffleStatus);
     void L0x04_0x30_ReturnRepeat(byte repeatStatus);
     void L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks);
