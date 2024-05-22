@@ -13,8 +13,67 @@ esPod espod(USBSerial);
 esPod espod(Serial);
 #endif
 
-Timer<millis> espodRefreshTimer = 10;
+Timer<millis> espodRefreshTimer = 5;
 Timer<millis> notificationsRefresh = 500;
+
+#ifdef ENABLE_A2DP
+//Placeholder for doing interesting things with regards to the connection state... e.g. if there is a client connected
+void connectionStateChanged(esp_a2d_connection_state_t state, void* ptr) {
+  //do something when the connection state is changed
+  switch (state)
+  {
+  case ESP_A2D_CONNECTION_STATE_CONNECTED:
+    #ifdef LED_BUILTIN
+    digitalWrite(LED_BUILTIN,HIGH);
+    #endif
+    break;
+  case ESP_A2D_CONNECTION_STATE_DISCONNECTED:
+    #ifdef LED_BUILTIN
+    digitalWrite(LED_BUILTIN,LOW);
+    #endif
+    break;
+  default:
+    break;
+  }
+
+}
+
+//Force play Status sync
+void forcePlayStatusSync() {
+  switch (a2dp_sink.get_audio_state())
+  {
+  case ESP_A2D_AUDIO_STATE_STARTED:
+    espod._playStatus = 0x01;
+    break;
+  case ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND:
+    espod._playStatus = 0x02;
+    break;
+  case ESP_A2D_AUDIO_STATE_STOPPED:
+    espod._playStatus = 0x00;
+    break;
+  default:
+    break;
+  }
+}
+
+//Callback to align the iPod playback status to the A2DP stream status
+void audioStateChanged(esp_a2d_audio_state_t state,void* ptr) {
+  switch (state)
+  {
+  case ESP_A2D_AUDIO_STATE_STARTED:
+    espod._playStatus = 0x01;
+    break;
+  case ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND:
+    espod._playStatus = 0x02;
+    break;
+  case ESP_A2D_AUDIO_STATE_STOPPED:
+    espod._playStatus = 0x00;
+    break;
+  default:
+    break;
+  }
+}
+#endif
 
 void playStatusHandler(byte playCommand) {
   #ifdef ENABLE_A2DP
@@ -126,11 +185,16 @@ void setup() {
     #endif
     a2dp_sink.set_i2s_config(i2s_config);
     //a2dp_sink.set_auto_reconnect(true); //Auto-reconnect
-    //a2dp_sink.set_on_connection_state_changed(connection_state_changed);
-    //a2dp_sink.set_on_audio_state_changed(audio_state_changed);
+    a2dp_sink.set_on_connection_state_changed(connectionStateChanged);
+    a2dp_sink.set_on_audio_state_changed(audioStateChanged);
     a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
     a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE|ESP_AVRC_MD_ATTR_ARTIST|ESP_AVRC_MD_ATTR_ALBUM|ESP_AVRC_MD_ATTR_GENRE);
     a2dp_sink.start("espiPod");
+
+    #ifdef LED_BUILTIN
+    pinMode(LED_BUILTIN,OUTPUT);
+    digitalWrite(LED_BUILTIN,LOW);
+    #endif
   
   #endif
 
@@ -155,5 +219,6 @@ void loop() {
   }
   if(notificationsRefresh) {
     espod.cyclicNotify();
+    forcePlayStatusSync();
   }
 }
