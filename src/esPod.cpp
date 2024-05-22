@@ -846,21 +846,25 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
+                notifyTrackChange = true;
                 break;
             case 0x04: //Prev track
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
+                notifyTrackChange = true;
                 break;
             case 0x08: //Next track
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
+                notifyTrackChange = true;
                 break;
             case 0x09: //Prev track
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
+                notifyTrackChange = true;
                 break;
             case 0x0A: //Play
                 _playStatus = 0x01;
@@ -1026,6 +1030,10 @@ void esPod::cyclicNotify()
         if((_playStatus == 0x00) && !_playStatusNotificationsPaused) {
             L0x04_0x27_PlayStatusNotification(0x00); //Stopped playback
             _playStatusNotificationsPaused = true;
+        }
+        if(notifyTrackChange && (_playStatus==0x01)) {
+            L0x04_0x27_PlayStatusNotification(0x01,0); //Inform it has changed to track 0
+            notifyTrackChange = false;
         }
     }
 }
