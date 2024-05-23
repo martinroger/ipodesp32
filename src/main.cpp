@@ -57,6 +57,7 @@ void forcePlayStatusSync() {
 }
 
 //Callback to align the iPod playback status to the A2DP stream status
+//Could be using an overloaded version of forcePlayStatusSync in the ptr ?
 void audioStateChanged(esp_a2d_audio_state_t state,void* ptr) {
   switch (state)
   {
@@ -100,18 +101,22 @@ void playStatusHandler(byte playCommand) {
   case 0x03: //Next
     //Send the next instruction to A2DP
     a2dp_sink.next();
+    esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE); //Trying to force a title update here
     break;
   case 0x04: //Prev
     //Send the prev instruction to A2DP
     a2dp_sink.previous();
+    esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE);
     break;
   case 0x08: //next
     //Send the next instruction to A2DP
     a2dp_sink.next();
+    esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE);
     break;
   case 0x09: //Prev
     //Send the prev instruction to A2DP
     a2dp_sink.previous();
+    esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE);
     break;
   case 0x0A: //Play
     a2dp_sink.play();

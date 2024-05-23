@@ -52,6 +52,9 @@ void esPod::resetState(){
     _extendedInterfaceModeActive = false;
     _handshakeOK = false;
     lastConnected = millis();
+    _playStatusNotifications = 0x00;
+    _playStatusNotificationsPaused = false;
+    notifyTrackChange = false;
 }
 
 void esPod::attachPlayControlHandler(playStatusHandler_t playHandler)
@@ -715,7 +718,13 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             #ifdef DEBUG_MODE
             _debugSerial.println("GetNumberCategorizedDBRecords");
             #endif
-            L0x04_0x19_ReturnNumberCategorizedDBRecords(1);
+            category = byteArray[2];
+            if(category == 0x05) { // Say there are two tracks
+                L0x04_0x19_ReturnNumberCategorizedDBRecords(2);
+            }
+            else { //And only one of anything else
+                L0x04_0x19_ReturnNumberCategorizedDBRecords(1);
+            }
             break;
         
         case L0x04_RetrieveCategorizedDatabaseRecords:
@@ -751,7 +760,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_trackGenre);
                 }
                 break;
-            case 0x05:
+            case 0x05: //Will sometimes return twice
                 for (uint32_t i = startIndex; i < startIndex +counts; i++)
                 {
                     L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_trackTitle);
@@ -779,7 +788,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             #ifdef DEBUG_MODE
             _debugSerial.println("GetCurrentPlayingTrackIndex");
             #endif
-            L0x04_0x1F_ReturnCurrentPlayingTrackIndex(0);
+            L0x04_0x1F_ReturnCurrentPlayingTrackIndex(_currentTrackIndex);
             break;
 
         case L0x04_GetIndexedPlayingTrackTitle:
@@ -828,7 +837,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             #endif
             switch (byteArray[2])
             {
-            case 0x01:
+            case 0x01: //Just Toggle or start playing
                 if(_playStatus==0x01) _playStatus=0x02;
                 else _playStatus = 0x01;
                 //call PlayControlHandler()
@@ -846,24 +855,33 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
+                //We flip the track Index tracker
+                if(_currentTrackIndex==0x00) _currentTrackIndex = 0x01;
+                else _currentTrackIndex = 0x00;
                 notifyTrackChange = true;
                 break;
             case 0x04: //Prev track
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
+                if(_currentTrackIndex==0x00) _currentTrackIndex = 0x01;
+                else _currentTrackIndex = 0x00;
                 notifyTrackChange = true;
                 break;
             case 0x08: //Next track
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
+                if(_currentTrackIndex==0x00) _currentTrackIndex = 0x01;
+                else _currentTrackIndex = 0x00;
                 notifyTrackChange = true;
                 break;
             case 0x09: //Prev track
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
+                if(_currentTrackIndex==0x00) _currentTrackIndex = 0x01;
+                else _currentTrackIndex = 0x00;
                 notifyTrackChange = true;
                 break;
             case 0x0A: //Play
@@ -918,7 +936,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             #ifdef DEBUG_MODE
             _debugSerial.println("GetNumPlayingTracks");
             #endif
-            L0x04_0x36_ReturnNumPlayingTracks(1);
+            L0x04_0x36_ReturnNumPlayingTracks(2); //We say there are two playing tracks
             break;
 
         case L0x04_SetCurrentPlayingTrack:
@@ -1013,8 +1031,8 @@ void esPod::refresh()
         _prevRxByte = incomingByte;
     }
 
-    //Reset if no message received in the last 120s
-    if((millis()/1000)-lastConnected > 120) {
+    //Reset if no message received in the last 10s
+    if((millis()/1000)-lastConnected > 10) {
         resetState();
     }
 
@@ -1032,7 +1050,7 @@ void esPod::cyclicNotify()
             _playStatusNotificationsPaused = true;
         }
         if(notifyTrackChange && (_playStatus==0x01)) {
-            L0x04_0x27_PlayStatusNotification(0x01,0); //Inform it has changed to track 0
+            L0x04_0x27_PlayStatusNotification(0x01,_currentTrackIndex); //Inform it has changed to track currentTrackIndex
             notifyTrackChange = false;
         }
     }

@@ -21,12 +21,12 @@ public:
     char _composer[255] = "Composer";
 
     //PlaybackEngine
-    byte _playStatus = 0x00; //PlayStatus, 00 Stopped, 01 Playing, 02 Paused
+    byte _playStatus = 0x02; //PlayStatus, 00 Stopped, 01 Playing, 02 Paused
     byte _playStatusNotifications = 0x00;
     bool _playStatusNotificationsPaused = false;
     bool notifyTrackChange = false;
-    byte _shuffleStatus = 0x00; //00 No Shuffle, 0x01 Tracks 0x02 Albums
-    byte _repeatStatus = 0x00; //00 Repeat off, 01 One track, 02 All tracks
+    byte _shuffleStatus = 0x01; //00 No Shuffle, 0x01 Tracks 0x02 Albums
+    byte _repeatStatus = 0x02; //00 Repeat off, 01 One track, 02 All tracks
 
 private:
     //Serial to the listening device
@@ -36,7 +36,8 @@ private:
     #endif
     byte _prevRxByte;
     
-
+    //Track Index Flip-Flop
+    byte _currentTrackIndex = 0x00;
     
     //Packet-related 
     byte _rxBuf[1024];
