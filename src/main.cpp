@@ -207,15 +207,16 @@ void setup() {
   #endif
 
   #ifdef DEBUG_MODE
-    USBSerial.begin(19200);
     USBSerial.setRxBufferSize(4096);
+    USBSerial.begin(19200);
     Serial.setTxBufferSize(4096);
     Serial.begin(115200);
     while(USBSerial.available()) USBSerial.read();
   #else
-    Serial.begin(19200);
     Serial.setRxBufferSize(4096);
     Serial.setTxBufferSize(4096);
+    Serial.begin(19200);
+
   #endif
   while(Serial.available()) Serial.read();
   espod.attachPlayControlHandler(playStatusHandler);
