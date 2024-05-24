@@ -84,14 +84,17 @@ void playStatusHandler(byte playCommand) {
     if(espod._playStatus == 0x01) { //Playing
       //Send the play instruction to A2DP
       a2dp_sink.play();
+      esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE);
     }
     else if(espod._playStatus == 0x02) { //Paused
       //Send the pause instruction to A2DP
       a2dp_sink.pause();
+      esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE);
     }
     else { //Stopped
       //Send the stop instruction to A2DP
       a2dp_sink.stop();
+      esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE);
     }
     break;
   case 0x02: //Stop
@@ -120,9 +123,11 @@ void playStatusHandler(byte playCommand) {
     break;
   case 0x0A: //Play
     a2dp_sink.play();
+    esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE);
     break;
   case 0x0B: //Pause
     a2dp_sink.pause();
+    esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE);
     break;
   default:
     break;
