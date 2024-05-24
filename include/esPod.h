@@ -3,6 +3,39 @@
 #include "L0x00.h"
 #include "L0x04.h"
 
+enum PB_STATUS : byte
+{
+    PB_STATE_STOPPED        =   0x00,
+    PB_STATE_PLAYING        =   0x01,
+    PB_STATE_PAUSED         =   0x02,
+    PB_STATE_ERROR          =   0xFF
+};
+
+enum PB_COMMAND : byte
+{
+    PB_CMD_TOGGLE           =   0x01,
+    PB_CMD_STOP             =   0x02,
+    PB_CMD_NEXT_TRACK       =   0x03,
+    PB_CMD_PREVIOUS_TRACK   =   0x04,
+    PB_CMD_SEEK_FF          =   0x05,
+    PB_CMD_SEEK_RW          =   0x06,
+    PB_CMD_STOP_SEEK        =   0x07,
+    PB_CMD_NEXT             =   0x08,
+    PB_CMD_PREV             =   0x09,
+    PB_CMD_PLAY             =   0x0A,
+    PB_CMD_PAUSE            =   0x0B
+};
+
+enum DB_CATEGORY : byte
+{
+    DB_CAT_PLAYLIST         =   0x01,
+    DB_CAT_ARTIST           =   0x02,
+    DB_CAT_ALBUM            =   0x03,
+    DB_CAT_GENRE            =   0x04,
+    DB_CAT_TRACK            =   0x05,
+    DB_CAT_COMPOSER         =   0x06
+}; //Just a small selection
+
 class esPod
 {
 public:
@@ -37,7 +70,8 @@ private:
     byte _prevRxByte;
     
     //Track Index Flip-Flop
-    byte _currentTrackIndex = 0x00;
+    uint32_t _currentTrackIndex = 0;
+    uint32_t _totalNumberTracks = 16000;
     
     //Packet-related 
     byte _rxBuf[1024];

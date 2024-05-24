@@ -43,13 +43,13 @@ void forcePlayStatusSync() {
   switch (a2dp_sink.get_audio_state())
   {
   case ESP_A2D_AUDIO_STATE_STARTED:
-    espod._playStatus = 0x01;
+    espod._playStatus = PB_STATE_PLAYING;
     break;
   case ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND:
-    espod._playStatus = 0x02;
+    espod._playStatus = PB_STATE_PAUSED;
     break;
   case ESP_A2D_AUDIO_STATE_STOPPED:
-    espod._playStatus = 0x00;
+    espod._playStatus = PB_STATE_STOPPED;
     break;
   default:
     break;
@@ -62,13 +62,13 @@ void audioStateChanged(esp_a2d_audio_state_t state,void* ptr) {
   switch (state)
   {
   case ESP_A2D_AUDIO_STATE_STARTED:
-    espod._playStatus = 0x01;
+    espod._playStatus = PB_STATE_PLAYING;
     break;
   case ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND:
-    espod._playStatus = 0x02;
+    espod._playStatus = PB_STATE_PAUSED;
     break;
   case ESP_A2D_AUDIO_STATE_STOPPED:
-    espod._playStatus = 0x00;
+    espod._playStatus = PB_STATE_STOPPED;
     break;
   default:
     break;
@@ -80,13 +80,13 @@ void playStatusHandler(byte playCommand) {
   #ifdef ENABLE_A2DP
   switch (playCommand)
   {
-  case 0x01: //Toggle Play Pause
-    if(espod._playStatus == 0x01) { //Playing
+  case PB_CMD_TOGGLE: //Toggle Play Pause, the state update is already handled in the espod class
+    if(espod._playStatus == PB_STATE_PLAYING) { //Playing
       //Send the play instruction to A2DP
       a2dp_sink.play();
       esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE);
     }
-    else if(espod._playStatus == 0x02) { //Paused
+    else if(espod._playStatus == PB_STATE_PAUSED) { //Paused
       //Send the pause instruction to A2DP
       a2dp_sink.pause();
       esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE);
@@ -97,35 +97,35 @@ void playStatusHandler(byte playCommand) {
       esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE);
     }
     break;
-  case 0x02: //Stop
+  case PB_CMD_STOP: //Stop
     //Send the Stop instruction to A2DP
     a2dp_sink.stop();
     break;
-  case 0x03: //Next
+  case PB_CMD_NEXT_TRACK: //Next
     //Send the next instruction to A2DP
     a2dp_sink.next();
     esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE); //Trying to force a title update here
     break;
-  case 0x04: //Prev
+  case PB_CMD_PREVIOUS_TRACK: //Prev
     //Send the prev instruction to A2DP
     a2dp_sink.previous();
     esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE);
     break;
-  case 0x08: //next
+  case PB_CMD_NEXT: //next
     //Send the next instruction to A2DP
     a2dp_sink.next();
     esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE);
     break;
-  case 0x09: //Prev
+  case PB_CMD_PREV: //Prev
     //Send the prev instruction to A2DP
     a2dp_sink.previous();
     esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE);
     break;
-  case 0x0A: //Play
+  case PB_CMD_PLAY: //Play
     a2dp_sink.play();
     esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE);
     break;
-  case 0x0B: //Pause
+  case PB_CMD_PAUSE: //Pause
     a2dp_sink.pause();
     esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE);
     break;
@@ -149,12 +149,10 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
   case 0x01:
     strcpy(espod._trackTitle,(char*)text);
     break;
-  // case ESP_AVRC_MD_ATTR_GENRE:
-  //   strcpy(espod._trackGenre,(char*)&text);
-  //   break;
   default:
     break;
   }
+  espod.notifyTrackChange = true;
 }
 #endif
 
@@ -198,7 +196,7 @@ void setup() {
     a2dp_sink.set_on_connection_state_changed(connectionStateChanged);
     a2dp_sink.set_on_audio_state_changed(audioStateChanged);
     a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
-    a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE|ESP_AVRC_MD_ATTR_ARTIST|ESP_AVRC_MD_ATTR_ALBUM|ESP_AVRC_MD_ATTR_GENRE);
+    a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE|ESP_AVRC_MD_ATTR_ARTIST|ESP_AVRC_MD_ATTR_ALBUM);
     a2dp_sink.start("espiPod");
 
     #ifdef LED_BUILTIN

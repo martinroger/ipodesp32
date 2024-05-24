@@ -24,7 +24,6 @@ T swap_endian(T u)
     return dest.u;
 }
 
-
 esPod::esPod(Stream& targetSerial) 
     :
         #ifdef DEBUG_MODE
@@ -39,7 +38,8 @@ esPod::esPod(Stream& targetSerial)
         _SWMinor(0x03),
         _SWrevision(0x00),
         _serialNumber("AB345F7HIJK"),
-        _playStatusHandler(0)
+        _playStatusHandler(0),
+        _currentTrackIndex(0)
 {
     //Setup the metadata
     //_SWMajor = 0x01;
@@ -48,13 +48,14 @@ esPod::esPod(Stream& targetSerial)
 }
 
 void esPod::resetState(){
-    _playStatus = 0x00;
+    _playStatus = PB_STATE_STOPPED;
     _extendedInterfaceModeActive = false;
     _handshakeOK = false;
     lastConnected = millis();
     _playStatusNotifications = 0x00;
     _playStatusNotificationsPaused = false;
     notifyTrackChange = false;
+    _currentTrackIndex = 0;
 }
 
 void esPod::attachPlayControlHandler(playStatusHandler_t playHandler)
@@ -434,7 +435,7 @@ void esPod::L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(char *trackAlbumName)
     sendPacket(txPacket,3+strlen(trackAlbumName)+1);
 }
 
-/// @brief Only supports currently two types : 0x01 Track index, 0x04 Track offset
+/// @brief Only supports currently two types : 0x00 Playback Stopped, 0x01 Track index, 0x04 Track offset
 /// @param notification 
 /// @param numField 
 void esPod::L0x04_0x27_PlayStatusNotification(byte notification, uint32_t numField)
@@ -660,7 +661,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
     byte category;
     uint32_t startIndex, counts;
 
-    if(!_extendedInterfaceModeActive)   {
+    if(!_extendedInterfaceModeActive)   { //Complain if not in extended interface mode
         L0x04_0x01_iPodAck(iPodAck_BadParam,cmdID);
     }
     else    {
@@ -673,7 +674,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             switch (byteArray[2])
             {
             case 0x00: //TrackCapabilities and Information
-                L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2]);
+                L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2]); //Ideally should be overloaded to pass the track duration
                 break;
             case 0x02: //Track Release Date
                 L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2]);
@@ -704,10 +705,11 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             #ifdef DEBUG_MODE
             _debugSerial.println("ResetDBSelection");
             #endif
+            _currentTrackIndex = 0;
             L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
             break;
 
-        case L0x04_SelectDBRecord:
+        case L0x04_SelectDBRecord: //Might need to check that one
             #ifdef DEBUG_MODE
             _debugSerial.println("SelectDBRecord");
             #endif
@@ -719,8 +721,8 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             _debugSerial.println("GetNumberCategorizedDBRecords");
             #endif
             category = byteArray[2];
-            if(category == 0x05) { // Say there are two tracks
-                L0x04_0x19_ReturnNumberCategorizedDBRecords(2);
+            if(category == DB_CAT_TRACK) { // Say there are a lot of tracks
+                L0x04_0x19_ReturnNumberCategorizedDBRecords(_totalNumberTracks);
             }
             else { //And only one of anything else
                 L0x04_0x19_ReturnNumberCategorizedDBRecords(1);
@@ -736,37 +738,37 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             counts = swap_endian<uint32_t>(*(uint32_t*)&byteArray[7]);
             switch (category)
             {
-            case 0x01:
+            case DB_CAT_PLAYLIST:
                 for (uint32_t i = startIndex; i < startIndex +counts; i++)
                 {
                     L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_playList);
                 }
                 break;
-            case 0x02:
+            case DB_CAT_ARTIST:
                 for (uint32_t i = startIndex; i < startIndex +counts; i++)
                 {
                     L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_artistName);
                 }
                 break;
-            case 0x03:
+            case DB_CAT_ALBUM:
                 for (uint32_t i = startIndex; i < startIndex +counts; i++)
                 {
                     L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_albumName);
                 }
                 break;
-            case 0x04:
+            case DB_CAT_GENRE:
                 for (uint32_t i = startIndex; i < startIndex +counts; i++)
                 {
                     L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_trackGenre);
                 }
                 break;
-            case 0x05: //Will sometimes return twice
+            case DB_CAT_TRACK: //Will sometimes return twice
                 for (uint32_t i = startIndex; i < startIndex +counts; i++)
                 {
                     L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_trackTitle);
                 }
                 break;
-            case 0x06:
+            case DB_CAT_COMPOSER:
                 for (uint32_t i = startIndex; i < startIndex +counts; i++)
                 {
                     L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_composer);
@@ -824,10 +826,11 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             #ifdef DEBUG_MODE
             _debugSerial.println("PlayCurrentSelection");
             #endif
-            _playStatus = 0x01; //Playing
+            _playStatus = PB_STATE_PLAYING; //Playing
             if(_playStatusHandler) {
-                _playStatusHandler(0x0A);
+                _playStatusHandler(PB_CMD_PLAY);
             }
+            _currentTrackIndex = swap_endian<uint32_t>(*((uint32_t*)&byteArray[2]));
             L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
             break;
         
@@ -837,61 +840,56 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             #endif
             switch (byteArray[2])
             {
-            case 0x01: //Just Toggle or start playing
-                if(_playStatus==0x01) _playStatus=0x02;
-                else _playStatus = 0x01;
+            case PB_CMD_TOGGLE: //Just Toggle or start playing
+                if(_playStatus==PB_STATE_PLAYING) _playStatus=PB_STATE_PAUSED;
+                else _playStatus = PB_STATE_PLAYING;
                 //call PlayControlHandler()
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
                 break;
-            case 0x02: //Stop
-                _playStatus = 0x00;
+            case PB_CMD_STOP: //Stop
+                _playStatus = PB_STATE_STOPPED;
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
                 break;
-            case 0x03: //Next track
+            case PB_CMD_NEXT_TRACK: //Next track
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
-                //We flip the track Index tracker
-                if(_currentTrackIndex==0x00) _currentTrackIndex = 0x01;
-                else _currentTrackIndex = 0x00;
+                _currentTrackIndex++;
                 notifyTrackChange = true;
                 break;
-            case 0x04: //Prev track
+            case PB_CMD_PREVIOUS_TRACK: //Prev track
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
-                if(_currentTrackIndex==0x00) _currentTrackIndex = 0x01;
-                else _currentTrackIndex = 0x00;
+                if(_currentTrackIndex!=0) _currentTrackIndex--;
                 notifyTrackChange = true;
                 break;
-            case 0x08: //Next track
+            case PB_CMD_NEXT: //Next track
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
-                if(_currentTrackIndex==0x00) _currentTrackIndex = 0x01;
-                else _currentTrackIndex = 0x00;
+                _currentTrackIndex++;
                 notifyTrackChange = true;
                 break;
-            case 0x09: //Prev track
+            case PB_CMD_PREV: //Prev track
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
-                if(_currentTrackIndex==0x00) _currentTrackIndex = 0x01;
-                else _currentTrackIndex = 0x00;
+                if(_currentTrackIndex!=0) _currentTrackIndex--;
                 notifyTrackChange = true;
                 break;
-            case 0x0A: //Play
-                _playStatus = 0x01;
+            case PB_CMD_PLAY: //Play
+                _playStatus = PB_STATE_PLAYING;
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
                 break;
-            case 0x0B: //Pause
-                _playStatus = 0x02;
+            case PB_CMD_PAUSE: //Pause
+                _playStatus = PB_STATE_PAUSED;
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
@@ -936,13 +934,14 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             #ifdef DEBUG_MODE
             _debugSerial.println("GetNumPlayingTracks");
             #endif
-            L0x04_0x36_ReturnNumPlayingTracks(2); //We say there are two playing tracks
+            L0x04_0x36_ReturnNumPlayingTracks(_totalNumberTracks); //We say there are two playing tracks
             break;
 
         case L0x04_SetCurrentPlayingTrack:
             #ifdef DEBUG_MODE
             _debugSerial.println("SetCurrentPlayingTrack");
             #endif
+            _currentTrackIndex = swap_endian<uint32_t>(*((uint32_t*)&byteArray[2]));
             L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
             break;
 
@@ -1041,15 +1040,15 @@ void esPod::refresh()
 void esPod::cyclicNotify()
 {
     if((_playStatusNotifications == 0x01) && (_extendedInterfaceModeActive)) {
-        if(_playStatus == 0x01) {
+        if(_playStatus == PB_STATE_PLAYING) {
             L0x04_0x27_PlayStatusNotification(0x04,60000); //Track offset
             _playStatusNotificationsPaused = false;
         }
-        if((_playStatus == 0x00) && !_playStatusNotificationsPaused) {
+        if((_playStatus == PB_STATE_PAUSED) && !_playStatusNotificationsPaused) {
             L0x04_0x27_PlayStatusNotification(0x00); //Stopped playback
             _playStatusNotificationsPaused = true;
         }
-        if(notifyTrackChange && (_playStatus==0x01)) {
+        if(notifyTrackChange && (_playStatus==PB_STATE_PLAYING)) {
             L0x04_0x27_PlayStatusNotification(0x01,_currentTrackIndex); //Inform it has changed to track currentTrackIndex
             notifyTrackChange = false;
         }
