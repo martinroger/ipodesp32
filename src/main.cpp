@@ -3,8 +3,11 @@
 #include "AH/Timing/MillisMicrosTimer.hpp"
 #include "esPod.h"
 #ifdef ENABLE_A2DP
+#include "AudioTools.h"
 #include "BluetoothA2DPSink.h"
-BluetoothA2DPSink a2dp_sink;
+
+I2SStream i2s;
+BluetoothA2DPSink a2dp_sink(i2s);
 #endif
 
 #ifdef DEBUG_MODE
@@ -136,6 +139,10 @@ void playStatusHandler(byte playCommand) {
 }
 
 #ifdef ENABLE_A2DP
+void avrc_rn_play_pos_callback(uint32_t play_pos) {
+  //Serial.printf("Play position is %d (%d seconds)\n", play_pos, (int)round(play_pos/1000.0));
+}
+
 void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
   //Serial.printf("==> AVRC metadata rsp: attribute id 0x%x, %s\n", id, text);
   switch (id)
@@ -175,6 +182,14 @@ void setup() {
       };
     #endif
     #ifdef USE_EXTERNAL_DAC_UDA1334A
+    auto cfg = i2s.defaultConfig();
+    cfg.pin_ws = 25;
+    cfg.pin_bck = 26;
+    cfg.pin_data = 22;
+    cfg.sample_rate = 44100;
+    
+    i2s.begin(cfg);
+    /*
       static const i2s_config_t i2s_config = {
         .mode = (i2s_mode_t) (I2S_MODE_MASTER | I2S_MODE_TX),
         .sample_rate = 44100,
@@ -187,6 +202,7 @@ void setup() {
         .use_apll = false,
         .tx_desc_auto_clear = true // avoiding noise in case of data unavailability
       };
+    */
     /*
     Default pins are as follows : 
     WSEL  ->  GPIO 25
@@ -194,12 +210,13 @@ void setup() {
     BCLK  ->  GPIO 26
     */
     #endif
-    a2dp_sink.set_i2s_config(i2s_config);
+    //a2dp_sink.set_i2s_config(i2s_config);
     //a2dp_sink.set_auto_reconnect(true); //Auto-reconnect
     a2dp_sink.set_on_connection_state_changed(connectionStateChanged);
     a2dp_sink.set_on_audio_state_changed(audioStateChanged);
     a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
     a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE|ESP_AVRC_MD_ATTR_ARTIST|ESP_AVRC_MD_ATTR_ALBUM|ESP_AVRC_MD_ATTR_PLAYING_TIME);
+    a2dp_sink.set_avrc_rn_play_pos_callback(avrc_rn_play_pos_callback);
     a2dp_sink.start("espiPod");
 
     #ifdef LED_BUILTIN
