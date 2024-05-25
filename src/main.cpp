@@ -196,7 +196,7 @@ void setup() {
     a2dp_sink.set_on_connection_state_changed(connectionStateChanged);
     a2dp_sink.set_on_audio_state_changed(audioStateChanged);
     a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
-    a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE|ESP_AVRC_MD_ATTR_ARTIST|ESP_AVRC_MD_ATTR_ALBUM);
+    a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE|ESP_AVRC_MD_ATTR_ARTIST|ESP_AVRC_MD_ATTR_ALBUM|ESP_AVRC_MD_ATTR_PLAYING_TIME);
     a2dp_sink.start("espiPod");
 
     #ifdef LED_BUILTIN

@@ -58,7 +58,7 @@ public:
     byte _playStatusNotifications = 0x00;
     bool _playStatusNotificationsPaused = false;
     bool notifyTrackChange = false;
-    byte _shuffleStatus = 0x01; //00 No Shuffle, 0x01 Tracks 0x02 Albums
+    byte _shuffleStatus = 0x00; //00 No Shuffle, 0x01 Tracks 0x02 Albums
     byte _repeatStatus = 0x02; //00 Repeat off, 01 One track, 02 All tracks
 
 private:
