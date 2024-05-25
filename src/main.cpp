@@ -182,11 +182,12 @@ void setup() {
       };
     #endif
     #ifdef USE_EXTERNAL_DAC_UDA1334A
-    auto cfg = i2s.defaultConfig();
+    auto cfg = i2s.defaultConfig(TX_MODE);
     cfg.pin_ws = 25;
     cfg.pin_bck = 26;
     cfg.pin_data = 22;
     cfg.sample_rate = 44100;
+    cfg.i2s_format = I2S_LSB_FORMAT;
     
     i2s.begin(cfg);
     /*
