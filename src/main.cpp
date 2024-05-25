@@ -140,14 +140,17 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
   //Serial.printf("==> AVRC metadata rsp: attribute id 0x%x, %s\n", id, text);
   switch (id)
   {
-  case 0x04:
+  case ESP_AVRC_MD_ATTR_ALBUM:
     strcpy(espod._albumName,(char*)text);
     break;
-  case 0x02:
+  case ESP_AVRC_MD_ATTR_ARTIST:
     strcpy(espod._artistName,(char*)text);
     break;
-  case 0x01:
+  case ESP_AVRC_MD_ATTR_TITLE:
     strcpy(espod._trackTitle,(char*)text);
+    break;
+  case ESP_AVRC_MD_ATTR_PLAYING_TIME:
+    espod._trackDuration = String((char*)text).toInt();
     break;
   default:
     break;

@@ -46,12 +46,13 @@ public:
     uint64_t lastConnected = 0;
     
     //metadata variables
-    char _trackTitle[255] = "Title";
-    char _artistName[255] = "Artist";
-    char _albumName[255] = "Album";
-    char _trackGenre[255] = "Genre";
-    char _playList[255] = "Spotify";
-    char _composer[255] = "Composer";
+    char _trackTitle[255]   =   "Title";
+    char _artistName[255]   =   "Artist";
+    char _albumName[255]    =   "Album";
+    char _trackGenre[255]   =   "Genre";
+    char _playList[255]     =   "Spotify";
+    char _composer[255]     =   "Composer";
+    uint32_t _trackDuration =   1;
 
     //PlaybackEngine
     byte _playStatus = 0x02; //PlayStatus, 00 Stopped, 01 Playing, 02 Paused
