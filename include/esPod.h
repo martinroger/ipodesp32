@@ -50,31 +50,39 @@ enum A2DP_PB_CMD : byte
     A2DP_PREV               =   0x05
 };
 
+enum NOTIF_STATES : byte
+{
+    NOTIF_OFF           =   0x00,
+    NOTIF_ON            =   0x01,
+    NOTIF_PAUSED        =   0x02
+};
+
 class esPod
 {
 public:
     typedef void playStatusHandler_t(byte playControlCommand);
 
     //State variables
-    bool _extendedInterfaceModeActive;
-    uint64_t lastConnected = 0;
+    bool extendedInterfaceModeActive;
+    uint64_t lastConnected  =   0;
     
     //metadata variables
-    char _trackTitle[255]   =   "Title";
-    char _artistName[255]   =   "Artist";
-    char _albumName[255]    =   "Album";
-    char _trackGenre[255]   =   "Genre";
-    char _playList[255]     =   "Spotify";
-    char _composer[255]     =   "Composer";
-    uint32_t _trackDuration =   1;
+    char trackTitle[255]    =   "Title";
+    char artistName[255]    =   "Artist";
+    char albumName[255]     =   "Album";
+    char trackGenre[255]    =   "Genre";
+    char playList[255]      =   "Spotify";
+    char composer[255]      =   "Composer";
+    uint32_t trackDuration  =   1;
+    uint32_t playPosition   =   0;
 
     //PlaybackEngine
-    byte _playStatus = 0x02; //PlayStatus, 00 Stopped, 01 Playing, 02 Paused
-    byte _playStatusNotifications = 0x00;
-    bool _playStatusNotificationsPaused = false;
-    bool notifyTrackChange = false;
-    byte _shuffleStatus = 0x00; //00 No Shuffle, 0x01 Tracks 0x02 Albums
-    byte _repeatStatus = 0x02; //00 Repeat off, 01 One track, 02 All tracks
+    byte playStatus                     =   PB_STATE_PAUSED;
+    byte playStatusNotificationState    =   NOTIF_OFF;
+    bool playStatusNotificationsPaused  =   false;
+    bool notifyTrackChange              =   false;
+    byte shuffleStatus                  =   0x00; //00 No Shuffle, 0x01 Tracks 0x02 Albums
+    byte repeatStatus                   =   0x02; //00 Repeat off, 01 One track, 02 All tracks
 
 private:
     //Serial to the listening device
@@ -94,7 +102,6 @@ private:
     byte _rxBuf[1024];
     uint32_t _rxLen;
     uint32_t _rxCounter;
-    bool _handshakeOK = false;
 
 
     //Device metadata

@@ -32,7 +32,7 @@ esPod::esPod(Stream& targetSerial)
         _targetSerial(targetSerial),
         _rxLen(0),
         _rxCounter(0),
-        _extendedInterfaceModeActive(false),
+        extendedInterfaceModeActive(false),
         _name("ipodESP32"),
         _SWMajor(0x01),
         _SWMinor(0x03),
@@ -41,19 +41,14 @@ esPod::esPod(Stream& targetSerial)
         _playStatusHandler(0),
         _currentTrackIndex(0)
 {
-    //Setup the metadata
-    //_SWMajor = 0x01;
-    //_SWMinor = 0x03;
-    //_SWrevision = 0x00;
 }
 
 void esPod::resetState(){
-    _playStatus = PB_STATE_STOPPED;
-    _extendedInterfaceModeActive = false;
-    _handshakeOK = false;
+    playStatus = PB_STATE_PAUSED;
+    extendedInterfaceModeActive = false;
     lastConnected = millis();
-    _playStatusNotifications = 0x00;
-    _playStatusNotificationsPaused = false;
+    playStatusNotificationState = NOTIF_OFF;
+    playStatusNotificationsPaused = false;
     notifyTrackChange = false;
     _currentTrackIndex = 0;
 }
@@ -359,10 +354,10 @@ void esPod::L0x04_0x1B_ReturnCategorizedDatabaseRecord(uint32_t index, char *rec
     sendPacket(txPacket,7+strlen(recordString)+1);
 }
 
-void esPod::L0x04_0x1D_ReturnPlayStatus(uint32_t position, uint32_t duration, byte playStatus)
+void esPod::L0x04_0x1D_ReturnPlayStatus(uint32_t position, uint32_t duration, byte playStatusArg)
 {
     #ifdef DEBUG_MODE
-    _debugSerial.print("L0x04 0x1D ReturnPlayStatus: ");_debugSerial.print(playStatus,HEX);_debugSerial.print(" at pos: ");
+    _debugSerial.print("L0x04 0x1D ReturnPlayStatus: ");_debugSerial.print(playStatusArg,HEX);_debugSerial.print(" at pos: ");
     _debugSerial.print(position); _debugSerial.print(" of ");
     _debugSerial.println(duration);
     #endif
@@ -371,7 +366,7 @@ void esPod::L0x04_0x1D_ReturnPlayStatus(uint32_t position, uint32_t duration, by
         0x00,0x1D,
         0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,
-        playStatus
+        playStatusArg
     };
     *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(duration);
     *((uint32_t*)&txPacket[7]) = swap_endian<uint32_t>(position);
@@ -480,30 +475,30 @@ void esPod::L0x04_0x27_PlayStatusNotification(byte notification)
     sendPacket(txPacket,sizeof(txPacket));
 }
 
-void esPod::L0x04_0x2D_ReturnShuffle(byte shuffleStatus)
+void esPod::L0x04_0x2D_ReturnShuffle(byte currentShuffleStatus)
 {
     #ifdef DEBUG_MODE
     _debugSerial.print("L0x04 0x2D ReturnShuffle: ");
-    _debugSerial.println(shuffleStatus);
+    _debugSerial.println(currentShuffleStatus);
     #endif
     byte txPacket[] = {
         0x04,
         0x00,0x2D,
-        shuffleStatus
+        currentShuffleStatus
     };
     sendPacket(txPacket,sizeof(txPacket));
 }
 
-void esPod::L0x04_0x30_ReturnRepeat(byte repeatStatus)
+void esPod::L0x04_0x30_ReturnRepeat(byte currentRepeatStatus)
 {
     #ifdef DEBUG_MODE
     _debugSerial.print("L0x04 0x30 ReturnRepeat: ");
-    _debugSerial.println(repeatStatus);
+    _debugSerial.println(currentRepeatStatus);
     #endif
     byte txPacket[] = {
         0x04,
         0x00,0x30,
-        repeatStatus
+        currentRepeatStatus
     };
     sendPacket(txPacket,sizeof(txPacket));
 }
@@ -537,7 +532,7 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         #ifdef DEBUG_MODE
         _debugSerial.println("RequestExtendedInterfaceMode");
         #endif
-        if(_extendedInterfaceModeActive) {
+        if(extendedInterfaceModeActive) {
             L0x00_0x04_ReturnExtendedInterfaceMode(0x01); //Report that extended interface mode is active
         }
         else
@@ -550,11 +545,11 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         #ifdef DEBUG_MODE
         _debugSerial.println("EnterExtendedInterfaceMode");
         #endif
-        if(!_extendedInterfaceModeActive) {
+        if(!extendedInterfaceModeActive) {
             //Send a first iPodAck Command pending with a certain time delay
             L0x00_0x02_iPodAck_pending(1000,cmdID);
             //Send a second iPodAck Command with Success
-            _extendedInterfaceModeActive = true;
+            extendedInterfaceModeActive = true;
         }
         L0x00_0x02_iPodAck(iPodAck_OK,cmdID);
         break;
@@ -635,9 +630,6 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         default:
             break;
         }
-        if(_accessoryCapabilitiesRequested && _accessoryNameRequested && _accessoryFirmwareRequested && _accessoryHardwareRequested && _accessoryManufRequested && _accessoryModelRequested) {
-            _handshakeOK = true;
-        }
         break;
     
     default:
@@ -661,7 +653,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
     byte category;
     uint32_t startIndex, counts;
 
-    if(!_extendedInterfaceModeActive)   { //Complain if not in extended interface mode
+    if(!extendedInterfaceModeActive)   { //Complain if not in extended interface mode
         L0x04_0x01_iPodAck(iPodAck_BadParam,cmdID);
     }
     else    {
@@ -680,13 +672,13 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2]);
                 break;
             case 0x01:
-                L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],"PodcastName");
+                L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],trackTitle);
                 break;
             case 0x05:
-                L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],_trackGenre);
+                L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],trackGenre);
                 break; 
             case 0x06:
-                L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],"Composer");
+                L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],composer);
                 break; 
             default:
                 L0x04_0x01_iPodAck(iPodAck_BadParam,cmdID);
@@ -741,37 +733,37 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             case DB_CAT_PLAYLIST:
                 for (uint32_t i = startIndex; i < startIndex +counts; i++)
                 {
-                    L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_playList);
+                    L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,playList);
                 }
                 break;
             case DB_CAT_ARTIST:
                 for (uint32_t i = startIndex; i < startIndex +counts; i++)
                 {
-                    L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_artistName);
+                    L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,artistName);
                 }
                 break;
             case DB_CAT_ALBUM:
                 for (uint32_t i = startIndex; i < startIndex +counts; i++)
                 {
-                    L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_albumName);
+                    L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,albumName);
                 }
                 break;
             case DB_CAT_GENRE:
                 for (uint32_t i = startIndex; i < startIndex +counts; i++)
                 {
-                    L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_trackGenre);
+                    L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,trackGenre);
                 }
                 break;
             case DB_CAT_TRACK: //Will sometimes return twice
                 for (uint32_t i = startIndex; i < startIndex +counts; i++)
                 {
-                    L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_trackTitle);
+                    L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,trackTitle);
                 }
                 break;
             case DB_CAT_COMPOSER:
                 for (uint32_t i = startIndex; i < startIndex +counts; i++)
                 {
-                    L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,_composer);
+                    L0x04_0x1B_ReturnCategorizedDatabaseRecord(i,composer);
                 }
                 break;
             default:
@@ -783,7 +775,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             #ifdef DEBUG_MODE
             _debugSerial.println("GetPlayStatus");
             #endif
-            L0x04_0x1D_ReturnPlayStatus(60000,120000,_playStatus);
+            L0x04_0x1D_ReturnPlayStatus(60000,120000,playStatus);
             break;
 
         case L0x04_GetCurrentPlayingTrackIndex:
@@ -797,28 +789,28 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             #ifdef DEBUG_MODE
             _debugSerial.println("GetIndexedPlayingTrackTitle");
             #endif
-            L0x04_0x21_ReturnIndexedPlayingTrackTitle(_trackTitle);
+            L0x04_0x21_ReturnIndexedPlayingTrackTitle(trackTitle);
             break;
 
         case L0x04_GetIndexedPlayingTrackArtistName:
             #ifdef DEBUG_MODE
             _debugSerial.println("GetIndexedPlayingTrackArtistName");
             #endif
-            L0x04_0x23_ReturnIndexedPlayingTrackArtistName(_artistName);
+            L0x04_0x23_ReturnIndexedPlayingTrackArtistName(artistName);
             break;
 
         case L0x04_GetIndexedPlayingTrackAlbumName:
             #ifdef DEBUG_MODE
             _debugSerial.println("GetIndexedPlayingTrackAlbumName");
             #endif
-            L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(_albumName);
+            L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(albumName);
             break;
 
         case L0x04_SetPlayStatusChangeNotification: //iPod seems to only send track index and track time offset
             #ifdef DEBUG_MODE
             _debugSerial.println("SetPlayStatusChangeNotification");
             #endif
-            _playStatusNotifications = byteArray[2];
+            playStatusNotificationState = byteArray[2];
             L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
             break;
 
@@ -826,7 +818,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             #ifdef DEBUG_MODE
             _debugSerial.println("PlayCurrentSelection");
             #endif
-            _playStatus = PB_STATE_PLAYING; //Playing
+            playStatus = PB_STATE_PLAYING; //Playing
             if(_playStatusHandler) {
                 _playStatusHandler(PB_CMD_PLAY);
             }
@@ -841,15 +833,15 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             switch (byteArray[2])
             {
             case PB_CMD_TOGGLE: //Just Toggle or start playing
-                if(_playStatus==PB_STATE_PLAYING) _playStatus=PB_STATE_PAUSED;
-                else _playStatus = PB_STATE_PLAYING;
+                if(playStatus==PB_STATE_PLAYING) playStatus=PB_STATE_PAUSED;
+                else playStatus = PB_STATE_PLAYING;
                 //call PlayControlHandler()
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
                 break;
             case PB_CMD_STOP: //Stop
-                _playStatus = PB_STATE_STOPPED;
+                playStatus = PB_STATE_STOPPED;
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
@@ -883,13 +875,13 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 notifyTrackChange = true;
                 break;
             case PB_CMD_PLAY: //Play
-                _playStatus = PB_STATE_PLAYING;
+                playStatus = PB_STATE_PLAYING;
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
                 break;
             case PB_CMD_PAUSE: //Pause
-                _playStatus = PB_STATE_PAUSED;
+                playStatus = PB_STATE_PAUSED;
                 if(_playStatusHandler) {
                     _playStatusHandler(byteArray[2]);
                 }
@@ -904,14 +896,14 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             #ifdef DEBUG_MODE
             _debugSerial.println("GetShuffle");
             #endif
-            L0x04_0x2D_ReturnShuffle(_shuffleStatus);
+            L0x04_0x2D_ReturnShuffle(shuffleStatus);
             break;
 
         case L0x04_SetShuffle:
             #ifdef DEBUG_MODE
             _debugSerial.println("SetShuffle");
             #endif
-            _shuffleStatus = byteArray[2];
+            shuffleStatus = byteArray[2];
             L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
             break;
         
@@ -919,14 +911,14 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             #ifdef DEBUG_MODE
             _debugSerial.println("GetRepeat");
             #endif
-            L0x04_0x30_ReturnRepeat(_repeatStatus);
+            L0x04_0x30_ReturnRepeat(repeatStatus);
             break;
 
         case L0x04_SetRepeat:
             #ifdef DEBUG_MODE
             _debugSerial.println("SetRepeat");
             #endif
-            _repeatStatus = byteArray[2];
+            repeatStatus = byteArray[2];
             L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
             break;
 
@@ -1039,16 +1031,16 @@ void esPod::refresh()
 
 void esPod::cyclicNotify()
 {
-    if((_playStatusNotifications == 0x01) && (_extendedInterfaceModeActive)) {
-        if(_playStatus == PB_STATE_PLAYING) {
+    if((playStatusNotificationState == 0x01) && (extendedInterfaceModeActive)) {
+        if(playStatus == PB_STATE_PLAYING) {
             L0x04_0x27_PlayStatusNotification(0x04,60000); //Track offset
-            _playStatusNotificationsPaused = false;
+            playStatusNotificationsPaused = false;
         }
-        if((_playStatus == PB_STATE_PAUSED) && !_playStatusNotificationsPaused) {
+        if((playStatus == PB_STATE_PAUSED) && !playStatusNotificationsPaused) {
             L0x04_0x27_PlayStatusNotification(0x00); //Stopped playback
-            _playStatusNotificationsPaused = true;
+            playStatusNotificationsPaused = true;
         }
-        if(notifyTrackChange && (_playStatus==PB_STATE_PLAYING)) {
+        if(notifyTrackChange && (playStatus==PB_STATE_PLAYING)) {
             L0x04_0x27_PlayStatusNotification(0x01,_currentTrackIndex); //Inform it has changed to track currentTrackIndex
             notifyTrackChange = false;
         }

@@ -46,13 +46,13 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void* ptr) {
 void forcePlayStatusSync() {
 	switch (a2dp_sink.get_audio_state()) {
 		case ESP_A2D_AUDIO_STATE_STARTED:
-			espod._playStatus = PB_STATE_PLAYING;
+			espod.playStatus = PB_STATE_PLAYING;
 			break;
 		case ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND:
-			espod._playStatus = PB_STATE_PAUSED;
+			espod.playStatus = PB_STATE_PAUSED;
 			break;
 		case ESP_A2D_AUDIO_STATE_STOPPED:
-			espod._playStatus = PB_STATE_STOPPED;
+			espod.playStatus = PB_STATE_STOPPED;
 			break;
 		default:
 			break;
@@ -64,13 +64,13 @@ void forcePlayStatusSync() {
 void audioStateChanged(esp_a2d_audio_state_t state,void* ptr) {
 	switch (state)	{
 		case ESP_A2D_AUDIO_STATE_STARTED:
-			espod._playStatus = PB_STATE_PLAYING;
+			espod.playStatus = PB_STATE_PLAYING;
 			break;
 		case ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND:
-			espod._playStatus = PB_STATE_PAUSED;
+			espod.playStatus = PB_STATE_PAUSED;
 			break;
 		case ESP_A2D_AUDIO_STATE_STOPPED:
-			espod._playStatus = PB_STATE_STOPPED;
+			espod.playStatus = PB_STATE_STOPPED;
 			break;
 		default:
 			break;
@@ -118,16 +118,16 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 	//Serial.printf("==> AVRC metadata rsp: attribute id 0x%x, %s\n", id, text);
 	switch (id)	{
 		case ESP_AVRC_MD_ATTR_ALBUM:
-			strcpy(espod._albumName,(char*)text);
+			strcpy(espod.albumName,(char*)text);
 			break;
 		case ESP_AVRC_MD_ATTR_ARTIST:
-			strcpy(espod._artistName,(char*)text);
+			strcpy(espod.artistName,(char*)text);
 			break;
 		case ESP_AVRC_MD_ATTR_TITLE:
-			strcpy(espod._trackTitle,(char*)text);
+			strcpy(espod.trackTitle,(char*)text);
 			break;
 		case ESP_AVRC_MD_ATTR_PLAYING_TIME:
-			espod._trackDuration = String((char*)text).toInt();
+			espod.trackDuration = String((char*)text).toInt();
 			break;
 		default:
 			break;
