@@ -3,6 +3,10 @@
 #include "L0x00.h"
 #include "L0x04.h"
 
+#ifndef TOTAL_NUM_TRACKS
+    #define TOTAL_NUM_TRACKS 3000
+#endif
+
 enum PB_STATUS : byte
 {
     PB_STATE_STOPPED        =   0x00,
@@ -80,9 +84,11 @@ private:
     #endif
     byte _prevRxByte;
     
-    //Track Index Flip-Flop
+    //TrackList variables
     uint32_t _currentTrackIndex = 0;
-    uint32_t _totalNumberTracks = 16000;
+    uint32_t _totalNumberTracks = TOTAL_NUM_TRACKS;
+    uint32_t _trackList[TOTAL_NUM_TRACKS] = {0};
+    uint32_t _trackListPosition = 0;
     
     //Packet-related 
     byte _rxBuf[1024];
