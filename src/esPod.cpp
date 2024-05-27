@@ -24,6 +24,11 @@ T swap_endian(T u)
     return dest.u;
 }
 
+
+//-----------------------------------------------------------------------
+//|         Constructor, reset, attachCallback, packet utilities        |
+//-----------------------------------------------------------------------
+#pragma region
 esPod::esPod(Stream& targetSerial) 
     :
         #ifdef DEBUG_MODE
@@ -79,6 +84,16 @@ void esPod::sendPacket(const byte* byteArray, uint32_t len)
     _targetSerial.write(esPod::checksum(byteArray,len));
 }
 
+#pragma endregion
+
+//-----------------------------------------------------------------------
+//|                     Lingo 0x00 subfunctions                         |
+//-----------------------------------------------------------------------
+#pragma region 
+
+/// @brief General response command for Lingo 0x00
+/// @param cmdStatus Has to obey to iPodAck_xxx format as defined in L0x00.h
+/// @param cmdID ID (single byte) of the Lingo 0x00 command replied to
 void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID) {
     #ifdef DEBUG_MODE
     _debugSerial.print("L0x00 0x02 iPodAck: ");
@@ -92,28 +107,51 @@ void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID) {
         cmdStatus,
         cmdID
     };
-
     sendPacket(txPacket,sizeof(txPacket));
 }
 
-void esPod::L0x00_0x02_iPodAck_pending(uint32_t pendingDelayMS,byte cmdID) {
+/// @brief General response command for Lingo 0x00 with numerical field (used for Ack Pending). Has to be followed up with a normal iPodAck
+/// @param cmdStatus Unprotected, but should only be iPodAck_CmdPending
+/// @param cmdID Single byte ID of the command being acknowledged with Pending
+/// @param numField Pending delay in milliseconds
+void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID, uint32_t numField) {
     #ifdef DEBUG_MODE
-    _debugSerial.print("L0x00 0x02 iPodAck pending: ");
-    _debugSerial.print(pendingDelayMS);
+    _debugSerial.print("L0x00 0x02 iPodAck: ");
+    _debugSerial.print(cmdStatus,HEX);
     _debugSerial.print(" cmd: ");
-    _debugSerial.println(cmdID,HEX);
+    _debugSerial.print(cmdID,HEX);
+    _debugSerial.print(" numField: ");
+    _debugSerial.println(numField);
     #endif
-    byte txPacket[20] = {
+    const byte txPacket[20] = {
         0x00,
         0x02,
-        iPodAck_CmdPending,
+        cmdStatus,
         cmdID
     };
-
-    *((uint32_t*)&txPacket[4]) = swap_endian<uint32_t>(pendingDelayMS);
+    *((uint32_t*)&txPacket[4]) = swap_endian<uint32_t>(numField);
     sendPacket(txPacket,4+4);
 }
 
+// void esPod::L0x00_0x02_iPodAck_pending(uint32_t pendingDelayMS,byte cmdID) {
+//     #ifdef DEBUG_MODE
+//     _debugSerial.print("L0x00 0x02 iPodAck pending: ");
+//     _debugSerial.print(pendingDelayMS);
+//     _debugSerial.print(" cmd: ");
+//     _debugSerial.println(cmdID,HEX);
+//     #endif
+//     byte txPacket[20] = {
+//         0x00,
+//         0x02,
+//         iPodAck_CmdPending,
+//         cmdID
+//     };
+//     *((uint32_t*)&txPacket[4]) = swap_endian<uint32_t>(pendingDelayMS);
+//     sendPacket(txPacket,4+4);
+// }
+
+/// @brief Returns 0x01 if the iPod is in extendedInterfaceMode, or 0x00 if not
+/// @param extendedModeByte Direct value of the extendedInterfaceMode boolean
 void esPod::L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte) {
     #ifdef DEBUG_MODE
     _debugSerial.print("L0x00 0x04 ReturnExtendedInterfaceMode: ");
@@ -128,24 +166,22 @@ void esPod::L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte) {
     sendPacket(txPacket,sizeof(txPacket));
 }
 
+/// @brief Returns as a UTF8 null-ended char array, the _name of the iPod (not changeable during runtime)
 void esPod::L0x00_0x08_ReturniPodName() {
     #ifdef DEBUG_MODE
     _debugSerial.print("L0x00 0x08 ReturniPodName: ");
     _debugSerial.println(_name);
-    //_debugSerial.println(sizeof(_name));
     _debugSerial.println(strlen(_name));
     #endif
-    //char _nameProxy[] = "stuff";
     byte txPacket[255] = { //Prealloc to len = FF
         0x00,
         0x08
     };
-    //*((char*)&txPacket[2]) = *_name; //BOH
-    //strncpy((char*)&txPacket[2],_name,strlen(_name));
     strcpy((char*)&txPacket[2],_name);
     sendPacket(txPacket,3+strlen(_name));
 }
 
+/// @brief Returns the iPod Software Version
 void esPod::L0x00_0x0A_ReturniPodSoftwareVersion() {
     #ifdef DEBUG_MODE
     _debugSerial.println("L0x00 0x0A ReturniPodSoftwareVersion: 1.3.0 ");
@@ -160,6 +196,7 @@ void esPod::L0x00_0x0A_ReturniPodSoftwareVersion() {
     sendPacket(txPacket,sizeof(txPacket));
 }
 
+/// @brief Returns the iPod Serial Number (which is a string)
 void esPod::L0x00_0x0C_ReturniPodSerialNum() {
     #ifdef DEBUG_MODE
     _debugSerial.print("L0x00 0x0C ReturniPodSerialNum: ");
@@ -227,7 +264,12 @@ void esPod::L0x00_0x27_GetAccessoryInfo(byte desiredInfo)
     sendPacket(txPacket,sizeof(txPacket));
 }
 
-//Moving on to L0x04
+#pragma endregion
+
+//-----------------------------------------------------------------------
+//|                     Lingo 0x04 subfunctions                         |
+//-----------------------------------------------------------------------
+#pragma region 
 
 void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID)
 {
@@ -518,6 +560,9 @@ void esPod::L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks)
     sendPacket(txPacket,sizeof(txPacket));
 }
 
+#pragma endregion
+
+
 void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
 {
     byte cmdID = byteArray[0];
@@ -547,7 +592,8 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         #endif
         if(!extendedInterfaceModeActive) {
             //Send a first iPodAck Command pending with a certain time delay
-            L0x00_0x02_iPodAck_pending(1000,cmdID);
+            //L0x00_0x02_iPodAck_pending(1000,cmdID);
+            L0x00_0x02_iPodAck(iPodAck_CmdPending,cmdID,1000);
             //Send a second iPodAck Command with Success
             extendedInterfaceModeActive = true;
         }

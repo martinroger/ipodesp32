@@ -134,7 +134,8 @@ public:
     static byte checksum(const byte* byteArray, uint32_t len);
     void sendPacket(const byte* byteArray, uint32_t len);
     void L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID);
-    void L0x00_0x02_iPodAck_pending(uint32_t pendingDelayMS, byte cmdID);
+    void L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField);
+    //void L0x00_0x02_iPodAck_pending(uint32_t pendingDelayMS, byte cmdID);
     void L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte);
     void L0x00_0x08_ReturniPodName();
     void L0x00_0x0A_ReturniPodSoftwareVersion();
