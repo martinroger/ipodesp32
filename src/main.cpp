@@ -5,9 +5,15 @@
 #ifdef ENABLE_A2DP
 #include "AudioTools.h"
 #include "BluetoothA2DPSink.h"
+  #ifdef USE_EXTERNAL_DAC_UDA1334A
+    I2SStream i2s;
+    BluetoothA2DPSink a2dp_sink(i2s);
+  #endif
 
-I2SStream i2s;
-BluetoothA2DPSink a2dp_sink(i2s);
+  #ifdef USE_INTERNAL_DAC
+    AnalogAudioStream out;
+    BluetoothA2DPSink a2dp_sink(out);
+  #endif
 #endif
 
 #ifdef DEBUG_MODE
@@ -168,19 +174,6 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 
 void setup() {
   #ifdef ENABLE_A2DP
-    #ifdef USE_INTERNAL_DAC
-      static const i2s_config_t i2s_config = {
-        .mode = (i2s_mode_t) (I2S_MODE_MASTER | I2S_MODE_TX | I2S_MODE_DAC_BUILT_IN),
-        .sample_rate = 44100, // corrected by info from bluetooth
-        .bits_per_sample = (i2s_bits_per_sample_t) 16, /* the DAC module will only take the 8bits from MSB */
-        .channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT,
-        .communication_format = (i2s_comm_format_t)I2S_COMM_FORMAT_STAND_MSB,
-        .intr_alloc_flags = 0, // default interrupt priority
-        .dma_buf_count = 8,
-        .dma_buf_len = 64,
-        .use_apll = false
-      };
-    #endif
     #ifdef USE_EXTERNAL_DAC_UDA1334A
     auto cfg = i2s.defaultConfig(TX_MODE);
     cfg.pin_ws = 25;
@@ -190,20 +183,7 @@ void setup() {
     cfg.i2s_format = I2S_LSB_FORMAT;
     
     i2s.begin(cfg);
-    /*
-      static const i2s_config_t i2s_config = {
-        .mode = (i2s_mode_t) (I2S_MODE_MASTER | I2S_MODE_TX),
-        .sample_rate = 44100,
-        .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
-        .channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT,
-        .communication_format = (i2s_comm_format_t) I2S_COMM_FORMAT_STAND_MSB ,
-        .intr_alloc_flags = 0, // default interrupt priority
-        .dma_buf_count = 8,
-        .dma_buf_len = 64,
-        .use_apll = false,
-        .tx_desc_auto_clear = true // avoiding noise in case of data unavailability
-      };
-    */
+
     /*
     Default pins are as follows : 
     WSEL  ->  GPIO 25
