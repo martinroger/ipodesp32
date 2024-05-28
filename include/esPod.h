@@ -63,7 +63,7 @@ public:
     typedef void playStatusHandler_t(byte playControlCommand);
 
     //State variables
-    bool extendedInterfaceModeActive;
+    bool extendedInterfaceModeActive = false;
     uint64_t lastConnected  =   0;
     
     //metadata variables
@@ -73,10 +73,10 @@ public:
     char trackGenre[255]    =   "Genre";
     char playList[255]      =   "Spotify";
     char composer[255]      =   "Composer";
-    uint32_t trackDuration  =   1;
-    uint32_t playPosition   =   0;
+    uint32_t trackDuration  =   1;  //Track duration in ms
+    uint32_t playPosition   =   0;  //Current playing position of the track in ms
 
-    //PlaybackEngine
+    //Playback Engine
     byte playStatus                     =   PB_STATE_PAUSED;
     byte playStatusNotificationState    =   NOTIF_OFF;
     bool playStatusNotificationsPaused  =   false;
@@ -90,49 +90,50 @@ private:
     #ifdef DEBUG_MODE
     HardwareSerial& _debugSerial;
     #endif
-    byte _prevRxByte;
+    
     
     //TrackList variables
-    uint32_t _currentTrackIndex = 0;
-    uint32_t _totalNumberTracks = TOTAL_NUM_TRACKS;
-    uint32_t _trackList[TOTAL_NUM_TRACKS] = {0};
-    uint32_t _trackListPosition = 0;
+    uint32_t _currentTrackIndex             =   0;
+    const uint32_t _totalNumberTracks       =   TOTAL_NUM_TRACKS;
+    uint32_t _trackList[TOTAL_NUM_TRACKS]   =   {0};
+    uint32_t _trackListPosition             =   0; //Locator for the position of the track ID in the TrackList (of IDS)
     
     //Packet-related 
-    byte _rxBuf[1024];
-    uint32_t _rxLen;
-    uint32_t _rxCounter;
+    byte _prevRxByte    =   0x00;
+    byte _rxBuf[1024]   =   {0x00};
+    uint32_t _rxLen     =   0;
+    uint32_t _rxCounter =   0;
 
 
     //Device metadata
-    const char* _name;
-    const uint8_t _SWMajor;
-    const uint8_t _SWMinor;
-    const uint8_t _SWrevision;
-    const char* _serialNumber;
+    const char* _name           =   "ipodESP32";
+    const uint8_t _SWMajor      =   0x01;
+    const uint8_t _SWMinor      =   0x03;
+    const uint8_t _SWrevision   =   0x00;
+    const char* _serialNumber   =   "AB345F7HIJK";
 
     //Mini metadata
-    bool _accessoryNameRequested = false;
-    bool _accessoryCapabilitiesRequested = false;
-    bool _accessoryFirmwareRequested = false;
-    bool _accessoryManufRequested = false;
-    bool _accessoryModelRequested = false;
-    bool _accessoryHardwareRequested = false;
+    bool _accessoryNameRequested            =   false;
+    bool _accessoryCapabilitiesRequested    =   false;
+    bool _accessoryFirmwareRequested        =   false;
+    bool _accessoryManufRequested           =   false;
+    bool _accessoryModelRequested           =   false;
+    bool _accessoryHardwareRequested        =   false;
 
     //Handler functions
-    playStatusHandler_t *_playStatusHandler;
+    playStatusHandler_t *_playStatusHandler = nullptr;
 
 public:
 
     esPod(Stream& targetSerial);
-
     void resetState();
-
     void attachPlayControlHandler(playStatusHandler_t playHandler);
     
     //Packet handling
     static byte checksum(const byte* byteArray, uint32_t len);
     void sendPacket(const byte* byteArray, uint32_t len);
+    
+    //Lingo 0x00
     void L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID);
     void L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField);
     //void L0x00_0x02_iPodAck_pending(uint32_t pendingDelayMS, byte cmdID);
@@ -144,9 +145,11 @@ public:
     void L0x00_0x10_ReturnLingoProtocolVersion(byte targetLingo);
     void L0x00_0x27_GetAccessoryInfo(byte desiredInfo);
 
+    //Lingo 0x04
     void L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID);
     void L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, char *trackInfoChars);
-    void L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType);
+    void L0x04_0x0D_ReturnIndexedPlayingTrackInfo(uint32_t trackDuration_ms);
+    void L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, uint16_t releaseYear);
     void L0x04_0x13_ReturnProtocolVersion();
     void L0x04_0x19_ReturnNumberCategorizedDBRecords(uint32_t categoryDBRecords);
     void L0x04_0x1B_ReturnCategorizedDatabaseRecord(uint32_t index, char* recordString);
@@ -161,11 +164,12 @@ public:
     void L0x04_0x30_ReturnRepeat(byte repeatStatus);
     void L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks);
 
-
+    //Processors
     void processLingo0x00(const byte *byteArray, uint32_t len);
     void processLingo0x04(const byte* byteArray, uint32_t len);
     void processPacket(const byte* byteArray,uint32_t len);
 
+    //Cyclic functions
     void refresh();
     void cyclicNotify();
 };

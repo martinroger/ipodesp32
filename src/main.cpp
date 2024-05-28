@@ -41,9 +41,11 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void* ptr) {
 		}
 	#endif
 }
+#endif
 
 //Force play Status sync periodically (might be a bad idea)
 void forcePlayStatusSync() {
+  #ifdef ENABLE_A2DP
 	switch (a2dp_sink.get_audio_state()) {
 		case ESP_A2D_AUDIO_STATE_STARTED:
 			espod.playStatus = PB_STATE_PLAYING;
@@ -57,8 +59,10 @@ void forcePlayStatusSync() {
 		default:
 			break;
 	}
+  #endif
 }
 
+#ifdef ENABLE_A2DP
 //Callback to align the iPod playback status to the A2DP stream status
 //Could be using an overloaded version of forcePlayStatusSync in the ptr ?
 void audioStateChanged(esp_a2d_audio_state_t state,void* ptr) {
