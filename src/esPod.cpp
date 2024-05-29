@@ -748,22 +748,24 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         case L0x04_SelectDBRecord: //Used for browsing ?
             {
                 #ifdef DEBUG_MODE
-            _debugSerial.println("SelectDBRecord");
+                _debugSerial.println("SelectDBRecord");
                 #endif
                 L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
             }
             break;
         
-        case L0x04_GetNumberCategorizedDBRecords:
-            #ifdef DEBUG_MODE
-            _debugSerial.println("GetNumberCategorizedDBRecords");
-            #endif
-            category = byteArray[2];
-            if(category == DB_CAT_TRACK) { // Say there are a lot of tracks
-                L0x04_0x19_ReturnNumberCategorizedDBRecords(_totalNumberTracks);
-            }
-            else { //And only one of anything else
-                L0x04_0x19_ReturnNumberCategorizedDBRecords(1);
+        case L0x04_GetNumberCategorizedDBRecords: //Mini requests the number of records for a specific DB_CAT
+            {
+                #ifdef DEBUG_MODE
+                _debugSerial.println("GetNumberCategorizedDBRecords");
+                #endif
+                category = byteArray[2];
+                if(category == DB_CAT_TRACK) { // Say there are fixed, large amount of tracks
+                    L0x04_0x19_ReturnNumberCategorizedDBRecords(_totalNumberTracks);
+                }
+                else { //And only one of anything else (Playlist, album, artist etc...)
+                    L0x04_0x19_ReturnNumberCategorizedDBRecords(1);
+                }
             }
             break;
         
