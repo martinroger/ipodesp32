@@ -53,8 +53,7 @@ enum A2DP_PB_CMD : byte
 enum NOTIF_STATES : byte
 {
     NOTIF_OFF           =   0x00,
-    NOTIF_ON            =   0x01,
-    NOTIF_PAUSED        =   0x02
+    NOTIF_ON            =   0x01
 };
 
 class esPod
@@ -77,10 +76,10 @@ public:
     uint32_t playPosition   =   0;  //Current playing position of the track in ms
 
     //Playback Engine
-    byte playStatus                     =   PB_STATE_PAUSED;
-    byte playStatusNotificationState    =   NOTIF_OFF;
-    bool playStatusNotificationsPaused  =   false;
-    bool notifyTrackChange              =   false;
+    byte playStatus                     =   PB_STATE_PAUSED; //Current state of the PBEngine
+    byte playStatusNotificationState    =   NOTIF_OFF; //Current state of the Notifications engine
+    bool playStatusNotificationsPaused  =   false; //Possibly not needed no more
+    bool notifyTrackChange              =   false; //Possibly not needed no more
     byte shuffleStatus                  =   0x00; //00 No Shuffle, 0x01 Tracks 0x02 Albums
     byte repeatStatus                   =   0x02; //00 Repeat off, 01 One track, 02 All tracks
 
