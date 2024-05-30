@@ -24,47 +24,41 @@
 Timer<millis> espodRefreshTimer = 5;
 Timer<millis> notificationsRefresh = 500;
 
-#ifdef ENABLE_A2DP
-//Placeholder for doing interesting things with regards to the connection state... e.g. if there is a client connected
-void connectionStateChanged(esp_a2d_connection_state_t state, void* ptr) {
-	//do something when the connection state is changed
-	#ifdef LED_BUILTIN
-		switch (state)	{
-			case ESP_A2D_CONNECTION_STATE_CONNECTED:
-				digitalWrite(LED_BUILTIN,HIGH);
-				break;
-			case ESP_A2D_CONNECTION_STATE_DISCONNECTED:
-				digitalWrite(LED_BUILTIN,LOW);
-				break;
-			default:
-				break;
-		}
-	#endif
-}
-#endif
+//Reminders used to keep track of previous changes
+char incAlbumName[255] = "incAlbum";
+char prevAlbumName[255] = "PrevAlbum";
+char incArtistName[255] = "incArtist";
+char prevArtistName[255] = "PrevArtist";
+char incTrackTitle[255] = "incTitle";
+char prevTrackTitle[255] = "PrevTitle";
+bool albumNameUpdated = false;
+bool artistNameUpdated = false;
+bool trackTitleUpdated = false;
 
-//Force play Status sync periodically (might be a bad idea)
-void forcePlayStatusSync() {
-  #ifdef ENABLE_A2DP
-	switch (a2dp_sink.get_audio_state()) {
-		case ESP_A2D_AUDIO_STATE_STARTED:
-			espod.playStatus = PB_STATE_PLAYING;
+#ifdef ENABLE_A2DP
+/// @brief callback on changes of A2DP connection and AVRCP connection. Turns a LED on, enables the espod.
+/// @param state New state passed by the callback.
+/// @param ptr Not used.
+void connectionStateChanged(esp_a2d_connection_state_t state, void* ptr) {
+	switch (state)	{
+		case ESP_A2D_CONNECTION_STATE_CONNECTED:
+				#ifdef LED_BUILTIN
+				digitalWrite(LED_BUILTIN,HIGH);
+				#endif
+			espod.disabled = false;
 			break;
-		case ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND:
-			espod.playStatus = PB_STATE_PAUSED;
-			break;
-		case ESP_A2D_AUDIO_STATE_STOPPED:
-			espod.playStatus = PB_STATE_STOPPED;
-			break;
-		default:
+		case ESP_A2D_CONNECTION_STATE_DISCONNECTED:
+				#ifdef LED_BUILTIN
+				digitalWrite(LED_BUILTIN,LOW);
+				#endif
+			espod.disabled = true;
 			break;
 	}
-  #endif
 }
 
-#ifdef ENABLE_A2DP
-//Callback to align the iPod playback status to the A2DP stream status
-//Could be using an overloaded version of forcePlayStatusSync in the ptr ?
+/// @brief Callback for the change of playstate after connection. Aligns the state of the esPod to the state of the phone. Play should be called by the espod interaction
+/// @param state The A2DP Stream to align to.
+/// @param ptr Not used.
 void audioStateChanged(esp_a2d_audio_state_t state,void* ptr) {
 	switch (state)	{
 		case ESP_A2D_AUDIO_STATE_STARTED:
@@ -76,69 +70,102 @@ void audioStateChanged(esp_a2d_audio_state_t state,void* ptr) {
 		case ESP_A2D_AUDIO_STATE_STOPPED:
 			espod.playStatus = PB_STATE_STOPPED;
 			break;
-		default:
-			break;
 	}
 }
+
+/// @brief Play position callback returning the ms spent since start on every interval
+/// @param play_pos Playing Position in ms
+void avrc_rn_play_pos_callback(uint32_t play_pos) {
+	espod.playPosition = play_pos;
+	if(espod.playStatusNotificationState==NOTIF_ON) {
+		espod.L0x04_0x27_PlayStatusNotification(0x04,play_pos);
+	}
+}
+
+/// @brief Catch callback for the AVRC metadata. There can be duplicates !
+/// @param id Metadata attribute ID : ESP_AVRC_MD_ATTR_xxx
+/// @param text Text data passed around, sometimes it's a uint32_t
+void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
+	switch (id)	{
+		case ESP_AVRC_MD_ATTR_ALBUM:
+			strcpy(incAlbumName,(char*)text);
+			if((strcmp(incAlbumName,espod.albumName)!=0) || artistNameUpdated || trackTitleUpdated) { //If there is a difference, copy it over and set an updated flag
+				strcpy(espod.albumName,incAlbumName);
+				albumNameUpdated = true;
+			}
+			break;
+		case ESP_AVRC_MD_ATTR_ARTIST:
+			strcpy(incArtistName,(char*)text);
+			if((strcmp(incArtistName,espod.artistName)!=0) || albumNameUpdated || trackTitleUpdated) { //If there is a difference, copy it over and set an updated flag
+				strcpy(espod.artistName,incArtistName);
+				artistNameUpdated = true;
+			}
+			break;
+		case ESP_AVRC_MD_ATTR_TITLE:
+			strcpy(incTrackTitle,(char*)text);
+			if((strcmp(incTrackTitle,espod.trackTitle)!=0) || artistNameUpdated || albumNameUpdated) { //If there is a difference, copy it over and set an updated flag
+				strcpy(espod.trackTitle,incTrackTitle);
+				trackTitleUpdated = true;
+			}
+			break;
+		case ESP_AVRC_MD_ATTR_PLAYING_TIME: //No checks on duration, always update
+			espod.trackDuration = String((char*)text).toInt();
+			break;
+	}
+	if(albumNameUpdated && artistNameUpdated && trackTitleUpdated) { //This is a possible condition even if playing from the same artist/album or two songs with the same title
+		if(espod.waitMetadataUpdate) { //If this was expected, it means the trickeries with index were done directly on the espod
+			artistNameUpdated = false;
+			albumNameUpdated = false;
+			trackTitleUpdated = false;
+			espod.waitMetadataUpdate = false; //Given the duplicate conditions, this is irrelevant to keep that flag up
+		}
+		else { //This was "unprovoked update", try to determine if this is a PREV or a NEXT
+			if((strcmp(espod.artistName,prevArtistName)==0) && (strcmp(espod.albumName,prevAlbumName)==0) && (strcmp(espod.trackTitle,prevTrackTitle)==0)) {
+				//This is very certainly a Previous ... rewind the currentTrackIndex
+				espod.trackListPosition = (espod.trackListPosition + TOTAL_NUM_TRACKS -1)%TOTAL_NUM_TRACKS; //Same thing as doing a -1 with some safety
+				espod.currentTrackIndex = espod.trackList[espod.trackListPosition];
+			}
+			else { //Something is different, assume it is a next (the case for identicals is impossible)
+				espod.trackListPosition = (espod.trackListPosition+1) % TOTAL_NUM_TRACKS;
+				espod.trackList[espod.trackListPosition] = (espod.currentTrackIndex+1) % TOTAL_NUM_TRACKS;
+				espod.currentTrackIndex++;
+			}
+			espod.L0x04_0x27_PlayStatusNotification(0x01,espod.currentTrackIndex);
+		}
+	}
+
+}
+
 #endif
 
+/// @brief Callback function that passes intended operations from the esPod to the A2DP player
+/// @param playCommand A2DP_xx command instruction. It does not match the PB_CMD_xx codes !!!
 void playStatusHandler(byte playCommand) {
 	#ifdef ENABLE_A2DP
-	/*
-	Force-refresh title :
-	esp_avrc_ct_send_metadata_cmd(2,ESP_AVRC_MD_ATTR_TITLE);
-	*/
   	switch (playCommand) {
 		case A2DP_STOP:
-			/* code */
+			a2dp_sink.stop();
+			//Stoppage notification is handled internally in the espod
 			break;
 		case A2DP_PLAY:
-			/* code */
+			a2dp_sink.play();
+			//Watch out for possible metadata
 			break;
 		case A2DP_PAUSE:
-			/* code */
+			a2dp_sink.pause();
 			break;
 		case A2DP_REWIND:
-			/* code */
+			a2dp_sink.previous();
 			break;
 		case A2DP_NEXT:
-			/* code */
+			a2dp_sink.next();
 			break;
-		case A2DP_PREV:
-			/* code */
-			break;
-		default:
+		case A2DP_PREV: //We will assume that the timing difference for a PREV and a REWIND is similar on the AVRC TG and the CT/Radio
+			a2dp_sink.previous();
 			break;
 	}
   	#endif
 }
-
-#ifdef ENABLE_A2DP
-void avrc_rn_play_pos_callback(uint32_t play_pos) {
-	//Serial.printf("Play position is %d (%d seconds)\n", play_pos, (int)round(play_pos/1000.0));
-}
-
-void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
-	//Serial.printf("==> AVRC metadata rsp: attribute id 0x%x, %s\n", id, text);
-	switch (id)	{
-		case ESP_AVRC_MD_ATTR_ALBUM:
-			strcpy(espod.albumName,(char*)text);
-			break;
-		case ESP_AVRC_MD_ATTR_ARTIST:
-			strcpy(espod.artistName,(char*)text);
-			break;
-		case ESP_AVRC_MD_ATTR_TITLE:
-			strcpy(espod.trackTitle,(char*)text);
-			break;
-		case ESP_AVRC_MD_ATTR_PLAYING_TIME:
-			espod.trackDuration = String((char*)text).toInt();
-			break;
-		default:
-			break;
-	}
-	espod.notifyTrackChange = true;
-}
-#endif
 
 void setup() {
 	#ifdef ENABLE_A2DP
@@ -157,7 +184,6 @@ void setup() {
 			BCLK  ->  GPIO 26
 			*/
 		#endif
-		//a2dp_sink.set_i2s_config(i2s_config);
 		//a2dp_sink.set_auto_reconnect(true); //Auto-reconnect
 		a2dp_sink.set_on_connection_state_changed(connectionStateChanged);
 		a2dp_sink.set_on_audio_state_changed(audioStateChanged);
@@ -183,19 +209,24 @@ void setup() {
 		Serial.setTxBufferSize(4096);
 		Serial.begin(19200);
 	#endif
-
-  	while(Serial.available()) Serial.read(); //Flush the RX Buffer
  	
 	//Prep and start up espod
 	espod.attachPlayControlHandler(playStatusHandler);
+
+	#ifdef ENABLE_A2DP
+	//Let's wait for something to start before we enable espod and start the game.
+		while(a2dp_sink.get_connection_state()!=ESP_A2D_CONNECTION_STATE_CONNECTED) {
+			delay(10);
+		}
+	#endif
+
 }
 
 void loop() {
 	if(espodRefreshTimer) {
 		espod.refresh();
 	}
-	if(notificationsRefresh) {
+	if(notificationsRefresh) { //currently does nothing...
 		espod.cyclicNotify();
-		forcePlayStatusSync();
 	}
 }

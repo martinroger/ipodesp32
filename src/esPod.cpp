@@ -42,6 +42,7 @@ void esPod::resetState(){
     //State variables
     extendedInterfaceModeActive = false;
     lastConnected = millis();
+    disabled = true;
 
     //metadata variables
     trackDuration = 1;
@@ -51,14 +52,14 @@ void esPod::resetState(){
     playStatus = PB_STATE_PAUSED;
     playStatusNotificationState = NOTIF_OFF;
     playStatusNotificationsPaused = false; //To Deprecate
-    notifyTrackChange = false;  //To Deprecate, probably
+    waitMetadataUpdate = false;  //To Deprecate, probably
     shuffleStatus = 0x00;
     repeatStatus = 0x02;
 
     //TrackList variables
-    _currentTrackIndex = 0;
-    for (uint16_t i = 0; i < TOTAL_NUM_TRACKS; i++) _trackList[i] = 0;
-    _trackListPosition = 0;
+    currentTrackIndex = 0;
+    for (uint16_t i = 0; i < TOTAL_NUM_TRACKS; i++) trackList[i] = 0;
+    trackListPosition = 0;
 
     //Packet-related
     _prevRxByte = 0x00;
@@ -698,7 +699,6 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     }
 }
 
-
 //-----------------------------------------------------------------------
 //|                     Process Lingo 0x04 Requests                     |
 //-----------------------------------------------------------------------
@@ -786,7 +786,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 #endif
                 category = byteArray[2];
                 if(category == DB_CAT_TRACK) { // Say there are fixed, large amount of tracks
-                    L0x04_0x19_ReturnNumberCategorizedDBRecords(_totalNumberTracks);
+                    L0x04_0x19_ReturnNumberCategorizedDBRecords(totalNumberTracks);
                 }
                 else { //And only one of anything else (Playlist, album, artist etc...)
                     L0x04_0x19_ReturnNumberCategorizedDBRecords(1);
@@ -858,7 +858,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 #ifdef DEBUG_MODE
                 _debugSerial.println("GetCurrentPlayingTrackIndex");
                 #endif
-                L0x04_0x1F_ReturnCurrentPlayingTrackIndex(_currentTrackIndex);
+                L0x04_0x1F_ReturnCurrentPlayingTrackIndex(currentTrackIndex);
             }
             break;
 
@@ -911,152 +911,212 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                         _playStatusHandler(A2DP_PLAY); //Send play to the a2dp
                     }
                     //We need to append the new track Index to the list and shift to the right. In some cases this may create glitches ? Too tired to rationalise
-                    if(tempTrackIndex!=_currentTrackIndex)  { //If this is a new track index
-                        _trackListPosition = (_trackListPosition + 1) % TOTAL_NUM_TRACKS; //Move the trackListPosition cursor one to the right, or back to zero if it becomes TOTAL_NUM_TRACKS
-                        _trackList[_trackListPosition] = tempTrackIndex;
-                        _currentTrackIndex = tempTrackIndex;
+                    if(tempTrackIndex!=currentTrackIndex)  { //If this is a new track index
+                        trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS; //Move the trackListPosition cursor one to the right, or back to zero if it becomes TOTAL_NUM_TRACKS
+                        trackList[trackListPosition] = tempTrackIndex;
+                        currentTrackIndex = tempTrackIndex;
+                        waitMetadataUpdate = true;
                     }
                     //If untrue, nothing changes. Case of the play was paused and restarted without change of the trackIndex on the Mini side 
                 }
                 else { //PB is PLAYING. Here we check if this might be a previous. If we can't determine,assume it is a next()
-                    if(tempTrackIndex==_trackList[(_trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS]) { //If this index is the previous one
+                    if(tempTrackIndex==trackList[(trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS]) { //If this index is the previous one
                         if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Technically not a rewind, so send PREV
-                        _trackListPosition = (_trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS; //Jump the _trackListPosition one index to the left
-                        _currentTrackIndex = tempTrackIndex;
+                        trackListPosition = (trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS; //Jump the trackListPosition one index to the left
+                        currentTrackIndex = tempTrackIndex;
+                        waitMetadataUpdate = true;
                     }
                     else { //Technically here we could check if the index corresponds to the one of the next song, in case of P N P N P transitions. Realistically, the outcome is the same
                         if(_playStatusHandler) _playStatusHandler(A2DP_NEXT); //When you don't know... NEXT
-                        _trackListPosition = (_trackListPosition + 1) % TOTAL_NUM_TRACKS; //Safely move the cursor right
-                        _trackList[_trackListPosition] = tempTrackIndex;
-                        _currentTrackIndex = tempTrackIndex;
+                        trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS; //Safely move the cursor right
+                        trackList[trackListPosition] = tempTrackIndex;
+                        currentTrackIndex = tempTrackIndex;
+                        waitMetadataUpdate = true;
                     }
                 }
                 //A little acknowledgment
                 L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
                 //Don't forget a little notification if it is active, to inform of the track change
                 if(playStatusNotificationState == NOTIF_ON) {
-                    L0x04_0x27_PlayStatusNotification(0x01,_currentTrackIndex);
+                    L0x04_0x27_PlayStatusNotification(0x01,currentTrackIndex);
                 }
             }
             break;
         
-        case L0x04_PlayControl: //Will require a callback for interfacing externally for next/prev
-            #ifdef DEBUG_MODE
-            _debugSerial.println("PlayControl");
-            #endif
-            switch (byteArray[2])
+        case L0x04_PlayControl: //Baisc play control. Used for Prev, pause and play
+            {    
+                #ifdef DEBUG_MODE
+                _debugSerial.println("PlayControl");
+                #endif
+                switch (byteArray[2]) //PlayControl byte
+                {
+                case PB_CMD_TOGGLE: //Just Toggle or start playing
+                    {
+                        if(playStatus==PB_STATE_PLAYING) {
+                            playStatus=PB_STATE_PAUSED; //Toggle to paused if playing
+                            if(_playStatusHandler) _playStatusHandler(A2DP_PAUSE);
+                        }
+                        else {
+                            playStatus = PB_STATE_PLAYING; //Switch to playing in any other case
+                            if(_playStatusHandler) _playStatusHandler(A2DP_PLAY);
+                        }
+                    }
+                    break;
+                case PB_CMD_STOP: //Stop
+                    {
+                        playStatus = PB_STATE_STOPPED;
+                        if(_playStatusHandler) _playStatusHandler(A2DP_STOP);
+                    }
+                    break;
+                case PB_CMD_NEXT_TRACK: //Next track.. never seems to happen ?
+                    {
+                        if(_playStatusHandler) _playStatusHandler(A2DP_NEXT);
+                        waitMetadataUpdate = true;//Tells the system we are expecting new metadata (that has to be checked for consistency and duplicates)
+                        // Note about manipulation of currentTrackIndex, trackList and trackListPosition : it should happen outside of this case and should provoke the right notification
+                    }
+                    break;
+                case PB_CMD_PREVIOUS_TRACK: //Prev track
+                    {
+                        if(_playStatusHandler) _playStatusHandler(A2DP_PREV);
+                        waitMetadataUpdate = true;//Tells the system we are expecting new metadata (that has to be checked for consistency and duplicates)
+                        // Note about manipulation of currentTrackIndex, trackList and trackListPosition : it should happen outside of this case and should provoke the right notification
+                    }
+                    break;
+                case PB_CMD_NEXT: //Next track
+                    {
+                        if(_playStatusHandler) _playStatusHandler(A2DP_NEXT);
+                        waitMetadataUpdate = true;//Tells the system we are expecting new metadata (that has to be checked for consistency and duplicates)
+                        // Note about manipulation of currentTrackIndex, trackList and trackListPosition : it should happen outside of this case and should provoke the right notification
+                    }
+                    break;
+                case PB_CMD_PREV: //Prev track
+                    {
+                        if(_playStatusHandler) _playStatusHandler(A2DP_PREV);
+                        waitMetadataUpdate = true;//Tells the system we are expecting new metadata (that has to be checked for consistency and duplicates)
+                        // Note about manipulation of currentTrackIndex, trackList and trackListPosition : it should happen outside of this case and should provoke the right notification
+                    }
+                    break;
+                case PB_CMD_PLAY: //Play
+                    {
+                        playStatus = PB_STATE_PLAYING;
+                        if(_playStatusHandler) _playStatusHandler(A2DP_PLAY);
+                        waitMetadataUpdate = true;
+                    }
+                    break;
+                case PB_CMD_PAUSE: //Pause
+                    {
+                        playStatus = PB_STATE_PAUSED;
+                        if(_playStatusHandler) _playStatusHandler(A2DP_PAUSE);
+                        waitMetadataUpdate = true;
+                    }
+                    break;
+                }
+                L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
+                if((playStatus = PB_STATE_STOPPED)&&(playStatusNotificationState==NOTIF_ON)) L0x04_0x27_PlayStatusNotification(0x00); //Notify successful stop
+            }   
+            break;
+
+        case L0x04_GetShuffle: //Get Shuffle state from the PB Engine
             {
-            case PB_CMD_TOGGLE: //Just Toggle or start playing
-                if(playStatus==PB_STATE_PLAYING) playStatus=PB_STATE_PAUSED;
-                else playStatus = PB_STATE_PLAYING;
-                //call PlayControlHandler()
-                if(_playStatusHandler) {
-                    _playStatusHandler(byteArray[2]);
-                }
-                break;
-            case PB_CMD_STOP: //Stop
-                playStatus = PB_STATE_STOPPED;
-                if(_playStatusHandler) {
-                    _playStatusHandler(byteArray[2]);
-                }
-                break;
-            case PB_CMD_NEXT_TRACK: //Next track
-                if(_playStatusHandler) {
-                    _playStatusHandler(byteArray[2]);
-                }
-                _currentTrackIndex++;
-                notifyTrackChange = true;
-                break;
-            case PB_CMD_PREVIOUS_TRACK: //Prev track
-                if(_playStatusHandler) {
-                    _playStatusHandler(byteArray[2]);
-                }
-                if(_currentTrackIndex!=0) _currentTrackIndex--;
-                notifyTrackChange = true;
-                break;
-            case PB_CMD_NEXT: //Next track
-                if(_playStatusHandler) {
-                    _playStatusHandler(byteArray[2]);
-                }
-                _currentTrackIndex++;
-                notifyTrackChange = true;
-                break;
-            case PB_CMD_PREV: //Prev track
-                if(_playStatusHandler) {
-                    _playStatusHandler(byteArray[2]);
-                }
-                if(_currentTrackIndex!=0) _currentTrackIndex--;
-                notifyTrackChange = true;
-                break;
-            case PB_CMD_PLAY: //Play
-                playStatus = PB_STATE_PLAYING;
-                if(_playStatusHandler) {
-                    _playStatusHandler(byteArray[2]);
-                }
-                break;
-            case PB_CMD_PAUSE: //Pause
-                playStatus = PB_STATE_PAUSED;
-                if(_playStatusHandler) {
-                    _playStatusHandler(byteArray[2]);
-                }
-                break;
-            default:
-                break;
+                #ifdef DEBUG_MODE
+                _debugSerial.println("GetShuffle");
+                #endif
+                L0x04_0x2D_ReturnShuffle(shuffleStatus);
             }
-            L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
             break;
 
-        case L0x04_GetShuffle:
-            #ifdef DEBUG_MODE
-            _debugSerial.println("GetShuffle");
-            #endif
-            L0x04_0x2D_ReturnShuffle(shuffleStatus);
-            break;
-
-        case L0x04_SetShuffle:
-            #ifdef DEBUG_MODE
-            _debugSerial.println("SetShuffle");
-            #endif
-            shuffleStatus = byteArray[2];
-            L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
+        case L0x04_SetShuffle: //Set Shuffle state
+            {
+                #ifdef DEBUG_MODE
+                _debugSerial.println("SetShuffle");
+                #endif
+                shuffleStatus = byteArray[2];
+                L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
+            }
             break;
         
-        case L0x04_GetRepeat:
-            #ifdef DEBUG_MODE
-            _debugSerial.println("GetRepeat");
-            #endif
-            L0x04_0x30_ReturnRepeat(repeatStatus);
+        case L0x04_GetRepeat: //Get Repeat state
+            {
+                #ifdef DEBUG_MODE
+                _debugSerial.println("GetRepeat");
+                #endif
+                L0x04_0x30_ReturnRepeat(repeatStatus);
+            }
             break;
 
-        case L0x04_SetRepeat:
-            #ifdef DEBUG_MODE
-            _debugSerial.println("SetRepeat");
-            #endif
-            repeatStatus = byteArray[2];
-            L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
+        case L0x04_SetRepeat: //Set Repeat state
+            {
+                #ifdef DEBUG_MODE
+                _debugSerial.println("SetRepeat");
+                #endif
+                repeatStatus = byteArray[2];
+                L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
+            }
             break;
 
-        case L0x04_GetNumPlayingTracks:
-            #ifdef DEBUG_MODE
-            _debugSerial.println("GetNumPlayingTracks");
-            #endif
-            L0x04_0x36_ReturnNumPlayingTracks(_totalNumberTracks); //We say there are two playing tracks
+        case L0x04_GetNumPlayingTracks: //Systematically return TOTAL_NUM_TRACKS
+            {
+                #ifdef DEBUG_MODE
+                _debugSerial.println("GetNumPlayingTracks");
+                #endif
+                L0x04_0x36_ReturnNumPlayingTracks(totalNumberTracks); //We say there are two playing tracks
+            }
             break;
 
-        case L0x04_SetCurrentPlayingTrack:
-            #ifdef DEBUG_MODE
-            _debugSerial.println("SetCurrentPlayingTrack");
-            #endif
-            _currentTrackIndex = swap_endian<uint32_t>(*((uint32_t*)&byteArray[2]));
-            L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
-            break;
-
-        default:
+        case L0x04_SetCurrentPlayingTrack: //Basically identical to PlayCurrentSelection
+                {
+                #ifdef DEBUG_MODE
+                _debugSerial.println("PlayCurrentSelection");
+                #endif
+                tempTrackIndex = swap_endian<uint32_t>(*((uint32_t*)&byteArray[2]));
+                if(playStatus!=PB_STATE_PLAYING) {
+                    playStatus = PB_STATE_PLAYING; //Playing status forced 
+                    if(_playStatusHandler) {
+                        _playStatusHandler(A2DP_PLAY); //Send play to the a2dp
+                    }
+                    //We need to append the new track Index to the list and shift to the right. In some cases this may create glitches ? Too tired to rationalise
+                    if(tempTrackIndex!=currentTrackIndex)  { //If this is a new track index
+                        trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS; //Move the trackListPosition cursor one to the right, or back to zero if it becomes TOTAL_NUM_TRACKS
+                        trackList[trackListPosition] = tempTrackIndex;
+                        currentTrackIndex = tempTrackIndex;
+                        waitMetadataUpdate = true;
+                    }
+                    //If untrue, nothing changes. Case of the play was paused and restarted without change of the trackIndex on the Mini side 
+                }
+                else { //PB is PLAYING. Here we check if this might be a previous. If we can't determine,assume it is a next()
+                    if(tempTrackIndex==trackList[(trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS]) { //If this index is the previous one
+                        if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Technically not a rewind, so send PREV
+                        trackListPosition = (trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS; //Jump the trackListPosition one index to the left
+                        currentTrackIndex = tempTrackIndex;
+                        waitMetadataUpdate = true;
+                    }
+                    else { //Technically here we could check if the index corresponds to the one of the next song, in case of P N P N P transitions. Realistically, the outcome is the same
+                        if(_playStatusHandler) _playStatusHandler(A2DP_NEXT); //When you don't know... NEXT
+                        trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS; //Safely move the cursor right
+                        trackList[trackListPosition] = tempTrackIndex;
+                        currentTrackIndex = tempTrackIndex;
+                        waitMetadataUpdate = true;
+                    }
+                }
+                //A little acknowledgment
+                L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
+                //Don't forget a little notification if it is active, to inform of the track change
+                if(playStatusNotificationState == NOTIF_ON) {
+                    L0x04_0x27_PlayStatusNotification(0x01,currentTrackIndex);
+                }
+            }
             break;
         }
     }
 }
 
+//-----------------------------------------------------------------------
+//|                            Packet Disneyland                        |
+//-----------------------------------------------------------------------
+
+/// @brief Processes a valid packet and calls the relevant Lingo processor
+/// @param byteArray Checksum-validated packet starting at LingoID
+/// @param len Length of valid data in the packet
 void esPod::processPacket(const byte *byteArray, uint32_t len)
 {
     byte rxLingoID = byteArray[0];
@@ -1064,14 +1124,14 @@ void esPod::processPacket(const byte *byteArray, uint32_t len)
     uint32_t subPayloadLen = len-1;
     switch (rxLingoID) //0x00 is general Lingo and 0x04 is extended Lingo. Nothing else is expected from the Mini
     {
-    case 0x00:
+    case 0x00: //General Lingo
         #ifdef DEBUG_MODE
         _debugSerial.print("Lingo 0x00 ");
         #endif
         processLingo0x00(subPayload,subPayloadLen);
         break;
     
-    case 0x04:
+    case 0x04: // Extended Interface Lingo
         #ifdef DEBUG_MODE
         _debugSerial.print("Lingo 0x04 ");
         #endif
@@ -1080,60 +1140,59 @@ void esPod::processPacket(const byte *byteArray, uint32_t len)
     
     default:
         #ifdef DEBUG_MODE
-        _debugSerial.print("Unknown Lingo : ");
-        _debugSerial.println(rxLingoID,HEX);
+        _debugSerial.printf("Unknown Lingo : 0x%x ",rxLingoID);
         #endif
         break;
     }
 }
 
+/// @brief Refresh function for the esPod : listens to Serial, assembles packets, or ignores everything if it is disabled.
 void esPod::refresh()
 {
     //Check for a new packet and update the buffer
     while(_targetSerial.available()) {
         byte incomingByte = _targetSerial.read();
-
-        //A new 0xFF55 packet starter shows up
-        if(_prevRxByte == 0xFF && incomingByte == 0x55) { 
-            _rxLen = 0; //Reset the received length
-            _rxCounter = 0; //Reset the counter to the end of payload
-        }
-        // Packet start was detected, but Length was not passed yet (this sort of works for 3-bytes length fields)
-        else if(_rxLen == 0 && _rxCounter == 0) {
-            _rxLen = incomingByte;
-        }
-        // Just plop in in the buffer
-        else {
-            _rxBuf[_rxCounter++] = incomingByte;
-            if(_rxCounter == _rxLen+1) { //We are done receiving the packet
-                byte tempChecksum = esPod::checksum(_rxBuf, _rxLen);
-                if (tempChecksum == _rxBuf[_rxLen]) { //Checksum checks out
-                    processPacket(_rxBuf,_rxLen);
-                    lastConnected = millis()/1000;
-                    #ifdef DEBUG_MODE
-
-                    #ifdef DUMP_MODE
-                    _debugSerial.print("RX ");
-                    for(int i = 0;i<_rxLen;i++) {
-                        _debugSerial.print(_rxBuf[i],HEX);
-                        _debugSerial.print(" ");
-                    }
-                    _debugSerial.print(" ");
-                    _debugSerial.println(_rxBuf[_rxLen],HEX);
-                    #endif
-                    
-                    #endif
-                }
-                #ifdef DEBUG_MODE
-                else {
-                    _debugSerial.println("Checksum failed");
-                }
-                #endif
+        lastConnected = millis()/1000;
+        if(!disabled) {
+            //A new 0xFF55 packet starter shows up
+            if(_prevRxByte == 0xFF && incomingByte == 0x55) { 
+                _rxLen = 0; //Reset the received length
+                _rxCounter = 0; //Reset the counter to the end of payload
             }
-        }
+            // Packet start was detected, but Length was not passed yet (this sort of works for 3-bytes length fields)
+            else if(_rxLen == 0 && _rxCounter == 0) {
+                _rxLen = incomingByte;
+            }
+            // Just plop in in the buffer
+            else {
+                _rxBuf[_rxCounter++] = incomingByte;
+                if(_rxCounter == _rxLen+1) { //We are done receiving the packet
+                    byte tempChecksum = esPod::checksum(_rxBuf, _rxLen);
+                    if (tempChecksum == _rxBuf[_rxLen]) { //Checksum checks out
+                        processPacket(_rxBuf,_rxLen);  
+                        #ifdef DEBUG_MODE
+                            #ifdef DUMP_MODE
+                            _debugSerial.print("RX ");
+                            for(int i = 0;i<_rxLen;i++) {
+                                _debugSerial.print(_rxBuf[i],HEX);
+                                _debugSerial.print(" ");
+                            }
+                            _debugSerial.print(" ");
+                            _debugSerial.println(_rxBuf[_rxLen],HEX);
+                            #endif
+                        #endif
+                    }
+                    #ifdef DEBUG_MODE
+                    else {
+                        _debugSerial.println("Checksum failed");
+                    }
+                    #endif
+                }
+            }
 
-        //pass to the previous received byte
-        _prevRxByte = incomingByte;
+            //pass to the previous received byte
+            _prevRxByte = incomingByte;
+        }
     }
 
     //Reset if no message received in the last 10s
@@ -1143,20 +1202,7 @@ void esPod::refresh()
 
 }
 
-void esPod::cyclicNotify()
+void esPod::cyclicNotify() //Currently not certain this is useful
 {
-    if((playStatusNotificationState == 0x01) && (extendedInterfaceModeActive)) {
-        if(playStatus == PB_STATE_PLAYING) {
-            L0x04_0x27_PlayStatusNotification(0x04,60000); //Track offset
-            playStatusNotificationsPaused = false;
-        }
-        if((playStatus == PB_STATE_PAUSED) && !playStatusNotificationsPaused) {
-            L0x04_0x27_PlayStatusNotification(0x00); //Stopped playback
-            playStatusNotificationsPaused = true;
-        }
-        if(notifyTrackChange && (playStatus==PB_STATE_PLAYING)) {
-            L0x04_0x27_PlayStatusNotification(0x01,_currentTrackIndex); //Inform it has changed to track currentTrackIndex
-            notifyTrackChange = false;
-        }
-    }
+
 }

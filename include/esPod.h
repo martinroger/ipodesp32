@@ -63,6 +63,7 @@ public:
 
     //State variables
     bool extendedInterfaceModeActive = false;
+    bool disabled = true; //espod starts disabled... it means it keeps flushing the Serial until it is ready to process something
     uint64_t lastConnected  =   0;
     
     //metadata variables
@@ -79,9 +80,16 @@ public:
     byte playStatus                     =   PB_STATE_PAUSED; //Current state of the PBEngine
     byte playStatusNotificationState    =   NOTIF_OFF; //Current state of the Notifications engine
     bool playStatusNotificationsPaused  =   false; //Possibly not needed no more
-    bool notifyTrackChange              =   false; //Possibly not needed no more
+    bool waitMetadataUpdate             =   false; //Possibly not needed no more
     byte shuffleStatus                  =   0x00; //00 No Shuffle, 0x01 Tracks 0x02 Albums
     byte repeatStatus                   =   0x02; //00 Repeat off, 01 One track, 02 All tracks
+
+    //TrackList variables
+    uint32_t currentTrackIndex             =   0;
+    const uint32_t totalNumberTracks       =   TOTAL_NUM_TRACKS;
+    uint32_t trackList[TOTAL_NUM_TRACKS]   =   {0};
+    uint32_t trackListPosition             =   0; //Locator for the position of the track ID in the TrackList (of IDS)
+
 
 private:
     //Serial to the listening device
@@ -89,14 +97,7 @@ private:
     #ifdef DEBUG_MODE
     HardwareSerial& _debugSerial;
     #endif
-    
-    
-    //TrackList variables
-    uint32_t _currentTrackIndex             =   0;
-    const uint32_t _totalNumberTracks       =   TOTAL_NUM_TRACKS;
-    uint32_t _trackList[TOTAL_NUM_TRACKS]   =   {0};
-    uint32_t _trackListPosition             =   0; //Locator for the position of the track ID in the TrackList (of IDS)
-    
+
     //Packet-related 
     byte _prevRxByte    =   0x00;
     byte _rxBuf[1024]   =   {0x00};
