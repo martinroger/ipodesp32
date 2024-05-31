@@ -4,6 +4,9 @@
 
 Second-generation BMW Mini Coopers (R56, 55, 57, 58...) usually did not come with Bluetooth music streaming capabilities, except for some that had the "Visual Boost" or "Mini Connected" packages selected. These are easily identifiable because they replace the large central speedometer with a touch-screen surrounded by a speedo ring.
 
+![A 2013 Mini Cooper S R56 GP2](/img/miniGP2.png)
+
+
 In the case of "LCI" (aka facelift), post-2010 Mini Coopers and derivatives, a good portion of them came with the "Radio Boost CD" head unit, which in some cases may feature Hands-free Bluetooth, USB input and an Aux 3.5mm jack input (typically those with option $6ND).
 
 A large number of thoses are capable of reading USB drives and the likes on the USB input, and in some cases they also can "control" good old 30-pins iPods, via a now-rare and often-faked "Y-cable". 
