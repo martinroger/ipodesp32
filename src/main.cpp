@@ -184,7 +184,7 @@ void setup() {
 			BCLK  ->  GPIO 26
 			*/
 		#endif
-		//a2dp_sink.set_auto_reconnect(true); //Auto-reconnect
+		a2dp_sink.set_auto_reconnect(true); //Auto-reconnect
 		a2dp_sink.set_on_connection_state_changed(connectionStateChanged);
 		a2dp_sink.set_on_audio_state_changed(audioStateChanged);
 		a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
