@@ -179,9 +179,9 @@ void setup() {
 			i2s.begin(cfg);
 			/*
 			Default pins are as follows :
-			WSEL  ->  GPIO 25
-			DIN   ->  GPIO 22
-			BCLK  ->  GPIO 26
+			WSEL  ->  25
+			DIN   ->  22
+			BCLK  ->  26
 			*/
 		#endif
 		a2dp_sink.set_auto_reconnect(true); //Auto-reconnect
