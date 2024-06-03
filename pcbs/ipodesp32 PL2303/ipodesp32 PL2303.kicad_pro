@@ -48,7 +48,13 @@
           "min_clearance": 0.508
         }
       },
-      "diff_pair_dimensions": [],
+      "diff_pair_dimensions": [
+        {
+          "gap": 0.0,
+          "via_gap": 0.0,
+          "width": 0.0
+        }
+      ],
       "drc_exclusions": [],
       "meta": {
         "filename": "board_design_settings.json",
@@ -164,8 +170,27 @@
           "td_width_to_size_filter_ratio": 0.9
         }
       ],
-      "track_widths": [],
-      "via_dimensions": [],
+      "track_widths": [
+        0.0,
+        0.1524,
+        0.254,
+        0.508,
+        0.762
+      ],
+      "via_dimensions": [
+        {
+          "diameter": 0.0,
+          "drill": 0.0
+        },
+        {
+          "diameter": 0.6,
+          "drill": 0.3
+        },
+        {
+          "diameter": 0.8,
+          "drill": 0.4
+        }
+      ],
       "zones_allow_external_fillets": false
     },
     "layer_presets": [],
@@ -412,6 +437,57 @@
         "via_diameter": 0.6,
         "via_drill": 0.3,
         "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 0.1524,
+        "diff_pair_gap": 0.1524,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.1524,
+        "line_style": 0,
+        "microvia_diameter": 0.6,
+        "microvia_drill": 0.3,
+        "name": "Large",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.508,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 0.1524,
+        "diff_pair_gap": 0.1524,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.1524,
+        "line_style": 0,
+        "microvia_diameter": 0.6,
+        "microvia_drill": 0.3,
+        "name": "Mid",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.254,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 0.1524,
+        "diff_pair_gap": 0.1524,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.1524,
+        "line_style": 0,
+        "microvia_diameter": 0.6,
+        "microvia_drill": 0.3,
+        "name": "XLarge",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.762,
+        "via_diameter": 0.8,
+        "via_drill": 0.4,
+        "wire_width": 6
       }
     ],
     "meta": {
@@ -419,7 +495,16 @@
     },
     "net_colors": null,
     "netclass_assignments": null,
-    "netclass_patterns": []
+    "netclass_patterns": [
+      {
+        "netclass": "Large",
+        "pattern": "+5V"
+      },
+      {
+        "netclass": "Large",
+        "pattern": "+3V3"
+      }
+    ]
   },
   "pcbnew": {
     "last_paths": {
