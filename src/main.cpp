@@ -18,7 +18,7 @@
 #ifdef DEBUG_MODE
 	esPod espod(USBSerial);
 #else
-	esPod espod(Serial);
+	esPod espod(Serial2);
 #endif
 
 Timer<millis> espodRefreshTimer = 5;
@@ -190,7 +190,7 @@ void setup() {
 		a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
 		a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE|ESP_AVRC_MD_ATTR_ARTIST|ESP_AVRC_MD_ATTR_ALBUM|ESP_AVRC_MD_ATTR_PLAYING_TIME);
 		a2dp_sink.set_avrc_rn_play_pos_callback(avrc_rn_play_pos_callback);
-		a2dp_sink.start("espiPod");
+		a2dp_sink.start("espiPod2");
 
 		#ifdef LED_BUILTIN
 			pinMode(LED_BUILTIN,OUTPUT);
@@ -205,9 +205,9 @@ void setup() {
 		Serial.begin(115200);
 		while(USBSerial.available()) USBSerial.read();
   	#else
-		Serial.setRxBufferSize(4096);
-		Serial.setTxBufferSize(4096);
-		Serial.begin(19200);
+		Serial2.setRxBufferSize(4096);
+		Serial2.setTxBufferSize(4096);
+		Serial2.begin(19200);
 	#endif
  	
 	//Prep and start up espod
