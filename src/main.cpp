@@ -18,7 +18,7 @@
 #ifdef DEBUG_MODE
 	esPod espod(USBSerial);
 #else
-	esPod espod(Serial);
+	esPod espod(Serial2);
 #endif
 
 Timer<millis> espodRefreshTimer = 5;
