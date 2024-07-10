@@ -42,7 +42,7 @@ void esPod::resetState(){
     //State variables
     extendedInterfaceModeActive = false;
     lastConnected = millis();
-    disabled = true;
+    //disabled = true;  //Not for now, might need to reenable or rethink the concept later
 
     //metadata variables
     trackDuration = 1;
