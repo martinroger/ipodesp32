@@ -6,8 +6,8 @@
 
   (title_block
     (title "iPod ESP32 barebones PCB")
-    (date "2024-06-04")
-    (rev "0.2.0")
+    (date "2024-07-16")
+    (rev "0.2.1")
     (company "(c) Martin Roger")
   )
 
@@ -2846,7 +2846,7 @@
     (property "Reference" "IC1" (at 231.14 19.05 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Value" "PL2303GS" (at 231.14 21.59 0)
+    (property "Value" "PL2303GL" (at 231.14 21.59 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Footprint" "SamacSys_Parts:SOIC127P600X170-8N" (at 243.84 22.86 0)

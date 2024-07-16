@@ -7,8 +7,8 @@
   (paper "A4")
   (title_block
     (title "iPod ESP32 barebones PCB")
-    (date "2024-06-04")
-    (rev "0.2.0")
+    (date "2024-07-16")
+    (rev "0.2.1")
     (company "(c) Martin Roger")
   )
 
@@ -1182,7 +1182,7 @@
         (effects (font (size 1.27 1.27) (thickness 0.254)))
       (tstamp 7b04968b-9877-4313-af13-ec7bc8f75cea)
     )
-    (fp_text value "PL2303GS" (at 0 0 90) (layer "F.SilkS") hide
+    (fp_text value "PL2303GL" (at 0 0 90) (layer "F.SilkS") hide
         (effects (font (size 1.27 1.27) (thickness 0.254)))
       (tstamp b8f91991-cd7c-45f5-b769-de75e8fdf166)
     )
