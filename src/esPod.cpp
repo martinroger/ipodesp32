@@ -1195,8 +1195,8 @@ void esPod::refresh()
         }
     }
 
-    //Reset if no message received in the last 30s
-    if((millis()/1000)-lastConnected > 30) {
+    //Reset if no message received in the last 120s
+    if((millis()/1000)-lastConnected > 120) {
         resetState();
     }
 
