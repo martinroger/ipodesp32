@@ -51,6 +51,7 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void* ptr) {
 				#ifdef LED_BUILTIN
 				digitalWrite(LED_BUILTIN,LOW);
 				#endif
+			espod.resetState();
 			espod.disabled = true;
 			break;
 	}
