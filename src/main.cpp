@@ -87,6 +87,8 @@ void avrc_rn_play_pos_callback(uint32_t play_pos) {
 /// @param id Metadata attribute ID : ESP_AVRC_MD_ATTR_xxx
 /// @param text Text data passed around, sometimes it's a uint32_t
 void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
+	//TODO : systematically handle L0x04_0x27_PlayStatusNotification firing after track change ?
+	//TODO : complete overhaul !
 	switch (id)	{
 		case ESP_AVRC_MD_ATTR_ALBUM:
 			strcpy(incAlbumName,(char*)text);

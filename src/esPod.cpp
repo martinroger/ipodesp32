@@ -46,6 +46,7 @@ void esPod::resetState(){
 
     //metadata variables
     trackDuration = 1;
+    prevTrackDuration = 1;
     playPosition = 0;
 
     //Playback Engine
@@ -729,16 +730,29 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 #ifdef DEBUG_MODE
                 _debugSerial.println("GetIndexedPlayingTrackInfo");
                 #endif
+                tempTrackIndex = swap_endian<uint32_t>(*((uint32_t*)&byteArray[3]));
                 switch (byteArray[2]) //Switch on the type of track info requested (careful with overloads)
                 {
                 case 0x00: //General track Capabilities and Information
-                    L0x04_0x0D_ReturnIndexedPlayingTrackInfo((uint32_t)trackDuration); //Ideally should be overloaded to pass the track duration
+                    if(tempTrackIndex==prevTrackIndex) {
+                        L0x04_0x0D_ReturnIndexedPlayingTrackInfo((uint32_t)prevTrackDuration);
+                    }
+                    else {
+                        //TODO : delay it if the metadata update is still pending. Should use command pending ?
+                        L0x04_0x0D_ReturnIndexedPlayingTrackInfo((uint32_t)trackDuration);
+                    }
                     break;
                 case 0x02: //Track Release Date (fictional)
                     L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],(uint16_t)2001);
                     break;
                 case 0x01: //Track Title
-                    L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],trackTitle);
+                    if(tempTrackIndex==prevTrackIndex) {
+                        L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],prevTrackTitle);
+                    }
+                    else {
+                        //TODO : delay it if the metadata update is still pending. Should use command pending ?
+                        L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],trackTitle);
+                    }
                     break;
                 case 0x05: //Track Genre
                     L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],trackGenre);
@@ -868,7 +882,15 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 #ifdef DEBUG_MODE
                 _debugSerial.println("GetIndexedPlayingTrackTitle");
                 #endif
-                L0x04_0x21_ReturnIndexedPlayingTrackTitle(trackTitle);
+                tempTrackIndex = swap_endian<uint32_t>(*((uint32_t*)&byteArray[2]));
+                if(tempTrackIndex==prevTrackIndex) {
+                    L0x04_0x21_ReturnIndexedPlayingTrackTitle(prevTrackTitle);
+                }
+                else {
+                    //TODO : introduce delay in case of pending metadata update
+                    L0x04_0x21_ReturnIndexedPlayingTrackTitle(trackTitle);
+                }
+                
             }
             break;
 
@@ -877,7 +899,15 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 #ifdef DEBUG_MODE
                 _debugSerial.println("GetIndexedPlayingTrackArtistName");
                 #endif
-                L0x04_0x23_ReturnIndexedPlayingTrackArtistName(artistName);
+                tempTrackIndex = swap_endian<uint32_t>(*((uint32_t*)&byteArray[2]));
+                if(tempTrackIndex==prevTrackIndex) {
+                    L0x04_0x23_ReturnIndexedPlayingTrackArtistName(prevArtistName);
+                }
+                else {
+                    //TODO : introduce delay in case of pending metadata update
+                    L0x04_0x23_ReturnIndexedPlayingTrackArtistName(artistName);
+                }
+                
             }
             break;
 
@@ -886,7 +916,15 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 #ifdef DEBUG_MODE
                 _debugSerial.println("GetIndexedPlayingTrackAlbumName");
                 #endif
-                L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(albumName);
+                tempTrackIndex = swap_endian<uint32_t>(*((uint32_t*)&byteArray[2]));
+                if(tempTrackIndex==prevTrackIndex) {
+                    L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(prevAlbumName);
+                }
+                else {
+                    //TODO : introduce delay in case of pending metadata update
+                    L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(albumName);
+                }
+                
             }
             break;
 
@@ -912,40 +950,82 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                         _playStatusHandler(A2DP_PLAY); //Send play to the a2dp
                     }
                     //We need to append the new track Index to the list and shift to the right. In some cases this may create glitches ? Too tired to rationalise
-                    if(tempTrackIndex!=currentTrackIndex)  { //If this is a new track index
-                        trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS; //Move the trackListPosition cursor one to the right, or back to zero if it becomes TOTAL_NUM_TRACKS
-                        trackList[trackListPosition] = tempTrackIndex;
-                        currentTrackIndex = tempTrackIndex;
-                        waitMetadataUpdate = true;
-                    }
+                    // if(tempTrackIndex!=currentTrackIndex)  { //If this is a new track index
+                    //     trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS; //Move the trackListPosition cursor one to the right, or back to zero if it becomes TOTAL_NUM_TRACKS
+                    //     trackList[trackListPosition] = tempTrackIndex;
+                    //     currentTrackIndex = tempTrackIndex;
+                    //     waitMetadataUpdate = true;
+                    // }
                     //If untrue, nothing changes. Case of the play was paused and restarted without change of the trackIndex on the Mini side 
                 }
-                else { //PB is PLAYING. Here we check if this might be a previous. If we can't determine,assume it is a next()
-                    if(tempTrackIndex==trackList[(trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS]) { //If this index is the previous one
-                        if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Technically not a rewind, so send PREV
-                        trackListPosition = (trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS; //Jump the trackListPosition one index to the left
-                        currentTrackIndex = tempTrackIndex;
-                        waitMetadataUpdate = true;
-                    }
-                    else { //Technically here we could check if the index corresponds to the one of the next song, in case of P N P N P transitions. Realistically, the outcome is the same
-                        if(_playStatusHandler) _playStatusHandler(A2DP_NEXT); //When you don't know... NEXT
-                        trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS; //Safely move the cursor right
-                        trackList[trackListPosition] = tempTrackIndex;
-                        currentTrackIndex = tempTrackIndex;
-                        waitMetadataUpdate = true;
-                    }
+                if (tempTrackIndex==trackList[(trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS]) //We are jumping to the previous, we assume we are just in time to not just restart the track
+                {
+                    //Don't try to pull the prevArtistName, prevTrackTitle etc, but this would work for only just jump. 
+                    //Plus the A2DP will fire new metadata anyways, so we take it !
+                    prevTrackIndex = currentTrackIndex;
+                    strcpy(prevArtistName,artistName);  //Pass the current artist name to the previous reference
+                    strcpy(prevAlbumName,albumName);    //Pass the current album name to the previous reference
+                    strcpy(prevTrackTitle,trackTitle);  //Pass the current track Title to the previous reference
+                    prevTrackDuration = trackDuration;  //Also do the track duration like that
+                    //Do cursor management
+                    trackListPosition = (trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS;
+                        //Note that trackList already knows the right index at this trackListPosition
+                    currentTrackIndex = tempTrackIndex;
+                    //Fire the A2DP when ready
+                    if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Fire the metadata trigger indirectly
+                    //Here we should set some flag to expect new metadata and potentially delay RETURNS to the MINI if it queries it before it arrives
+                    //...
                 }
+                else if (tempTrackIndex == currentTrackIndex) //We are just restarting the current Track
+                {
+                    
+                    //Fire the A2DP when ready
+                    if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Fire the metadata trigger indirectly
+                    //The metadata callback should just ignore it because it will be identical to the current metadata
+                }
+                else    //If it is not the previous or the current track, it becomes a next track
+                {
+                    //Initial behaviour is similar to the one for a deterministic PREV
+                    prevTrackIndex = currentTrackIndex;
+                    strcpy(prevArtistName,artistName);  //Pass the current artist name to the previous reference
+                    strcpy(prevAlbumName,albumName);    //Pass the current album name to the previous reference
+                    strcpy(prevTrackTitle,trackTitle);  //Pass the current track Title to the previous reference
+                    prevTrackDuration = trackDuration;  //Also do the track duration like that
+                    //Do cursor management
+                    trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS;
+                    trackList[trackListPosition] = tempTrackIndex;
+                    currentTrackIndex = tempTrackIndex;
+                    //Fire the A2DP when ready
+                    if(_playStatusHandler) _playStatusHandler(A2DP_NEXT); //Fire the metadata trigger indirectly
+                    //Here we should set some flag to expect new metadata and potentially delay RETURNS to the MINI if it queries it before it arrives
+                    //...
+                }
+                // { //PB is PLAYING. Here we check if this might be a previous. If we can't determine,assume it is a next()
+                //     if(tempTrackIndex==trackList[(trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS]) { //If this index is the previous one
+                //         if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Technically not a rewind, so send PREV
+                //         trackListPosition = (trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS; //Jump the trackListPosition one index to the left
+                //         currentTrackIndex = tempTrackIndex;
+                //         waitMetadataUpdate = true;
+                //     }
+                //     else { //Technically here we could check if the index corresponds to the one of the next song, in case of P N P N P transitions. Realistically, the outcome is the same
+                //         if(_playStatusHandler) _playStatusHandler(A2DP_NEXT); //When you don't know... NEXT
+                //         trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS; //Safely move the cursor right
+                //         trackList[trackListPosition] = tempTrackIndex;
+                //         currentTrackIndex = tempTrackIndex;
+                //         waitMetadataUpdate = true;
+                //     }
+                // }
                 //A little acknowledgment
-                L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
-                //Don't forget a little notification if it is active, to inform of the track change
-                if(playStatusNotificationState == NOTIF_ON) {
-                    L0x04_0x27_PlayStatusNotification(0x01,currentTrackIndex);
-                }
+                L0x04_0x01_iPodAck(iPodAck_OK,cmdID); //TODO : look into using a CMD PENDING if needed
+                //Questionable if this should not just come rather from the metadata callback in every case
+                // if(playStatusNotificationState == NOTIF_ON) {
+                //     L0x04_0x27_PlayStatusNotification(0x01,currentTrackIndex);
+                // }
             }
             break;
         
-        case L0x04_PlayControl: //Baisc play control. Used for Prev, pause and play
-            {    
+        case L0x04_PlayControl: //Basic play control. Used for Prev, pause and play
+            {                   //TODO : trackIndex trickery and pending metadata update management ?
                 #ifdef DEBUG_MODE
                 _debugSerial.println("PlayControl");
                 #endif
@@ -1067,7 +1147,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         case L0x04_SetCurrentPlayingTrack: //Basically identical to PlayCurrentSelection
                 {
                 #ifdef DEBUG_MODE
-                _debugSerial.println("PlayCurrentSelection");
+                _debugSerial.println("SetCurrentPlayingTrack");
                 #endif
                 tempTrackIndex = swap_endian<uint32_t>(*((uint32_t*)&byteArray[2]));
                 if(playStatus!=PB_STATE_PLAYING) {
@@ -1076,35 +1156,77 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                         _playStatusHandler(A2DP_PLAY); //Send play to the a2dp
                     }
                     //We need to append the new track Index to the list and shift to the right. In some cases this may create glitches ? Too tired to rationalise
-                    if(tempTrackIndex!=currentTrackIndex)  { //If this is a new track index
-                        trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS; //Move the trackListPosition cursor one to the right, or back to zero if it becomes TOTAL_NUM_TRACKS
-                        trackList[trackListPosition] = tempTrackIndex;
-                        currentTrackIndex = tempTrackIndex;
-                        waitMetadataUpdate = true;
-                    }
+                    // if(tempTrackIndex!=currentTrackIndex)  { //If this is a new track index
+                    //     trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS; //Move the trackListPosition cursor one to the right, or back to zero if it becomes TOTAL_NUM_TRACKS
+                    //     trackList[trackListPosition] = tempTrackIndex;
+                    //     currentTrackIndex = tempTrackIndex;
+                    //     waitMetadataUpdate = true;
+                    // }
                     //If untrue, nothing changes. Case of the play was paused and restarted without change of the trackIndex on the Mini side 
                 }
-                else { //PB is PLAYING. Here we check if this might be a previous. If we can't determine,assume it is a next()
-                    if(tempTrackIndex==trackList[(trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS]) { //If this index is the previous one
-                        if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Technically not a rewind, so send PREV
-                        trackListPosition = (trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS; //Jump the trackListPosition one index to the left
-                        currentTrackIndex = tempTrackIndex;
-                        waitMetadataUpdate = true;
-                    }
-                    else { //Technically here we could check if the index corresponds to the one of the next song, in case of P N P N P transitions. Realistically, the outcome is the same
-                        if(_playStatusHandler) _playStatusHandler(A2DP_NEXT); //When you don't know... NEXT
-                        trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS; //Safely move the cursor right
-                        trackList[trackListPosition] = tempTrackIndex;
-                        currentTrackIndex = tempTrackIndex;
-                        waitMetadataUpdate = true;
-                    }
+                if (tempTrackIndex==trackList[(trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS]) //We are jumping to the previous, we assume we are just in time to not just restart the track
+                {
+                    //Don't try to pull the prevArtistName, prevTrackTitle etc, but this would work for only just jump. 
+                    //Plus the A2DP will fire new metadata anyways, so we take it !
+                    prevTrackIndex = currentTrackIndex;
+                    strcpy(prevArtistName,artistName);  //Pass the current artist name to the previous reference
+                    strcpy(prevAlbumName,albumName);    //Pass the current album name to the previous reference
+                    strcpy(prevTrackTitle,trackTitle);  //Pass the current track Title to the previous reference
+                    prevTrackDuration = trackDuration;  //Also do the track duration like that
+                    //Do cursor management
+                    trackListPosition = (trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS;
+                        //Note that trackList already knows the right index at this trackListPosition
+                    currentTrackIndex = tempTrackIndex;
+                    //Fire the A2DP when ready
+                    if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Fire the metadata trigger indirectly
+                    //Here we should set some flag to expect new metadata and potentially delay RETURNS to the MINI if it queries it before it arrives
+                    //...
                 }
+                else if (tempTrackIndex == currentTrackIndex) //We are just restarting the current Track
+                {
+                    
+                    //Fire the A2DP when ready
+                    if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Fire the metadata trigger indirectly
+                    //The metadata callback should just ignore it because it will be identical to the current metadata
+                }
+                else    //If it is not the previous or the current track, it becomes a next track
+                {
+                    //Initial behaviour is similar to the one for a deterministic PREV
+                    prevTrackIndex = currentTrackIndex;
+                    strcpy(prevArtistName,artistName);  //Pass the current artist name to the previous reference
+                    strcpy(prevAlbumName,albumName);    //Pass the current album name to the previous reference
+                    strcpy(prevTrackTitle,trackTitle);  //Pass the current track Title to the previous reference
+                    prevTrackDuration = trackDuration;  //Also do the track duration like that
+                    //Do cursor management
+                    trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS;
+                    trackList[trackListPosition] = tempTrackIndex;
+                    currentTrackIndex = tempTrackIndex;
+                    //Fire the A2DP when ready
+                    if(_playStatusHandler) _playStatusHandler(A2DP_NEXT); //Fire the metadata trigger indirectly
+                    //Here we should set some flag to expect new metadata and potentially delay RETURNS to the MINI if it queries it before it arrives
+                    //...
+                }
+                // { //PB is PLAYING. Here we check if this might be a previous. If we can't determine,assume it is a next()
+                //     if(tempTrackIndex==trackList[(trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS]) { //If this index is the previous one
+                //         if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Technically not a rewind, so send PREV
+                //         trackListPosition = (trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS; //Jump the trackListPosition one index to the left
+                //         currentTrackIndex = tempTrackIndex;
+                //         waitMetadataUpdate = true;
+                //     }
+                //     else { //Technically here we could check if the index corresponds to the one of the next song, in case of P N P N P transitions. Realistically, the outcome is the same
+                //         if(_playStatusHandler) _playStatusHandler(A2DP_NEXT); //When you don't know... NEXT
+                //         trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS; //Safely move the cursor right
+                //         trackList[trackListPosition] = tempTrackIndex;
+                //         currentTrackIndex = tempTrackIndex;
+                //         waitMetadataUpdate = true;
+                //     }
+                // }
                 //A little acknowledgment
-                L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
-                //Don't forget a little notification if it is active, to inform of the track change
-                if(playStatusNotificationState == NOTIF_ON) {
-                    L0x04_0x27_PlayStatusNotification(0x01,currentTrackIndex);
-                }
+                L0x04_0x01_iPodAck(iPodAck_OK,cmdID); //TODO : look into using a CMD PENDING if needed
+                //Questionable if this should not just come rather from the metadata callback in every case
+                // if(playStatusNotificationState == NOTIF_ON) {
+                //     L0x04_0x27_PlayStatusNotification(0x01,currentTrackIndex);
+                // }
             }
             break;
         }
