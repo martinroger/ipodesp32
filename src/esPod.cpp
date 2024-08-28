@@ -58,6 +58,7 @@ void esPod::resetState(){
 
     //TrackList variables
     currentTrackIndex = 0;
+    prevTrackIndex = TOTAL_NUM_TRACKS-1;
     for (uint16_t i = 0; i < TOTAL_NUM_TRACKS; i++) trackList[i] = 0;
     trackListPosition = 0;
 

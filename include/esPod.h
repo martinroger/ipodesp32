@@ -67,12 +67,15 @@ public:
     uint64_t lastConnected  =   0;
     
     //metadata variables
-    char trackTitle[255]    =   "Title";
-    char artistName[255]    =   "Artist";
-    char albumName[255]     =   "Album";
-    char trackGenre[255]    =   "Genre";
-    char playList[255]      =   "Spotify";
-    char composer[255]      =   "Composer";
+    char trackTitle[255]        =   "Title";
+    char prevTrackTitle[255]    =   " ";
+    char artistName[255]        =   "Artist";
+    char prevArtistName[255]    =   " ";
+    char albumName[255]         =   "Album";
+    char prevAlbumName[255]     =   " ";
+    char trackGenre[255]        =   "Genre";
+    char playList[255]          =   "Spotify";
+    char composer[255]          =   "Composer";
     uint32_t trackDuration  =   1;  //Track duration in ms
     uint32_t playPosition   =   0;  //Current playing position of the track in ms
 
@@ -86,6 +89,7 @@ public:
 
     //TrackList variables
     uint32_t currentTrackIndex             =   0;
+    uint32_t prevTrackIndex                =   TOTAL_NUM_TRACKS-1;  //Starts at the end of the tracklist
     const uint32_t totalNumberTracks       =   TOTAL_NUM_TRACKS;
     uint32_t trackList[TOTAL_NUM_TRACKS]   =   {0};
     uint32_t trackListPosition             =   0; //Locator for the position of the track ID in the TrackList (of IDS)
@@ -112,7 +116,7 @@ private:
     const uint8_t _SWrevision   =   0x00;
     const char* _serialNumber   =   "AB345F7HIJK";
 
-    //Mini metadata
+    //MINI metadata
     bool _accessoryNameRequested            =   false;
     bool _accessoryCapabilitiesRequested    =   false;
     bool _accessoryFirmwareRequested        =   false;
