@@ -981,7 +981,8 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     
                     //Fire the A2DP when ready
                     if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Fire the metadata trigger indirectly
-                    //The metadata callback should just ignore it because it will be identical to the current metadata
+                    //The metadata callback should just ignore it because it will be identical to the current metadata?
+                    //TODO check the condition of the first track to play, make a failsafe
                 }
                 else    //If it is not the previous or the current track, it becomes a next track
                 {
