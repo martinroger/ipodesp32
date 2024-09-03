@@ -7,6 +7,10 @@
     #define TOTAL_NUM_TRACKS 3000
 #endif
 
+#ifndef TRACK_CHANGE_TIMEOUT
+    #define TRACK_CHANGE_TIMEOUT 1100
+#endif
+
 enum PB_STATUS : byte
 {
     PB_STATE_STOPPED        =   0x00,
@@ -84,6 +88,8 @@ public:
     byte playStatus                     =   PB_STATE_PAUSED; //Current state of the PBEngine
     byte playStatusNotificationState    =   NOTIF_OFF; //Current state of the Notifications engine
     bool playStatusNotificationsPaused  =   false; //Possibly not needed no more
+    byte trackChangeAckPending          =   0x00; //Indicate there is a pending track change.
+    uint64_t trackChangeTimestamp       =   0; //Trigger for the last track change request. Time outs the pending track change.
     bool waitMetadataUpdate             =   false; //Possibly not needed no more
     byte shuffleStatus                  =   0x00; //00 No Shuffle, 0x01 Tracks 0x02 Albums
     byte repeatStatus                   =   0x02; //00 Repeat off, 01 One track, 02 All tracks
@@ -152,6 +158,7 @@ public:
 
     //Lingo 0x04
     void L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID);
+    void L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField);
     void L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, char *trackInfoChars);
     void L0x04_0x0D_ReturnIndexedPlayingTrackInfo(uint32_t trackDuration_ms);
     void L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, uint16_t releaseYear);

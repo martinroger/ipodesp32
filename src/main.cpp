@@ -88,7 +88,12 @@ void avrc_rn_play_pos_callback(uint32_t play_pos) {
 /// @param text Text data passed around, sometimes it's a uint32_t
 void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 	//TODO : systematically handle L0x04_0x27_PlayStatusNotification firing after track change ?
-	//TODO : complete overhaul !
+	//TODO : complete overhaul ! Also drop the main.cpp prevXXX
+	/* Introducing :
+	TRACK_CHANGE_TIMEOUT <- Delay until which the ack sent anyways
+	trackChangeAckPending <- Send a L0x04_0x01 ACK to the value of this byte with L0x04_0x01_iPodAck(iPodAck_OK,cmdID), then resets it to 0x00
+	trackChangeTriggerTime <- Send the ACK anyways after millis() minus this value exceeds TRACK_CHANGE_TIMEOUT
+	*/
 	switch (id)	{
 		case ESP_AVRC_MD_ATTR_ALBUM:
 			strcpy(incAlbumName,(char*)text);

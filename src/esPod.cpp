@@ -53,6 +53,7 @@ void esPod::resetState(){
     playStatus = PB_STATE_PAUSED;
     playStatusNotificationState = NOTIF_OFF;
     playStatusNotificationsPaused = false; //To Deprecate
+    trackChangeAckPending = 0x00;
     waitMetadataUpdate = false;  //To Deprecate, probably
     shuffleStatus = 0x00;
     repeatStatus = 0x02;
@@ -281,6 +282,25 @@ void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID)
         0x00,cmdID
     };
     sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief General response command for Lingo 0x04 with numerical field (used for Ack Pending). Has to be followed up with a normal iPodAck
+/// @param cmdStatus Unprotected, but should only be iPodAck_CmdPending
+/// @param cmdID Single end-byte ID of the command being acknowledged with Pending
+/// @param numField Pending delay in milliseconds
+void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField)
+{
+    #ifdef DEBUG_MODE
+    _debugSerial.printf("L0x04 0x01 iPodAck: 0x%x CMD: 0x00%x NumField: %d\n",cmdStatus,cmdID,numField);
+    #endif
+    const byte txPacket[20] = {
+        0x04,
+        0x00,0x01,
+        cmdStatus,
+        cmdID
+    };
+    *((uint32_t*)&txPacket[5]) = swap_endian<uint32_t>(numField);
+    sendPacket(txPacket,5+4);
 }
 
 /// @brief Returns the pseudo-UTF8 string for the track info types 01/05/06
@@ -975,6 +995,9 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Fire the metadata trigger indirectly
                     //Here we should set some flag to expect new metadata and potentially delay RETURNS to the MINI if it queries it before it arrives
                     //...
+                    L0x04_0x01_iPodAck(iPodAck_CmdPending,cmdID,TRACK_CHANGE_TIMEOUT);
+                    trackChangeAckPending = cmdID;
+                    trackChangeTimestamp = millis();
                 }
                 else if (tempTrackIndex == currentTrackIndex) //We are just restarting the current Track
                 {
@@ -983,6 +1006,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Fire the metadata trigger indirectly
                     //The metadata callback should just ignore it because it will be identical to the current metadata?
                     //TODO check the condition of the first track to play, make a failsafe
+                    L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
                 }
                 else    //If it is not the previous or the current track, it becomes a next track
                 {
@@ -1000,6 +1024,9 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     if(_playStatusHandler) _playStatusHandler(A2DP_NEXT); //Fire the metadata trigger indirectly
                     //Here we should set some flag to expect new metadata and potentially delay RETURNS to the MINI if it queries it before it arrives
                     //...
+                    L0x04_0x01_iPodAck(iPodAck_CmdPending,cmdID,TRACK_CHANGE_TIMEOUT);
+                    trackChangeAckPending = cmdID;
+                    trackChangeTimestamp = millis();
                 }
                 // { //PB is PLAYING. Here we check if this might be a previous. If we can't determine,assume it is a next()
                 //     if(tempTrackIndex==trackList[(trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS]) { //If this index is the previous one
@@ -1017,7 +1044,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 //     }
                 // }
                 //A little acknowledgment
-                L0x04_0x01_iPodAck(iPodAck_OK,cmdID); //TODO : look into using a CMD PENDING if needed
+                //L0x04_0x01_iPodAck(iPodAck_OK,cmdID); //TODO : look into using a CMD PENDING if needed
                 //Questionable if this should not just come rather from the metadata callback in every case
                 // if(playStatusNotificationState == NOTIF_ON) {
                 //     L0x04_0x27_PlayStatusNotification(0x01,currentTrackIndex);
@@ -1182,13 +1209,18 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Fire the metadata trigger indirectly
                     //Here we should set some flag to expect new metadata and potentially delay RETURNS to the MINI if it queries it before it arrives
                     //...
+                    L0x04_0x01_iPodAck(iPodAck_CmdPending,cmdID,TRACK_CHANGE_TIMEOUT);
+                    trackChangeAckPending = cmdID;
+                    trackChangeTimestamp = millis();
                 }
                 else if (tempTrackIndex == currentTrackIndex) //We are just restarting the current Track
                 {
                     
                     //Fire the A2DP when ready
                     if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Fire the metadata trigger indirectly
-                    //The metadata callback should just ignore it because it will be identical to the current metadata
+                    //The metadata callback should just ignore it because it will be identical to the current metadata?
+                    //TODO check the condition of the first track to play, make a failsafe
+                    L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
                 }
                 else    //If it is not the previous or the current track, it becomes a next track
                 {
@@ -1206,6 +1238,9 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     if(_playStatusHandler) _playStatusHandler(A2DP_NEXT); //Fire the metadata trigger indirectly
                     //Here we should set some flag to expect new metadata and potentially delay RETURNS to the MINI if it queries it before it arrives
                     //...
+                    L0x04_0x01_iPodAck(iPodAck_CmdPending,cmdID,TRACK_CHANGE_TIMEOUT);
+                    trackChangeAckPending = cmdID;
+                    trackChangeTimestamp = millis();
                 }
                 // { //PB is PLAYING. Here we check if this might be a previous. If we can't determine,assume it is a next()
                 //     if(tempTrackIndex==trackList[(trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS]) { //If this index is the previous one
@@ -1223,7 +1258,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 //     }
                 // }
                 //A little acknowledgment
-                L0x04_0x01_iPodAck(iPodAck_OK,cmdID); //TODO : look into using a CMD PENDING if needed
+                //L0x04_0x01_iPodAck(iPodAck_OK,cmdID); //TODO : look into using a CMD PENDING if needed
                 //Questionable if this should not just come rather from the metadata callback in every case
                 // if(playStatusNotificationState == NOTIF_ON) {
                 //     L0x04_0x27_PlayStatusNotification(0x01,currentTrackIndex);
