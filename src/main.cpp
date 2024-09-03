@@ -92,11 +92,25 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 	/* Introducing :
 	TRACK_CHANGE_TIMEOUT <- Delay until which the ack sent anyways
 	trackChangeAckPending <- Send a L0x04_0x01 ACK to the value of this byte with L0x04_0x01_iPodAck(iPodAck_OK,cmdID), then resets it to 0x00
-	trackChangeTriggerTime <- Send the ACK anyways after millis() minus this value exceeds TRACK_CHANGE_TIMEOUT
+	trackChangeTimestamp <- Send the ACK anyways after millis() minus this value exceeds TRACK_CHANGE_TIMEOUT
 	*/
 	switch (id)	{
 		case ESP_AVRC_MD_ATTR_ALBUM:
 			strcpy(incAlbumName,(char*)text);
+			if(espod.trackChangeAckPending>0x00) { //There is a pending metadata update
+				if(!albumNameUpdated) { //The album Name has not been updated yet
+					strcpy(espod.prevAlbumName,espod.albumName);
+					strcpy(espod.albumName,incAlbumName);
+					albumNameUpdated = true;
+				}
+			}
+			else { //There is no pending track change
+				if(strcmp(incAlbumName,espod.albumName)!=0 && strcmp(incAlbumName,espod.prevAlbumName)!=0) { //Not the previous active album nor current one
+					strcpy(espod.prevAlbumName,espod.albumName);
+					strcpy(espod.albumName,incAlbumName);
+				}
+				
+			}
 			if((strcmp(incAlbumName,espod.albumName)!=0) || artistNameUpdated || trackTitleUpdated) { //If there is a difference, copy it over and set an updated flag
 				strcpy(espod.albumName,incAlbumName);
 				albumNameUpdated = true;
