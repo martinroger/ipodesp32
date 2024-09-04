@@ -1359,6 +1359,12 @@ void esPod::refresh()
         resetState();
     }
 
+    //Send the track change Ack Pending if it has not sent already
+    if(!disabled && (trackChangeAckPending>0x00) && (millis()>(trackChangeTimestamp+TRACK_CHANGE_TIMEOUT))) {
+        L0x04_0x01_iPodAck(iPodAck_OK,trackChangeAckPending);
+        trackChangeAckPending = 0x00;
+    }
+
 }
 
 void esPod::cyclicNotify() //Currently not certain this is useful

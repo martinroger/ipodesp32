@@ -92,11 +92,11 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 	/* Introducing :
 	TRACK_CHANGE_TIMEOUT <- Delay until which the ack sent anyways
 	trackChangeAckPending <- Send a L0x04_0x01 ACK to the value of this byte with L0x04_0x01_iPodAck(iPodAck_OK,cmdID), then resets it to 0x00
-	trackChangeTimestamp <- Send the ACK anyways after millis() minus this value exceeds TRACK_CHANGE_TIMEOUT
+	trackChangeTimestamp <- Send the ACK anyways after millis() minus this value exceeds TRACK_CHANGE_TIMEOUT in espod.refresh()
 	*/
 	switch (id)	{
 		case ESP_AVRC_MD_ATTR_ALBUM:
-			strcpy(incAlbumName,(char*)text);
+			strcpy(incAlbumName,(char*)text); //Buffer the incoming album string
 			if(espod.trackChangeAckPending>0x00) { //There is a pending metadata update
 				if(!albumNameUpdated) { //The album Name has not been updated yet
 					strcpy(espod.prevAlbumName,espod.albumName);
@@ -105,55 +105,110 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 				}
 			}
 			else { //There is no pending track change
-				if(strcmp(incAlbumName,espod.albumName)!=0 && strcmp(incAlbumName,espod.prevAlbumName)!=0) { //Not the previous active album nor current one
+				if(strcmp(incAlbumName,espod.albumName)!=0) { //If not the current albumName
 					strcpy(espod.prevAlbumName,espod.albumName);
 					strcpy(espod.albumName,incAlbumName);
+					albumNameUpdated = true;
+					//Use the albumNameUpdated flag here ?
 				}
-				
+				//TODO : check if previously active album ?
+				//No Next management 
 			}
-			if((strcmp(incAlbumName,espod.albumName)!=0) || artistNameUpdated || trackTitleUpdated) { //If there is a difference, copy it over and set an updated flag
-				strcpy(espod.albumName,incAlbumName);
-				albumNameUpdated = true;
-			}
+			// if((strcmp(incAlbumName,espod.albumName)!=0) || artistNameUpdated || trackTitleUpdated) { //If there is a difference, copy it over and set an updated flag
+			// 	strcpy(espod.albumName,incAlbumName);
+			// 	albumNameUpdated = true;
+			// }
 			break;
 		case ESP_AVRC_MD_ATTR_ARTIST:
-			strcpy(incArtistName,(char*)text);
-			if((strcmp(incArtistName,espod.artistName)!=0) || albumNameUpdated || trackTitleUpdated) { //If there is a difference, copy it over and set an updated flag
-				strcpy(espod.artistName,incArtistName);
-				artistNameUpdated = true;
+			strcpy(incArtistName,(char*)text); //Buffer the incoming artist string
+			if(espod.trackChangeAckPending>0x00) {
+				if(!artistNameUpdated) {
+					strcpy(espod.prevArtistName,espod.artistName);
+					strcpy(espod.artistName,incArtistName);
+					artistNameUpdated = true;
+				}
 			}
+			else { //No pending track change, update if different from current
+				if(strcmp(incArtistName,espod.artistName)!=0) {
+					strcpy(espod.prevArtistName,espod.artistName);
+					strcpy(espod.artistName,incArtistName);
+					artistNameUpdated = true;
+					//Use the artistNameUpdate flag here ?
+				}
+				//TODO : check that other comparisons are indeed invalid
+			}
+			// if((strcmp(incArtistName,espod.artistName)!=0) || albumNameUpdated || trackTitleUpdated) { //If there is a difference, copy it over and set an updated flag
+			// 	strcpy(espod.artistName,incArtistName);
+			// 	artistNameUpdated = true;
+			// }
 			break;
 		case ESP_AVRC_MD_ATTR_TITLE:
-			strcpy(incTrackTitle,(char*)text);
-			if((strcmp(incTrackTitle,espod.trackTitle)!=0) || artistNameUpdated || albumNameUpdated) { //If there is a difference, copy it over and set an updated flag
-				strcpy(espod.trackTitle,incTrackTitle);
-				trackTitleUpdated = true;
+			strcpy(incTrackTitle,(char*)text); //Buffer the incoming track title
+			if(espod.trackChangeAckPending>0x00) {
+				if(!trackTitleUpdated) {
+					strcpy(espod.prevTrackTitle,espod.trackTitle);
+					strcpy(espod.trackTitle,incTrackTitle);
+					trackTitleUpdated = true;
+				}
 			}
+			else { //Unexpected track change
+				if(strcmp(incTrackTitle,espod.trackTitle)!=0) { //If it is not the current track name (weakness of having a playlist with all the same title)
+					if(strcmp(incTrackTitle,espod.prevTrackTitle)!=0) {//It is also not the previous track
+						espod.trackListPosition = (espod.trackListPosition+1) % TOTAL_NUM_TRACKS;
+						espod.currentTrackIndex = (espod.currentTrackIndex + 1 ) % TOTAL_NUM_TRACKS;
+						espod.trackList[espod.trackListPosition] = (espod.currentTrackIndex);
+					}
+					else { //It IS the previous track
+						espod.trackListPosition = (espod.trackListPosition + TOTAL_NUM_TRACKS -1) % TOTAL_NUM_TRACKS; //Same thing as doing a -1 with some safety
+						espod.currentTrackIndex = espod.trackList[espod.trackListPosition];
+					}
+					//In any case copy the incoming string
+					strcpy(espod.prevTrackTitle,espod.trackTitle);
+					strcpy(espod.trackTitle,incTrackTitle);
+					trackTitleUpdated = true;
+				}
+			}
+			// if((strcmp(incTrackTitle,espod.trackTitle)!=0) || artistNameUpdated || albumNameUpdated) { //If there is a difference, copy it over and set an updated flag
+			// 	strcpy(espod.trackTitle,incTrackTitle);
+			// 	trackTitleUpdated = true;
+			// }
 			break;
 		case ESP_AVRC_MD_ATTR_PLAYING_TIME: //No checks on duration, always update
 			espod.trackDuration = String((char*)text).toInt();
 			break;
 	}
-	if(albumNameUpdated && artistNameUpdated && trackTitleUpdated) { //This is a possible condition even if playing from the same artist/album or two songs with the same title
-		if(espod.waitMetadataUpdate) { //If this was expected, it means the trickeries with index were done directly on the espod
-			artistNameUpdated = false;
-			albumNameUpdated = false;
-			trackTitleUpdated = false;
-			espod.waitMetadataUpdate = false; //Given the duplicate conditions, this is irrelevant to keep that flag up
+	//Check if it is ti,e to send a notification
+	if(albumNameUpdated && artistNameUpdated && trackTitleUpdated ) { 
+		//If all fields have received at least one update and the trackChangeAckPending is still hanging. The failsafe for this one is in the espod.refresh()
+		if (espod.trackChangeAckPending>0x00) {
+			espod.L0x04_0x01_iPodAck(iPodAck_OK,espod.trackChangeAckPending);
+			espod.trackChangeAckPending = 0x00;
 		}
-		else { //This was "unprovoked update", try to determine if this is a PREV or a NEXT
-			if((strcmp(espod.artistName,prevArtistName)==0) && (strcmp(espod.albumName,prevAlbumName)==0) && (strcmp(espod.trackTitle,prevTrackTitle)==0)) {
-				//This is very certainly a Previous ... rewind the currentTrackIndex
-				espod.trackListPosition = (espod.trackListPosition + TOTAL_NUM_TRACKS -1)%TOTAL_NUM_TRACKS; //Same thing as doing a -1 with some safety
-				espod.currentTrackIndex = espod.trackList[espod.trackListPosition];
-			}
-			else { //Something is different, assume it is a next (the case for identicals is impossible)
-				espod.trackListPosition = (espod.trackListPosition+1) % TOTAL_NUM_TRACKS;
-				espod.trackList[espod.trackListPosition] = (espod.currentTrackIndex+1) % TOTAL_NUM_TRACKS;
-				espod.currentTrackIndex++;
-			}
-			espod.L0x04_0x27_PlayStatusNotification(0x01,espod.currentTrackIndex);
-		}
+		albumNameUpdated 	= 	false;
+		artistNameUpdated 	= 	false;
+		trackTitleUpdated 	= 	false;
+		//Inform the car
+		espod.L0x04_0x27_PlayStatusNotification(0x01,espod.currentTrackIndex);
+
+		// if(espod.waitMetadataUpdate) { //If this was expected, it means the trickeries with index were done directly on the espod
+		// 	artistNameUpdated = false;
+		// 	albumNameUpdated = false;
+		// 	trackTitleUpdated = false;
+		// 	espod.waitMetadataUpdate = false; //Given the duplicate conditions, this is irrelevant to keep that flag up
+		// }
+		// else { //This was "unprovoked update", try to determine if this is a PREV or a NEXT
+		// 	if((strcmp(espod.artistName,prevArtistName)==0) && (strcmp(espod.albumName,prevAlbumName)==0) && (strcmp(espod.trackTitle,prevTrackTitle)==0)) {
+		// 		//This is very certainly a Previous ... rewind the currentTrackIndex
+		// 		espod.trackListPosition = (espod.trackListPosition + TOTAL_NUM_TRACKS -1)%TOTAL_NUM_TRACKS; //Same thing as doing a -1 with some safety
+		// 		espod.currentTrackIndex = espod.trackList[espod.trackListPosition];
+		// 	}
+		// 	else { //Something is different, assume it is a next (the case for identicals is impossible)
+		// 		espod.trackListPosition = (espod.trackListPosition+1) % TOTAL_NUM_TRACKS;
+		// 		espod.trackList[espod.trackListPosition] = (espod.currentTrackIndex+1) % TOTAL_NUM_TRACKS;
+		// 		espod.currentTrackIndex++;
+		// 	}
+		// 	espod.L0x04_0x27_PlayStatusNotification(0x01,espod.currentTrackIndex);
+		// }
 	}
 
 }
