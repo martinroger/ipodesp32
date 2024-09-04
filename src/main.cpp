@@ -26,11 +26,11 @@ Timer<millis> notificationsRefresh = 500;
 
 //Reminders used to keep track of previous changes
 char incAlbumName[255] = "incAlbum";
-char prevAlbumName[255] = "PrevAlbum";
+//char prevAlbumName[255] = "PrevAlbum";
 char incArtistName[255] = "incArtist";
-char prevArtistName[255] = "PrevArtist";
+//char prevArtistName[255] = "PrevArtist";
 char incTrackTitle[255] = "incTitle";
-char prevTrackTitle[255] = "PrevTitle";
+//char prevTrackTitle[255] = "PrevTitle";
 bool albumNameUpdated = false;
 bool artistNameUpdated = false;
 bool trackTitleUpdated = false;
