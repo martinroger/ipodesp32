@@ -177,7 +177,7 @@ public:
     void L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks);
 
     //Processors
-    void processLingo0x00(const byte *byteArray, uint32_t len);
+    void processLingo0x00(const byte* byteArray, uint32_t len);
     void processLingo0x04(const byte* byteArray, uint32_t len);
     void processPacket(const byte* byteArray,uint32_t len);
 
