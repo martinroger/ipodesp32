@@ -15,11 +15,7 @@
 		#endif
 #endif
 
-#ifdef DEBUG_MODE
-	esPod espod(USBSerial);
-#else
-	esPod espod(Serial2);
-#endif
+esPod espod(Serial2);
 
 Timer<millis> espodRefreshTimer = 5;
 Timer<millis> notificationsRefresh = 500;
@@ -42,15 +38,21 @@ bool trackTitleUpdated = false;
 void connectionStateChanged(esp_a2d_connection_state_t state, void* ptr) {
 	switch (state)	{
 		case ESP_A2D_CONNECTION_STATE_CONNECTED:
-				#ifdef LED_BUILTIN
+			#ifdef LED_BUILTIN
 				digitalWrite(LED_BUILTIN,HIGH);
-				#endif
+			#endif
+			#ifdef DEBUG_MODE
+				Serial.println("ESP_A2D_CONNECTION_STATE_CONNECTED, espod enabled");
+			#endif
 			espod.disabled = false;
 			break;
 		case ESP_A2D_CONNECTION_STATE_DISCONNECTED:
-				#ifdef LED_BUILTIN
+			#ifdef LED_BUILTIN
 				digitalWrite(LED_BUILTIN,LOW);
-				#endif
+			#endif
+			#ifdef DEBUG_MODE
+				Serial.println("ESP_A2D_CONNECTION_STATE_DISCONNECTED, espod disabled");
+			#endif
 			espod.resetState();
 			espod.disabled = true;
 			break;
@@ -64,12 +66,21 @@ void audioStateChanged(esp_a2d_audio_state_t state,void* ptr) {
 	switch (state)	{
 		case ESP_A2D_AUDIO_STATE_STARTED:
 			espod.playStatus = PB_STATE_PLAYING;
+			#ifdef DEBUG_MODE
+				Serial.println("ESP_A2D_AUDIO_STATE_STARTED, espod.playStatus = PB_STATE_PLAYING");
+			#endif
 			break;
 		case ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND:
 			espod.playStatus = PB_STATE_PAUSED;
+			#ifdef DEBUG_MODE
+				Serial.println("ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND, espod.playStatus = PB_STATE_PAUSED");
+			#endif
 			break;
 		case ESP_A2D_AUDIO_STATE_STOPPED:
 			espod.playStatus = PB_STATE_STOPPED;
+			#ifdef DEBUG_MODE
+				Serial.println("ESP_A2D_AUDIO_STATE_STOPPED, espod.playStatus = PB_STATE_STOPPED");
+			#endif
 			break;
 	}
 }
@@ -102,6 +113,14 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 					strcpy(espod.prevAlbumName,espod.albumName);
 					strcpy(espod.albumName,incAlbumName);
 					albumNameUpdated = true;
+					#ifdef DEBUG_MODE
+						Serial.printf("Album rxed, ACK pending, albumNameUpdate to %s from %s \n",incAlbumName,espod.prevAlbumName);
+					#endif
+				}
+				else {
+					#ifdef DEBUG_MODE
+						Serial.printf("Album rxed %s, ACK pending, already updated to %s \n",incAlbumName,espod.albumName);
+					#endif
 				}
 			}
 			else { //There is no pending track change
@@ -110,6 +129,14 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 					strcpy(espod.albumName,incAlbumName);
 					albumNameUpdated = true;
 					//Use the albumNameUpdated flag here ?
+					#ifdef DEBUG_MODE
+						Serial.printf("Album rxed, NO ACK pending, albumNameUpdate to %s from %s \n",incAlbumName,espod.prevAlbumName);
+					#endif
+				}
+				else {
+					#ifdef DEBUG_MODE
+						Serial.printf("Album rxed, NO ACK pending, same name : %s \n",incAlbumName);
+					#endif
 				}
 				//TODO : check if previously active album ?
 				//No Next management 
@@ -276,16 +303,13 @@ void setup() {
 	#endif
 
 	#ifdef DEBUG_MODE
-		USBSerial.setRxBufferSize(4096);
-		USBSerial.begin(19200);
 		Serial.setTxBufferSize(4096);
 		Serial.begin(115200);
-		while(USBSerial.available()) USBSerial.read();
-  	#else
+  	#endif
 		Serial2.setRxBufferSize(4096);
 		Serial2.setTxBufferSize(4096);
 		Serial2.begin(19200);
-	#endif
+
  	
 	//Prep and start up espod
 	espod.attachPlayControlHandler(playStatusHandler);
