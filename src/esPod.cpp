@@ -982,6 +982,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 {
                     //Don't try to pull the prevArtistName, prevTrackTitle etc, but this would work for only just jump. 
                     //Plus the A2DP will fire new metadata anyways, so we take it !
+                    //TODO check if this is really needs to happen here or if this should be done in metadata callback
                     prevTrackIndex = currentTrackIndex;
                     strcpy(prevArtistName,artistName);  //Pass the current artist name to the previous reference
                     strcpy(prevAlbumName,albumName);    //Pass the current album name to the previous reference
