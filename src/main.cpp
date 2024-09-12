@@ -98,6 +98,9 @@ void avrc_rn_play_pos_callback(uint32_t play_pos) {
 /// @param id Metadata attribute ID : ESP_AVRC_MD_ATTR_xxx
 /// @param text Text data passed around, sometimes it's a uint32_t
 void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
+	#ifdef DEBUG_MODE
+		Serial.println("AVRC_METADATA_CALLBACK");
+	#endif
 	//TODO : systematically handle L0x04_0x27_PlayStatusNotification firing after track change ?
 	//TODO : complete overhaul ! Also drop the main.cpp prevXXX
 	/* Introducing :
@@ -205,7 +208,7 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 			else { //Unexpected track change
 				if(strcmp(incTrackTitle,espod.trackTitle)!=0) { //If it is not the current track name (weakness of having a playlist with all the same title)
 					if(strcmp(incTrackTitle,espod.prevTrackTitle)!=0) {//It is also not the previous track
-						espod.trackListPosition = (espod.trackListPosition+1) % TOTAL_NUM_TRACKS;
+						espod.trackListPosition = (espod.trackListPosition + 1 ) % TOTAL_NUM_TRACKS;
 						espod.currentTrackIndex = (espod.currentTrackIndex + 1 ) % TOTAL_NUM_TRACKS;
 						espod.trackList[espod.trackListPosition] = (espod.currentTrackIndex);
 						#ifdef DEBUG_MODE
@@ -224,7 +227,7 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 					strcpy(espod.trackTitle,incTrackTitle);
 					trackTitleUpdated = true;
 					#ifdef DEBUG_MODE
-						Serial.printf("\t Title now %s from %s",espod.trackTitle,espod.prevTrackTitle);
+						Serial.printf("\t Title now %s from %s\n",espod.trackTitle,espod.prevTrackTitle);
 					#endif
 				}
 				else {
