@@ -153,6 +153,14 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 					strcpy(espod.prevArtistName,espod.artistName);
 					strcpy(espod.artistName,incArtistName);
 					artistNameUpdated = true;
+					#ifdef DEBUG_MODE
+						Serial.printf("Artist rxed, ACK pending, artistNameUpdated to %s from %s \n",incArtistName,espod.prevArtistName);
+					#endif
+				}
+				else {
+					#ifdef DEBUG_MODE
+						Serial.printf("Artist rxed %s, ACK pending, already updated to %s \n",incArtistName,espod.artistName);
+					#endif
 				}
 			}
 			else { //No pending track change, update if different from current
@@ -161,6 +169,14 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 					strcpy(espod.artistName,incArtistName);
 					artistNameUpdated = true;
 					//Use the artistNameUpdate flag here ?
+					#ifdef DEBUG_MODE
+						Serial.printf("Artist rxed, NO ACK pending, artistNameUdpated to %s from %s \n",incArtistName,espod.prevArtistName);
+					#endif
+				}
+				else {
+					#ifdef DEBUG_MODE
+						Serial.printf("Artist rxed, NO ACK pending, same name : %s \n",incArtistName);
+					#endif
 				}
 				//TODO : check that other comparisons are indeed invalid
 			}
@@ -176,6 +192,14 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 					strcpy(espod.prevTrackTitle,espod.trackTitle);
 					strcpy(espod.trackTitle,incTrackTitle);
 					trackTitleUpdated = true;
+					#ifdef DEBUG_MODE
+						Serial.printf("Title rxed, ACK pending, trackTitleUpdated to %s from %s \n",incTrackTitle,espod.prevTrackTitle);
+					#endif
+				}
+				else {
+					#ifdef DEBUG_MODE
+						Serial.printf("Title rxed %s, ACK pending, already updated to %s \n",incTrackTitle,espod.prevTrackTitle);
+					#endif
 				}
 			}
 			else { //Unexpected track change
@@ -184,15 +208,29 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 						espod.trackListPosition = (espod.trackListPosition+1) % TOTAL_NUM_TRACKS;
 						espod.currentTrackIndex = (espod.currentTrackIndex + 1 ) % TOTAL_NUM_TRACKS;
 						espod.trackList[espod.trackListPosition] = (espod.currentTrackIndex);
+						#ifdef DEBUG_MODE
+							Serial.printf("NO ACK pending, NEXT, pos %d index %d\n",espod.trackListPosition,espod.currentTrackIndex);
+						#endif
 					}
 					else { //It IS the previous track
 						espod.trackListPosition = (espod.trackListPosition + TOTAL_NUM_TRACKS -1) % TOTAL_NUM_TRACKS; //Same thing as doing a -1 with some safety
 						espod.currentTrackIndex = espod.trackList[espod.trackListPosition];
+						#ifdef DEBUG_MODE
+							Serial.printf("NO ACK pending, PREV, pos %d index %d\n",espod.trackListPosition,espod.currentTrackIndex);
+						#endif
 					}
 					//In any case copy the incoming string
 					strcpy(espod.prevTrackTitle,espod.trackTitle);
 					strcpy(espod.trackTitle,incTrackTitle);
 					trackTitleUpdated = true;
+					#ifdef DEBUG_MODE
+						Serial.printf("\t Title now %s from %s",espod.trackTitle,espod.prevTrackTitle);
+					#endif
+				}
+				else {
+					#ifdef DEBUG_MODE
+						Serial.printf("Title rxed, NO ACK pending, same name : %s \n",incTrackTitle);
+					#endif
 				}
 			}
 			// if((strcmp(incTrackTitle,espod.trackTitle)!=0) || artistNameUpdated || albumNameUpdated) { //If there is a difference, copy it over and set an updated flag
@@ -202,18 +240,30 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 			break;
 		case ESP_AVRC_MD_ATTR_PLAYING_TIME: //No checks on duration, always update
 			espod.trackDuration = String((char*)text).toInt();
+			#ifdef DEBUG_MODE
+				Serial.printf("trackDuration rxed : %d \n",espod.trackDuration);
+			#endif
 			break;
 	}
 	//Check if it is ti,e to send a notification
 	if(albumNameUpdated && artistNameUpdated && trackTitleUpdated ) { 
 		//If all fields have received at least one update and the trackChangeAckPending is still hanging. The failsafe for this one is in the espod.refresh()
 		if (espod.trackChangeAckPending>0x00) {
+			#ifdef DEBUG_MODE
+				Serial.printf("Artist+Album+Title +++ ACK Pending 0x%x\n",espod.trackChangeAckPending);
+			#endif
 			espod.L0x04_0x01_iPodAck(iPodAck_OK,espod.trackChangeAckPending);
 			espod.trackChangeAckPending = 0x00;
+			#ifdef DEBUG_MODE
+				Serial.println("trackChangeAckPending reset to 0x00");
+			#endif 
 		}
 		albumNameUpdated 	= 	false;
 		artistNameUpdated 	= 	false;
 		trackTitleUpdated 	= 	false;
+		#ifdef DEBUG_MODE
+			Serial.println("Artist+Album+Title true -> False");
+		#endif
 		//Inform the car
 		espod.L0x04_0x27_PlayStatusNotification(0x01,espod.currentTrackIndex);
 
@@ -294,7 +344,7 @@ void setup() {
 		a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
 		a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE|ESP_AVRC_MD_ATTR_ARTIST|ESP_AVRC_MD_ATTR_ALBUM|ESP_AVRC_MD_ATTR_PLAYING_TIME);
 		a2dp_sink.set_avrc_rn_play_pos_callback(avrc_rn_play_pos_callback);
-		a2dp_sink.start("espiPod2");
+		a2dp_sink.start("espiPod 2");
 
 		#ifdef LED_BUILTIN
 			pinMode(LED_BUILTIN,OUTPUT);
