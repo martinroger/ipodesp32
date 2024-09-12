@@ -984,10 +984,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     //Plus the A2DP will fire new metadata anyways, so we take it !
                     //TODO check if this is really needs to happen here or if this should be done in metadata callback
                     prevTrackIndex = currentTrackIndex;
-                    strcpy(prevArtistName,artistName);  //Pass the current artist name to the previous reference
-                    strcpy(prevAlbumName,albumName);    //Pass the current album name to the previous reference
-                    strcpy(prevTrackTitle,trackTitle);  //Pass the current track Title to the previous reference
-                    prevTrackDuration = trackDuration;  //Also do the track duration like that
                     //Do cursor management
                     trackListPosition = (trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS;
                         //Note that trackList already knows the right index at this trackListPosition
@@ -1002,7 +998,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 }
                 else if (tempTrackIndex == currentTrackIndex) //We are just restarting the current Track
                 {
-                    
                     //Fire the A2DP when ready
                     if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Fire the metadata trigger indirectly
                     //The metadata callback should just ignore it because it will be identical to the current metadata?
@@ -1013,10 +1008,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 {
                     //Initial behaviour is similar to the one for a deterministic PREV
                     prevTrackIndex = currentTrackIndex;
-                    strcpy(prevArtistName,artistName);  //Pass the current artist name to the previous reference
-                    strcpy(prevAlbumName,albumName);    //Pass the current album name to the previous reference
-                    strcpy(prevTrackTitle,trackTitle);  //Pass the current track Title to the previous reference
-                    prevTrackDuration = trackDuration;  //Also do the track duration like that
                     //Do cursor management
                     trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS;
                     trackList[trackListPosition] = tempTrackIndex;
@@ -1197,11 +1188,8 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 {
                     //Don't try to pull the prevArtistName, prevTrackTitle etc, but this would work for only just jump. 
                     //Plus the A2DP will fire new metadata anyways, so we take it !
+                    //TODO check if this is really needs to happen here or if this should be done in metadata callback
                     prevTrackIndex = currentTrackIndex;
-                    strcpy(prevArtistName,artistName);  //Pass the current artist name to the previous reference
-                    strcpy(prevAlbumName,albumName);    //Pass the current album name to the previous reference
-                    strcpy(prevTrackTitle,trackTitle);  //Pass the current track Title to the previous reference
-                    prevTrackDuration = trackDuration;  //Also do the track duration like that
                     //Do cursor management
                     trackListPosition = (trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS;
                         //Note that trackList already knows the right index at this trackListPosition
@@ -1216,7 +1204,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 }
                 else if (tempTrackIndex == currentTrackIndex) //We are just restarting the current Track
                 {
-                    
                     //Fire the A2DP when ready
                     if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Fire the metadata trigger indirectly
                     //The metadata callback should just ignore it because it will be identical to the current metadata?
@@ -1227,10 +1214,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 {
                     //Initial behaviour is similar to the one for a deterministic PREV
                     prevTrackIndex = currentTrackIndex;
-                    strcpy(prevArtistName,artistName);  //Pass the current artist name to the previous reference
-                    strcpy(prevAlbumName,albumName);    //Pass the current album name to the previous reference
-                    strcpy(prevTrackTitle,trackTitle);  //Pass the current track Title to the previous reference
-                    prevTrackDuration = trackDuration;  //Also do the track duration like that
                     //Do cursor management
                     trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS;
                     trackList[trackListPosition] = tempTrackIndex;
