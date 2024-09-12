@@ -116,7 +116,7 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 				}
 				else {
 					#ifdef DEBUG_MODE
-						Serial.printf("Album rxed, ACK pending, already updated to %s \n"espod.albumName);
+						Serial.printf("Album rxed, ACK pending, already updated to %s \n",espod.albumName);
 					#endif
 				}
 			}
