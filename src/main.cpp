@@ -18,15 +18,10 @@
 esPod espod(Serial2);
 
 Timer<millis> espodRefreshTimer = 5;
-Timer<millis> notificationsRefresh = 500;
 
-//Reminders used to keep track of previous changes
 char incAlbumName[255] = "incAlbum";
-//char prevAlbumName[255] = "PrevAlbum";
 char incArtistName[255] = "incArtist";
-//char prevArtistName[255] = "PrevArtist";
 char incTrackTitle[255] = "incTitle";
-//char prevTrackTitle[255] = "PrevTitle";
 bool albumNameUpdated = false;
 bool artistNameUpdated = false;
 bool trackTitleUpdated = false;
@@ -98,9 +93,6 @@ void avrc_rn_play_pos_callback(uint32_t play_pos) {
 /// @param id Metadata attribute ID : ESP_AVRC_MD_ATTR_xxx
 /// @param text Text data passed around, sometimes it's a uint32_t
 void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
-	#ifdef DEBUG_MODE
-		Serial.println("AVRC_METADATA_CALLBACK");
-	#endif
 	//TODO : systematically handle L0x04_0x27_PlayStatusNotification firing after track change ?
 	//TODO : complete overhaul ! Also drop the main.cpp prevXXX
 	/* Introducing :
@@ -109,151 +101,138 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 	trackChangeTimestamp <- Send the ACK anyways after millis() minus this value exceeds TRACK_CHANGE_TIMEOUT in espod.refresh()
 	*/
 	switch (id)	{
+
+
 		case ESP_AVRC_MD_ATTR_ALBUM:
 			strcpy(incAlbumName,(char*)text); //Buffer the incoming album string
 			if(espod.trackChangeAckPending>0x00) { //There is a pending metadata update
 				if(!albumNameUpdated) { //The album Name has not been updated yet
-					strcpy(espod.prevAlbumName,espod.albumName);
+					//strcpy(espod.prevAlbumName,espod.albumName); //We need to copy because of some stupid check the radio does
 					strcpy(espod.albumName,incAlbumName);
 					albumNameUpdated = true;
 					#ifdef DEBUG_MODE
-						Serial.printf("Album rxed, ACK pending, albumNameUpdate to %s from %s \n",incAlbumName,espod.prevAlbumName);
+						Serial.printf("Album rxed, ACK pending, albumNameUpdated to %s \n",espod.albumName);
 					#endif
 				}
 				else {
 					#ifdef DEBUG_MODE
-						Serial.printf("Album rxed %s, ACK pending, already updated to %s \n",incAlbumName,espod.albumName);
+						Serial.printf("Album rxed, ACK pending, already updated to %s \n"espod.albumName);
 					#endif
 				}
 			}
-			else { //There is no pending track change
-				if(strcmp(incAlbumName,espod.albumName)!=0) { //If not the current albumName
+			else { //There is no pending track change from iPod : active or passive track change from avrc target
+				if(strcmp(incAlbumName,espod.albumName)!=0) { //Different incoming metadata
 					strcpy(espod.prevAlbumName,espod.albumName);
 					strcpy(espod.albumName,incAlbumName);
 					albumNameUpdated = true;
-					//Use the albumNameUpdated flag here ?
 					#ifdef DEBUG_MODE
-						Serial.printf("Album rxed, NO ACK pending, albumNameUpdate to %s from %s \n",incAlbumName,espod.prevAlbumName);
+						Serial.printf("Album rxed, NO ACK pending, albumNameUpdated to %s \n",espod.albumName);
 					#endif
 				}
-				else {
+				else { //Despammer for double sends
 					#ifdef DEBUG_MODE
-						Serial.printf("Album rxed, NO ACK pending, same name : %s \n",incAlbumName);
+						Serial.printf("Album rxed, NO ACK pending, already updated to %s \n",espod.albumName);
 					#endif
 				}
-				//TODO : check if previously active album ?
-				//No Next management 
 			}
-			// if((strcmp(incAlbumName,espod.albumName)!=0) || artistNameUpdated || trackTitleUpdated) { //If there is a difference, copy it over and set an updated flag
-			// 	strcpy(espod.albumName,incAlbumName);
-			// 	albumNameUpdated = true;
-			// }
 			break;
+
+
 		case ESP_AVRC_MD_ATTR_ARTIST:
 			strcpy(incArtistName,(char*)text); //Buffer the incoming artist string
-			if(espod.trackChangeAckPending>0x00) {
-				if(!artistNameUpdated) {
-					strcpy(espod.prevArtistName,espod.artistName);
+			if(espod.trackChangeAckPending>0x00) { //There is a pending metadata update
+				if(!artistNameUpdated) { //The artist name has not been updated yet
+					//strcpy(espod.prevArtistName,espod.artistName); //We need to copy because of some stupid check the radio does
 					strcpy(espod.artistName,incArtistName);
 					artistNameUpdated = true;
 					#ifdef DEBUG_MODE
-						Serial.printf("Artist rxed, ACK pending, artistNameUpdated to %s from %s \n",incArtistName,espod.prevArtistName);
+						Serial.printf("Artist rxed, ACK pending, artistNameUpdated to %s \n",espod.artistName);
 					#endif
 				}
 				else {
 					#ifdef DEBUG_MODE
-						Serial.printf("Artist rxed %s, ACK pending, already updated to %s \n",incArtistName,espod.artistName);
+						Serial.printf("Artist rxed, ACK pending, already updated to %s \n",espod.artistName);
 					#endif
 				}
 			}
-			else { //No pending track change, update if different from current
-				if(strcmp(incArtistName,espod.artistName)!=0) {
+			else { //There is no pending track change from iPod : active or passive track change from avrc target
+				if(strcmp(incArtistName,espod.artistName)!=0) { //Different incoming metadata
 					strcpy(espod.prevArtistName,espod.artistName);
 					strcpy(espod.artistName,incArtistName);
 					artistNameUpdated = true;
-					//Use the artistNameUpdate flag here ?
 					#ifdef DEBUG_MODE
-						Serial.printf("Artist rxed, NO ACK pending, artistNameUdpated to %s from %s \n",incArtistName,espod.prevArtistName);
+						Serial.printf("Artist rxed, NO ACK pending, artistNameUdpated to %s \n",espod.artistName);
 					#endif
 				}
-				else {
+				else { //Despammer for double sends
 					#ifdef DEBUG_MODE
-						Serial.printf("Artist rxed, NO ACK pending, same name : %s \n",incArtistName);
+						Serial.printf("Artist rxed, NO ACK pending, already updated to %s \n",espod.artistName);
 					#endif
 				}
-				//TODO : check that other comparisons are indeed invalid
 			}
-			// if((strcmp(incArtistName,espod.artistName)!=0) || albumNameUpdated || trackTitleUpdated) { //If there is a difference, copy it over and set an updated flag
-			// 	strcpy(espod.artistName,incArtistName);
-			// 	artistNameUpdated = true;
-			// }
 			break;
-		case ESP_AVRC_MD_ATTR_TITLE:
+
+
+		case ESP_AVRC_MD_ATTR_TITLE: //Title change triggers the NEXT track assumption if unexpected. It is too intensive to try to do NEXT/PREV guesswork
 			strcpy(incTrackTitle,(char*)text); //Buffer the incoming track title
-			if(espod.trackChangeAckPending>0x00) {
-				if(!trackTitleUpdated) {
-					strcpy(espod.prevTrackTitle,espod.trackTitle);
+			if(espod.trackChangeAckPending>0x00) { //There is a pending metadata update
+				if(!trackTitleUpdated) { //The track title has not been updated yet
+					//strcpy(espod.prevTrackTitle,espod.trackTitle); //We need to copy because of some stupid check the radio does
 					strcpy(espod.trackTitle,incTrackTitle);
 					trackTitleUpdated = true;
 					#ifdef DEBUG_MODE
-						Serial.printf("Title rxed, ACK pending, trackTitleUpdated to %s from %s \n",incTrackTitle,espod.prevTrackTitle);
+						Serial.printf("Title rxed, ACK pending, trackTitleUpdated to %s\n",espod.trackTitle);
 					#endif
 				}
 				else {
 					#ifdef DEBUG_MODE
-						Serial.printf("Title rxed %s, ACK pending, already updated to %s \n",incTrackTitle,espod.prevTrackTitle);
+						Serial.printf("Title rxed, ACK pending, already updated to %s \n",espod.trackTitle);
 					#endif
 				}
 			}
-			else { //Unexpected track change
-				if(strcmp(incTrackTitle,espod.trackTitle)!=0) { //If it is not the current track name (weakness of having a playlist with all the same title)
-					if(strcmp(incTrackTitle,espod.prevTrackTitle)!=0) {//It is also not the previous track
-						espod.trackListPosition = (espod.trackListPosition + 1 ) % TOTAL_NUM_TRACKS;
-						espod.currentTrackIndex = (espod.currentTrackIndex + 1 ) % TOTAL_NUM_TRACKS;
-						espod.trackList[espod.trackListPosition] = (espod.currentTrackIndex);
-						#ifdef DEBUG_MODE
-							Serial.printf("NO ACK pending, NEXT, pos %d index %d\n",espod.trackListPosition,espod.currentTrackIndex);
-						#endif
-					}
-					else { //It IS the previous track
-						espod.trackListPosition = (espod.trackListPosition + TOTAL_NUM_TRACKS -1) % TOTAL_NUM_TRACKS; //Same thing as doing a -1 with some safety
-						espod.currentTrackIndex = espod.trackList[espod.trackListPosition];
-						#ifdef DEBUG_MODE
-							Serial.printf("NO ACK pending, PREV, pos %d index %d\n",espod.trackListPosition,espod.currentTrackIndex);
-						#endif
-					}
-					//In any case copy the incoming string
+			else { //There is no pending track change from iPod : active or passive track change from avrc target
+				if(strcmp(incTrackTitle,espod.trackTitle)!=0) { //Different from current track Title -> Systematic NEXT
+					//Assume it is Next, perform cursor operations
+					espod.trackListPosition = (espod.trackListPosition + 1 ) % TOTAL_NUM_TRACKS;
+					espod.prevTrackIndex = espod.currentTrackIndex;
+					espod.currentTrackIndex = (espod.currentTrackIndex + 1 ) % TOTAL_NUM_TRACKS;
+					espod.trackList[espod.trackListPosition] = (espod.currentTrackIndex);
+					//Copy new title and flag that data has been updated
 					strcpy(espod.prevTrackTitle,espod.trackTitle);
 					strcpy(espod.trackTitle,incTrackTitle);
 					trackTitleUpdated = true;
 					#ifdef DEBUG_MODE
-						Serial.printf("\t Title now %s from %s\n",espod.trackTitle,espod.prevTrackTitle);
+						Serial.printf("Title rxed, NO ACK pending, AUTONEXT, trackTitleUpdated to %s\n",espod.trackTitle);
+						Serial.printf("\ttrackPos %d trackIndex %d\n",espod.trackListPosition,espod.currentTrackIndex);
 					#endif
 				}
-				else {
+				else { //Despammer for double sends
 					#ifdef DEBUG_MODE
-						Serial.printf("Title rxed, NO ACK pending, same name : %s \n",incTrackTitle);
+						Serial.printf("Title rxed, NO ACK pending, same name : %s \n",espod.trackTitle);
 					#endif
 				}
 			}
-			// if((strcmp(incTrackTitle,espod.trackTitle)!=0) || artistNameUpdated || albumNameUpdated) { //If there is a difference, copy it over and set an updated flag
-			// 	strcpy(espod.trackTitle,incTrackTitle);
-			// 	trackTitleUpdated = true;
-			// }
 			break;
+
+
 		case ESP_AVRC_MD_ATTR_PLAYING_TIME: //No checks on duration, always update
+			//TODO need to implement espod.prevTrackDuration management
 			espod.trackDuration = String((char*)text).toInt();
 			#ifdef DEBUG_MODE
 				Serial.printf("trackDuration rxed : %d \n",espod.trackDuration);
 			#endif
 			break;
 	}
-	//Check if it is ti,e to send a notification
+
+
+
+	//Check if it is tie to send a notification
 	if(albumNameUpdated && artistNameUpdated && trackTitleUpdated ) { 
 		//If all fields have received at least one update and the trackChangeAckPending is still hanging. The failsafe for this one is in the espod.refresh()
 		if (espod.trackChangeAckPending>0x00) {
 			#ifdef DEBUG_MODE
 				Serial.printf("Artist+Album+Title +++ ACK Pending 0x%x\n",espod.trackChangeAckPending);
+				Serial.printf("\tPending duration: %d\n",millis()-espod.trackChangeTimestamp);
 			#endif
 			espod.L0x04_0x01_iPodAck(iPodAck_OK,espod.trackChangeAckPending);
 			espod.trackChangeAckPending = 0x00;
@@ -268,29 +247,10 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 			Serial.println("Artist+Album+Title true -> False");
 		#endif
 		//Inform the car
-		espod.L0x04_0x27_PlayStatusNotification(0x01,espod.currentTrackIndex);
-
-		// if(espod.waitMetadataUpdate) { //If this was expected, it means the trickeries with index were done directly on the espod
-		// 	artistNameUpdated = false;
-		// 	albumNameUpdated = false;
-		// 	trackTitleUpdated = false;
-		// 	espod.waitMetadataUpdate = false; //Given the duplicate conditions, this is irrelevant to keep that flag up
-		// }
-		// else { //This was "unprovoked update", try to determine if this is a PREV or a NEXT
-		// 	if((strcmp(espod.artistName,prevArtistName)==0) && (strcmp(espod.albumName,prevAlbumName)==0) && (strcmp(espod.trackTitle,prevTrackTitle)==0)) {
-		// 		//This is very certainly a Previous ... rewind the currentTrackIndex
-		// 		espod.trackListPosition = (espod.trackListPosition + TOTAL_NUM_TRACKS -1)%TOTAL_NUM_TRACKS; //Same thing as doing a -1 with some safety
-		// 		espod.currentTrackIndex = espod.trackList[espod.trackListPosition];
-		// 	}
-		// 	else { //Something is different, assume it is a next (the case for identicals is impossible)
-		// 		espod.trackListPosition = (espod.trackListPosition+1) % TOTAL_NUM_TRACKS;
-		// 		espod.trackList[espod.trackListPosition] = (espod.currentTrackIndex+1) % TOTAL_NUM_TRACKS;
-		// 		espod.currentTrackIndex++;
-		// 	}
-		// 	espod.L0x04_0x27_PlayStatusNotification(0x01,espod.currentTrackIndex);
-		// }
+		if (espod.playStatusNotificationState==NOTIF_ON) {
+			espod.L0x04_0x27_PlayStatusNotification(0x01,espod.currentTrackIndex);
+		}
 	}
-
 }
 
 #endif
@@ -302,23 +262,41 @@ void playStatusHandler(byte playCommand) {
   	switch (playCommand) {
 		case A2DP_STOP:
 			a2dp_sink.stop();
+			#ifdef DEBUG_MODE
+				Serial.println("playStatusHandler: A2DP_STOP");
+			#endif
 			//Stoppage notification is handled internally in the espod
 			break;
 		case A2DP_PLAY:
 			a2dp_sink.play();
+			#ifdef DEBUG_MODE
+				Serial.println("playStatusHandler: A2DP_PLAY");
+			#endif
 			//Watch out for possible metadata
 			break;
 		case A2DP_PAUSE:
 			a2dp_sink.pause();
+			#ifdef DEBUG_MODE
+				Serial.println("playStatusHandler: A2DP_PAUSE");
+			#endif
 			break;
 		case A2DP_REWIND:
 			a2dp_sink.previous();
+			#ifdef DEBUG_MODE
+				Serial.println("playStatusHandler: A2DP_REWIND");
+			#endif
 			break;
 		case A2DP_NEXT:
 			a2dp_sink.next();
+			#ifdef DEBUG_MODE
+				Serial.println("playStatusHandler: A2DP_NEXT");
+			#endif
 			break;
-		case A2DP_PREV: //We will assume that the timing difference for a PREV and a REWIND is similar on the AVRC TG and the CT/Radio
+		case A2DP_PREV: 
 			a2dp_sink.previous();
+			#ifdef DEBUG_MODE
+				Serial.println("playStatusHandler: A2DP_PREV");
+			#endif
 			break;
 	}
   	#endif
@@ -379,8 +357,5 @@ void setup() {
 void loop() {
 	if(espodRefreshTimer) {
 		espod.refresh();
-	}
-	if(notificationsRefresh) { //currently does nothing...
-		espod.cyclicNotify();
 	}
 }

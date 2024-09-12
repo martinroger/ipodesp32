@@ -183,5 +183,4 @@ public:
 
     //Cyclic functions
     void refresh();
-    void cyclicNotify();
 };
