@@ -1410,7 +1410,7 @@ void esPod::refresh()
     }
 
     //Reset if no message received in the last 120s
-    if((millis()/1000)-lastConnected > 120) {
+    if(((millis()/1000)-lastConnected > 120) && !disabled) {
         #ifdef DEBUG_MODE
             _debugSerial.println("Serial comms timeout");
         #endif
