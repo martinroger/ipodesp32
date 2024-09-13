@@ -57,9 +57,7 @@ void esPod::resetState(){
     //Playback Engine
     playStatus = PB_STATE_PAUSED;
     playStatusNotificationState = NOTIF_OFF;
-    playStatusNotificationsPaused = false; //To Deprecate
     trackChangeAckPending = 0x00;
-    waitMetadataUpdate = false;  //To Deprecate, probably
     shuffleStatus = 0x00;
     repeatStatus = 0x02;
 
@@ -1082,58 +1080,138 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                             playStatus = PB_STATE_PLAYING; //Switch to playing in any other case
                             if(_playStatusHandler) _playStatusHandler(A2DP_PLAY);
                         }
+                        L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
                     }
                     break;
                 case PB_CMD_STOP: //Stop
                     {
                         playStatus = PB_STATE_STOPPED;
                         if(_playStatusHandler) _playStatusHandler(A2DP_STOP);
+                        L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
                     }
                     break;
                 case PB_CMD_NEXT_TRACK: //Next track.. never seems to happen ?
                     {
-                        if(_playStatusHandler) _playStatusHandler(A2DP_NEXT);
-                        waitMetadataUpdate = true;//Tells the system we are expecting new metadata (that has to be checked for consistency and duplicates)
-                        // Note about manipulation of currentTrackIndex, trackList and trackListPosition : it should happen outside of this case and should provoke the right notification
+                        //This is only for when the system requires the data of the previously active track
+                        prevTrackIndex = currentTrackIndex; 
+                        strcpy(prevAlbumName,albumName);
+                        strcpy(prevArtistName,artistName);
+                        strcpy(prevTrackTitle,trackTitle);
+                        prevTrackDuration = trackDuration;
+
+                        //Cursor operations for NEXT
+                        trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS;
+                        trackList[trackListPosition] = tempTrackIndex;
+                        currentTrackIndex = tempTrackIndex;
+                        
+                        #ifdef DEBUG_MODE
+                        _debugSerial.printf("\t NEXT TRACK requested, prev Index %d new Index %d pos %d\n",prevTrackIndex,currentTrackIndex,trackListPosition);
+                        #endif
+
+                        //Fire the A2DP when ready
+                        if(_playStatusHandler) _playStatusHandler(A2DP_NEXT); //Fire the metadata trigger indirectly
+
+                        //Engage the pending ACK for expected metadata
+                        L0x04_0x01_iPodAck(iPodAck_CmdPending,cmdID,TRACK_CHANGE_TIMEOUT);
+                        trackChangeAckPending = cmdID;
+                        trackChangeTimestamp = millis();
                     }
                     break;
                 case PB_CMD_PREVIOUS_TRACK: //Prev track
                     {
-                        if(_playStatusHandler) _playStatusHandler(A2DP_PREV);
-                        waitMetadataUpdate = true;//Tells the system we are expecting new metadata (that has to be checked for consistency and duplicates)
-                        // Note about manipulation of currentTrackIndex, trackList and trackListPosition : it should happen outside of this case and should provoke the right notification
+                        //This is only for when the system requires the data of the previously active track
+                        prevTrackIndex = currentTrackIndex; 
+                        strcpy(prevAlbumName,albumName);
+                        strcpy(prevArtistName,artistName);
+                        strcpy(prevTrackTitle,trackTitle);
+                        prevTrackDuration = trackDuration;
+
+                        //Cursor operations for PREV
+                        trackListPosition = (trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS; //Shift trackListPosition one to the right
+                        currentTrackIndex = tempTrackIndex;
+                        #ifdef DEBUG_MODE
+                            _debugSerial.printf("\t PREV TRACK requested, prev Index %d new Index %d pos %d \n",prevTrackIndex,currentTrackIndex,trackListPosition);
+                        #endif
+
+                        //Fire the A2DP when ready
+                        if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Fire the metadata trigger indirectly
+                        
+                        //Engage the pending ACK for expected metadata
+                        L0x04_0x01_iPodAck(iPodAck_CmdPending,cmdID,TRACK_CHANGE_TIMEOUT);
+                        trackChangeAckPending = cmdID;
+                        trackChangeTimestamp = millis();
                     }
                     break;
                 case PB_CMD_NEXT: //Next track
                     {
-                        if(_playStatusHandler) _playStatusHandler(A2DP_NEXT);
-                        waitMetadataUpdate = true;//Tells the system we are expecting new metadata (that has to be checked for consistency and duplicates)
-                        // Note about manipulation of currentTrackIndex, trackList and trackListPosition : it should happen outside of this case and should provoke the right notification
+                        //This is only for when the system requires the data of the previously active track
+                        prevTrackIndex = currentTrackIndex; 
+                        strcpy(prevAlbumName,albumName);
+                        strcpy(prevArtistName,artistName);
+                        strcpy(prevTrackTitle,trackTitle);
+                        prevTrackDuration = trackDuration;
+
+                        //Cursor operations for NEXT
+                        trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS;
+                        trackList[trackListPosition] = tempTrackIndex;
+                        currentTrackIndex = tempTrackIndex;
+                        
+                        #ifdef DEBUG_MODE
+                        _debugSerial.printf("\t NEXT requested, prev Index %d new Index %d pos %d\n",prevTrackIndex,currentTrackIndex,trackListPosition);
+                        #endif
+
+                        //Fire the A2DP when ready
+                        if(_playStatusHandler) _playStatusHandler(A2DP_NEXT); //Fire the metadata trigger indirectly
+
+                        //Engage the pending ACK for expected metadata
+                        L0x04_0x01_iPodAck(iPodAck_CmdPending,cmdID,TRACK_CHANGE_TIMEOUT);
+                        trackChangeAckPending = cmdID;
+                        trackChangeTimestamp = millis();
                     }
                     break;
                 case PB_CMD_PREV: //Prev track
                     {
-                        if(_playStatusHandler) _playStatusHandler(A2DP_PREV);
-                        waitMetadataUpdate = true;//Tells the system we are expecting new metadata (that has to be checked for consistency and duplicates)
-                        // Note about manipulation of currentTrackIndex, trackList and trackListPosition : it should happen outside of this case and should provoke the right notification
+                        //This is only for when the system requires the data of the previously active track
+                        prevTrackIndex = currentTrackIndex; 
+                        strcpy(prevAlbumName,albumName);
+                        strcpy(prevArtistName,artistName);
+                        strcpy(prevTrackTitle,trackTitle);
+                        prevTrackDuration = trackDuration;
+
+                        //Cursor operations for PREV
+                        trackListPosition = (trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS; //Shift trackListPosition one to the right
+                        currentTrackIndex = tempTrackIndex;
+                        #ifdef DEBUG_MODE
+                            _debugSerial.printf("\t PREV requested, prev Index %d new Index %d pos %d \n",prevTrackIndex,currentTrackIndex,trackListPosition);
+                        #endif
+
+                        //Fire the A2DP when ready
+                        if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Fire the metadata trigger indirectly
+                        
+                        //Engage the pending ACK for expected metadata
+                        L0x04_0x01_iPodAck(iPodAck_CmdPending,cmdID,TRACK_CHANGE_TIMEOUT);
+                        trackChangeAckPending = cmdID;
+                        trackChangeTimestamp = millis();
                     }
                     break;
-                case PB_CMD_PLAY: //Play
+                case PB_CMD_PLAY: //Play... do we need to have an ack pending ?
                     {
                         playStatus = PB_STATE_PLAYING;
                         if(_playStatusHandler) _playStatusHandler(A2DP_PLAY);
-                        waitMetadataUpdate = true;
+                        //Engage the pending ACK for expected metadata
+                        L0x04_0x01_iPodAck(iPodAck_CmdPending,cmdID,TRACK_CHANGE_TIMEOUT);
+                        trackChangeAckPending = cmdID;
+                        trackChangeTimestamp = millis();
                     }
                     break;
                 case PB_CMD_PAUSE: //Pause
                     {
                         playStatus = PB_STATE_PAUSED;
                         if(_playStatusHandler) _playStatusHandler(A2DP_PAUSE);
-                        waitMetadataUpdate = true;
+                        L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
                     }
                     break;
                 }
-                L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
                 if((playStatus = PB_STATE_STOPPED)&&(playStatusNotificationState==NOTIF_ON)) L0x04_0x27_PlayStatusNotification(0x00); //Notify successful stop
             }   
             break;
@@ -1149,10 +1227,10 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
 
         case L0x04_SetShuffle: //Set Shuffle state
             {
-                #ifdef DEBUG_MODE
-                _debugSerial.println("SetShuffle");
-                #endif
                 shuffleStatus = byteArray[2];
+                #ifdef DEBUG_MODE
+                _debugSerial.printf("SetShuffle to %x\n",shuffleStatus);
+                #endif
                 L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
             }
             break;
@@ -1168,10 +1246,10 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
 
         case L0x04_SetRepeat: //Set Repeat state
             {
-                #ifdef DEBUG_MODE
-                _debugSerial.println("SetRepeat");
-                #endif
                 repeatStatus = byteArray[2];
+                #ifdef DEBUG_MODE
+                _debugSerial.printf("SetRepeat to %x\n",repeatStatus);
+                #endif
                 L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
             }
             break;
@@ -1292,7 +1370,7 @@ void esPod::processPacket(const byte *byteArray, uint32_t len)
     
     default:
         #ifdef DEBUG_MODE
-        _debugSerial.printf("Unknown Lingo : 0x%x ",rxLingoID);
+        _debugSerial.printf("Unknown Lingo : 0x%x \n",rxLingoID);
         #endif
         break;
     }
@@ -1322,23 +1400,7 @@ void esPod::refresh()
                     byte tempChecksum = esPod::checksum(_rxBuf, _rxLen);
                     if (tempChecksum == _rxBuf[_rxLen]) { //Checksum checks out
                         processPacket(_rxBuf,_rxLen);  
-                        #ifdef DEBUG_MODE
-                            #ifdef DUMP_MODE
-                            _debugSerial.print("RX ");
-                            for(int i = 0;i<_rxLen;i++) {
-                                _debugSerial.print(_rxBuf[i],HEX);
-                                _debugSerial.print(" ");
-                            }
-                            _debugSerial.print(" ");
-                            _debugSerial.println(_rxBuf[_rxLen],HEX);
-                            #endif
-                        #endif
                     }
-                    #ifdef DEBUG_MODE
-                    else {
-                        _debugSerial.println("Checksum failed");
-                    }
-                    #endif
                 }
             }
 
@@ -1349,11 +1411,17 @@ void esPod::refresh()
 
     //Reset if no message received in the last 120s
     if((millis()/1000)-lastConnected > 120) {
+        #ifdef DEBUG_MODE
+            _debugSerial.println("Serial comms timeout");
+        #endif
         resetState();
     }
 
     //Send the track change Ack Pending if it has not sent already
     if(!disabled && (trackChangeAckPending>0x00) && (millis()>(trackChangeTimestamp+TRACK_CHANGE_TIMEOUT))) {
+        #ifdef DEBUG_MODE
+            _debugSerial.printf("Timeout reset of pending ACK to %x\n",trackChangeAckPending);
+        #endif        
         L0x04_0x01_iPodAck(iPodAck_OK,trackChangeAckPending);
         trackChangeAckPending = 0x00;
     }

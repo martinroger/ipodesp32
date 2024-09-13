@@ -87,10 +87,8 @@ public:
     //Playback Engine
     byte playStatus                     =   PB_STATE_PAUSED; //Current state of the PBEngine
     byte playStatusNotificationState    =   NOTIF_OFF; //Current state of the Notifications engine
-    bool playStatusNotificationsPaused  =   false; //Possibly not needed no more
     byte trackChangeAckPending          =   0x00; //Indicate there is a pending track change.
     uint64_t trackChangeTimestamp       =   0; //Trigger for the last track change request. Time outs the pending track change.
-    bool waitMetadataUpdate             =   false; //Possibly not needed no more
     byte shuffleStatus                  =   0x00; //00 No Shuffle, 0x01 Tracks 0x02 Albums
     byte repeatStatus                   =   0x02; //00 Repeat off, 01 One track, 02 All tracks
 

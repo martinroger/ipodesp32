@@ -19,12 +19,14 @@ esPod espod(Serial2);
 
 Timer<millis> espodRefreshTimer = 5;
 
-char incAlbumName[255] = "incAlbum";
-char incArtistName[255] = "incArtist";
-char incTrackTitle[255] = "incTitle";
-bool albumNameUpdated = false;
-bool artistNameUpdated = false;
-bool trackTitleUpdated = false;
+char incAlbumName[255] 		= 	"incAlbum";
+char incArtistName[255] 	= 	"incArtist";
+char incTrackTitle[255] 	= 	"incTitle";
+uint32_t incTrackDuration 	= 	0;
+bool albumNameUpdated 		= 	false;
+bool artistNameUpdated 		= 	false;
+bool trackTitleUpdated 		= 	false;
+bool trackDurationUpdated		=	false;
 
 #ifdef ENABLE_A2DP
 /// @brief callback on changes of A2DP connection and AVRCP connection. Turns a LED on, enables the espod.
@@ -215,23 +217,49 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 			break;
 
 
-		case ESP_AVRC_MD_ATTR_PLAYING_TIME: //No checks on duration, always update
-			//TODO need to implement espod.prevTrackDuration management
-			espod.trackDuration = String((char*)text).toInt();
-			#ifdef DEBUG_MODE
-				Serial.printf("trackDuration rxed : %d \n",espod.trackDuration);
-			#endif
+		case ESP_AVRC_MD_ATTR_PLAYING_TIME: 
+			incTrackDuration = String((char*)text).toInt();
+			if(espod.trackChangeAckPending>0x00) { //There is a pending metadata update
+				if(!trackDurationUpdated) { //The duration has not been updated yet
+					//espod.prevTrackDuration = espod.trackDuration;
+					espod.trackDuration = incTrackDuration;
+					trackDurationUpdated = true;
+					#ifdef DEBUG_MODE
+						Serial.printf("Duration rxed, ACK pending, trackDurationUpdated to %d \n",espod.trackDuration);
+					#endif
+				}
+				else {
+					#ifdef DEBUG_MODE
+						Serial.printf("Duration rxed, ACK pending, already updated to %d \n",espod.trackDuration);
+					#endif
+				}
+			}
+			else { //There is no pending track change from iPod : active or passive track change from avrc target
+				if(incTrackDuration != espod.trackDuration) { //Different incoming metadata
+					//espod.prevTrackDuration = espod.trackDuration;
+					espod.trackDuration = incTrackDuration;
+					trackDurationUpdated = true;
+					#ifdef DEBUG_MODE
+						Serial.printf("Duration rxed, NO ACK pending, trackDurationUpdated to %d \n",espod.trackDuration);
+					#endif
+				}
+				else { //Despammer for double sends
+					#ifdef DEBUG_MODE
+						Serial.printf("Duration rxed, NO ACK pending, already updated to %d \n",espod.trackDuration);
+					#endif
+				}
+			}
 			break;
 	}
 
 
 
 	//Check if it is tie to send a notification
-	if(albumNameUpdated && artistNameUpdated && trackTitleUpdated ) { 
+	if(albumNameUpdated && artistNameUpdated && trackTitleUpdated && trackDurationUpdated ) { 
 		//If all fields have received at least one update and the trackChangeAckPending is still hanging. The failsafe for this one is in the espod.refresh()
 		if (espod.trackChangeAckPending>0x00) {
 			#ifdef DEBUG_MODE
-				Serial.printf("Artist+Album+Title +++ ACK Pending 0x%x\n",espod.trackChangeAckPending);
+				Serial.printf("Artist+Album+Title+Duration +++ ACK Pending 0x%x\n",espod.trackChangeAckPending);
 				Serial.printf("\tPending duration: %d\n",millis()-espod.trackChangeTimestamp);
 			#endif
 			espod.L0x04_0x01_iPodAck(iPodAck_OK,espod.trackChangeAckPending);
@@ -243,8 +271,9 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 		albumNameUpdated 	= 	false;
 		artistNameUpdated 	= 	false;
 		trackTitleUpdated 	= 	false;
+		trackDurationUpdated=	false;
 		#ifdef DEBUG_MODE
-			Serial.println("Artist+Album+Title true -> False");
+			Serial.println("Artist+Album+Title+Duration true -> False");
 		#endif
 		//Inform the car
 		if (espod.playStatusNotificationState==NOTIF_ON) {
