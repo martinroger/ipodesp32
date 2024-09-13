@@ -61,13 +61,13 @@ The I2S stream generated from the ESP32 goes to a DAC chip (in my case an *UDA13
 ## What is needed ?
 ### PL2303-based USB-Serial interface
 
-Unfortunately BMW's head unit doesn't seem to recognise the most widely available USB-Serial chips like the *FTDI 232* or the *CH340* and other variants, possibly because of trade deals and of their release dates.
+Unfortunately BMW's head unit doesn't seem to **natively** recognise the most widely available USB-Serial chips like the *FTDI 232* or the *CH340* and other variants, possibly because of trade deals and of their release dates.
 
-Most if not all the Y-cables used to connect iPods to the Mini use a **PL2303 chip** to let the iPod communicate over Serial with the car.
+Most if not all the Y-cables used to connect iPods to the Mini use a **PL2303HX chip** to let the iPod communicate over Serial with the car.
 
-Working chips are the PL2303HX, PL2303GS and possibly some others... but unfortunately this has been a widely copied chip so there is a host of fakes available on the Internet. These should just as fine as the real ones, but they are obviously not the real deal.
+Working USB-Serial chips need to report the VID and PID of the **PL2303HX** converter to be recognised and unfortunately it is difficult to source in small quantities. Additionally this has been a widely copied chip so there is a host of fakes available on the Internet. These should just as fine as the real ones, but they are obviously not the real deal.
 
-For true DIY makers I would recommend getting a PL2303 interface board like the [one manufactured by Waveshare](https://www.waveshare.com/product/pl2303-usb-uart-board-type-c.htm?sku=20265), but alternatives from [Amazon/Aliexpress](https://a.co/d/a89Kzf7) and consorts might work just as well.
+Hardcore DIY makers can get a PL2303G interface board like the [one manufactured by Waveshare](https://www.waveshare.com/product/pl2303-usb-uart-board-type-c.htm?sku=20265) and edit the OTPROM (only once) with the PL2303HX VID and PIDs, but PL2303HX alternatives from [Amazon/Aliexpress](https://a.co/d/a89Kzf7) and consorts might work just as well without trying to find a way to edit the VID and PID.
 
 ![PL2303 Converters](/img/PL2303.png)
 
@@ -83,6 +83,8 @@ Other boards, such as the **[Sparkfun Thing Plus](https://www.sparkfun.com/produ
 ![SparkFun Thing Plus](/img/SparkfunThingPlus.png)
 
 ### An external DAC breakout board
+
+Please note, because of deprecation issues with ESP's A2DP-I2S implementation, this project uses now [pschatzmann's Arduino Audio Tools lib](https://github.com/pschatzmann/arduino-audio-tools) for the A2DP-I2S implementation. It works just the same with some syntax adjustments.
 
 Before I may get around to providing an all-in-one board, the best solution is to use an external DAC with a 3.5mm barrel jack output. The possible models are described, along with some configuration hints, on [pschatzmann's ESP32-A2DP library wiki](https://github.com/pschatzmann/arduino-audio-tools/wiki/External-DAC) pages.
 
@@ -101,15 +103,16 @@ For the *McGyver style*, a handful of jumper wires can suffice to connect all th
 At the time of writing, this is what is supported :
 - Auto-reconnect to the phone
 - iPod emulation to the car
-- Skip FW/RW and restart song, with some glitches
+- Skip FW/RW and restart song
 - Metadata update, sometimes with a couple small issues
 - Auto-pause on leave
 
 Some features are also partially supported but known to generate some bugs or unintended effects :
 - Shuffle mode does not affect the Shuffle state of the phone, and can lead to some issues with Next/Previous commands needing to be alternatively activated and metadata fetching delays
 - Controlling playback from the phone (Pause/Play, Next/Previous) should work but can generate synchronisation issues
-- Repeat tracks control is ineffective
-- Metadata update can sometimes need a bit of encouragement by pressing the "Track" button on the Mini
+- Repeat tracks control is essentially ineffective
+- Metadata update can sometimes need a bit of encouragement by pressing the "Track" button on the Mini, though there is a patch coming for that
+- Sometimes starting can be laggy or paused with Spotify if there is a no data connection available on the mobile phone. This is unfortunately an issue with online streaming. Forcing "play" on the phone, or skipping to the next track on the phone usually resolves everything.
 
 Some features that seem to be there but are actually not doing what they are originally intended to :
 - Artist/Genre/Album browsing and selection : it will display only one entry to the current song and will not allow dynamic selections
