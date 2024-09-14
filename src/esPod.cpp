@@ -154,7 +154,8 @@ void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID, uint32_t numField) {
 /// @param extendedModeByte Direct value of the extendedInterfaceMode boolean
 void esPod::L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte) {
     #ifdef DEBUG_MODE
-    _debugSerial.printf("TX: L0x00 0x04 ReturnExtendedInterfaceMode: 0x%x\n",extendedModeByte);
+    //Temporarily disabled because it spams logs
+    //_debugSerial.printf("TX: L0x00 0x04 ReturnExtendedInterfaceMode: 0x%x\n",extendedModeByte);
     #endif
     const byte txPacket[] = {
         0x00,
@@ -589,7 +590,8 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     case L0x00_RequestExtendedInterfaceMode: //Mini requests extended interface mode status
         {
             #ifdef DEBUG_MODE
-            _debugSerial.println("RequestExtendedInterfaceMode");
+            //Temporarily disabled because it spams logs
+            //_debugSerial.println("RequestExtendedInterfaceMode");
             #endif
             if(extendedInterfaceModeActive) {
                 L0x00_0x04_ReturnExtendedInterfaceMode(0x01); //Report that extended interface mode is active
@@ -1101,8 +1103,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
 
                         //Cursor operations for NEXT
                         trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS;
-                        trackList[trackListPosition] = tempTrackIndex;
-                        currentTrackIndex = tempTrackIndex;
+                        currentTrackIndex = trackList[trackListPosition];
                         
                         #ifdef DEBUG_MODE
                         _debugSerial.printf("\t NEXT TRACK requested, prev Index %d new Index %d pos %d\n",prevTrackIndex,currentTrackIndex,trackListPosition);
@@ -1128,7 +1129,8 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
 
                         //Cursor operations for PREV
                         trackListPosition = (trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS; //Shift trackListPosition one to the right
-                        currentTrackIndex = tempTrackIndex;
+                        currentTrackIndex = trackList[trackListPosition];
+                        
                         #ifdef DEBUG_MODE
                             _debugSerial.printf("\t PREV TRACK requested, prev Index %d new Index %d pos %d \n",prevTrackIndex,currentTrackIndex,trackListPosition);
                         #endif
@@ -1153,8 +1155,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
 
                         //Cursor operations for NEXT
                         trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS;
-                        trackList[trackListPosition] = tempTrackIndex;
-                        currentTrackIndex = tempTrackIndex;
+                        currentTrackIndex = trackList[trackListPosition];
                         
                         #ifdef DEBUG_MODE
                         _debugSerial.printf("\t NEXT requested, prev Index %d new Index %d pos %d\n",prevTrackIndex,currentTrackIndex,trackListPosition);
@@ -1180,7 +1181,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
 
                         //Cursor operations for PREV
                         trackListPosition = (trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS; //Shift trackListPosition one to the right
-                        currentTrackIndex = tempTrackIndex;
+                        currentTrackIndex = trackList[trackListPosition];
                         #ifdef DEBUG_MODE
                             _debugSerial.printf("\t PREV requested, prev Index %d new Index %d pos %d \n",prevTrackIndex,currentTrackIndex,trackListPosition);
                         #endif
