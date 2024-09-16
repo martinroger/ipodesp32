@@ -1234,7 +1234,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     }
                     break;
                 }
-                if((playStatus = PB_STATE_STOPPED)&&(playStatusNotificationState==NOTIF_ON)) L0x04_0x27_PlayStatusNotification(0x00); //Notify successful stop
+                if((playStatus == PB_STATE_STOPPED)&&(playStatusNotificationState==NOTIF_ON)) L0x04_0x27_PlayStatusNotification(0x00); //Notify successful stop
             }   
             break;
 
