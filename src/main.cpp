@@ -95,21 +95,12 @@ void avrc_rn_play_pos_callback(uint32_t play_pos) {
 /// @param id Metadata attribute ID : ESP_AVRC_MD_ATTR_xxx
 /// @param text Text data passed around, sometimes it's a uint32_t
 void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
-	//TODO : systematically handle L0x04_0x27_PlayStatusNotification firing after track change ?
-	//TODO : complete overhaul ! Also drop the main.cpp prevXXX
-	/* Introducing :
-	TRACK_CHANGE_TIMEOUT <- Delay until which the ack sent anyways
-	trackChangeAckPending <- Send a L0x04_0x01 ACK to the value of this byte with L0x04_0x01_iPodAck(iPodAck_OK,cmdID), then resets it to 0x00
-	trackChangeTimestamp <- Send the ACK anyways after millis() minus this value exceeds TRACK_CHANGE_TIMEOUT in espod.refresh()
-	*/
 	switch (id)	{
-
 
 		case ESP_AVRC_MD_ATTR_ALBUM:
 			strcpy(incAlbumName,(char*)text); //Buffer the incoming album string
 			if(espod.trackChangeAckPending>0x00) { //There is a pending metadata update
 				if(!albumNameUpdated) { //The album Name has not been updated yet
-					//strcpy(espod.prevAlbumName,espod.albumName); //We need to copy because of some stupid check the radio does
 					strcpy(espod.albumName,incAlbumName);
 					albumNameUpdated = true;
 					#ifdef DEBUG_MODE
@@ -144,7 +135,6 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 			strcpy(incArtistName,(char*)text); //Buffer the incoming artist string
 			if(espod.trackChangeAckPending>0x00) { //There is a pending metadata update
 				if(!artistNameUpdated) { //The artist name has not been updated yet
-					//strcpy(espod.prevArtistName,espod.artistName); //We need to copy because of some stupid check the radio does
 					strcpy(espod.artistName,incArtistName);
 					artistNameUpdated = true;
 					#ifdef DEBUG_MODE
@@ -179,7 +169,6 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 			strcpy(incTrackTitle,(char*)text); //Buffer the incoming track title
 			if(espod.trackChangeAckPending>0x00) { //There is a pending metadata update
 				if(!trackTitleUpdated) { //The track title has not been updated yet
-					//strcpy(espod.prevTrackTitle,espod.trackTitle); //We need to copy because of some stupid check the radio does
 					strcpy(espod.trackTitle,incTrackTitle);
 					trackTitleUpdated = true;
 					#ifdef DEBUG_MODE
@@ -221,7 +210,6 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 			incTrackDuration = String((char*)text).toInt();
 			if(espod.trackChangeAckPending>0x00) { //There is a pending metadata update
 				if(!trackDurationUpdated) { //The duration has not been updated yet
-					//espod.prevTrackDuration = espod.trackDuration;
 					espod.trackDuration = incTrackDuration;
 					trackDurationUpdated = true;
 					#ifdef DEBUG_MODE
@@ -236,7 +224,6 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 			}
 			else { //There is no pending track change from iPod : active or passive track change from avrc target
 				if(incTrackDuration != espod.trackDuration) { //Different incoming metadata
-					//espod.prevTrackDuration = espod.trackDuration;
 					espod.trackDuration = incTrackDuration;
 					trackDurationUpdated = true;
 					#ifdef DEBUG_MODE
@@ -379,6 +366,9 @@ void setup() {
 		while(a2dp_sink.get_connection_state()!=ESP_A2D_CONNECTION_STATE_CONNECTED) {
 			delay(10);
 		}
+		a2dp_sink.play(); //Essential to attempt auto-start. Creates issues with Offline mode on spotify
+		delay(500);
+		
 	#endif
 
 }
