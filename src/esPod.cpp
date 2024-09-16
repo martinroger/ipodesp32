@@ -85,6 +85,7 @@ void esPod::resetState(){
 void esPod::attachPlayControlHandler(playStatusHandler_t playHandler)
 {
     _playStatusHandler = playHandler;
+    //Experimental, maybe is doing more harm than good
     for (uint32_t i = 0; i < TOTAL_NUM_TRACKS; i++)
     {
         trackList[i] = i;
@@ -598,7 +599,7 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         {
             #ifdef DEBUG_MODE
             //Temporarily disabled because it spams logs
-            //_debugSerial.println("RequestExtendedInterfaceMode");
+            _debugSerial.println("RequestExtendedInterfaceMode");
             #endif
             if(extendedInterfaceModeActive) {
                 L0x00_0x04_ReturnExtendedInterfaceMode(0x01); //Report that extended interface mode is active

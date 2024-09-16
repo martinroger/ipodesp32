@@ -86,7 +86,7 @@ void audioStateChanged(esp_a2d_audio_state_t state,void* ptr) {
 /// @param play_pos Playing Position in ms
 void avrc_rn_play_pos_callback(uint32_t play_pos) {
 	espod.playPosition = play_pos;
-	if(espod.playStatusNotificationState==NOTIF_ON) {
+	if(espod.playStatusNotificationState==NOTIF_ON && espod.trackChangeAckPending==0x00) {
 		espod.L0x04_0x27_PlayStatusNotification(0x04,play_pos);
 	}
 }
@@ -353,7 +353,7 @@ void setup() {
 		a2dp_sink.set_on_audio_state_changed(audioStateChanged);
 		a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
 		a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE|ESP_AVRC_MD_ATTR_ARTIST|ESP_AVRC_MD_ATTR_ALBUM|ESP_AVRC_MD_ATTR_PLAYING_TIME);
-		a2dp_sink.set_avrc_rn_play_pos_callback(avrc_rn_play_pos_callback);
+		a2dp_sink.set_avrc_rn_play_pos_callback(avrc_rn_play_pos_callback,1);
 		a2dp_sink.start("espiPod 2");
 
 		#ifdef LED_BUILTIN
