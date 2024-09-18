@@ -162,8 +162,7 @@ void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID, uint32_t numField) {
 /// @param extendedModeByte Direct value of the extendedInterfaceMode boolean
 void esPod::L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte) {
     #ifdef DEBUG_MODE
-    //Temporarily disabled because it spams logs
-    //_debugSerial.printf("TX: L0x00 0x04 ReturnExtendedInterfaceMode: 0x%x\n",extendedModeByte);
+    _debugSerial.printf("TX: L0x00 0x04 ReturnExtendedInterfaceMode: 0x%x\n",extendedModeByte);
     #endif
     const byte txPacket[] = {
         0x00,
