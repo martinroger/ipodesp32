@@ -86,12 +86,12 @@ void esPod::attachPlayControlHandler(playStatusHandler_t playHandler)
 {
     _playStatusHandler = playHandler;
     //Experimental, maybe is doing more harm than good
-    for (uint32_t i = 0; i < TOTAL_NUM_TRACKS; i++)
+/*     for (uint32_t i = 0; i < TOTAL_NUM_TRACKS; i++)
     {
         trackList[i] = i;
     }
     trackListPosition = 0;
-    currentTrackIndex = trackList[trackListPosition];
+    currentTrackIndex = trackList[trackListPosition]; */
     
 }
 
