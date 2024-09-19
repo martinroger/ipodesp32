@@ -104,7 +104,7 @@ At the time of writing, this is what is supported :
 - Auto-reconnect to the phone
 - iPod emulation to the car
 - Skip FW/RW and restart song
-- Metadata update, sometimes with a couple small issues
+- Metadata update, sometimes with a couple small issues (but less and less)
 - Auto-pause on leave
 
 Some features are also partially supported but known to generate some bugs or unintended effects :
@@ -121,8 +121,8 @@ Some features that seem to be there but are actually not doing what they are ori
 
 ## Remaining work to do
 
-- [ ] Work on improving the reliability of the metadata fetching and displaying, especially on song changes
-- [ ] Revise the Previous/Next detection, especially when performed directly on the phone
+- [x] Work on improving the reliability of the metadata fetching and displaying, especially on song changes
+- [x] Revise the Previous/Next detection, especially when performed directly on the phone
 - [ ] Extend the code to more external DACs
 - [ ] Design and get manufactured a all-in-one PCB, for the clean looks of it
 - [ ] Design a 3D-printable enclosure
@@ -130,18 +130,33 @@ Some features that seem to be there but are actually not doing what they are ori
 
 ## How to flash it
 
-This repository is built around a **Platformio project**, which allows automatic pulling of the right libraries, at the right version, from the right places, and good auto-configuration based on a couple build flags.
+This repository is built around a **Platformio project and VSCode**, which allows automatic pulling of the right libraries, at the right version, from the right places, and good auto-configuration based on a couple build flags.
+
+### For those who know
 
 For the recommended hardware configuration, the simplest is to **clone this repository**, open it in Platformio (in VS Code for instance), connect the ESP32 board (without the DAC or the USB-Serial interface) and flash it like any other ESP32 bit of software.
 
 For more exotic configurations, the build flags may need to be updated and the *main.cpp* file may also require some fiddling. I may provide some pre-made configurations in the future.
 
-Please be aware that if the PL2303 is connected via the GPIO pins to the UART0 interface, flashing may not work properly or start at all.
-It is preferable to disconnect the USB-Serial interface from the ESP32 board prior to flashing.
+Please be aware that it is not currently possible to flash via the PL2303HX because it is not connected to the UART0 pins of the ESP32. Use USB CDC or the embedded USB-UART chips on the ESP32 devboard to flash via the main UART.
+
+### For those who do not know
+
+First start by installing [Visual Studio Code](https://code.visualstudio.com/) and from within its Extensions interface, [PlatformIo IDE](https://platformio.org/).
+Once they are both installed, download [the latest release](https://github.com/martinroger/ipodesp32/releases/latest) or clone the repository on your computer.
+Unzip the release file and from within the folder, right-click and choose "Open with Code" as shown below.
+
+![Open with Code](/img/openWithCode.png)
+
+The PlatformIO extension should automatically recognize and configure the project (which might take a few minutes). Once it is ready, select the build configuration you need (most likely *nodeMCUESP32S_externalDAC* ) and hit the "Build and Upload" arrow in the bottom bar, after connecting your NodeMCU32S board to the computer and letting it install the drivers.
+
+![Build and Upload](/img/selectAndUpload.png)
+
+VS Code should automatically find the target board and upload the software to it. After this, disconnect it, remount/reconnect as below, and look over Bluetooth for iPodEsp 2.
 
 ## Resources for a clean build
 
-To be completed when a clean build exists...
+To be completed when a clean build exists... 
 
 ### Connection diagram
 
@@ -171,4 +186,4 @@ And on the PL2303 interface board :
 
 ### Enclosure
 
-TBC
+To be designed.
