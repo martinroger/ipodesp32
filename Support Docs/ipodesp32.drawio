@@ -1,0 +1,485 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.5 Chrome/126.0.6478.183 Electron/31.3.0 Safari/537.36" version="24.7.5">
+  <diagram name="Page-1" id="adxrczwJx_nAG3B7Sv2U">
+    <mxGraphModel dx="4284" dy="1993" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="shdqNxZh7_gPQoqyW1RQ-27" target="shdqNxZh7_gPQoqyW1RQ-9" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-140" y="460" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="-140" y="770" />
+              <mxPoint x="-140" y="180" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-1" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#ff0000;" parent="1" vertex="1">
+          <mxGeometry x="195" y="20" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-2" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="shdqNxZh7_gPQoqyW1RQ-1" target="shdqNxZh7_gPQoqyW1RQ-8" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="225" y="80" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-8" value="Start state - setup()" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;fontColor=#000000;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#ffffc0;dropTarget=0;" parent="1" vertex="1">
+          <mxGeometry x="20" y="100" width="380" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-9" value="&lt;ul&gt;&lt;li&gt;extendedInterfaceModeActive = false&lt;/li&gt;&lt;li&gt;disabled = true&lt;/li&gt;&lt;li&gt;playStatus = PB_STATE_PAUSED&lt;/li&gt;&lt;li&gt;playStatusNotificationState = NOTIF_OFF&lt;/li&gt;&lt;li&gt;playStatusNotificationPaused = false&lt;/li&gt;&lt;li&gt;waitMetadataUpdate = false&lt;/li&gt;&lt;li&gt;shuffleStatus = 0x00&lt;/li&gt;&lt;li&gt;repeatStatus = 0x02&lt;/li&gt;&lt;li&gt;currentTrackIndex = 0&lt;/li&gt;&lt;li&gt;tracklist = [0..0]&lt;/li&gt;&lt;li&gt;trackListPosition = 0&lt;/li&gt;&lt;li&gt;ESP_A2D_CONNECTION_STATE_DISCONNECTED&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;fontColor=#000000;" parent="shdqNxZh7_gPQoqyW1RQ-8" vertex="1">
+          <mxGeometry y="30" width="380" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" parent="shdqNxZh7_gPQoqyW1RQ-8" source="shdqNxZh7_gPQoqyW1RQ-9" target="shdqNxZh7_gPQoqyW1RQ-8" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="320" y="-50" as="targetPoint" />
+            <mxPoint x="415" y="30" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="440" y="80" />
+              <mxPoint x="440" y="-60" />
+              <mxPoint x="285" y="-60" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-17" value="No A2DP connection" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="shdqNxZh7_gPQoqyW1RQ-16" vertex="1" connectable="0">
+          <mxGeometry x="0.5036" y="3" relative="1" as="geometry">
+            <mxPoint x="32" y="-3" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-12" value="Waiting for car - loop()" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;fontColor=#000000;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#ffffc0;dropTarget=0;" parent="1" vertex="1">
+          <mxGeometry x="20" y="380" width="380" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-13" value="&lt;ul&gt;&lt;li&gt;extendedInterfaceModeActive = false&lt;/li&gt;&lt;li&gt;&lt;b&gt;disabled = false&lt;/b&gt;&lt;/li&gt;&lt;li&gt;playStatus = PB_STATE_PAUSED&lt;/li&gt;&lt;li&gt;playStatusNotificationState = NOTIF_OFF&lt;/li&gt;&lt;li&gt;playStatusNotificationPaused = false&lt;/li&gt;&lt;li&gt;waitMetadataUpdate = false&lt;/li&gt;&lt;li&gt;shuffleStatus = 0x00&lt;/li&gt;&lt;li&gt;repeatStatus = 0x02&lt;/li&gt;&lt;li&gt;currentTrackIndex = 0&lt;/li&gt;&lt;li&gt;tracklist = [0..0]&lt;/li&gt;&lt;li&gt;trackListPosition = 0&lt;/li&gt;&lt;li&gt;&lt;b&gt;ESP_A2D_CONNECTION_STATE_CONNECTED&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;fontColor=#000000;" parent="shdqNxZh7_gPQoqyW1RQ-12" vertex="1">
+          <mxGeometry y="30" width="380" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" parent="shdqNxZh7_gPQoqyW1RQ-12" source="shdqNxZh7_gPQoqyW1RQ-13" target="shdqNxZh7_gPQoqyW1RQ-13" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="285" y="290" />
+              <mxPoint x="420" y="290" />
+              <mxPoint x="420" y="180" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-31" value="Lingo 0x00 handshake incomplete&lt;br&gt;Serial not timing out&lt;br&gt;extendedInterfaceModeActive request NOK" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="shdqNxZh7_gPQoqyW1RQ-30" vertex="1" connectable="0">
+          <mxGeometry x="0.2787" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="shdqNxZh7_gPQoqyW1RQ-9" target="shdqNxZh7_gPQoqyW1RQ-12" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-15" value="connectionStateChanged -&amp;gt; Connection initiated" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="shdqNxZh7_gPQoqyW1RQ-14" vertex="1" connectable="0">
+          <mxGeometry x="-0.0909" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-18" value="Reset espod - resetState()" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;fontColor=#000000;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#ffffc0;dropTarget=0;" parent="1" vertex="1">
+          <mxGeometry x="570" y="380" width="380" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-19" value="&lt;ul&gt;&lt;li&gt;extendedInterfaceModeActive = false&lt;/li&gt;&lt;li&gt;disabled = false&lt;/li&gt;&lt;li&gt;playStatus = PB_STATE_PAUSED&lt;/li&gt;&lt;li&gt;playStatusNotificationState = NOTIF_OFF&lt;/li&gt;&lt;li&gt;playStatusNotificationPaused = false&lt;/li&gt;&lt;li&gt;waitMetadataUpdate = false&lt;/li&gt;&lt;li&gt;shuffleStatus = 0x00&lt;/li&gt;&lt;li&gt;repeatStatus = 0x02&lt;/li&gt;&lt;li&gt;currentTrackIndex = 0&lt;/li&gt;&lt;li&gt;tracklist = [0..0]&lt;/li&gt;&lt;li&gt;trackListPosition = 0&lt;/li&gt;&lt;li&gt;&lt;b&gt;ESP_A2D_CONNECTION_STATE_CONNECTED&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;fontColor=#000000;" parent="shdqNxZh7_gPQoqyW1RQ-18" vertex="1">
+          <mxGeometry y="30" width="380" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="shdqNxZh7_gPQoqyW1RQ-13" target="shdqNxZh7_gPQoqyW1RQ-19" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-21" value="No Serial for 120s" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="shdqNxZh7_gPQoqyW1RQ-20" vertex="1" connectable="0">
+          <mxGeometry x="0.2353" y="-2" relative="1" as="geometry">
+            <mxPoint x="-15" y="-2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="shdqNxZh7_gPQoqyW1RQ-19" target="shdqNxZh7_gPQoqyW1RQ-13" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-23" value="Next refresh()" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="shdqNxZh7_gPQoqyW1RQ-22" vertex="1" connectable="0">
+          <mxGeometry x="0.0706" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="shdqNxZh7_gPQoqyW1RQ-13" target="shdqNxZh7_gPQoqyW1RQ-9" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-90" y="200" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="-140" y="460" />
+              <mxPoint x="-140" y="180" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-25" value="connectionStateChanged -&amp;gt; Connection lost&lt;br&gt;espod.resetState()&lt;br&gt;espod.disabled = true" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="shdqNxZh7_gPQoqyW1RQ-24" vertex="1" connectable="0">
+          <mxGeometry x="0.0633" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-26" value="Entering extendedInterfaceMode - refresh()" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;fontColor=#000000;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#ffffc0;dropTarget=0;" parent="1" vertex="1">
+          <mxGeometry x="20" y="690" width="380" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-27" value="&lt;ul&gt;&lt;li&gt;&lt;b&gt;extendedInterfaceModeActive = true&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;disabled = false&lt;/b&gt;&lt;/li&gt;&lt;li&gt;playStatus = PB_STATE_PAUSED&lt;/li&gt;&lt;li&gt;playStatusNotificationState = NOTIF_OFF&lt;/li&gt;&lt;li&gt;playStatusNotificationPaused = false&lt;/li&gt;&lt;li&gt;waitMetadataUpdate = false&lt;/li&gt;&lt;li&gt;shuffleStatus = 0x00&lt;/li&gt;&lt;li&gt;repeatStatus = 0x02&lt;/li&gt;&lt;li&gt;currentTrackIndex = 0&lt;/li&gt;&lt;li&gt;tracklist = [0..0]&lt;/li&gt;&lt;li&gt;trackListPosition = 0&lt;/li&gt;&lt;li&gt;&lt;b&gt;ESP_A2D_CONNECTION_STATE_CONNECTED&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;fontColor=#000000;" parent="shdqNxZh7_gPQoqyW1RQ-26" vertex="1">
+          <mxGeometry y="30" width="380" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" parent="1" source="shdqNxZh7_gPQoqyW1RQ-13" target="shdqNxZh7_gPQoqyW1RQ-26" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-29" value="Lingo 0x00 handshake OK&lt;div&gt;Serial not timing out&lt;/div&gt;&lt;div&gt;extendedInterfaceModeActive request OK&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="shdqNxZh7_gPQoqyW1RQ-28" vertex="1" connectable="0">
+          <mxGeometry x="-0.175" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" parent="1" source="shdqNxZh7_gPQoqyW1RQ-27" target="shdqNxZh7_gPQoqyW1RQ-19" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="450" y="804.5" as="sourcePoint" />
+            <mxPoint x="620" y="804.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="shdqNxZh7_gPQoqyW1RQ-37" value="No Serial for 120s" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="shdqNxZh7_gPQoqyW1RQ-36" vertex="1" connectable="0">
+          <mxGeometry x="0.2353" y="-2" relative="1" as="geometry">
+            <mxPoint x="-177" y="28" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--1" value="playStatus" style="rhombus;whiteSpace=wrap;html=1;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="170" y="990" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--2" value="!PB_STATE_PLAYING" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="r1ZhlQd4K2l6mlT_eHo--1" parent="1" target="r1ZhlQd4K2l6mlT_eHo--6">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="420" y="1010" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--3" value="PB_STATE_PLAYING" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;" edge="1" source="r1ZhlQd4K2l6mlT_eHo--1" parent="1" target="r1ZhlQd4K2l6mlT_eHo--21">
+          <mxGeometry x="-0.5636" relative="1" as="geometry">
+            <mxPoint x="210" y="1400" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="shdqNxZh7_gPQoqyW1RQ-27" target="r1ZhlQd4K2l6mlT_eHo--1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--5" value="L0x04_PlayCurrentSelection ABCD&lt;br&gt;L0x04_SetCurrentPlayingTrack ABCD" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="r1ZhlQd4K2l6mlT_eHo--4">
+          <mxGeometry x="-0.1143" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="r1ZhlQd4K2l6mlT_eHo--6" target="r1ZhlQd4K2l6mlT_eHo--10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--6" value="Set PB_STATE_PLAYING - processLingo0x04()" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;fontColor=#000000;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#ffffc0;dropTarget=0;" vertex="1" parent="1">
+          <mxGeometry x="400" y="1040" width="380" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="r1ZhlQd4K2l6mlT_eHo--6" source="r1ZhlQd4K2l6mlT_eHo--7">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="129.66666666666697" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--9" value="_playStatusHandler&lt;br&gt;A2DP_PLAY" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="r1ZhlQd4K2l6mlT_eHo--8">
+          <mxGeometry x="-0.0219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--7" value="&lt;ul&gt;&lt;li&gt;&lt;b&gt;extendedInterfaceModeActive = true&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;disabled = false&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;playStatus = PB_STATE_PLAYING&lt;/b&gt;&lt;/li&gt;&lt;li&gt;playStatusNotificationState = NOTIF_OFF&lt;/li&gt;&lt;li&gt;playStatusNotificationPaused = false&lt;/li&gt;&lt;li&gt;waitMetadataUpdate = false&lt;/li&gt;&lt;li&gt;shuffleStatus = 0x00&lt;/li&gt;&lt;li&gt;repeatStatus = 0x02&lt;/li&gt;&lt;li&gt;currentTrackIndex = 0&lt;/li&gt;&lt;li&gt;tracklist = [0..0]&lt;/li&gt;&lt;li&gt;trackListPosition = 0&lt;/li&gt;&lt;li&gt;&lt;b&gt;ESP_A2D_CONNECTION_STATE_CONNECTED&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;fontColor=#000000;" vertex="1" parent="r1ZhlQd4K2l6mlT_eHo--6">
+          <mxGeometry y="30" width="380" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--20" value="&lt;ul&gt;&lt;li&gt;&lt;b&gt;extendedInterfaceModeActive = true&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;disabled = false&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;playStatus = PB_STATE_PLAYING&lt;/b&gt;&lt;/li&gt;&lt;li&gt;playStatusNotificationState = NOTIF_OFF&lt;/li&gt;&lt;li&gt;playStatusNotificationPaused = false&lt;/li&gt;&lt;li&gt;waitMetadataUpdate = false&lt;/li&gt;&lt;li&gt;shuffleStatus = 0x00&lt;/li&gt;&lt;li&gt;repeatStatus = 0x02&lt;/li&gt;&lt;li&gt;currentTrackIndex = 0&lt;/li&gt;&lt;li&gt;tracklist = [0..0]&lt;/li&gt;&lt;li&gt;trackListPosition = 0&lt;/li&gt;&lt;li&gt;&lt;b&gt;ESP_A2D_CONNECTION_STATE_CONNECTED&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;fontColor=#000000;" vertex="1" parent="r1ZhlQd4K2l6mlT_eHo--6">
+          <mxGeometry y="230" width="380" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--10" value="currentTrackIndex" style="rhombus;whiteSpace=wrap;html=1;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="525" y="1340" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--11" value="=ABCD" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="r1ZhlQd4K2l6mlT_eHo--10" parent="1" target="r1ZhlQd4K2l6mlT_eHo--17">
+          <mxGeometry x="-0.3732" relative="1" as="geometry">
+            <mxPoint x="830" y="1360" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--12" value="!=ABCD" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="r1ZhlQd4K2l6mlT_eHo--10" parent="1" target="r1ZhlQd4K2l6mlT_eHo--18">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="590" y="1440" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--14" value="Just play - processLingo0x04()" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;fontColor=#000000;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#ffffc0;dropTarget=0;" vertex="1" parent="1">
+          <mxGeometry x="880" y="1230" width="380" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--17" value="&lt;ul&gt;&lt;li&gt;&lt;b&gt;extendedInterfaceModeActive = true&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;disabled = false&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;playStatus = PB_STATE_PLAYING&lt;/b&gt;&lt;/li&gt;&lt;li&gt;playStatusNotificationState = NOTIF_OFF&lt;/li&gt;&lt;li&gt;playStatusNotificationPaused = false&lt;/li&gt;&lt;li&gt;waitMetadataUpdate = false&lt;/li&gt;&lt;li&gt;shuffleStatus = 0x00&lt;/li&gt;&lt;li&gt;repeatStatus = 0x02&lt;/li&gt;&lt;li&gt;currentTrackIndex = 0&lt;/li&gt;&lt;li&gt;tracklist = [0..0]&lt;/li&gt;&lt;li&gt;trackListPosition = 0&lt;/li&gt;&lt;li&gt;&lt;b&gt;ESP_A2D_CONNECTION_STATE_CONNECTED&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;fontColor=#000000;" vertex="1" parent="r1ZhlQd4K2l6mlT_eHo--14">
+          <mxGeometry y="30" width="380" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--18" value="Assume next, wait for metadata update - processLingo0x04()" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;fontColor=#000000;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#ffffc0;dropTarget=0;" vertex="1" parent="1">
+          <mxGeometry x="580" y="1520" width="380" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--19" value="&lt;ul&gt;&lt;li&gt;&lt;b&gt;extendedInterfaceModeActive = true&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;disabled = false&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;playStatus = PB_STATE_PLAYING&lt;/b&gt;&lt;/li&gt;&lt;li&gt;playStatusNotificationState = NOTIF_OFF&lt;/li&gt;&lt;li&gt;playStatusNotificationPaused = false&lt;/li&gt;&lt;li&gt;&lt;b&gt;waitMetadataUpdate = true&lt;/b&gt;&lt;/li&gt;&lt;li&gt;shuffleStatus = 0x00&lt;/li&gt;&lt;li&gt;repeatStatus = 0x02&lt;/li&gt;&lt;li&gt;currentTrackIndex = ABCD&lt;/li&gt;&lt;li&gt;tracklist = [0 ABCD 0 .. 0]&lt;/li&gt;&lt;li&gt;trackListPosition = +1&lt;/li&gt;&lt;li&gt;&lt;b&gt;ESP_A2D_CONNECTION_STATE_CONNECTED&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;fontColor=#000000;" vertex="1" parent="r1ZhlQd4K2l6mlT_eHo--18">
+          <mxGeometry y="30" width="380" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--21" value="trackList[trackListPosition-1]" style="rhombus;whiteSpace=wrap;html=1;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="-130" y="1340" width="180" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--22" value="!=ABCD" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="r1ZhlQd4K2l6mlT_eHo--21" parent="1" target="r1ZhlQd4K2l6mlT_eHo--25">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="150" y="1420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--23" value="=ABCD" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="r1ZhlQd4K2l6mlT_eHo--21" parent="1" target="r1ZhlQd4K2l6mlT_eHo--29">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="-40" y="1520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--25" value="Request next, expect metadata update - processLingo0x04()" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;fontColor=#000000;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#ffffc0;dropTarget=0;" vertex="1" parent="1">
+          <mxGeometry x="140" y="1520" width="380" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--26" value="&lt;ul&gt;&lt;li&gt;&lt;b&gt;extendedInterfaceModeActive = true&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;disabled = false&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;playStatus = PB_STATE_PLAYING&lt;/b&gt;&lt;/li&gt;&lt;li&gt;playStatusNotificationState = NOTIF_OFF&lt;/li&gt;&lt;li&gt;playStatusNotificationPaused = false&lt;/li&gt;&lt;li&gt;&lt;b&gt;waitMetadataUpdate = true&lt;/b&gt;&lt;/li&gt;&lt;li&gt;shuffleStatus = 0x00&lt;/li&gt;&lt;li&gt;repeatStatus = 0x02&lt;/li&gt;&lt;li&gt;currentTrackIndex = ABCD&lt;/li&gt;&lt;li&gt;tracklist = [0 ABCD 0 .. 0]&lt;/li&gt;&lt;li&gt;trackListPosition = +1&lt;/li&gt;&lt;li&gt;&lt;b&gt;ESP_A2D_CONNECTION_STATE_CONNECTED&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;fontColor=#000000;" vertex="1" parent="r1ZhlQd4K2l6mlT_eHo--25">
+          <mxGeometry y="30" width="380" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="r1ZhlQd4K2l6mlT_eHo--26">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="450" y="1770" as="targetPoint" />
+            <mxPoint x="290" y="1800.33" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--28" value="_playStatusHandler&lt;br&gt;A2DP_NEXT" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="r1ZhlQd4K2l6mlT_eHo--27">
+          <mxGeometry x="-0.0219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--29" value="Request PREV, expect metadata update - processLingo0x04()" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;fontColor=#000000;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#ffffc0;dropTarget=0;" vertex="1" parent="1">
+          <mxGeometry x="-320" y="1520" width="380" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--30" value="&lt;ul&gt;&lt;li&gt;&lt;b&gt;extendedInterfaceModeActive = true&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;disabled = false&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;playStatus = PB_STATE_PLAYING&lt;/b&gt;&lt;/li&gt;&lt;li&gt;playStatusNotificationState = NOTIF_OFF&lt;/li&gt;&lt;li&gt;playStatusNotificationPaused = false&lt;/li&gt;&lt;li&gt;&lt;b&gt;waitMetadataUpdate = true&lt;/b&gt;&lt;/li&gt;&lt;li&gt;shuffleStatus = 0x00&lt;/li&gt;&lt;li&gt;repeatStatus = 0x02&lt;/li&gt;&lt;li&gt;currentTrackIndex = ABCD&lt;/li&gt;&lt;li&gt;&lt;font color=&quot;#ff3333&quot;&gt;tracklist = [ABCD 0 .. 0]&lt;/font&gt;&lt;/li&gt;&lt;li&gt;&lt;font color=&quot;#ff3333&quot;&gt;trackListPosition = -1&lt;/font&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;ESP_A2D_CONNECTION_STATE_CONNECTED&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;fontColor=#000000;" vertex="1" parent="r1ZhlQd4K2l6mlT_eHo--29">
+          <mxGeometry y="30" width="380" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="r1ZhlQd4K2l6mlT_eHo--30">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-20" y="1770" as="targetPoint" />
+            <mxPoint x="-237.75" y="1770" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--32" value="_playStatusHandler&lt;br&gt;A2DP_PREV" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="r1ZhlQd4K2l6mlT_eHo--31">
+          <mxGeometry x="-0.0219" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--33" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="1845" y="10" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--34" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="r1ZhlQd4K2l6mlT_eHo--33" parent="1" target="r1ZhlQd4K2l6mlT_eHo--35">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1815" y="110" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--35" value="Start state" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;fontColor=#000000;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#ffffc0;dropTarget=0;" vertex="1" parent="1">
+          <mxGeometry x="1735" y="70" width="250" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--36" value="&lt;ul&gt;&lt;li&gt;incAlbumName = &quot;incAlbum&quot;&lt;/li&gt;&lt;li&gt;prevAlbumName = &quot;PrevAlbum&quot;&lt;/li&gt;&lt;li&gt;incArtistName = &quot;incArtist&quot;&lt;/li&gt;&lt;li&gt;prevArtistName = &quot;PrevArtist&quot;&lt;/li&gt;&lt;li&gt;incTrackTitle = &quot;incTitle&quot;&lt;/li&gt;&lt;li&gt;prevTrackTitle = &quot;PrevTitle&quot;&lt;/li&gt;&lt;li&gt;albumNameUpdated = false&lt;/li&gt;&lt;li&gt;artistNameUpdated = false&lt;/li&gt;&lt;li&gt;trackTitleUpdated = false&lt;/li&gt;&lt;li&gt;albumName = &quot;...&quot;&lt;/li&gt;&lt;li&gt;artistName = &quot;...&quot;&lt;/li&gt;&lt;li&gt;trackTitle = &quot;...&quot;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;fontColor=#000000;" vertex="1" parent="r1ZhlQd4K2l6mlT_eHo--35">
+          <mxGeometry y="30" width="250" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="r1ZhlQd4K2l6mlT_eHo--38" target="r1ZhlQd4K2l6mlT_eHo--56">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1470" y="410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--43" value="ESP_AVRC_MD_ATTR_TITLE" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="r1ZhlQd4K2l6mlT_eHo--42">
+          <mxGeometry x="-0.2409" y="3" relative="1" as="geometry">
+            <mxPoint x="-15" y="-13" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--38" value="Mdata trigger" style="rhombus;whiteSpace=wrap;html=1;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="1800" y="320" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--39" value="ESP_AVRC_MD_ATTR_ALBUM" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="r1ZhlQd4K2l6mlT_eHo--38" parent="1" target="r1ZhlQd4K2l6mlT_eHo--62">
+          <mxGeometry x="0.0772" relative="1" as="geometry">
+            <mxPoint x="2270" y="400" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="2260" y="340" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--40" value="ESP_AVRC_MD_ATTR_ARTIST" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="r1ZhlQd4K2l6mlT_eHo--38" parent="1" target="r1ZhlQd4K2l6mlT_eHo--59">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="1860" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="r1ZhlQd4K2l6mlT_eHo--36" target="r1ZhlQd4K2l6mlT_eHo--38">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--56" value="incTrackTitle != trackTitle&lt;br&gt;OR albumNameUpdated&lt;div&gt;OR artistNameUpdated&lt;/div&gt;" style="rhombus;whiteSpace=wrap;html=1;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="390" width="220" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--57" value="no" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" source="r1ZhlQd4K2l6mlT_eHo--56" parent="1" target="r1ZhlQd4K2l6mlT_eHo--71">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="1650" y="810" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1620" y="455" />
+              <mxPoint x="1620" y="955" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--58" value="yes" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="r1ZhlQd4K2l6mlT_eHo--56" parent="1" target="r1ZhlQd4K2l6mlT_eHo--65">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="1480" y="590" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--59" value="incArtistName != artistName&lt;br&gt;OR albumNameUpdated&lt;div&gt;OR trackTitleUpdated&lt;/div&gt;" style="rhombus;whiteSpace=wrap;html=1;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="1750" y="390" width="220" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--60" value="no" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" target="r1ZhlQd4K2l6mlT_eHo--71">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="1890" y="900" as="targetPoint" />
+            <mxPoint x="1970" y="454.97" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="2000" y="455" />
+              <mxPoint x="2000" y="880" />
+              <mxPoint x="1860" y="880" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--61" value="yes" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="r1ZhlQd4K2l6mlT_eHo--59" target="r1ZhlQd4K2l6mlT_eHo--67">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="1860" y="590" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--62" value="incAlbumName != albumName&lt;br&gt;OR trackTitleUpdated&lt;div&gt;OR artistNameUpdated&lt;/div&gt;" style="rhombus;whiteSpace=wrap;html=1;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="2150" y="390" width="220" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--63" value="no" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="r1ZhlQd4K2l6mlT_eHo--62" target="r1ZhlQd4K2l6mlT_eHo--71">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="2430" y="760" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="2400" y="455" />
+              <mxPoint x="2400" y="955" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--64" value="yes" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="r1ZhlQd4K2l6mlT_eHo--62" target="r1ZhlQd4K2l6mlT_eHo--69">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="2260" y="600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--65" value="trackTitleUpdated true" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;fontColor=#000000;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#ffffc0;dropTarget=0;" vertex="1" parent="1">
+          <mxGeometry x="1355" y="600" width="250" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--66" value="&lt;ul&gt;&lt;li&gt;incAlbumName = &quot;incAlbum&quot;&lt;/li&gt;&lt;li&gt;prevAlbumName = &quot;PrevAlbum&quot;&lt;/li&gt;&lt;li&gt;incArtistName = &quot;incArtist&quot;&lt;/li&gt;&lt;li&gt;prevArtistName = &quot;PrevArtist&quot;&lt;/li&gt;&lt;li&gt;&lt;b&gt;incTrackTitle = Mdata&lt;/b&gt;&lt;/li&gt;&lt;li&gt;prevTrackTitle = &quot;PrevTitle&quot;&lt;/li&gt;&lt;li&gt;albumNameUpdated = any&lt;/li&gt;&lt;li&gt;artistNameUpdated = any&lt;/li&gt;&lt;li&gt;trackTitleUpdated = &lt;b&gt;true&lt;/b&gt;&lt;/li&gt;&lt;li&gt;albumName = &quot;...&quot;&lt;/li&gt;&lt;li&gt;artistName = &quot;...&quot;&lt;/li&gt;&lt;li&gt;&lt;b&gt;trackTitle = incTrackTitle&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;fontColor=#000000;" vertex="1" parent="r1ZhlQd4K2l6mlT_eHo--65">
+          <mxGeometry y="30" width="250" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--67" value="artistNameUpdated true" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;fontColor=#000000;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#ffffc0;dropTarget=0;" vertex="1" parent="1">
+          <mxGeometry x="1735" y="600" width="250" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--68" value="&lt;ul&gt;&lt;li&gt;incAlbumName = &quot;incAlbum&quot;&lt;/li&gt;&lt;li&gt;prevAlbumName = &quot;PrevAlbum&quot;&lt;/li&gt;&lt;li&gt;incArtistName = &lt;b&gt;Mdata&lt;/b&gt;&lt;/li&gt;&lt;li&gt;prevArtistName = &quot;PrevArtist&quot;&lt;/li&gt;&lt;li&gt;incTrackTitle =&amp;nbsp;&quot;incTitle&quot;&lt;/li&gt;&lt;li&gt;prevTrackTitle = &quot;PrevTitle&quot;&lt;/li&gt;&lt;li&gt;albumNameUpdated = any&lt;/li&gt;&lt;li&gt;artistNameUpdated = &lt;b&gt;true&lt;/b&gt;&lt;/li&gt;&lt;li&gt;trackTitleUpdated = any&lt;/li&gt;&lt;li&gt;albumName = &quot;...&quot;&lt;/li&gt;&lt;li&gt;&lt;b&gt;artistName = incArtistName&lt;/b&gt;&lt;/li&gt;&lt;li&gt;trackTitle = &quot;...&quot;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;fontColor=#000000;" vertex="1" parent="r1ZhlQd4K2l6mlT_eHo--67">
+          <mxGeometry y="30" width="250" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--69" value="albumNameUpdated true" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;fontColor=#000000;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#ffffc0;dropTarget=0;" vertex="1" parent="1">
+          <mxGeometry x="2135" y="600" width="250" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--70" value="&lt;ul&gt;&lt;li&gt;incAlbumName = &lt;b&gt;Mdata&lt;/b&gt;&lt;/li&gt;&lt;li&gt;prevAlbumName = &quot;PrevAlbum&quot;&lt;/li&gt;&lt;li&gt;incArtistName = &quot;incArtist&quot;&lt;/li&gt;&lt;li&gt;prevArtistName = &quot;PrevArtist&quot;&lt;/li&gt;&lt;li&gt;incTrackTitle = &quot;incTitle&quot;&lt;/li&gt;&lt;li&gt;prevTrackTitle = &quot;PrevTitle&quot;&lt;/li&gt;&lt;li&gt;albumNameUpdated = &lt;b&gt;true&lt;/b&gt;&lt;/li&gt;&lt;li&gt;artistNameUpdated = any&lt;/li&gt;&lt;li&gt;trackTitleUpdated = any&lt;/li&gt;&lt;li&gt;&lt;b&gt;albumName = incAlbumName&lt;/b&gt;&lt;/li&gt;&lt;li&gt;artistName = &quot;...&quot;&lt;/li&gt;&lt;li&gt;trackTitle = &quot;...&quot;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;fontColor=#000000;" vertex="1" parent="r1ZhlQd4K2l6mlT_eHo--69">
+          <mxGeometry y="30" width="250" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--71" value="trackTitleUpdated &amp;amp;&amp;amp;&lt;div&gt;artistNameUpdated &amp;amp;&amp;amp;&lt;/div&gt;&lt;div&gt;albumNameUpdated&lt;/div&gt;" style="rhombus;whiteSpace=wrap;html=1;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="1765" y="920" width="190" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--72" value="no" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" source="r1ZhlQd4K2l6mlT_eHo--71" parent="1" target="r1ZhlQd4K2l6mlT_eHo--38">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="2050" y="1030" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="2430" y="990" />
+              <mxPoint x="2430" y="300" />
+              <mxPoint x="1890" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--73" value="yes" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="r1ZhlQd4K2l6mlT_eHo--71" parent="1" target="r1ZhlQd4K2l6mlT_eHo--77">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="1860" y="1120" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1860" y="1160" />
+              <mxPoint x="1860" y="1160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--74" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="r1ZhlQd4K2l6mlT_eHo--68" target="r1ZhlQd4K2l6mlT_eHo--71">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--75" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="r1ZhlQd4K2l6mlT_eHo--70" target="r1ZhlQd4K2l6mlT_eHo--71">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2260" y="955" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--76" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="r1ZhlQd4K2l6mlT_eHo--66" target="r1ZhlQd4K2l6mlT_eHo--71">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1860" y="920" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1480" y="955" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--77" value="waitMetadataUpdate" style="rhombus;whiteSpace=wrap;html=1;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="1795" y="1160" width="130" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--78" value="no" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="r1ZhlQd4K2l6mlT_eHo--77" parent="1" target="r1ZhlQd4K2l6mlT_eHo--83">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="2000" y="1220" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="2130" y="1200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--79" value="yes" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="r1ZhlQd4K2l6mlT_eHo--77" parent="1" target="r1ZhlQd4K2l6mlT_eHo--80">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="1860" y="1300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--80" value="Reset Update flags" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;fontColor=#000000;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#ffffc0;dropTarget=0;" vertex="1" parent="1">
+          <mxGeometry x="1735" y="1320" width="250" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--81" value="&lt;ul&gt;&lt;li&gt;incAlbumName = &quot;...&quot;&lt;/li&gt;&lt;li&gt;prevAlbumName = &quot;PrevAlbum&quot;&lt;/li&gt;&lt;li&gt;incArtistName = &quot;...&quot;&lt;/li&gt;&lt;li&gt;prevArtistName = &quot;PrevArtist&quot;&lt;/li&gt;&lt;li&gt;incTrackTitle = &quot;...&quot;&lt;/li&gt;&lt;li&gt;prevTrackTitle = &quot;PrevTitle&quot;&lt;/li&gt;&lt;li&gt;albumNameUpdated = &lt;b&gt;false&lt;/b&gt;&lt;/li&gt;&lt;li&gt;artistNameUpdated = &lt;b&gt;false&lt;/b&gt;&lt;/li&gt;&lt;li&gt;trackTitleUpdated = &lt;b&gt;false&lt;/b&gt;&lt;/li&gt;&lt;li&gt;albumName = &quot;...&quot;&lt;/li&gt;&lt;li&gt;artistName = &quot;...&quot;&lt;/li&gt;&lt;li&gt;trackTitle = &quot;...&quot;&lt;/li&gt;&lt;li&gt;waitMetadataUpdate = &lt;b&gt;false&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;fontColor=#000000;" vertex="1" parent="r1ZhlQd4K2l6mlT_eHo--80">
+          <mxGeometry y="30" width="250" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--82" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="r1ZhlQd4K2l6mlT_eHo--81" target="r1ZhlQd4K2l6mlT_eHo--38">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1860" y="1580" />
+              <mxPoint x="1330" y="1580" />
+              <mxPoint x="1330" y="300" />
+              <mxPoint x="1830" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--83" value="artistName == prevArtistName &amp;amp;&amp;amp;&lt;div&gt;albumName == prevAlbumName &amp;amp;&amp;amp;&lt;/div&gt;&lt;div&gt;trackTitle == prevTrackTitle&lt;/div&gt;" style="rhombus;whiteSpace=wrap;html=1;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="2000" y="1240" width="260" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--84" value="no (NEXT or else)" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="r1ZhlQd4K2l6mlT_eHo--83" parent="1" target="r1ZhlQd4K2l6mlT_eHo--88">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="2370" y="1280" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="2310" y="1300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--85" value="yes (PREV)" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="r1ZhlQd4K2l6mlT_eHo--83" parent="1" target="r1ZhlQd4K2l6mlT_eHo--86">
+          <mxGeometry x="-0.6667" relative="1" as="geometry">
+            <mxPoint x="2190" y="1420" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--91" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="r1ZhlQd4K2l6mlT_eHo--86" target="r1ZhlQd4K2l6mlT_eHo--89">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--86" value="Rewind currentTrackIndex and trackListPosition" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="2065" y="1420" width="130" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--92" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="r1ZhlQd4K2l6mlT_eHo--88" target="r1ZhlQd4K2l6mlT_eHo--89">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2240" y="1530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--88" value="Advance currentTrackIndex, trackListPosition, and append trackList next item" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;" vertex="1" parent="1">
+          <mxGeometry x="2230" y="1420" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--89" value="Weird state" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;fontColor=#000000;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#ffffc0;dropTarget=0;" vertex="1" parent="1">
+          <mxGeometry x="2090" y="1550" width="250" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--93" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="r1ZhlQd4K2l6mlT_eHo--89" source="r1ZhlQd4K2l6mlT_eHo--90">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="340" y="-560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1ZhlQd4K2l6mlT_eHo--90" value="&lt;ul&gt;&lt;li&gt;incAlbumName = &quot;...&quot;&lt;/li&gt;&lt;li&gt;prevAlbumName = &quot;...&quot;&lt;/li&gt;&lt;li&gt;incArtistName = &quot;...&quot;&lt;/li&gt;&lt;li&gt;prevArtistName = &quot;...&quot;&lt;/li&gt;&lt;li&gt;incTrackTitle = &quot;...&quot;&lt;/li&gt;&lt;li&gt;prevTrackTitle = &quot;...&quot;&lt;/li&gt;&lt;li&gt;albumNameUpdated = &lt;b&gt;true&lt;/b&gt;&lt;/li&gt;&lt;li&gt;artistNameUpdated = &lt;b&gt;true&lt;/b&gt;&lt;/li&gt;&lt;li&gt;trackTitleUpdated = &lt;b&gt;true&lt;/b&gt;&lt;/li&gt;&lt;li&gt;albumName = &quot;...&quot;&lt;/li&gt;&lt;li&gt;artistName = &quot;...&quot;&lt;/li&gt;&lt;li&gt;trackTitle = &quot;...&quot;&lt;/li&gt;&lt;li&gt;waitMetadataUpdate = &lt;b&gt;false&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;fontColor=#000000;" vertex="1" parent="r1ZhlQd4K2l6mlT_eHo--89">
+          <mxGeometry y="30" width="250" height="210" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

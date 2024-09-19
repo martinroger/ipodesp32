@@ -7,6 +7,10 @@
     #define TOTAL_NUM_TRACKS 3000
 #endif
 
+#ifndef TRACK_CHANGE_TIMEOUT
+    #define TRACK_CHANGE_TIMEOUT 1100
+#endif
+
 enum PB_STATUS : byte
 {
     PB_STATE_STOPPED        =   0x00,
@@ -67,25 +71,30 @@ public:
     uint64_t lastConnected  =   0;
     
     //metadata variables
-    char trackTitle[255]    =   "Title";
-    char artistName[255]    =   "Artist";
-    char albumName[255]     =   "Album";
-    char trackGenre[255]    =   "Genre";
-    char playList[255]      =   "Spotify";
-    char composer[255]      =   "Composer";
-    uint32_t trackDuration  =   1;  //Track duration in ms
-    uint32_t playPosition   =   0;  //Current playing position of the track in ms
+    char trackTitle[255]        =   "Title";
+    char prevTrackTitle[255]    =   " ";
+    char artistName[255]        =   "Artist";
+    char prevArtistName[255]    =   " ";
+    char albumName[255]         =   "Album";
+    char prevAlbumName[255]     =   " ";
+    char trackGenre[255]        =   "Genre";
+    char playList[255]          =   "Spotify";
+    char composer[255]          =   "Composer";
+    uint32_t trackDuration      =   1;  //Track duration in ms
+    uint32_t prevTrackDuration  =   1;
+    uint32_t playPosition       =   0;  //Current playing position of the track in ms
 
     //Playback Engine
     byte playStatus                     =   PB_STATE_PAUSED; //Current state of the PBEngine
     byte playStatusNotificationState    =   NOTIF_OFF; //Current state of the Notifications engine
-    bool playStatusNotificationsPaused  =   false; //Possibly not needed no more
-    bool waitMetadataUpdate             =   false; //Possibly not needed no more
+    byte trackChangeAckPending          =   0x00; //Indicate there is a pending track change.
+    uint64_t trackChangeTimestamp       =   0; //Trigger for the last track change request. Time outs the pending track change.
     byte shuffleStatus                  =   0x00; //00 No Shuffle, 0x01 Tracks 0x02 Albums
     byte repeatStatus                   =   0x02; //00 Repeat off, 01 One track, 02 All tracks
 
     //TrackList variables
     uint32_t currentTrackIndex             =   0;
+    uint32_t prevTrackIndex                =   TOTAL_NUM_TRACKS-1;  //Starts at the end of the tracklist
     const uint32_t totalNumberTracks       =   TOTAL_NUM_TRACKS;
     uint32_t trackList[TOTAL_NUM_TRACKS]   =   {0};
     uint32_t trackListPosition             =   0; //Locator for the position of the track ID in the TrackList (of IDS)
@@ -112,7 +121,7 @@ private:
     const uint8_t _SWrevision   =   0x00;
     const char* _serialNumber   =   "AB345F7HIJK";
 
-    //Mini metadata
+    //MINI metadata
     bool _accessoryNameRequested            =   false;
     bool _accessoryCapabilitiesRequested    =   false;
     bool _accessoryFirmwareRequested        =   false;
@@ -147,6 +156,7 @@ public:
 
     //Lingo 0x04
     void L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID);
+    void L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField);
     void L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, char *trackInfoChars);
     void L0x04_0x0D_ReturnIndexedPlayingTrackInfo(uint32_t trackDuration_ms);
     void L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, uint16_t releaseYear);
@@ -165,11 +175,10 @@ public:
     void L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks);
 
     //Processors
-    void processLingo0x00(const byte *byteArray, uint32_t len);
+    void processLingo0x00(const byte* byteArray, uint32_t len);
     void processLingo0x04(const byte* byteArray, uint32_t len);
     void processPacket(const byte* byteArray,uint32_t len);
 
     //Cyclic functions
     void refresh();
-    void cyclicNotify();
 };

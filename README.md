@@ -61,13 +61,13 @@ The I2S stream generated from the ESP32 goes to a DAC chip (in my case an *UDA13
 ## What is needed ?
 ### PL2303-based USB-Serial interface
 
-Unfortunately BMW's head unit doesn't seem to recognise the most widely available USB-Serial chips like the *FTDI 232* or the *CH340* and other variants, possibly because of trade deals and of their release dates.
+Unfortunately BMW's head unit doesn't seem to **natively** recognise the most widely available USB-Serial chips like the *FTDI 232* or the *CH340* and other variants, possibly because of trade deals and of their release dates.
 
-Most if not all the Y-cables used to connect iPods to the Mini use a **PL2303 chip** to let the iPod communicate over Serial with the car.
+Most if not all the Y-cables used to connect iPods to the Mini use a **PL2303HX chip** to let the iPod communicate over Serial with the car.
 
-Working chips are the PL2303HX, PL2303GS and possibly some others... but unfortunately this has been a widely copied chip so there is a host of fakes available on the Internet. These should just as fine as the real ones, but they are obviously not the real deal.
+Working USB-Serial chips need to report the VID and PID of the **PL2303HX** converter to be recognised and unfortunately it is difficult to source in small quantities. Additionally this has been a widely copied chip so there is a host of fakes available on the Internet. These should just as fine as the real ones, but they are obviously not the real deal.
 
-For true DIY makers I would recommend getting a PL2303 interface board like the [one manufactured by Waveshare](https://www.waveshare.com/product/pl2303-usb-uart-board-type-c.htm?sku=20265), but alternatives from [Amazon/Aliexpress](https://a.co/d/a89Kzf7) and consorts might work just as well.
+Hardcore DIY makers can get a PL2303G interface board like the [one manufactured by Waveshare](https://www.waveshare.com/product/pl2303-usb-uart-board-type-c.htm?sku=20265) and edit the OTPROM (only once) with the PL2303HX VID and PIDs, but PL2303HX alternatives from [Amazon/Aliexpress](https://a.co/d/a89Kzf7) and consorts might work just as well without trying to find a way to edit the VID and PID.
 
 ![PL2303 Converters](/img/PL2303.png)
 
@@ -83,6 +83,8 @@ Other boards, such as the **[Sparkfun Thing Plus](https://www.sparkfun.com/produ
 ![SparkFun Thing Plus](/img/SparkfunThingPlus.png)
 
 ### An external DAC breakout board
+
+Please note, because of deprecation issues with ESP's A2DP-I2S implementation, this project uses now [pschatzmann's Arduino Audio Tools lib](https://github.com/pschatzmann/arduino-audio-tools) for the A2DP-I2S implementation. It works just the same with some syntax adjustments.
 
 Before I may get around to providing an all-in-one board, the best solution is to use an external DAC with a 3.5mm barrel jack output. The possible models are described, along with some configuration hints, on [pschatzmann's ESP32-A2DP library wiki](https://github.com/pschatzmann/arduino-audio-tools/wiki/External-DAC) pages.
 
@@ -101,15 +103,16 @@ For the *McGyver style*, a handful of jumper wires can suffice to connect all th
 At the time of writing, this is what is supported :
 - Auto-reconnect to the phone
 - iPod emulation to the car
-- Skip FW/RW and restart song, with some glitches
-- Metadata update, sometimes with a couple small issues
+- Skip FW/RW and restart song
+- Metadata update, sometimes with a couple small issues (but less and less)
 - Auto-pause on leave
 
 Some features are also partially supported but known to generate some bugs or unintended effects :
 - Shuffle mode does not affect the Shuffle state of the phone, and can lead to some issues with Next/Previous commands needing to be alternatively activated and metadata fetching delays
 - Controlling playback from the phone (Pause/Play, Next/Previous) should work but can generate synchronisation issues
-- Repeat tracks control is ineffective
-- Metadata update can sometimes need a bit of encouragement by pressing the "Track" button on the Mini
+- Repeat tracks control is essentially ineffective
+- Metadata update can sometimes need a bit of encouragement by pressing the "Track" button on the Mini, though there is a patch coming for that
+- Sometimes starting can be laggy or paused with Spotify if there is a no data connection available on the mobile phone. This is unfortunately an issue with online streaming. Forcing "play" on the phone, or skipping to the next track on the phone usually resolves everything.
 
 Some features that seem to be there but are actually not doing what they are originally intended to :
 - Artist/Genre/Album browsing and selection : it will display only one entry to the current song and will not allow dynamic selections
@@ -118,8 +121,8 @@ Some features that seem to be there but are actually not doing what they are ori
 
 ## Remaining work to do
 
-- [ ] Work on improving the reliability of the metadata fetching and displaying, especially on song changes
-- [ ] Revise the Previous/Next detection, especially when performed directly on the phone
+- [x] Work on improving the reliability of the metadata fetching and displaying, especially on song changes
+- [x] Revise the Previous/Next detection, especially when performed directly on the phone
 - [ ] Extend the code to more external DACs
 - [ ] Design and get manufactured a all-in-one PCB, for the clean looks of it
 - [ ] Design a 3D-printable enclosure
@@ -127,18 +130,33 @@ Some features that seem to be there but are actually not doing what they are ori
 
 ## How to flash it
 
-This repository is built around a **Platformio project**, which allows automatic pulling of the right libraries, at the right version, from the right places, and good auto-configuration based on a couple build flags.
+This repository is built around a **Platformio project and VSCode**, which allows automatic pulling of the right libraries, at the right version, from the right places, and good auto-configuration based on a couple build flags.
+
+### For those who know
 
 For the recommended hardware configuration, the simplest is to **clone this repository**, open it in Platformio (in VS Code for instance), connect the ESP32 board (without the DAC or the USB-Serial interface) and flash it like any other ESP32 bit of software.
 
 For more exotic configurations, the build flags may need to be updated and the *main.cpp* file may also require some fiddling. I may provide some pre-made configurations in the future.
 
-Please be aware that if the PL2303 is connected via the GPIO pins to the UART0 interface, flashing may not work properly or start at all.
-It is preferable to disconnect the USB-Serial interface from the ESP32 board prior to flashing.
+Please be aware that it is not currently possible to flash via the PL2303HX because it is not connected to the UART0 pins of the ESP32. Use USB CDC or the embedded USB-UART chips on the ESP32 devboard to flash via the main UART.
+
+### For those who do not know
+
+First start by installing [Visual Studio Code](https://code.visualstudio.com/) and from within its Extensions interface, [PlatformIo IDE](https://platformio.org/).
+Once they are both installed, download [the latest release](https://github.com/martinroger/ipodesp32/releases/latest) or clone the repository on your computer.
+Unzip the release file and from within the folder, right-click and choose "Open with Code" as shown below.
+
+![Open with Code](/img/openWithCode.png)
+
+The PlatformIO extension should automatically recognize and configure the project (which might take a few minutes). Once it is ready, select the build configuration you need (most likely *nodeMCUESP32S_externalDAC* ) and hit the "Build and Upload" arrow in the bottom bar, after connecting your NodeMCU32S board to the computer and letting it install the drivers.
+
+![Build and Upload](/img/selectAndUpload.png)
+
+VS Code should automatically find the target board and upload the software to it. After this, disconnect it, remount/reconnect as below, and look over Bluetooth for iPodEsp 2.
 
 ## Resources for a clean build
 
-To be completed when a clean build exists...
+To be completed when a clean build exists... 
 
 ### Connection diagram
 
@@ -168,4 +186,4 @@ And on the PL2303 interface board :
 
 ### Enclosure
 
-TBC
+To be designed.
