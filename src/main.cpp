@@ -366,7 +366,7 @@ void setup() {
 		while(a2dp_sink.get_connection_state()!=ESP_A2D_CONNECTION_STATE_CONNECTED) {
 			delay(10);
 		}
-		a2dp_sink.play(); //Essential to attempt auto-start. Creates issues with Offline mode on spotify
+		//a2dp_sink.play(); //Essential to attempt auto-start. Creates issues with Offline mode on spotify
 		delay(500);
 		
 	#endif
