@@ -16,8 +16,10 @@
 #endif
 
 esPod espod(Serial2);
-
-Timer<millis> espodRefreshTimer = 5;
+#ifndef REFRESH_INTERVAL
+	#define REFRESH_INTERVAL 5
+#endif
+Timer<millis> espodRefreshTimer = REFRESH_INTERVAL;
 
 char incAlbumName[255] 		= 	"incAlbum";
 char incArtistName[255] 	= 	"incArtist";
