@@ -14,15 +14,30 @@
 			BluetoothA2DPSink a2dp_sink(out);
 		#endif
 		#ifdef AUDIOKIT
+			#ifndef LED_BUILTIN
+				#define LED_BUILTIN 22
+			#else
+				#undef LED_BUILTIN
+				#define LED_BUILTIN 22
+			#endif
 			#include "AudioTools/AudioLibs/I2SCodecStream.h"
 			#include "AudioBoard.h"
 			AudioInfo info(44100,2,16);
-			I2SCodecStream i2s(AudioKitEs8388V2);
+			I2SCodecStream i2s(AudioKitEs8388V1);
 			BluetoothA2DPSink a2dp_sink(i2s);
 		#endif
 #endif
 
-esPod espod(Serial2);
+#ifndef AUDIOKIT
+	esPod espod(Serial2);
+#else
+	//HardwareSerial ipodSerial(1);
+	//esPod espod(ipodSerial);
+	esPod espod(Serial);
+	#ifdef SERIAL_DEBUG
+		#undef SERIAL_DEBUG
+	#endif
+#endif
 #ifndef REFRESH_INTERVAL
 	#define REFRESH_INTERVAL 5
 #endif
@@ -45,7 +60,7 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void* ptr) {
 	switch (state)	{
 		case ESP_A2D_CONNECTION_STATE_CONNECTED:
 			#ifdef LED_BUILTIN
-				digitalWrite(LED_BUILTIN,HIGH);
+				digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
 			#endif
 			#ifdef DEBUG_MODE
 				Serial.println("ESP_A2D_CONNECTION_STATE_CONNECTED, espod enabled");
@@ -54,7 +69,7 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void* ptr) {
 			break;
 		case ESP_A2D_CONNECTION_STATE_DISCONNECTED:
 			#ifdef LED_BUILTIN
-				digitalWrite(LED_BUILTIN,LOW);
+				digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
 			#endif
 			#ifdef DEBUG_MODE
 				Serial.println("ESP_A2D_CONNECTION_STATE_DISCONNECTED, espod disabled");
@@ -355,7 +370,11 @@ void setup() {
 		a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
 		a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE|ESP_AVRC_MD_ATTR_ARTIST|ESP_AVRC_MD_ATTR_ALBUM|ESP_AVRC_MD_ATTR_PLAYING_TIME);
 		a2dp_sink.set_avrc_rn_play_pos_callback(avrc_rn_play_pos_callback,1);
-		a2dp_sink.start("espiPod 2");
+		#ifdef AUDIOKIT
+			a2dp_sink.start("MiNiPoD56");
+		#else
+			a2dp_sink.start("espiPod 2");
+		#endif
 
 		#ifdef LED_BUILTIN
 			pinMode(LED_BUILTIN,OUTPUT);
@@ -367,10 +386,20 @@ void setup() {
 		Serial.setTxBufferSize(4096);
 		Serial.begin(115200);
   	#endif
+	#ifndef AUDIOKIT
 		Serial2.setRxBufferSize(4096);
 		Serial2.setTxBufferSize(4096);
 		Serial2.begin(19200);
-
+	#else
+		// ipodSerial.setPins(19,22);
+		// ipodSerial.setRxBufferSize(4096);
+		// ipodSerial.setTxBufferSize(4096);
+		// ipodSerial.begin(19200);
+		// digitalWrite(LED_BUILTIN,HIGH);
+		Serial.setRxBufferSize(4096);
+		Serial.setTxBufferSize(4096);
+		Serial.begin(19200);
+	#endif
  	
 	//Prep and start up espod
 	espod.attachPlayControlHandler(playStatusHandler);
@@ -380,7 +409,7 @@ void setup() {
 		while(a2dp_sink.get_connection_state()!=ESP_A2D_CONNECTION_STATE_CONNECTED) {
 			delay(10);
 		}
-		a2dp_sink.play(); //Essential to attempt auto-start. Creates issues with Offline mode on spotify
+		//a2dp_sink.play(); //Essential to attempt auto-start. Creates issues with Offline mode on spotify
 		delay(500);
 		
 	#endif
