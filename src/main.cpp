@@ -13,6 +13,13 @@
 			AnalogAudioStream out;
 			BluetoothA2DPSink a2dp_sink(out);
 		#endif
+		#ifdef AUDIOKIT
+			#include "AudioTools/AudioLibs/I2SCodecStream.h"
+			#include "AudioBoard.h"
+			AudioInfo info(44100,2,16);
+			I2SCodecStream i2s(AudioKitEs8388V2);
+			BluetoothA2DPSink a2dp_sink(i2s);
+		#endif
 #endif
 
 esPod espod(Serial2);
@@ -336,6 +343,11 @@ void setup() {
 			DIN   ->  22
 			BCLK  ->  26
 			*/
+		#endif
+		#ifdef AUDIOKIT
+			auto cfg = i2s.defaultConfig();
+			cfg.copyFrom(info);
+			i2s.begin(cfg);
 		#endif
 		a2dp_sink.set_auto_reconnect(true); //Auto-reconnect
 		a2dp_sink.set_on_connection_state_changed(connectionStateChanged);
