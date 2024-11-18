@@ -1,30 +1,21 @@
 #include <sdLogUpdate.h>
 
-static const char* TAG = "sdLogUpdate";
+static const char* TAG = "";
 
 bool initSD() {
 	bool ret = false;
-	pinMode(LED_SD,OUTPUT);
-	pinMode(SD_DETECT,INPUT);
 	if(SD_MMC.setPins(SD_CLK,SD_CMD,SD_DATA0,SD_DATA1,SD_DATA2,SD_DATA3)) {
-		digitalWrite(LED_SD,LOW);
-		ret = true;
-	}
-	else digitalWrite(LED_SD,HIGH); //Turn of if setPins didn't work
-
-	if(!digitalRead(SD_DETECT)) { //Check the SD Detect pin. Not sure about the logic
-		digitalWrite(LED_SD,LOW);
-		//ret = true;
-	}
-	else digitalWrite(LED_SD,HIGH); //Turn off if no SD card detected
-
-	if(SD_MMC.begin()) {
-		ret = true;
-		digitalWrite(LED_SD,LOW);
-		if(SD_MMC.cardType() == CARD_NONE || SD_MMC.cardType() == CARD_UNKNOWN) {
-			ret = false;
-			digitalWrite(LED_SD,HIGH);
+		if(SD_MMC.begin()) {
+			ret = true;
+			if(SD_MMC.cardType() == CARD_NONE || SD_MMC.cardType() == CARD_UNKNOWN) {
+				ESP_LOGW(TAG,"Card type invalid or unknown");
+				ret = false;
+			}
 		}
+	}
+	else {
+		ESP_LOGW(TAG,"Could not set SD_MMC pins"); //Turn of if setPins didn't work
+		return false;
 	}
 	return ret;
 }
@@ -136,77 +127,75 @@ void deleteFile(fs::FS &fs, const char *path) {
   }
 }
 
-void performUpdate(Stream &updateSource, size_t updateSize) {
-  if (Update.begin(updateSize)) {
-	size_t written = Update.writeStream(updateSource);
-	if (written == updateSize) {
-		ESP_LOGW(TAG,"yes");
-	  Serial.println("Written : " + String(written) + " successfully");
-	  ESP_LOGE(TAG,"Written : %s successfully",String(written));
-	} else {
-	  Serial.println("Written only : " + String(written) + "/" + String(updateSize) + ". Retry?");
-	}
-	if (Update.end()) {
-	  Serial.println("OTA done!");
-	  if (Update.isFinished()) {
-		Serial.println("Update successfully completed. Rebooting.");
-		//To remove later
-		digitalWrite(LED_SD,!digitalRead(LED_SD));
-		delay(500);
-		digitalWrite(LED_SD,!digitalRead(LED_SD));
-		delay(500);
-		digitalWrite(LED_SD,!digitalRead(LED_SD));
-		delay(500);
-		digitalWrite(LED_SD,!digitalRead(LED_SD));
-		delay(500);
-		digitalWrite(LED_SD,!digitalRead(LED_SD));
-		delay(500);
-		digitalWrite(LED_SD,!digitalRead(LED_SD));
-		delay(500);
-		digitalWrite(LED_SD,!digitalRead(LED_SD));
-		delay(500);
-		digitalWrite(LED_SD,!digitalRead(LED_SD));
-		delay(500);
-		digitalWrite(LED_SD,!digitalRead(LED_SD));
-		delay(500);
-		digitalWrite(LED_SD,!digitalRead(LED_SD));
-		delay(500);
-		
-	  } else {
-		Serial.println("Update not finished? Something went wrong!");
-	  }
-	} else {
-	  Serial.println("Error Occurred. Error #: " + String(Update.getError()));
-	}
-
-  } else {
-	Serial.println("Not enough space to begin OTA");
-  }
+/// @brief Performs the update based on a the stream source
+/// @param updateSource Streamed update source
+/// @param updateSize Total size to update
+/// @return True if successful, false otherwise
+bool performUpdate(Stream &updateSource, size_t updateSize) {
+	bool ret = false;
+	if (Update.begin(updateSize)) 
+	{
+		size_t written = Update.writeStream(updateSource);
+		if (written == updateSize) 
+		{
+			ESP_LOGI(TAG,"Written : %d successfully",written);
+		} 
+		else 
+		{
+			ESP_LOGI(TAG,"Written only : %d / %d. Retry?",written,updateSize);
+		}
+		if (Update.end()) 
+		{
+			ESP_LOGI(TAG,"Update done!");
+			if (Update.isFinished()) 
+			{
+				ESP_LOGI(TAG,"Update successfully completed. Rebooting.");
+				ret = true;
+			} 
+			else ESP_LOGE(TAG,"Update not finished? Something went wrong!");
+		} 
+		else ESP_LOGE(TAG,"Error Occurred. Error #: %d",Update.getError());
+	} 
+	else ESP_LOGE(TAG,"Not enough space to begin OTA");
+	return ret;
 }
 
 void updateFromFS(fs::FS &fs) {
-  File updateBin = fs.open("/update.bin");
-  if (updateBin) {
-	if (updateBin.isDirectory()) {
-	  Serial.println("Error, update.bin is not a file");
-	  updateBin.close();
-	  return;
+	bool restartRequired = false;
+	if(fs.exists("/update.bin")) {
+		File updateBin = fs.open("/update.bin");
+		if (updateBin) 
+		{
+			if (updateBin.isDirectory()) 
+			{
+				ESP_LOGE(TAG,"Error, update.bin is not a file");
+				updateBin.close();
+				return;
+			}
+
+			size_t updateSize = updateBin.size();
+
+			if (updateSize > 0) 
+			{
+				ESP_LOGI(TAG,"Attempting update with update.bin");
+				restartRequired = performUpdate(updateBin, updateSize);
+			} 
+			else 
+			{
+				ESP_LOGE(TAG,"Error, update file is empty");
+			}
+			updateBin.close();
+
+			fs.remove("/update.bin");
+			if(restartRequired) ESP.restart();
+		} 
+		else 
+		{
+			ESP_LOGE(TAG,"Could not load update.bin from SD root");
+		}
 	}
-
-	size_t updateSize = updateBin.size();
-
-	if (updateSize > 0) {
-	  Serial.println("Try to start update");
-	  performUpdate(updateBin, updateSize);
-	} else {
-	  Serial.println("Error, file is empty");
+	else
+	{
+		ESP_LOGI(TAG,"No update.bin file found");
 	}
-
-	updateBin.close();
-
-	// when finished remove the binary from sd card to indicate end of the process
-	fs.remove("/update.bin");
-  } else {
-	Serial.println("Could not load update.bin from sd root");
-  }
 }

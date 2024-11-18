@@ -349,10 +349,17 @@ void playStatusHandler(byte playCommand) {
 
 void setup() {
 	#ifdef USE_SD //Main check for FW and start logging
-		if(initSD()) {
-			//TODO: link the log output to the SD card first
-			//Attempt to update
-			updateFromFS(SD_MMC);
+		pinMode(LED_SD,OUTPUT);
+		pinMode(SD_DETECT,INPUT);
+		if(digitalRead(SD_DETECT) == LOW) {
+			ESP_LOGE("SD_DETECT","SD detected");
+			
+			if(initSD()) {
+				digitalWrite(LED_SD, LOW); //Turn the SD LED ON
+				//TODO: link the log output to the SD card first here
+				//Attempt to update
+				updateFromFS(SD_MMC);
+			}
 		}
 	#endif
 	#ifdef ENABLE_A2DP

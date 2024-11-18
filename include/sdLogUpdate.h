@@ -17,9 +17,11 @@
 #define SD_DATA0	2
 #define SD_DATA1	4
 
+
+/// @brief Starts the 4 wire SD_MMC and checks the card type is valid
+/// @return True if successful init, false otherwise
 bool initSD();
 
-void performUpdate(Stream &updateSource, size_t updateSize);
 
 /// @brief Looks for a "/update.bin" file on the SD card and updates the system automatically
 /// @param fs SD_MMC or SD if it has been successfully mounted
