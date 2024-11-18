@@ -40,7 +40,6 @@
 	#ifdef SERIAL_DEBUG
 		#undef SERIAL_DEBUG
 	#endif
-
 #endif
 #ifndef REFRESH_INTERVAL
 	#define REFRESH_INTERVAL 5
@@ -349,6 +348,13 @@ void playStatusHandler(byte playCommand) {
 }
 
 void setup() {
+	#ifdef USE_SD //Main check for FW and start logging
+		if(initSD()) {
+			//TODO: link the log output to the SD card
+			//Attempt to update
+			updateFromFS(SD_MMC);
+		}
+	#endif
 	#ifdef ENABLE_A2DP
 		#ifdef USE_EXTERNAL_DAC_UDA1334A
 			auto cfg = i2s.defaultConfig(TX_MODE);

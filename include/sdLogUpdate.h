@@ -21,4 +21,6 @@ bool initSD();
 
 void performUpdate(Stream &updateSource, size_t updateSize);
 
+/// @brief Looks for a "/update.bin" file on the SD card and updates the system automatically
+/// @param fs SD_MMC or SD if it has been successfully mounted
 void updateFromFS(fs::FS &fs);
