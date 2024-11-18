@@ -350,7 +350,7 @@ void playStatusHandler(byte playCommand) {
 void setup() {
 	#ifdef USE_SD //Main check for FW and start logging
 		if(initSD()) {
-			//TODO: link the log output to the SD card
+			//TODO: link the log output to the SD card first
 			//Attempt to update
 			updateFromFS(SD_MMC);
 		}

@@ -140,6 +140,7 @@ void performUpdate(Stream &updateSource, size_t updateSize) {
   if (Update.begin(updateSize)) {
 	size_t written = Update.writeStream(updateSource);
 	if (written == updateSize) {
+		ESP_LOGI(TAG,"yes");
 	//   Serial.println("Written : " + String(written) + " successfully");
 	} else {
 	//   Serial.println("Written only : " + String(written) + "/" + String(updateSize) + ". Retry?");
