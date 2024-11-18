@@ -352,7 +352,7 @@ void setup() {
 		pinMode(LED_SD,OUTPUT);
 		pinMode(SD_DETECT,INPUT);
 		if(digitalRead(SD_DETECT) == LOW) {
-			ESP_LOGE("SD_DETECT","SD detected");
+			//ESP_LOGE("SD_DETECT","SD detected");
 			
 			if(initSD()) {
 				digitalWrite(LED_SD, LOW); //Turn the SD LED ON
