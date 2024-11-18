@@ -20,6 +20,24 @@
 				#undef LED_BUILTIN
 				#define LED_BUILTIN 22
 			#endif
+			#ifdef USE_SD
+				#ifndef LED_SD
+					#define LED_SD 19
+				#else
+					#undef LED_SD
+					#define LED_SD 19
+				#endif
+				#include <Update.h>
+				#include <FS.h>
+				#include <SD_MMC.h>
+				#define SD_DETECT 	34
+				#define SD_CLK		14
+				#define SD_DATA2	12
+				#define SD_DATA3	13
+				#define SD_CMD		15
+				#define SD_DATA0	2
+				#define SD_DATA1	4
+			#endif
 			#include "AudioTools/AudioLibs/I2SCodecStream.h"
 			#include "AudioBoard.h"
 			AudioInfo info(44100,2,16);
@@ -37,6 +55,34 @@
 	#ifdef SERIAL_DEBUG
 		#undef SERIAL_DEBUG
 	#endif
+	#ifdef USE_SD
+		bool initSD() { //This should probably be placed in a separate header and cpp file
+			bool ret = false;
+			pinMode(LED_SD,OUTPUT);
+			pinMode(SD_DETECT,INPUT);
+			if(SD_MMC.setPins(SD_CLK,SD_CMD,SD_DATA0,SD_DATA1,SD_DATA2,SD_DATA3)) {
+				digitalWrite(LED_SD,LOW);
+				ret = true;
+			}
+			else digitalWrite(LED_SD,HIGH); //Turn of if setPins didn't work
+
+			if(!digitalRead(SD_DETECT)) { //Check the SD Detect pin. Not sure about the logic
+				digitalWrite(LED_SD,LOW);
+				//ret = true;
+			}
+			else digitalWrite(LED_SD,HIGH); //Turn off if no SD card detected
+
+			if(SD_MMC.begin()) {
+				ret = true;
+				digitalWrite(LED_SD,LOW);
+				if(SD_MMC.cardType() == CARD_NONE || SD_MMC.cardType() == CARD_UNKNOWN) {
+					ret = false;
+					digitalWrite(LED_SD,HIGH);
+				}
+			}
+			return ret;
+		}
+	#endif
 #endif
 #ifndef REFRESH_INTERVAL
 	#define REFRESH_INTERVAL 5
@@ -52,6 +98,7 @@ bool artistNameUpdated 		= 	false;
 bool trackTitleUpdated 		= 	false;
 bool trackDurationUpdated		=	false;
 
+#pragma region A2DP/AVRC callbacks
 #ifdef ENABLE_A2DP
 /// @brief callback on changes of A2DP connection and AVRCP connection. Turns a LED on, enables the espod.
 /// @param state New state passed by the callback.
@@ -294,6 +341,7 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 }
 
 #endif
+#pragma endregion
 
 /// @brief Callback function that passes intended operations from the esPod to the A2DP player
 /// @param playCommand A2DP_xx command instruction. It does not match the PB_CMD_xx codes !!!
