@@ -355,7 +355,7 @@ void setup() {
 			//ESP_LOGE("SD_DETECT","SD detected");
 			
 			if(initSD()) {
-				digitalWrite(LED_SD, LOW); //Turn the SD LED ON
+				digitalWrite(LED_SD,LOW); //Turn the SD LED ON
 				//TODO: link the log output to the SD card first here
 				//Attempt to update
 				updateFromFS(SD_MMC);

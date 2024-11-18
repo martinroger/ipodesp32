@@ -1,6 +1,6 @@
 #include <sdLogUpdate.h>
 
-static const char* TAG = "";
+static const char* TAG = "SD MMC";
 
 bool initSD() {
 	bool ret = false;
