@@ -140,24 +140,47 @@ void performUpdate(Stream &updateSource, size_t updateSize) {
   if (Update.begin(updateSize)) {
 	size_t written = Update.writeStream(updateSource);
 	if (written == updateSize) {
-		ESP_LOGI(TAG,"yes");
-	//   Serial.println("Written : " + String(written) + " successfully");
+		ESP_LOGW(TAG,"yes");
+	  Serial.println("Written : " + String(written) + " successfully");
+	  ESP_LOGE(TAG,"Written : %s successfully",String(written));
 	} else {
-	//   Serial.println("Written only : " + String(written) + "/" + String(updateSize) + ". Retry?");
+	  Serial.println("Written only : " + String(written) + "/" + String(updateSize) + ". Retry?");
 	}
 	if (Update.end()) {
-	//   Serial.println("OTA done!");
+	  Serial.println("OTA done!");
 	  if (Update.isFinished()) {
-		// Serial.println("Update successfully completed. Rebooting.");
+		Serial.println("Update successfully completed. Rebooting.");
+		//To remove later
+		digitalWrite(LED_SD,!digitalRead(LED_SD));
+		delay(500);
+		digitalWrite(LED_SD,!digitalRead(LED_SD));
+		delay(500);
+		digitalWrite(LED_SD,!digitalRead(LED_SD));
+		delay(500);
+		digitalWrite(LED_SD,!digitalRead(LED_SD));
+		delay(500);
+		digitalWrite(LED_SD,!digitalRead(LED_SD));
+		delay(500);
+		digitalWrite(LED_SD,!digitalRead(LED_SD));
+		delay(500);
+		digitalWrite(LED_SD,!digitalRead(LED_SD));
+		delay(500);
+		digitalWrite(LED_SD,!digitalRead(LED_SD));
+		delay(500);
+		digitalWrite(LED_SD,!digitalRead(LED_SD));
+		delay(500);
+		digitalWrite(LED_SD,!digitalRead(LED_SD));
+		delay(500);
+		
 	  } else {
-		// Serial.println("Update not finished? Something went wrong!");
+		Serial.println("Update not finished? Something went wrong!");
 	  }
 	} else {
-	//   Serial.println("Error Occurred. Error #: " + String(Update.getError()));
+	  Serial.println("Error Occurred. Error #: " + String(Update.getError()));
 	}
 
   } else {
-	// Serial.println("Not enough space to begin OTA");
+	Serial.println("Not enough space to begin OTA");
   }
 }
 
@@ -165,7 +188,7 @@ void updateFromFS(fs::FS &fs) {
   File updateBin = fs.open("/update.bin");
   if (updateBin) {
 	if (updateBin.isDirectory()) {
-	//   Serial.println("Error, update.bin is not a file");
+	  Serial.println("Error, update.bin is not a file");
 	  updateBin.close();
 	  return;
 	}
@@ -173,10 +196,10 @@ void updateFromFS(fs::FS &fs) {
 	size_t updateSize = updateBin.size();
 
 	if (updateSize > 0) {
-	//   Serial.println("Try to start update");
+	  Serial.println("Try to start update");
 	  performUpdate(updateBin, updateSize);
 	} else {
-	//   Serial.println("Error, file is empty");
+	  Serial.println("Error, file is empty");
 	}
 
 	updateBin.close();
@@ -184,6 +207,6 @@ void updateFromFS(fs::FS &fs) {
 	// when finished remove the binary from sd card to indicate end of the process
 	fs.remove("/update.bin");
   } else {
-	// Serial.println("Could not load update.bin from sd root");
+	Serial.println("Could not load update.bin from sd root");
   }
 }
