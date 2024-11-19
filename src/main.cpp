@@ -362,13 +362,7 @@ void setup() {
 				digitalWrite(LED_SD,LOW); //Turn the SD LED ON
 				//TODO: link the log output to the SD card first here
 				sdLoggerEnabled = initSDLogger();
-				ESP_LOGI("MAIN","Info log");
-				ESP_LOGI("MAIN","Info log");
-				ESP_LOGI("MAIN","Info log");
-				ESP_LOGI("MAIN","Info log");
-				ESP_LOGI("MAIN","Info log");
-				ESP_LOGI("MAIN","Info log");
-				ESP_LOGI("MAIN","Info log");
+
 				//Attempt to update
 				updateFromFS(SD_MMC);
 			}
@@ -429,7 +423,7 @@ void setup() {
 		// digitalWrite(LED_BUILTIN,HIGH);
 		Serial.setRxBufferSize(4096);
 		Serial.setTxBufferSize(4096);
-		Serial.begin(115200);
+		Serial.begin(19200);
 	#endif
  	
 	//Prep and start up espod

@@ -54,6 +54,7 @@ bool initSDLogger() {
 		esp_log_set_vprintf(&log_to_sd_card);
 		fprintf(log_file,"---NEW LOG---");
 		fsync(fileno(log_file));
+		fflush(log_file);
 		esp_log_level_set("*",ESP_LOG_DEBUG);
 		ESP_LOGI(TAG,"SD MMC Logger successfully started");
 		ret = true;
