@@ -22,6 +22,7 @@
 			#endif
 			#ifdef USE_SD
 				#include "sdLogUpdate.h"
+				bool sdLoggerEnabled = false;
 			#endif
 			#include "AudioTools/AudioLibs/I2SCodecStream.h"
 			#include "AudioBoard.h"
@@ -45,6 +46,7 @@
 	#define REFRESH_INTERVAL 5
 #endif
 Timer<millis> espodRefreshTimer = REFRESH_INTERVAL;
+Timer<millis> sdLoggerFlushTimer	=	1000;
 
 char incAlbumName[255] 		= 	"incAlbum";
 char incArtistName[255] 	= 	"incArtist";
@@ -348,6 +350,8 @@ void playStatusHandler(byte playCommand) {
 }
 
 void setup() {
+	
+	esp_log_level_set("*",ESP_LOG_INFO);
 	#ifdef USE_SD //Main check for FW and start logging
 		pinMode(LED_SD,OUTPUT);
 		pinMode(SD_DETECT,INPUT);
@@ -357,6 +361,14 @@ void setup() {
 			if(initSD()) {
 				digitalWrite(LED_SD,LOW); //Turn the SD LED ON
 				//TODO: link the log output to the SD card first here
+				sdLoggerEnabled = initSDLogger();
+				ESP_LOGI("MAIN","Info log");
+				ESP_LOGI("MAIN","Info log");
+				ESP_LOGI("MAIN","Info log");
+				ESP_LOGI("MAIN","Info log");
+				ESP_LOGI("MAIN","Info log");
+				ESP_LOGI("MAIN","Info log");
+				ESP_LOGI("MAIN","Info log");
 				//Attempt to update
 				updateFromFS(SD_MMC);
 			}
@@ -417,7 +429,7 @@ void setup() {
 		// digitalWrite(LED_BUILTIN,HIGH);
 		Serial.setRxBufferSize(4096);
 		Serial.setTxBufferSize(4096);
-		Serial.begin(19200);
+		Serial.begin(115200);
 	#endif
  	
 	//Prep and start up espod
@@ -438,5 +450,8 @@ void setup() {
 void loop() {
 	if(espodRefreshTimer) {
 		espod.refresh();
+	}
+	if(sdLoggerFlushTimer && sdLoggerEnabled) {
+		sdcard_flush_cyclic();
 	}
 }

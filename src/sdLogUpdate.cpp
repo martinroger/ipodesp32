@@ -2,6 +2,65 @@
 
 static const char* TAG = "SD MMC";
 
+static FILE *log_file;
+
+
+int log_to_sd_card(const char* fmt, va_list args) {
+	static bool static_fatal_error = false;
+	static const uint32_t WRITE_CACHE_CYCLE = 1;
+	static uint32_t counter_write = 0;
+	int iresult;
+
+	// #1 Write to file
+	if (log_file == NULL) 
+	{
+		printf("%s() ABORT. file handle log_file is NULL\n", __FUNCTION__);
+		return -1;
+	}
+	if (static_fatal_error == false) 
+	{
+		iresult = vfprintf(log_file, fmt, args);
+		if (iresult < 0) 
+		{
+			printf("%s() ABORT. failed vfprintf() -> logging disabled \n",__FUNCTION__);
+		// MARK FATAL
+		static_fatal_error = true;
+		return iresult;
+		}
+
+		// #2 Smart commit after x writes
+		if (counter_write++ % WRITE_CACHE_CYCLE == 0) fsync(fileno(log_file));
+	}
+	// #3 ALWAYS Write to stdout!
+	//return vprintf(fmt, args);
+	return iresult;
+}
+
+void sdcard_flush_cyclic(void) {
+	if (log_file)	fsync(fileno(log_file));
+}
+
+bool initSDLogger() {
+	bool ret = false;
+	ESP_LOGI(TAG,"Opening/creating stdout.log with append.");
+	log_file = fopen("/sdcard/stdout.log",FILE_APPEND);
+	if(log_file == NULL)
+	{
+		ESP_LOGE(TAG,"Failed to open stdout.log, aborting SD card logging");
+	}
+	else
+	{
+		ESP_LOGI(TAG,"Redirecting stdout to /stdout.log");
+		esp_log_set_vprintf(&log_to_sd_card);
+		fprintf(log_file,"---NEW LOG---");
+		fsync(fileno(log_file));
+		esp_log_level_set("*",ESP_LOG_DEBUG);
+		ESP_LOGI(TAG,"SD MMC Logger successfully started");
+		ret = true;
+	}
+	return ret;
+}
+
 bool initSD() {
 	bool ret = false;
 	if(SD_MMC.setPins(SD_CLK,SD_CMD,SD_DATA0,SD_DATA1,SD_DATA2,SD_DATA3)) {
