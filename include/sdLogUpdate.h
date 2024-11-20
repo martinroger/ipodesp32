@@ -17,9 +17,13 @@
 #define SD_DATA0	2
 #define SD_DATA1	4
 
-/// @brief Cyclically flush the FILE buffer to the actual file
-/// @param  None
-void sdcard_flush_cyclic(void);
+#ifdef TAG
+#undef TAG
+#endif
+
+// /// @brief Cyclically flush the FILE buffer to the actual file
+// /// @param  None
+// void sdcard_flush_cyclic(void);
 
 /// @brief Starts the logger instance
 /// @return Returns true if it is all successfully started, false otherwise

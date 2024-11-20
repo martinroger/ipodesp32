@@ -2,48 +2,60 @@
 
 static const char* TAG = "SD MMC";
 
-static FILE *log_file;
+File log_file;
 
-
-int log_to_sd_card(const char* fmt, va_list args) {
-	static bool static_fatal_error = false;
-	static const uint32_t WRITE_CACHE_CYCLE = 1;
-	static uint32_t counter_write = 0;
-	int iresult;
-
-	// #1 Write to file
-	if (log_file == NULL) 
+int log_to_sd_card(const char* fmt, va_list args) 
+{
+	File test;
+	int ret;
+	char buf[256];
+	ret = vsnprintf(buf,sizeof(buf),fmt,args);
+	if(log_file)
 	{
-		printf("%s() ABORT. file handle log_file is NULL\n", __FUNCTION__);
-		return -1;
+		log_file.print(buf);
+		log_file.flush();
+		log_file.close();
 	}
-	if (static_fatal_error == false) 
-	{
-		iresult = vfprintf(log_file, fmt, args);
-		if (iresult < 0) 
-		{
-			printf("%s() ABORT. failed vfprintf() -> logging disabled \n",__FUNCTION__);
-		// MARK FATAL
-		static_fatal_error = true;
-		return iresult;
-		}
-
-		// #2 Smart commit after x writes
-		if (counter_write++ % WRITE_CACHE_CYCLE == 0) fsync(fileno(log_file));
-	}
-	// #3 ALWAYS Write to stdout!
-	//return vprintf(fmt, args);
-	return iresult;
+	return ret;
 }
+// static FILE *log_file;
+// int log_to_sd_card(const char* fmt, va_list args) {
+// 	static bool static_fatal_error = false;
+// 	static const uint32_t WRITE_CACHE_CYCLE = 1;
+// 	static uint32_t counter_write = 0;
+// 	int iresult;
 
-void sdcard_flush_cyclic(void) {
-	if (log_file)	fsync(fileno(log_file));
-}
+// 	// #1 Write to file
+// 	if (log_file == NULL) 
+// 	{
+// 		printf("%s() ABORT. file handle log_file is NULL\n", __FUNCTION__);
+// 		return -1;
+// 	}
+// 	if (static_fatal_error == false) 
+// 	{
+// 		iresult = vfprintf(log_file, fmt, args);
+// 		if (iresult < 0) 
+// 		{
+// 			printf("%s() ABORT. failed vfprintf() -> logging disabled \n",__FUNCTION__);
+// 		// MARK FATAL
+// 		static_fatal_error = true;
+// 		return iresult;
+// 		}
+// 		// #2 Smart commit after x writes
+// 		if (counter_write++ % WRITE_CACHE_CYCLE == 0) fsync(fileno(log_file));
+// 	}
+// 	// #3 ALWAYS Write to stdout!
+// 	//return vprintf(fmt, args);
+// 	return iresult;
+// }
+// void sdcard_flush_cyclic(void) {
+// 	if (log_file)	fsync(fileno(log_file));
+// }
 
 bool initSDLogger() {
 	bool ret = false;
 	ESP_LOGI(TAG,"Opening/creating stdout.log with append.");
-	log_file = fopen("/sdcard/stdout.log",FILE_APPEND);
+	log_file = SD_MMC.open("/stdout.log",FILE_APPEND);
 	if(log_file == NULL)
 	{
 		ESP_LOGE(TAG,"Failed to open stdout.log, aborting SD card logging");
@@ -51,15 +63,29 @@ bool initSDLogger() {
 	else
 	{
 		ESP_LOGI(TAG,"Redirecting stdout to /stdout.log");
-		esp_log_set_vprintf(&log_to_sd_card);
-		fprintf(log_file,"---NEW LOG---");
-		fsync(fileno(log_file));
-		fflush(log_file);
-		esp_log_level_set("*",ESP_LOG_DEBUG);
-		ESP_LOGI(TAG,"SD MMC Logger successfully started");
+		esp_log_set_vprintf(log_to_sd_card);
 		ret = true;
 	}
 	return ret;
+
+
+	// log_file = fopen("/sdcard/stdout.log",FILE_APPEND);
+	// if(log_file == NULL)
+	// {
+	// 	ESP_LOGE(TAG,"Failed to open stdout.log, aborting SD card logging");
+	// }
+	// else
+	// {
+	// 	ESP_LOGI(TAG,"Redirecting stdout to /stdout.log");
+	// 	esp_log_set_vprintf(&log_to_sd_card);
+	// 	fprintf(log_file,"---NEW LOG---");
+	// 	fsync(fileno(log_file));
+	// 	fflush(log_file);
+	// 	esp_log_level_set("*",ESP_LOG_DEBUG);
+	// 	ESP_LOGI(TAG,"SD MMC Logger successfully started");
+	// 	ret = true;
+	// }
+	// return ret;
 }
 
 bool initSD() {
@@ -154,38 +180,38 @@ bool initSD() {
 //   }
 // }
 
-void appendFile(fs::FS &fs, const char *path, const char *message) {
-  //Serial.printf("Appending to file: %s\n", path);
+// void appendFile(fs::FS &fs, const char *path, const char *message) {
+//   //Serial.printf("Appending to file: %s\n", path);
 
-  File file = fs.open(path, FILE_APPEND);
-  if (!file) {
-	//Serial.println("Failed to open file for appending");
-	return;
-  }
-  if (file.print(message)) {
-	//Serial.println("Message appended");
-  } else {
-	//Serial.println("Append failed");
-  }
-}
+//   File file = fs.open(path, FILE_APPEND);
+//   if (!file) {
+// 	//Serial.println("Failed to open file for appending");
+// 	return;
+//   }
+//   if (file.print(message)) {
+// 	//Serial.println("Message appended");
+//   } else {
+// 	//Serial.println("Append failed");
+//   }
+// }
 
-void renameFile(fs::FS &fs, const char *path1, const char *path2) {
-//   Serial.printf("Renaming file %s to %s\n", path1, path2);
-  if (fs.rename(path1, path2)) {
-	// Serial.println("File renamed");
-  } else {
-	// Serial.println("Rename failed");
-  }
-}
+// void renameFile(fs::FS &fs, const char *path1, const char *path2) {
+// //   Serial.printf("Renaming file %s to %s\n", path1, path2);
+//   if (fs.rename(path1, path2)) {
+// 	// Serial.println("File renamed");
+//   } else {
+// 	// Serial.println("Rename failed");
+//   }
+// }
 
-void deleteFile(fs::FS &fs, const char *path) {
-//   Serial.printf("Deleting file: %s\n", path);
-  if (fs.remove(path)) {
-	// Serial.println("File deleted");
-  } else {
-	// Serial.println("Delete failed");
-  }
-}
+// void deleteFile(fs::FS &fs, const char *path) {
+// //   Serial.printf("Deleting file: %s\n", path);
+//   if (fs.remove(path)) {
+// 	// Serial.println("File deleted");
+//   } else {
+// 	// Serial.println("Delete failed");
+//   }
+// }
 
 /// @brief Performs the update based on a the stream source
 /// @param updateSource Streamed update source

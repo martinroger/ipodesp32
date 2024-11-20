@@ -3,6 +3,9 @@
 #include "AH/Timing/MillisMicrosTimer.hpp"
 #include "esPod.h"
 #ifdef ENABLE_A2DP
+	#ifdef TAG
+	#undef TAG
+	#endif
 	#include "AudioTools.h"
 	#include "BluetoothA2DPSink.h"
 		#ifdef USE_EXTERNAL_DAC_UDA1334A
@@ -23,6 +26,9 @@
 			#ifdef USE_SD
 				#include "sdLogUpdate.h"
 				bool sdLoggerEnabled = false;
+			#endif
+			#ifdef TAG
+			#undef TAG
 			#endif
 			#include "AudioTools/AudioLibs/I2SCodecStream.h"
 			#include "AudioBoard.h"
@@ -351,7 +357,7 @@ void playStatusHandler(byte playCommand) {
 
 void setup() {
 	
-	esp_log_level_set("*",ESP_LOG_INFO);
+	// esp_log_level_set("*",ESP_LOG_INFO);
 	#ifdef USE_SD //Main check for FW and start logging
 		pinMode(LED_SD,OUTPUT);
 		pinMode(SD_DETECT,INPUT);
@@ -362,7 +368,7 @@ void setup() {
 				digitalWrite(LED_SD,LOW); //Turn the SD LED ON
 				//TODO: link the log output to the SD card first here
 				sdLoggerEnabled = initSDLogger();
-
+				// if(sdLoggerEnabled) esp_log_level_set("*", ESP_LOG_VERBOSE);
 				//Attempt to update
 				updateFromFS(SD_MMC);
 			}
@@ -423,7 +429,7 @@ void setup() {
 		// digitalWrite(LED_BUILTIN,HIGH);
 		Serial.setRxBufferSize(4096);
 		Serial.setTxBufferSize(4096);
-		Serial.begin(19200);
+		Serial.begin(115200);
 	#endif
  	
 	//Prep and start up espod
@@ -438,6 +444,7 @@ void setup() {
 		delay(500);
 		
 	#endif
+	ESP_LOGI("Arduino","Setup finished");
 
 }
 
@@ -445,7 +452,7 @@ void loop() {
 	if(espodRefreshTimer) {
 		espod.refresh();
 	}
-	if(sdLoggerFlushTimer && sdLoggerEnabled) {
-		sdcard_flush_cyclic();
-	}
+	// if(sdLoggerFlushTimer && sdLoggerEnabled) {
+	// 	sdcard_flush_cyclic();
+	// }
 }
