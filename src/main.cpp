@@ -429,7 +429,7 @@ void setup() {
 		// digitalWrite(LED_BUILTIN,HIGH);
 		Serial.setRxBufferSize(4096);
 		Serial.setTxBufferSize(4096);
-		Serial.begin(115200);
+		Serial.begin(19200);
 	#endif
  	
 	//Prep and start up espod
