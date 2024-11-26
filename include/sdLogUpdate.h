@@ -25,9 +25,9 @@
 // /// @param  None
 // void sdcard_flush_cyclic(void);
 
-/// @brief Starts the logger instance
-/// @return Returns true if it is all successfully started, false otherwise
-bool initSDLogger();
+// /// @brief Starts the logger instance
+// /// @return Returns true if it is all successfully started, false otherwise
+// bool initSDLogger();
 
 /// @brief Starts the 4 wire SD_MMC and checks the card type is valid
 /// @return True if successful init, false otherwise

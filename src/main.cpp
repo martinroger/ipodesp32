@@ -367,8 +367,8 @@ void setup() {
 			if(initSD()) {
 				digitalWrite(LED_SD,LOW); //Turn the SD LED ON
 				//TODO: link the log output to the SD card first here
-				sdLoggerEnabled = initSDLogger();
-				// if(sdLoggerEnabled) esp_log_level_set("*", ESP_LOG_VERBOSE);
+				// sdLoggerEnabled = initSDLogger();
+				// if(sdLoggerEnabled) esp_log_level_set("*", ESP_LOG_DEBUG);//For debug only
 				//Attempt to update
 				updateFromFS(SD_MMC);
 			}
@@ -444,7 +444,7 @@ void setup() {
 		delay(500);
 		
 	#endif
-	ESP_LOGI("Arduino","Setup finished");
+	// ESP_LOGI("Arduino","Setup finished");
 
 }
 
@@ -452,7 +452,7 @@ void loop() {
 	if(espodRefreshTimer) {
 		espod.refresh();
 	}
-	// if(sdLoggerFlushTimer && sdLoggerEnabled) {
-	// 	sdcard_flush_cyclic();
-	// }
+// 	if(sdLoggerFlushTimer && sdLoggerEnabled) {
+// 		sdcard_flush_cyclic();
+// 	}
 }

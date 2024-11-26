@@ -2,22 +2,22 @@
 
 static const char* TAG = "SD MMC";
 
-File log_file;
+// File log_file;
 
-int log_to_sd_card(const char* fmt, va_list args) 
-{
-	File test;
-	int ret;
-	char buf[256];
-	ret = vsnprintf(buf,sizeof(buf),fmt,args);
-	if(log_file)
-	{
-		log_file.print(buf);
-		log_file.flush();
-		log_file.close();
-	}
-	return ret;
-}
+// int log_to_sd_card(const char* fmt, va_list args) 
+// {
+// 	File test;
+// 	int ret;
+// 	char buf[256];
+// 	ret = vsnprintf(buf,sizeof(buf),fmt,args);
+// 	if(log_file)
+// 	{
+// 		log_file.print(buf);
+// 		log_file.flush();
+// 		//log_file.close();
+// 	}
+// 	return ret;
+// }
 // static FILE *log_file;
 // int log_to_sd_card(const char* fmt, va_list args) {
 // 	static bool static_fatal_error = false;
@@ -47,46 +47,53 @@ int log_to_sd_card(const char* fmt, va_list args)
 // 	// #3 ALWAYS Write to stdout!
 // 	//return vprintf(fmt, args);
 // 	return iresult;
-// }
+// // }
 // void sdcard_flush_cyclic(void) {
-// 	if (log_file)	fsync(fileno(log_file));
+
+// 		log_file.flush();
+// 		log_file.close();
+// 		log_file = SD_MMC.open("/stdout.log",FILE_APPEND);
+
 // }
 
-bool initSDLogger() {
-	bool ret = false;
-	ESP_LOGI(TAG,"Opening/creating stdout.log with append.");
-	log_file = SD_MMC.open("/stdout.log",FILE_APPEND);
-	if(log_file == NULL)
-	{
-		ESP_LOGE(TAG,"Failed to open stdout.log, aborting SD card logging");
-	}
-	else
-	{
-		ESP_LOGI(TAG,"Redirecting stdout to /stdout.log");
-		esp_log_set_vprintf(log_to_sd_card);
-		ret = true;
-	}
-	return ret;
+// bool initSDLogger() {
+// 	bool ret = false;
+// 	//esp_log_level_set("*",ESP_LOG_ERROR); //To remove, only here for debug
+// 	ESP_LOGI(TAG,"Opening/creating stdout.log with append.");
+// 	log_file = SD_MMC.open("/stdout.log",FILE_APPEND);
+// 	if(log_file == NULL)
+// 	{
+// 		ESP_LOGE(TAG,"Failed to open stdout.log, aborting SD card logging");
+// 	}
+// 	else
+// 	{
+// 		esp_log_level_set("*",ESP_LOG_INFO);
+// 		//ESP_LOGI(TAG,"Redirecting stdout to /stdout.log"); //To remove
+// 		esp_log_set_vprintf(log_to_sd_card);
+// 		ESP_LOGI(TAG,"SD Card logging start");
+// 		ret = true;
+// 	}
+// 	return ret;
 
 
-	// log_file = fopen("/sdcard/stdout.log",FILE_APPEND);
-	// if(log_file == NULL)
-	// {
-	// 	ESP_LOGE(TAG,"Failed to open stdout.log, aborting SD card logging");
-	// }
-	// else
-	// {
-	// 	ESP_LOGI(TAG,"Redirecting stdout to /stdout.log");
-	// 	esp_log_set_vprintf(&log_to_sd_card);
-	// 	fprintf(log_file,"---NEW LOG---");
-	// 	fsync(fileno(log_file));
-	// 	fflush(log_file);
-	// 	esp_log_level_set("*",ESP_LOG_DEBUG);
-	// 	ESP_LOGI(TAG,"SD MMC Logger successfully started");
-	// 	ret = true;
-	// }
-	// return ret;
-}
+// 	// log_file = fopen("/sdcard/stdout.log",FILE_APPEND);
+// 	// if(log_file == NULL)
+// 	// {
+// 	// 	ESP_LOGE(TAG,"Failed to open stdout.log, aborting SD card logging");
+// 	// }
+// 	// else
+// 	// {
+// 	// 	ESP_LOGI(TAG,"Redirecting stdout to /stdout.log");
+// 	// 	esp_log_set_vprintf(&log_to_sd_card);
+// 	// 	fprintf(log_file,"---NEW LOG---");
+// 	// 	fsync(fileno(log_file));
+// 	// 	fflush(log_file);
+// 	// 	esp_log_level_set("*",ESP_LOG_DEBUG);
+// 	// 	ESP_LOGI(TAG,"SD MMC Logger successfully started");
+// 	// 	ret = true;
+// 	// }
+// 	// return ret;
+// }
 
 bool initSD() {
 	bool ret = false;
