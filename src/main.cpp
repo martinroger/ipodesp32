@@ -1,6 +1,6 @@
 #include <Arduino.h>
-#include "Arduino_Helpers.h"
-#include "AH/Timing/MillisMicrosTimer.hpp"
+// #include "Arduino_Helpers.h"
+// #include "AH/Timing/MillisMicrosTimer.hpp"
 #include "esPod.h"
 #ifdef ENABLE_A2DP
 	// #ifdef TAG
@@ -51,8 +51,9 @@
 #ifndef REFRESH_INTERVAL
 	#define REFRESH_INTERVAL 5
 #endif
-Timer<millis> espodRefreshTimer = REFRESH_INTERVAL;
-Timer<millis> sdLoggerFlushTimer	=	1000;
+// Timer<millis> espodRefreshTimer = REFRESH_INTERVAL;
+unsigned long lastTick_ts = 0;
+// Timer<millis> sdLoggerFlushTimer	=	1000;
 
 char incAlbumName[255] 		= 	"incAlbum";
 char incArtistName[255] 	= 	"incArtist";
@@ -449,8 +450,9 @@ void setup() {
 }
 
 void loop() {
-	if(espodRefreshTimer) {
+	if(millis()-lastTick_ts>REFRESH_INTERVAL) {
 		espod.refresh();
+		lastTick_ts = millis();
 	}
 // 	if(sdLoggerFlushTimer && sdLoggerEnabled) {
 // 		sdcard_flush_cyclic();
