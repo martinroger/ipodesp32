@@ -3,9 +3,9 @@
 #include "AH/Timing/MillisMicrosTimer.hpp"
 #include "esPod.h"
 #ifdef ENABLE_A2DP
-	#ifdef TAG
-	#undef TAG
-	#endif
+	// #ifdef TAG
+	// #undef TAG
+	// #endif
 	#include "AudioTools.h"
 	#include "BluetoothA2DPSink.h"
 		#ifdef USE_EXTERNAL_DAC_UDA1334A
@@ -27,9 +27,9 @@
 				#include "sdLogUpdate.h"
 				bool sdLoggerEnabled = false;
 			#endif
-			#ifdef TAG
-			#undef TAG
-			#endif
+			// #ifdef TAG
+			// #undef TAG
+			// #endif
 			#include "AudioTools/AudioLibs/I2SCodecStream.h"
 			#include "AudioBoard.h"
 			AudioInfo info(44100,2,16);
