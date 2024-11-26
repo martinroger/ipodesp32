@@ -3,6 +3,9 @@
 #include "AH/Timing/MillisMicrosTimer.hpp"
 #include "esPod.h"
 #ifdef ENABLE_A2DP
+	// #ifdef TAG
+	// #undef TAG
+	// #endif
 	#include "AudioTools.h"
 	#include "BluetoothA2DPSink.h"
 		#ifdef USE_EXTERNAL_DAC_UDA1334A
@@ -13,11 +16,43 @@
 			AnalogAudioStream out;
 			BluetoothA2DPSink a2dp_sink(out);
 		#endif
+		#ifdef AUDIOKIT
+			#ifndef LED_BUILTIN
+				#define LED_BUILTIN 22
+			#else
+				#undef LED_BUILTIN
+				#define LED_BUILTIN 22
+			#endif
+			#ifdef USE_SD
+				#include "sdLogUpdate.h"
+				bool sdLoggerEnabled = false;
+			#endif
+			// #ifdef TAG
+			// #undef TAG
+			// #endif
+			#include "AudioTools/AudioLibs/I2SCodecStream.h"
+			#include "AudioBoard.h"
+			AudioInfo info(44100,2,16);
+			I2SCodecStream i2s(AudioKitEs8388V1);
+			BluetoothA2DPSink a2dp_sink(i2s);
+		#endif
 #endif
 
-esPod espod(Serial2);
-
-Timer<millis> espodRefreshTimer = 5;
+#ifndef AUDIOKIT
+	esPod espod(Serial2);
+#else
+	//HardwareSerial ipodSerial(1);
+	//esPod espod(ipodSerial);
+	esPod espod(Serial);
+	#ifdef SERIAL_DEBUG
+		#undef SERIAL_DEBUG
+	#endif
+#endif
+#ifndef REFRESH_INTERVAL
+	#define REFRESH_INTERVAL 5
+#endif
+Timer<millis> espodRefreshTimer = REFRESH_INTERVAL;
+Timer<millis> sdLoggerFlushTimer	=	1000;
 
 char incAlbumName[255] 		= 	"incAlbum";
 char incArtistName[255] 	= 	"incArtist";
@@ -28,6 +63,7 @@ bool artistNameUpdated 		= 	false;
 bool trackTitleUpdated 		= 	false;
 bool trackDurationUpdated		=	false;
 
+#pragma region A2DP/AVRC callbacks
 #ifdef ENABLE_A2DP
 /// @brief callback on changes of A2DP connection and AVRCP connection. Turns a LED on, enables the espod.
 /// @param state New state passed by the callback.
@@ -36,7 +72,7 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void* ptr) {
 	switch (state)	{
 		case ESP_A2D_CONNECTION_STATE_CONNECTED:
 			#ifdef LED_BUILTIN
-				digitalWrite(LED_BUILTIN,HIGH);
+				digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
 			#endif
 			#ifdef DEBUG_MODE
 				Serial.println("ESP_A2D_CONNECTION_STATE_CONNECTED, espod enabled");
@@ -45,7 +81,7 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void* ptr) {
 			break;
 		case ESP_A2D_CONNECTION_STATE_DISCONNECTED:
 			#ifdef LED_BUILTIN
-				digitalWrite(LED_BUILTIN,LOW);
+				digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
 			#endif
 			#ifdef DEBUG_MODE
 				Serial.println("ESP_A2D_CONNECTION_STATE_DISCONNECTED, espod disabled");
@@ -270,6 +306,7 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 }
 
 #endif
+#pragma endregion
 
 /// @brief Callback function that passes intended operations from the esPod to the A2DP player
 /// @param playCommand A2DP_xx command instruction. It does not match the PB_CMD_xx codes !!!
@@ -319,6 +356,24 @@ void playStatusHandler(byte playCommand) {
 }
 
 void setup() {
+	
+	// esp_log_level_set("*",ESP_LOG_INFO);
+	#ifdef USE_SD //Main check for FW and start logging
+		pinMode(LED_SD,OUTPUT);
+		pinMode(SD_DETECT,INPUT);
+		if(digitalRead(SD_DETECT) == LOW) {
+			//ESP_LOGE("SD_DETECT","SD detected");
+			
+			if(initSD()) {
+				digitalWrite(LED_SD,LOW); //Turn the SD LED ON
+				//TODO: link the log output to the SD card first here
+				// sdLoggerEnabled = initSDLogger();
+				// if(sdLoggerEnabled) esp_log_level_set("*", ESP_LOG_DEBUG);//For debug only
+				//Attempt to update
+				updateFromFS(SD_MMC);
+			}
+		}
+	#endif
 	#ifdef ENABLE_A2DP
 		#ifdef USE_EXTERNAL_DAC_UDA1334A
 			auto cfg = i2s.defaultConfig(TX_MODE);
@@ -335,13 +390,22 @@ void setup() {
 			BCLK  ->  26
 			*/
 		#endif
+		#ifdef AUDIOKIT
+			auto cfg = i2s.defaultConfig();
+			cfg.copyFrom(info);
+			i2s.begin(cfg);
+		#endif
 		a2dp_sink.set_auto_reconnect(true); //Auto-reconnect
 		a2dp_sink.set_on_connection_state_changed(connectionStateChanged);
 		a2dp_sink.set_on_audio_state_changed(audioStateChanged);
 		a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
 		a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE|ESP_AVRC_MD_ATTR_ARTIST|ESP_AVRC_MD_ATTR_ALBUM|ESP_AVRC_MD_ATTR_PLAYING_TIME);
 		a2dp_sink.set_avrc_rn_play_pos_callback(avrc_rn_play_pos_callback,1);
-		a2dp_sink.start("espiPod 2");
+		#ifdef AUDIOKIT
+			a2dp_sink.start("MiNiPoD56");
+		#else
+			a2dp_sink.start("espiPod 2");
+		#endif
 
 		#ifdef LED_BUILTIN
 			pinMode(LED_BUILTIN,OUTPUT);
@@ -353,10 +417,20 @@ void setup() {
 		Serial.setTxBufferSize(4096);
 		Serial.begin(115200);
   	#endif
+	#ifndef AUDIOKIT
 		Serial2.setRxBufferSize(4096);
 		Serial2.setTxBufferSize(4096);
 		Serial2.begin(19200);
-
+	#else
+		// ipodSerial.setPins(19,22);
+		// ipodSerial.setRxBufferSize(4096);
+		// ipodSerial.setTxBufferSize(4096);
+		// ipodSerial.begin(19200);
+		// digitalWrite(LED_BUILTIN,HIGH);
+		Serial.setRxBufferSize(4096);
+		Serial.setTxBufferSize(4096);
+		Serial.begin(19200);
+	#endif
  	
 	//Prep and start up espod
 	espod.attachPlayControlHandler(playStatusHandler);
@@ -370,6 +444,7 @@ void setup() {
 		delay(500);
 		
 	#endif
+	// ESP_LOGI("Arduino","Setup finished");
 
 }
 
@@ -377,4 +452,7 @@ void loop() {
 	if(espodRefreshTimer) {
 		espod.refresh();
 	}
+// 	if(sdLoggerFlushTimer && sdLoggerEnabled) {
+// 		sdcard_flush_cyclic();
+// 	}
 }
