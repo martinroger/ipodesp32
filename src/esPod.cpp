@@ -1,4 +1,8 @@
 #include "esPod.h"
+#ifdef IPOD_TAG
+    #undef IPOD_TAG
+#endif
+#define IPOD_TAG "esPod"
 
 /*Heavily adapted from :
 https://github.com/chemicstry/A2DP_iPod
@@ -31,19 +35,19 @@ T swap_endian(T u)
 #pragma region
 esPod::esPod(Stream& targetSerial) 
     :
-        #ifdef DEBUG_MODE
-        _debugSerial(Serial),
-        #endif
+        // #ifdef DEBUG_MODE
+        // _debugSerial(Serial),
+        // #endif
         _targetSerial(targetSerial)
 {
 }
 
 void esPod::resetState(){
 
-    #ifdef DEBUG_MODE
-        _debugSerial.println("espod.resetState() triggered");
-    #endif
-
+    // #ifdef DEBUG_MODE
+    //     _debugSerial.println("espod.resetState() triggered");
+    // #endif
+    ESP_LOGW(IPOD_TAG,"esPod resetState called");
     //State variables
     extendedInterfaceModeActive = false;
     lastConnected = millis();
@@ -85,6 +89,7 @@ void esPod::resetState(){
 void esPod::attachPlayControlHandler(playStatusHandler_t playHandler)
 {
     _playStatusHandler = playHandler;
+    ESP_LOGD(IPOD_TAG,"PlayControlHandler attached.");
     //Experimental, maybe is doing more harm than good
 /*     for (uint32_t i = 0; i < TOTAL_NUM_TRACKS; i++)
     {
@@ -127,9 +132,9 @@ void esPod::sendPacket(const byte* byteArray, uint32_t len)
 /// @param cmdStatus Has to obey to iPodAck_xxx format as defined in L0x00.h
 /// @param cmdID ID (single byte) of the Lingo 0x00 command replied to
 void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID) {
-    #ifdef DEBUG_MODE
-        _debugSerial.printf("TX: L0x00 0x02 iPodAck: %x CMD: %x \n",cmdStatus,cmdID);
-    #endif
+    // #ifdef DEBUG_MODE
+    //     _debugSerial.printf("TX: L0x00 0x02 iPodAck: %x CMD: %x \n",cmdStatus,cmdID);
+    // #endif
     const byte txPacket[] = {
         0x00,
         0x02,
@@ -1356,6 +1361,7 @@ void esPod::processPacket(const byte *byteArray, uint32_t len)
 /// @brief Refresh function for the esPod : listens to Serial, assembles packets, or ignores everything if it is disabled.
 void esPod::refresh()
 {
+    ESP_LOGD(IPOD_TAG,"Refresh called");
     //Check for a new packet and update the buffer
     while(_targetSerial.available()) {
         byte incomingByte = _targetSerial.read();

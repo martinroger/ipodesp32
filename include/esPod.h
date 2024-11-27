@@ -103,9 +103,9 @@ public:
 private:
     //Serial to the listening device
     Stream& _targetSerial;
-    #ifdef DEBUG_MODE
-    HardwareSerial& _debugSerial;
-    #endif
+    // #ifdef DEBUG_MODE
+    // HardwareSerial& _debugSerial;
+    // #endif
 
     //Packet-related 
     byte _prevRxByte    =   0x00;
