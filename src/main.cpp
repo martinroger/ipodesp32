@@ -62,7 +62,7 @@ uint32_t incTrackDuration 	= 	0;
 bool albumNameUpdated 		= 	false;
 bool artistNameUpdated 		= 	false;
 bool trackTitleUpdated 		= 	false;
-bool trackDurationUpdated		=	false;
+bool trackDurationUpdated	=	false;
 
 #pragma region A2DP/AVRC callbacks
 #ifdef ENABLE_A2DP

@@ -1359,7 +1359,7 @@ void esPod::refresh()
     //Check for a new packet and update the buffer
     while(_targetSerial.available()) {
         byte incomingByte = _targetSerial.read();
-        lastConnected = millis()/1000;
+        lastConnected = millis();
         if(!disabled) {
             //A new 0xFF55 packet starter shows up
             if(_prevRxByte == 0xFF && incomingByte == 0x55) { 
@@ -1387,7 +1387,7 @@ void esPod::refresh()
     }
 
     //Reset if no message received in the last 120s
-    if(((millis()/1000)-lastConnected > 120) && !disabled) {
+    if((millis()-lastConnected > 120000) && !disabled) {
         #ifdef DEBUG_MODE
             _debugSerial.println("Serial comms timeout");
         #endif
