@@ -1337,23 +1337,26 @@ void esPod::processPacket(const byte *byteArray, uint32_t len)
     switch (rxLingoID) //0x00 is general Lingo and 0x04 is extended Lingo. Nothing else is expected from the Mini
     {
     case 0x00: //General Lingo
-        #ifdef DEBUG_MODE
-        _debugSerial.print("Lingo 0x00 ");
-        #endif
+        // #ifdef DEBUG_MODE
+        // _debugSerial.print("Lingo 0x00 ");
+        // #endif
+        ESP_LOGD(IPOD_TAG,"Lingo 0x00 Packet in processor,payload length: %d",subPayloadLen);
         processLingo0x00(subPayload,subPayloadLen);
         break;
     
     case 0x04: // Extended Interface Lingo
-        #ifdef DEBUG_MODE
-        _debugSerial.print("Lingo 0x04 ");
-        #endif
+        // #ifdef DEBUG_MODE
+        // _debugSerial.print("Lingo 0x04 ");
+        // #endif
+        ESP_LOGD(IPOD_TAG,"Lingo 0x04 Packet in processor,payload length: %d",subPayloadLen);
         processLingo0x04(subPayload,subPayloadLen);
         break;
     
     default:
-        #ifdef DEBUG_MODE
-        _debugSerial.printf("Unknown Lingo : 0x%x \n",rxLingoID);
-        #endif
+        // #ifdef DEBUG_MODE
+        // _debugSerial.printf("Unknown Lingo : 0x%x \n",rxLingoID);
+        // #endif
+        ESP_LOGW(IPOD_TAG,"Unknown Lingo packet : L0x%x",rxLingoID);
         break;
     }
 }
@@ -1361,7 +1364,7 @@ void esPod::processPacket(const byte *byteArray, uint32_t len)
 /// @brief Refresh function for the esPod : listens to Serial, assembles packets, or ignores everything if it is disabled.
 void esPod::refresh()
 {
-    ESP_LOGD(IPOD_TAG,"Refresh called");
+    ESP_LOGV(IPOD_TAG,"Refresh called");
     //Check for a new packet and update the buffer
     while(_targetSerial.available()) {
         byte incomingByte = _targetSerial.read();
@@ -1394,17 +1397,19 @@ void esPod::refresh()
 
     //Reset if no message received in the last 120s
     if((millis()-lastConnected > 120000) && !disabled) {
-        #ifdef DEBUG_MODE
-            _debugSerial.println("Serial comms timeout");
-        #endif
+        // #ifdef DEBUG_MODE
+        //     _debugSerial.println("Serial comms timeout");
+        // #endif
+        ESP_LOGW(IPOD_TAG,"Serial comms timed out: %d",millis()-lastConnected);
         resetState();
     }
 
     //Send the track change Ack Pending if it has not sent already
     if(!disabled && (trackChangeAckPending>0x00) && (millis()>(trackChangeTimestamp+TRACK_CHANGE_TIMEOUT))) {
-        #ifdef DEBUG_MODE
-            _debugSerial.printf("Timeout reset of pending ACK to %x\n",trackChangeAckPending);
-        #endif        
+        // #ifdef DEBUG_MODE
+        //     _debugSerial.printf("Timeout reset of pending ACK to %x\n",trackChangeAckPending);
+        // #endif
+        ESP_LOGD(IPOD_TAG,"Track change ack pending timed out ! ");        
         L0x04_0x01_iPodAck(iPodAck_OK,trackChangeAckPending);
         trackChangeAckPending = 0x00;
     }
