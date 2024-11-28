@@ -614,7 +614,7 @@ void esPod::L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks)
 //-----------------------------------------------------------------------
 //|                     Process Lingo 0x00 Requests                     |
 //-----------------------------------------------------------------------
-
+#pragma region 0x00 Processor
 /// @brief This function processes a shortened byteArray packet identified as a valid Lingo 0x00 request
 /// @param byteArray Shortened packet, with byteArray[0] being the Lingo 0x00 command ID byte
 /// @param len Length of valid data in the byteArray
@@ -765,10 +765,12 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         break;
     }
 }
+#pragma endregion
 
 //-----------------------------------------------------------------------
 //|                     Process Lingo 0x04 Requests                     |
 //-----------------------------------------------------------------------
+#pragma region 0x04 Processor
 
 /// @brief This function processes a shortened byteArray packet identified as a valid Lingo 0x04 request
 /// @param byteArray Shortened packet, with byteArray[1] being the last byte of the Lingo 0x04 command
@@ -1350,9 +1352,12 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
     }
 }
 
+#pragma endregion
+
 //-----------------------------------------------------------------------
 //|                            Packet Disneyland                        |
 //-----------------------------------------------------------------------
+#pragma region Packet Disneyland
 
 /// @brief Processes a valid packet and calls the relevant Lingo processor
 /// @param byteArray Checksum-validated packet starting at LingoID
@@ -1443,4 +1448,5 @@ void esPod::refresh()
     }
 
 }
+#pragma endregion
 
