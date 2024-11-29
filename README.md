@@ -1,3 +1,5 @@
+[![PlatformIO CI](https://github.com/martinroger/ipodesp32/actions/workflows/platformIO.yml/badge.svg)](https://github.com/martinroger/ipodesp32/actions/workflows/platformIO.yml)
+
 # iPodESP32 : an iPod emulator for 2nd gen BMW Minis
 
 ## What is it for?
