@@ -615,24 +615,26 @@ void esPod::L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks)
 //|                     Process Lingo 0x00 Requests                     |
 //-----------------------------------------------------------------------
 #pragma region 0x00 Processor
+
 /// @brief This function processes a shortened byteArray packet identified as a valid Lingo 0x00 request
 /// @param byteArray Shortened packet, with byteArray[0] being the Lingo 0x00 command ID byte
 /// @param len Length of valid data in the byteArray
 void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
 {
     byte cmdID = byteArray[0];
-    #ifdef DEBUG_MODE
-    _debugSerial.printf("RX: L0x00 CMD 0x%x\t",cmdID);
-    #endif
+    // #ifdef DEBUG_MODE
+    // _debugSerial.printf("RX: L0x00 CMD 0x%x\t",cmdID);
+    // #endif
     //Switch through expected commandIDs
     switch (cmdID)
     { 
     case L0x00_RequestExtendedInterfaceMode: //Mini requests extended interface mode status
         {
-            #ifdef DEBUG_MODE
-            //Temporarily disabled because it spams logs
-            _debugSerial.println("RequestExtendedInterfaceMode");
-            #endif
+            // #ifdef DEBUG_MODE
+            // //Temporarily disabled because it spams logs
+            // _debugSerial.println("RequestExtendedInterfaceMode");
+            // #endif
+            ESP_LOGI(IPOD_TAG,"CMD: 0x%02x RequestExtendedInterfaceMode",cmdID);
             if(extendedInterfaceModeActive) {
                 L0x00_0x04_ReturnExtendedInterfaceMode(0x01); //Report that extended interface mode is active
             }
@@ -645,9 +647,10 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
 
     case L0x00_EnterExtendedInterfaceMode: //Mini forces extended interface mode
         {
-            #ifdef DEBUG_MODE
-            _debugSerial.println("EnterExtendedInterfaceMode");
-            #endif
+            // #ifdef DEBUG_MODE
+            // _debugSerial.println("EnterExtendedInterfaceMode");
+            // #endif
+            ESP_LOGI(IPOD_TAG,"CMD: 0x%02x EnterExtendedInterfaceMode",cmdID);
             if(!extendedInterfaceModeActive) {
                 //Send a first iPodAck Command pending with a 1000ms timeout
                 L0x00_0x02_iPodAck(iPodAck_CmdPending,cmdID,1000);
@@ -659,54 +662,60 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     
     case L0x00_RequestiPodName: //Mini requests ipod name
         {
-            #ifdef DEBUG_MODE
-            _debugSerial.println("RequestiPodName");
-            #endif
+            // #ifdef DEBUG_MODE
+            // _debugSerial.println("RequestiPodName");
+            // #endif
+            ESP_LOGI(IPOD_TAG,"CMD: 0x%02x RequestiPodName",cmdID);
             L0x00_0x08_ReturniPodName();
         }
         break;
     
     case L0x00_RequestiPodSoftwareVersion: //Mini requests ipod software version
         {
-            #ifdef DEBUG_MODE
-            _debugSerial.println("RequestiPodSoftwareVersion");
-            #endif
+            // #ifdef DEBUG_MODE
+            // _debugSerial.println("RequestiPodSoftwareVersion");
+            // #endif
+            ESP_LOGI(IPOD_TAG,"CMD: 0x%02x RequestiPodSoftwareVersion",cmdID);
             L0x00_0x0A_ReturniPodSoftwareVersion();
         }
         break;
     
     case L0x00_RequestiPodSerialNum: //Mini requests ipod Serial Num
         {
-            #ifdef DEBUG_MODE
-            _debugSerial.println("RequestiPodSerialNum");
-            #endif
+            // #ifdef DEBUG_MODE
+            // _debugSerial.println("RequestiPodSerialNum");
+            // #endif
+            ESP_LOGI(IPOD_TAG,"CMD: 0x%02x RequestiPodSerialNum",cmdID);
             L0x00_0x0C_ReturniPodSerialNum();
         }
         break;
     
     case L0x00_RequestiPodModelNum: //Mini requests ipod Model Num
         {
-            #ifdef DEBUG_MODE
-            _debugSerial.println("RequestiPodModelNum");
-            #endif
+            // #ifdef DEBUG_MODE
+            // _debugSerial.println("RequestiPodModelNum");
+            // #endif
+            ESP_LOGI(IPOD_TAG,"CMD: 0x%02x RequestiPodModelNum",cmdID);
             L0x00_0x0E_ReturniPodModelNum();
         }
         break;
     
     case L0x00_RequestLingoProtocolVersion: //Mini requestsLingo Protocol Version
         {
-            #ifdef DEBUG_MODE
-            _debugSerial.println("RequestLingoProtocolVersion");
-            #endif
+            // #ifdef DEBUG_MODE
+            // _debugSerial.println("RequestLingoProtocolVersion");
+            // #endif
+            ESP_LOGI(IPOD_TAG,"CMD: 0x%02x RequestLingoProtocolVersion for Lingo 0x%02x",cmdID,byteArray[1]);
             L0x00_0x10_ReturnLingoProtocolVersion(byteArray[1]);
         }
         break;
     
     case L0x00_IdentifyDeviceLingoes: //Mini identifies its lingoes, used as an ice-breaker
         {
-            #ifdef DEBUG_MODE
-            _debugSerial.println("IdentifyDeviceLingoes");
-            #endif
+            // #ifdef DEBUG_MODE
+            // _debugSerial.println("IdentifyDeviceLingoes");
+            // #endif
+            ESP_LOGI(IPOD_TAG,"CMD: 0x%02x IdentifyDeviceLingoes",cmdID);
             L0x00_0x02_iPodAck(iPodAck_OK,cmdID);//Acknowledge, start capabilities pingpong
             L0x00_0x27_GetAccessoryInfo(0x00); //Immediately request general capabilities
         }
@@ -714,53 +723,55 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     
     case L0x00_RetAccessoryInfo: //Mini returns info after L0x00_0x27
         {
-            #ifdef DEBUG_MODE
-            _debugSerial.printf("RetAccessoryInfo: 0x%x\n",byteArray[1]);
-            #endif
+            // #ifdef DEBUG_MODE
+            // _debugSerial.printf("RetAccessoryInfo: 0x%x\n",byteArray[1]);
+            // #endif
+            ESP_LOGI(IPOD_TAG,"CMD: 0x%02x RetAccessoryInfo: 0x%02x",cmdID,byteArray[1]);
             switch (byteArray[1]) //Ping-pong the next request based on the current response
-        {
-        case 0x00:
-            _accessoryCapabilitiesRequested = true;
-            L0x00_0x27_GetAccessoryInfo(0x01); //Request the name
-            break;
+            {
+            case 0x00:
+                _accessoryCapabilitiesRequested = true;
+                L0x00_0x27_GetAccessoryInfo(0x01); //Request the name
+                break;
 
-        case 0x01:
-            _accessoryNameRequested = true;
-            L0x00_0x27_GetAccessoryInfo(0x04); //Request the firmware version
-            break;
+            case 0x01:
+                _accessoryNameRequested = true;
+                L0x00_0x27_GetAccessoryInfo(0x04); //Request the firmware version
+                break;
 
-        case 0x04:
-            _accessoryFirmwareRequested = true;
-            L0x00_0x27_GetAccessoryInfo(0x05); //Request the hardware number
-            break;
+            case 0x04:
+                _accessoryFirmwareRequested = true;
+                L0x00_0x27_GetAccessoryInfo(0x05); //Request the hardware number
+                break;
 
-        case 0x05:
-            _accessoryHardwareRequested = true;
-            L0x00_0x27_GetAccessoryInfo(0x06); //Request the manufacturer name
-            break;
+            case 0x05:
+                _accessoryHardwareRequested = true;
+                L0x00_0x27_GetAccessoryInfo(0x06); //Request the manufacturer name
+                break;
 
-        case 0x06:
-            _accessoryManufRequested = true;
-            L0x00_0x27_GetAccessoryInfo(0x07); //Request the model number
-            break;
+            case 0x06:
+                _accessoryManufRequested = true;
+                L0x00_0x27_GetAccessoryInfo(0x07); //Request the model number
+                break;
 
-        case 0x07:
-            _accessoryModelRequested = true; //End of the reactionchain
-            #ifdef DEBUG_MODE
-            _debugSerial.println("Handshake complete");
-            #endif
-            break;
-
-        }
+            case 0x07:
+                _accessoryModelRequested = true; //End of the reactionchain
+                // #ifdef DEBUG_MODE
+                // _debugSerial.println("Handshake complete");
+                // #endif
+                ESP_LOGI(IPOD_TAG,"Handshake complete.");
+                break;
+            }
         }
         break;
     
     default: //In case the command is not known
         {
-            #ifdef DEBUG_MODE
-        _debugSerial.println("CMD ID UNKNOWN");
-            #endif
-            L0x00_0x02_iPodAck(byteArray[0],iPodAck_CmdFailed);
+            // #ifdef DEBUG_MODE
+            // _debugSerial.println("CMD ID UNKNOWN");
+            // #endif
+            ESP_LOGW(IPOD_TAG,"CMD 0x%02x not recognized.",cmdID);
+            L0x00_0x02_iPodAck(cmdID,iPodAck_CmdFailed);
         }
         break;
     }
