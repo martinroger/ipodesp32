@@ -112,6 +112,7 @@ private:
     byte _rxBuf[1024]   =   {0x00};
     uint32_t _rxLen     =   0;
     uint32_t _rxCounter =   0;
+    bool _rxInProgress  =   false;
 
 
     //Device metadata
