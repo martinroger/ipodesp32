@@ -103,15 +103,13 @@ public:
 private:
     //Serial to the listening device
     Stream& _targetSerial;
-    #ifdef DEBUG_MODE
-    HardwareSerial& _debugSerial;
-    #endif
 
     //Packet-related 
     byte _prevRxByte    =   0x00;
     byte _rxBuf[1024]   =   {0x00};
     uint32_t _rxLen     =   0;
     uint32_t _rxCounter =   0;
+    bool _rxInProgress  =   false;
 
 
     //Device metadata
