@@ -35,18 +35,12 @@ T swap_endian(T u)
 #pragma region UTILS
 esPod::esPod(Stream& targetSerial) 
     :
-        // #ifdef DEBUG_MODE
-        // _debugSerial(Serial),
-        // #endif
         _targetSerial(targetSerial)
 {
 }
 
 void esPod::resetState(){
 
-    // #ifdef DEBUG_MODE
-    //     _debugSerial.println("espod.resetState() triggered");
-    // #endif
     ESP_LOGW(IPOD_TAG,"esPod resetState called");
     //State variables
     extendedInterfaceModeActive = false;
@@ -134,9 +128,6 @@ void esPod::sendPacket(const byte* byteArray, uint32_t len)
 /// @param cmdStatus Has to obey to iPodAck_xxx format as defined in L0x00.h
 /// @param cmdID ID (single byte) of the Lingo 0x00 command replied to
 void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID) {
-    // #ifdef DEBUG_MODE
-    //     _debugSerial.printf("TX: L0x00 0x02 iPodAck: %x CMD: %x \n",cmdStatus,cmdID);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Ack 0x%02x to command 0x%02x",cmdStatus,cmdID);
     const byte txPacket[] = {
         0x00,
@@ -152,9 +143,6 @@ void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID) {
 /// @param cmdID Single byte ID of the command being acknowledged with Pending
 /// @param numField Pending delay in milliseconds
 void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID, uint32_t numField) {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x00 0x02 iPodAck: %x CMD: %x NumField: %d\n",cmdStatus,cmdID,numField);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Ack 0x%02x to command 0x%02x Numfield: %d",cmdStatus,cmdID,numField);
     const byte txPacket[20] = {
         0x00,
@@ -170,9 +158,6 @@ void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID, uint32_t numField) {
 /// @brief Returns 0x01 if the iPod is in extendedInterfaceMode, or 0x00 if not
 /// @param extendedModeByte Direct value of the extendedInterfaceMode boolean
 void esPod::L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte) {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x00 0x04 ReturnExtendedInterfaceMode: 0x%x\n",extendedModeByte);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Extended Interface mode: 0x%02x",extendedModeByte);
     const byte txPacket[] = {
         0x00,
@@ -184,9 +169,6 @@ void esPod::L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte) {
 
 /// @brief Returns as a UTF8 null-ended char array, the _name of the iPod (not changeable during runtime)
 void esPod::L0x00_0x08_ReturniPodName() {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x00 0x08 ReturniPodName: %s\n",_name);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Name: %s",_name);
     byte txPacket[255] = { //Prealloc to len = FF
         0x00,
@@ -198,9 +180,6 @@ void esPod::L0x00_0x08_ReturniPodName() {
 
 /// @brief Returns the iPod Software Version
 void esPod::L0x00_0x0A_ReturniPodSoftwareVersion() {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x00 0x0A ReturniPodSoftwareVersion: %d.%d.%d \n",_SWMajor,_SWMinor,_SWrevision);
-    // #endif
     ESP_LOGI(IPOD_TAG,"SW version: %d.%d.%d",_SWMajor,_SWMinor,_SWrevision);
     byte txPacket[] = {
         0x00,
@@ -214,9 +193,6 @@ void esPod::L0x00_0x0A_ReturniPodSoftwareVersion() {
 
 /// @brief Returns the iPod Serial Number (which is a string)
 void esPod::L0x00_0x0C_ReturniPodSerialNum() {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x00 0x0C ReturniPodSerialNum: %s\n",_serialNumber);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Serial number: %s",_serialNumber);
     byte txPacket[255] = { //Prealloc to len = FF
         0x00,
@@ -228,9 +204,6 @@ void esPod::L0x00_0x0C_ReturniPodSerialNum() {
 
 /// @brief Returns the iPod model number PA146FD 720901, which corresponds to an iPod 5.5G classic
 void esPod::L0x00_0x0E_ReturniPodModelNum() {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.println("TX: L0x00 0x0E ReturniPodModelNumber PA146FD 720901 ");
-    // #endif
     ESP_LOGI(IPOD_TAG,"Model number : PA146FD 720901");
     byte txPacket[] = {
         0x00,
@@ -244,9 +217,6 @@ void esPod::L0x00_0x0E_ReturniPodModelNum() {
 /// @param targetLingo Target Lingo for which the Protocol Version is desired.
 void esPod::L0x00_0x10_ReturnLingoProtocolVersion(byte targetLingo)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x00 0x10 ReturnLingoProtocolVersion for Lingo 0x%x\n",targetLingo);
-    // #endif
     byte txPacket[] = {
         0x00, 0x10,
         targetLingo,
@@ -272,9 +242,6 @@ void esPod::L0x00_0x10_ReturnLingoProtocolVersion(byte targetLingo)
 /// @param desiredInfo Hex code for the type of information that is desired
 void esPod::L0x00_0x27_GetAccessoryInfo(byte desiredInfo)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x00 0x27 GetAccessoryInfo of type 0x%x\n",desiredInfo);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Req'd info type: 0x%02x",desiredInfo);
     byte txPacket[] = {
         0x00, 0x27,
@@ -296,9 +263,6 @@ void esPod::L0x00_0x27_GetAccessoryInfo(byte desiredInfo)
 /// @param cmdID last two ID bytes of the Lingo 0x04 command replied to
 void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x04 0x01 iPodAck: %x CMD %x\n",cmdStatus,cmdID);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Ack 0x%02x to command 0x%04x",cmdStatus,cmdID);
     const byte txPacket[] = {
         0x04,
@@ -315,9 +279,6 @@ void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID)
 /// @param numField Pending delay in milliseconds
 void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x04 0x01 iPodAck: %x CMD: 0x00%x NumField: %d\n",cmdStatus,cmdID,numField);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Ack 0x%02x to command 0x%04x Numfield: %d",cmdStatus,cmdID,numField);
     const byte txPacket[20] = {
         0x04,
@@ -334,9 +295,6 @@ void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField)
 /// @param trackInfoChars Character array to pass and package in the tail of the message
 void esPod::L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, char* trackInfoChars)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x04 0x0D ReturnIndexedPlayingTrackInfo type: 0x%x\n",trackInfoType);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Req'd track info type: 0x%02x",trackInfoType);
     byte txPacket[255] = {
         0x04,
@@ -351,9 +309,6 @@ void esPod::L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, char* t
 /// @param trackDuration_ms trackduration in ms
 void esPod::L0x04_0x0D_ReturnIndexedPlayingTrackInfo(uint32_t trackDuration_ms)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x04 0x0D ReturnIndexedPlayingTrackInfo total duration: %d\n",trackDuration_ms);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Track duration: %d",trackDuration_ms);
     byte txPacket[14] = {
         0x04,
@@ -372,9 +327,6 @@ void esPod::L0x04_0x0D_ReturnIndexedPlayingTrackInfo(uint32_t trackDuration_ms)
 /// @param releaseYear Fictional release year of the song
 void esPod::L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, uint16_t releaseYear)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x04 0x0D ReturnIndexedPlayingTrackInfo release year: %d\n",releaseYear);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Track info: 0x%02x Release Year: %d",trackInfoType,releaseYear);
     byte txPacket[12] = {
         0x04,
@@ -391,9 +343,6 @@ void esPod::L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, uint16_
 /// @brief Returns the L0x04 Lingo Protocol Version : hardcoded to 1.12, consistent with an iPod Classic 5.5G
 void esPod::L0x04_0x13_ReturnProtocolVersion()
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.println("TX: L0x04 0x13 ReturnProtocolVersion: 1.12");
-    // #endif
     ESP_LOGI(IPOD_TAG,"Lingo protocol version 1.12");
     byte txPacket[] = {
         0x04,
@@ -407,9 +356,6 @@ void esPod::L0x04_0x13_ReturnProtocolVersion()
 /// @param categoryDBRecords The number of records to return
 void esPod::L0x04_0x19_ReturnNumberCategorizedDBRecords(uint32_t categoryDBRecords)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x04 0x19 ReturnNumberCategorizedDBRecords: %d\n",categoryDBRecords);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Category DB Records: %d",categoryDBRecords);
     byte txPacket[7] = {
         0x04,
@@ -425,9 +371,6 @@ void esPod::L0x04_0x19_ReturnNumberCategorizedDBRecords(uint32_t categoryDBRecor
 /// @param recordString Metadata to include in the return
 void esPod::L0x04_0x1B_ReturnCategorizedDatabaseRecord(uint32_t index, char *recordString)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x04 0x1B ReturnCategorizedDatabaseRecord at index %d : %s\n",index,recordString);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Database record at index %d : %s",index,recordString);
     byte txPacket[255] = {
         0x04,
@@ -445,9 +388,6 @@ void esPod::L0x04_0x1B_ReturnCategorizedDatabaseRecord(uint32_t index, char *rec
 /// @param playStatusArg Playback status (0x00 Stopped, 0x01 Playing, 0x02 Paused, 0xFF Error)
 void esPod::L0x04_0x1D_ReturnPlayStatus(uint32_t position, uint32_t duration, byte playStatusArg)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x04 0x1D ReturnPlayStatus: 0x%x at %d / %d ms\n",playStatusArg,position,duration);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Play status 0x%02x at pos. %d / %d ms",playStatusArg,position,duration);
     byte txPacket[] = {
         0x04,
@@ -465,9 +405,6 @@ void esPod::L0x04_0x1D_ReturnPlayStatus(uint32_t position, uint32_t duration, by
 /// @param trackIndex The trackIndex to return. This is different from the position in the tracklist when Shuffle is ON
 void esPod::L0x04_0x1F_ReturnCurrentPlayingTrackIndex(uint32_t trackIndex)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x04 0x1F ReturnCurrentPlayingTrackIndex: %d\n",trackIndex);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Track index: %d",trackIndex);
     byte txPacket[] = {
         0x04,
@@ -482,9 +419,6 @@ void esPod::L0x04_0x1F_ReturnCurrentPlayingTrackIndex(uint32_t trackIndex)
 /// @param trackTitle Character array to return
 void esPod::L0x04_0x21_ReturnIndexedPlayingTrackTitle(char *trackTitle)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x04 0x21 ReturnIndexedPlayingTrackTitle: %s\n",trackTitle);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Track title: %s",trackTitle);
     byte txPacket[255] = {
         0x04,
@@ -498,9 +432,6 @@ void esPod::L0x04_0x21_ReturnIndexedPlayingTrackTitle(char *trackTitle)
 /// @param trackArtistName Character array to return
 void esPod::L0x04_0x23_ReturnIndexedPlayingTrackArtistName(char *trackArtistName)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x04 0x23 ReturnIndexedPlayingTrackArtistName: %s\n",trackArtistName);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Track artist: %s",trackArtistName);
     byte txPacket[255] = {
         0x04,
@@ -514,9 +445,6 @@ void esPod::L0x04_0x23_ReturnIndexedPlayingTrackArtistName(char *trackArtistName
 /// @param trackAlbumName Character array to return
 void esPod::L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(char *trackAlbumName)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x04 0x23 ReturnIndexedPlayingTrackArtistName: %s\n",trackAlbumName);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Track album: %s",trackAlbumName);
     byte txPacket[255] = {
         0x04,
@@ -531,9 +459,6 @@ void esPod::L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(char *trackAlbumName)
 /// @param numField For 0x01 this is the new Track index, for 0x04 this is the current Track offset in ms
 void esPod::L0x04_0x27_PlayStatusNotification(byte notification, uint32_t numField)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x04 0x27 PlayStatusNotification: 0x%x with numField %d\n",notification,numField);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Play status 0x%02x Numfield: %d",notification,numField);
     byte txPacket[] = {
         0x04,
@@ -549,9 +474,6 @@ void esPod::L0x04_0x27_PlayStatusNotification(byte notification, uint32_t numFie
 /// @param notification Can only be 0x00
 void esPod::L0x04_0x27_PlayStatusNotification(byte notification)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x04 0x27 PlayStatusNotification: 0x%x\n",notification);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Play status 0x%02x STOPPED",notification);
     byte txPacket[] = {
         0x04,
@@ -565,9 +487,6 @@ void esPod::L0x04_0x27_PlayStatusNotification(byte notification)
 /// @param currentShuffleStatus 0x00 No Shuffle, 0x01 Tracks, 0x02 Albums
 void esPod::L0x04_0x2D_ReturnShuffle(byte currentShuffleStatus)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x04 0x2D ReturnShuffle: 0x%x\n",currentShuffleStatus);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Shuffle status: 0x%02x",currentShuffleStatus);
     byte txPacket[] = {
         0x04,
@@ -581,9 +500,6 @@ void esPod::L0x04_0x2D_ReturnShuffle(byte currentShuffleStatus)
 /// @param currentRepeatStatus 0x00 No Repeat, 0x01 One Track, 0x02 All tracks
 void esPod::L0x04_0x30_ReturnRepeat(byte currentRepeatStatus)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x04 0x30 ReturnRepeat: 0x%x\n",currentRepeatStatus);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Repeat status: 0x%02x",currentRepeatStatus);
     byte txPacket[] = {
         0x04,
@@ -597,9 +513,6 @@ void esPod::L0x04_0x30_ReturnRepeat(byte currentRepeatStatus)
 /// @param numPlayingTracks Number of playing tracks to return
 void esPod::L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks)
 {
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("TX: L0x04 0x36 ReturnNumPlayingTracks: %d\n",numPlayingTracks);
-    // #endif
     ESP_LOGI(IPOD_TAG,"Playing tracks: %d",numPlayingTracks);
     byte txPacket[] = {
         0x04,
@@ -623,18 +536,11 @@ void esPod::L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks)
 void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
 {
     byte cmdID = byteArray[0];
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("RX: L0x00 CMD 0x%x\t",cmdID);
-    // #endif
     //Switch through expected commandIDs
     switch (cmdID)
     { 
     case L0x00_RequestExtendedInterfaceMode: //Mini requests extended interface mode status
         {
-            // #ifdef DEBUG_MODE
-            // //Temporarily disabled because it spams logs
-            // _debugSerial.println("RequestExtendedInterfaceMode");
-            // #endif
             ESP_LOGI(IPOD_TAG,"CMD: 0x%02x RequestExtendedInterfaceMode",cmdID);
             if(extendedInterfaceModeActive) {
                 L0x00_0x04_ReturnExtendedInterfaceMode(0x01); //Report that extended interface mode is active
@@ -648,9 +554,6 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
 
     case L0x00_EnterExtendedInterfaceMode: //Mini forces extended interface mode
         {
-            // #ifdef DEBUG_MODE
-            // _debugSerial.println("EnterExtendedInterfaceMode");
-            // #endif
             ESP_LOGI(IPOD_TAG,"CMD: 0x%02x EnterExtendedInterfaceMode",cmdID);
             if(!extendedInterfaceModeActive) {
                 //Send a first iPodAck Command pending with a 1000ms timeout
@@ -663,9 +566,6 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     
     case L0x00_RequestiPodName: //Mini requests ipod name
         {
-            // #ifdef DEBUG_MODE
-            // _debugSerial.println("RequestiPodName");
-            // #endif
             ESP_LOGI(IPOD_TAG,"CMD: 0x%02x RequestiPodName",cmdID);
             L0x00_0x08_ReturniPodName();
         }
@@ -673,9 +573,6 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     
     case L0x00_RequestiPodSoftwareVersion: //Mini requests ipod software version
         {
-            // #ifdef DEBUG_MODE
-            // _debugSerial.println("RequestiPodSoftwareVersion");
-            // #endif
             ESP_LOGI(IPOD_TAG,"CMD: 0x%02x RequestiPodSoftwareVersion",cmdID);
             L0x00_0x0A_ReturniPodSoftwareVersion();
         }
@@ -683,9 +580,6 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     
     case L0x00_RequestiPodSerialNum: //Mini requests ipod Serial Num
         {
-            // #ifdef DEBUG_MODE
-            // _debugSerial.println("RequestiPodSerialNum");
-            // #endif
             ESP_LOGI(IPOD_TAG,"CMD: 0x%02x RequestiPodSerialNum",cmdID);
             L0x00_0x0C_ReturniPodSerialNum();
         }
@@ -693,9 +587,6 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     
     case L0x00_RequestiPodModelNum: //Mini requests ipod Model Num
         {
-            // #ifdef DEBUG_MODE
-            // _debugSerial.println("RequestiPodModelNum");
-            // #endif
             ESP_LOGI(IPOD_TAG,"CMD: 0x%02x RequestiPodModelNum",cmdID);
             L0x00_0x0E_ReturniPodModelNum();
         }
@@ -703,9 +594,6 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     
     case L0x00_RequestLingoProtocolVersion: //Mini requestsLingo Protocol Version
         {
-            // #ifdef DEBUG_MODE
-            // _debugSerial.println("RequestLingoProtocolVersion");
-            // #endif
             ESP_LOGI(IPOD_TAG,"CMD: 0x%02x RequestLingoProtocolVersion for Lingo 0x%02x",cmdID,byteArray[1]);
             L0x00_0x10_ReturnLingoProtocolVersion(byteArray[1]);
         }
@@ -713,9 +601,6 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     
     case L0x00_IdentifyDeviceLingoes: //Mini identifies its lingoes, used as an ice-breaker
         {
-            // #ifdef DEBUG_MODE
-            // _debugSerial.println("IdentifyDeviceLingoes");
-            // #endif
             ESP_LOGI(IPOD_TAG,"CMD: 0x%02x IdentifyDeviceLingoes",cmdID);
             L0x00_0x02_iPodAck(iPodAck_OK,cmdID);//Acknowledge, start capabilities pingpong
             L0x00_0x27_GetAccessoryInfo(0x00); //Immediately request general capabilities
@@ -724,9 +609,6 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     
     case L0x00_RetAccessoryInfo: //Mini returns info after L0x00_0x27
         {
-            // #ifdef DEBUG_MODE
-            // _debugSerial.printf("RetAccessoryInfo: 0x%x\n",byteArray[1]);
-            // #endif
             ESP_LOGI(IPOD_TAG,"CMD: 0x%02x RetAccessoryInfo: 0x%02x",cmdID,byteArray[1]);
             switch (byteArray[1]) //Ping-pong the next request based on the current response
             {
@@ -757,9 +639,6 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
 
             case 0x07:
                 _accessoryModelRequested = true; //End of the reactionchain
-                // #ifdef DEBUG_MODE
-                // _debugSerial.println("Handshake complete");
-                // #endif
                 ESP_LOGI(IPOD_TAG,"Handshake complete.");
                 break;
             }
@@ -768,9 +647,6 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     
     default: //In case the command is not known
         {
-            // #ifdef DEBUG_MODE
-            // _debugSerial.println("CMD ID UNKNOWN");
-            // #endif
             ESP_LOGW(IPOD_TAG,"CMD 0x%02x not recognized.",cmdID);
             L0x00_0x02_iPodAck(cmdID,iPodAck_CmdFailed);
         }
@@ -790,17 +666,11 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
 void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
 {
     byte cmdID = byteArray[1];
-    // #ifdef DEBUG_MODE
-    // _debugSerial.printf("RX: CMD 0x00%x\t",cmdID);
-    // #endif
     //Initialising handlers to understand what is happening in some parts of the switch. They cannot be initialised in the switch-case scope
     byte category;
     uint32_t startIndex, counts, tempTrackIndex;
 
     if(!extendedInterfaceModeActive)   { //Complain if not in extended interface mode
-        // #ifdef DEBUG_MODE
-        // _debugSerial.println("Device NOT in extendedInterfaceMode!");
-        // #endif
         ESP_LOGW(IPOD_TAG,"CMD 0x%04x not executed : Not in extendedInterfaceMode!",cmdID);
         L0x04_0x01_iPodAck(iPodAck_BadParam,cmdID);
     }
@@ -811,23 +681,16 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         case L0x04_GetIndexedPlayingTrackInfo:
             {
                 tempTrackIndex = swap_endian<uint32_t>(*((uint32_t*)&byteArray[3]));
-                // #ifdef DEBUG_MODE
-                // _debugSerial.printf("GetIndexedPlayingTrackInfo Index %d Info %x\n",tempTrackIndex,byteArray[2]);
-                // #endif
                 switch (byteArray[2]) //Switch on the type of track info requested (careful with overloads)
                 {
                 case 0x00: //General track Capabilities and Information
                     ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Duration",byteArray[2],tempTrackIndex,prevTrackIndex);
-                    if(tempTrackIndex==prevTrackIndex) {
-                        // #ifdef DEBUG_MODE
-                        // _debugSerial.println("\tIndex==prevTrackIndex");
-                        // #endif
+                    if(tempTrackIndex==prevTrackIndex) 
+                    {
                         L0x04_0x0D_ReturnIndexedPlayingTrackInfo((uint32_t)prevTrackDuration);
                     }
-                    else {
-                        // #ifdef DEBUG_MODE
-                        // _debugSerial.println("\tIndex!=prevTrackIndex");
-                        // #endif
+                    else 
+                    {
                         L0x04_0x0D_ReturnIndexedPlayingTrackInfo((uint32_t)trackDuration);
                     }
                     break;
@@ -837,16 +700,12 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     break;
                 case 0x01: //Track Title
                     ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Title",byteArray[2],tempTrackIndex,prevTrackIndex);
-                    if(tempTrackIndex==prevTrackIndex) {
-                        // #ifdef DEBUG_MODE
-                        // _debugSerial.println("\tIndex==prevTrackIndex");
-                        // #endif
+                    if(tempTrackIndex==prevTrackIndex) 
+                    {
                         L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],prevTrackTitle);
                     }
-                    else {
-                        // #ifdef DEBUG_MODE
-                        // _debugSerial.println("\tIndex!=prevTrackIndex");
-                        // #endif
+                    else 
+                    {
                         L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],trackTitle);
                     }
                     break;
@@ -868,9 +727,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         
         case L0x04_RequestProtocolVersion: //Hardcoded return for L0x04
             {
-                // #ifdef DEBUG_MODE
-                // _debugSerial.println("RequestProtocolVersion");
-                // #endif
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x RequestProtocolVersion",cmdID);
                 L0x04_0x13_ReturnProtocolVersion();
             }
@@ -878,9 +734,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
 
         case L0x04_ResetDBSelection: //Not sure what to do here. Reset Current Track Index ?
             {
-                // #ifdef DEBUG_MODE
-                // _debugSerial.println("ResetDBSelection");
-                // #endif
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x ResetDBSelection",cmdID);
                 L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
             }
@@ -888,9 +741,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
 
         case L0x04_SelectDBRecord: //Used for browsing ?
             {
-                // #ifdef DEBUG_MODE
-                // _debugSerial.println("SelectDBRecord");
-                // #endif
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x SelectDBRecord",cmdID);
                 L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
             }
@@ -899,14 +749,13 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         case L0x04_GetNumberCategorizedDBRecords: //Mini requests the number of records for a specific DB_CAT
             {
                 category = byteArray[2];
-                // #ifdef DEBUG_MODE
-                // _debugSerial.printf("GetNumberCategorizedDBRecords category %x\n",category);
-                // #endif
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetNumberCategorizedDBRecords category: 0x%02x",cmdID,category);
-                if(category == DB_CAT_TRACK) { // Say there are fixed, large amount of tracks
-                    L0x04_0x19_ReturnNumberCategorizedDBRecords(totalNumberTracks);
+                if(category == DB_CAT_TRACK) 
+                { 
+                    L0x04_0x19_ReturnNumberCategorizedDBRecords(totalNumberTracks);// Say there are fixed, large amount of tracks
                 }
-                else { //And only one of anything else (Playlist, album, artist etc...)
+                else 
+                { //And only one of anything else (Playlist, album, artist etc...)
                     L0x04_0x19_ReturnNumberCategorizedDBRecords(1);
                 }
             }
@@ -917,9 +766,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 category = byteArray[2]; //DBCat
                 startIndex = swap_endian<uint32_t>(*(uint32_t*)&byteArray[3]);
                 counts = swap_endian<uint32_t>(*(uint32_t*)&byteArray[7]);
-                // #ifdef DEBUG_MODE
-                // _debugSerial.printf("RetrieveCategorizedDatabaseRecords DBCat %x start %d counts %d\n",category,startIndex,counts);
-                // #endif
+
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x RetrieveCategorizedDatabaseRecords category: 0x%02x from %d for %d counts",cmdID,category,startIndex,counts);
                 switch (category)
                 {
@@ -965,9 +812,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
 
         case L0x04_GetPlayStatus: //Returns the current playStatus and the position/duration of the current track
             {   
-                // #ifdef DEBUG_MODE
-                // _debugSerial.println("GetPlayStatus");
-                // #endif
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetPlayStatus",cmdID);
                 L0x04_0x1D_ReturnPlayStatus(playPosition,trackDuration,playStatus);
             }
@@ -975,9 +819,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
 
         case L0x04_GetCurrentPlayingTrackIndex: //Get the uint32 index of the currently playing song
             {
-                // #ifdef DEBUG_MODE
-                // _debugSerial.println("GetCurrentPlayingTrackIndex");
-                // #endif
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetCurrentPlayingTrackIndex",cmdID);
                 L0x04_0x1F_ReturnCurrentPlayingTrackIndex(currentTrackIndex);
             }
@@ -986,78 +827,52 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         case L0x04_GetIndexedPlayingTrackTitle: 
             {
                 tempTrackIndex = swap_endian<uint32_t>(*((uint32_t*)&byteArray[2]));
-                // #ifdef DEBUG_MODE
-                // _debugSerial.printf("GetIndexedPlayingTrackTitle Index: %d\n",tempTrackIndex);
-                // #endif
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetIndexedPlayingTrackTitle for index %d (previous %d)",cmdID,tempTrackIndex,prevTrackIndex);
-                if(tempTrackIndex==prevTrackIndex) {
-                    // #ifdef DEBUG_MODE
-                    //     _debugSerial.println("\tIndex==prevTrackIndex");
-                    // #endif
+                if(tempTrackIndex==prevTrackIndex) 
+                {
                     L0x04_0x21_ReturnIndexedPlayingTrackTitle(prevTrackTitle);
                 }
-                else {
-                    // #ifdef DEBUG_MODE
-                    //     _debugSerial.println("\tIndex!=prevTrackIndex");
-                    // #endif
+                else 
+                {
                     L0x04_0x21_ReturnIndexedPlayingTrackTitle(trackTitle);
-                }
-                
+                }     
             }
             break;
 
         case L0x04_GetIndexedPlayingTrackArtistName: 
             {
                 tempTrackIndex = swap_endian<uint32_t>(*((uint32_t*)&byteArray[2]));
-                // #ifdef DEBUG_MODE
-                // _debugSerial.printf("GetIndexedPlayingTrackArtistName Index: %d\n",tempTrackIndex);
-                // #endif
+
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetIndexedPlayingTrackArtistName for index %d (previous %d)",cmdID,tempTrackIndex,prevTrackIndex);
-                if(tempTrackIndex==prevTrackIndex) {
-                    // #ifdef DEBUG_MODE
-                    //     _debugSerial.println("\tIndex==prevTrackIndex");
-                    // #endif
+                if(tempTrackIndex==prevTrackIndex) 
+                {
                     L0x04_0x23_ReturnIndexedPlayingTrackArtistName(prevArtistName);
                 }
-                else {
-                    // #ifdef DEBUG_MODE
-                    //     _debugSerial.println("\tIndex!=prevTrackIndex");
-                    // #endif
+                else 
+                {
                     L0x04_0x23_ReturnIndexedPlayingTrackArtistName(artistName);
-                }
-                
+                }  
             }
             break;
 
         case L0x04_GetIndexedPlayingTrackAlbumName: 
             {
                 tempTrackIndex = swap_endian<uint32_t>(*((uint32_t*)&byteArray[2]));
-                // #ifdef DEBUG_MODE
-                // _debugSerial.printf("GetIndexedPlayingTrackAlbumNameIndex: %d\n",tempTrackIndex);
-                // #endif
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetIndexedPlayingTrackAlbumName for index %d (previous %d)",cmdID,tempTrackIndex,prevTrackIndex);
-                if(tempTrackIndex==prevTrackIndex) {
-                    // #ifdef DEBUG_MODE
-                    //     _debugSerial.println("\tIndex==prevTrackIndex");
-                    // #endif
+                if(tempTrackIndex==prevTrackIndex) 
+                {
                     L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(prevAlbumName);
                 }
-                else {
-                    // #ifdef DEBUG_MODE
-                    //     _debugSerial.println("\tIndex!=prevTrackIndex");
-                    // #endif
+                else 
+                {
                     L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(albumName);
                 }
-                
             }
             break;
 
         case L0x04_SetPlayStatusChangeNotification: //Turns on basic notifications
             {
                 playStatusNotificationState = byteArray[2];
-                // #ifdef DEBUG_MODE
-                // _debugSerial.printf("SetPlayStatusChangeNotification %x\n",playStatusNotificationState);
-                // #endif
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x SetPlayStatusChangeNotification 0x%02x",cmdID,playStatusNotificationState);
                 L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
             }
@@ -1066,13 +881,12 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         case L0x04_PlayCurrentSelection: //Used to play a specific index, usually for "next" commands, but may be used to actually jump anywhere
             {
                 tempTrackIndex = swap_endian<uint32_t>(*((uint32_t*)&byteArray[2]));
-                // #ifdef DEBUG_MODE
-                //     _debugSerial.printf("PlayCurrentSelection target %d \n",tempTrackIndex);
-                // #endif
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x PlayCurrentSelection index %d",cmdID,tempTrackIndex);
-                if(playStatus!=PB_STATE_PLAYING) {
+                if(playStatus!=PB_STATE_PLAYING) 
+                {
                     playStatus = PB_STATE_PLAYING; //Playing status forced 
-                    if(_playStatusHandler) {
+                    if(_playStatusHandler) 
+                    {
                         _playStatusHandler(A2DP_PLAY); //Send play to the a2dp
                     }
                 }
@@ -1088,9 +902,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     //Cursor operations for PREV
                     trackListPosition = (trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS; //Shift trackListPosition one to the right
                     currentTrackIndex = tempTrackIndex;
-                    // #ifdef DEBUG_MODE
-                    //     _debugSerial.printf("\t PREV detected, prev Index %d new Index %d pos %d \n",prevTrackIndex,currentTrackIndex,trackListPosition);
-                    // #endif
                     
                     //Engage the pending ACK for expected metadata
                     trackChangeAckPending = cmdID;
@@ -1103,9 +914,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 }
                 else if (tempTrackIndex == currentTrackIndex) //Somehow reselecting the current track
                 {
-                    // #ifdef DEBUG_MODE
-                    //     _debugSerial.printf("\t SAME detected, Index %d \n",currentTrackIndex);
-                    // #endif
                     ESP_LOGI(IPOD_TAG,"Selected same track as current: %d",tempTrackIndex);
                     L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
                     
@@ -1125,9 +933,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS;
                     trackList[trackListPosition] = tempTrackIndex;
                     currentTrackIndex = tempTrackIndex;
-                    // #ifdef DEBUG_MODE
-                    //     _debugSerial.printf("\t NEXT detected, prev Index %d new Index %d pos %d\n",prevTrackIndex,currentTrackIndex,trackListPosition);
-                    // #endif
 
                     //Engage the pending ACK for expected metadata
                     trackChangeAckPending = cmdID;
@@ -1143,19 +948,18 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         
         case L0x04_PlayControl: //Basic play control. Used for Prev, pause and play
             {                   
-                // #ifdef DEBUG_MODE
-                // _debugSerial.printf("PlayControl %x\n",byteArray[2]);
-                // #endif
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x PlayControl req: 0x%02x vs playStatus: 0x%02x",cmdID,byteArray[2],playStatus);
                 switch (byteArray[2]) //PlayControl byte
                 {
                 case PB_CMD_TOGGLE: //Just Toggle or start playing
                     {
-                        if(playStatus==PB_STATE_PLAYING) {
+                        if(playStatus==PB_STATE_PLAYING) 
+                        {
                             playStatus=PB_STATE_PAUSED; //Toggle to paused if playing
                             if(_playStatusHandler) _playStatusHandler(A2DP_PAUSE);
                         }
-                        else {
+                        else 
+                        {
                             playStatus = PB_STATE_PLAYING; //Switch to playing in any other case
                             if(_playStatusHandler) _playStatusHandler(A2DP_PLAY);
                         }
@@ -1181,10 +985,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                         //Cursor operations for NEXT
                         trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS;
                         currentTrackIndex = trackList[trackListPosition];
-                        
-                        // #ifdef DEBUG_MODE
-                        // _debugSerial.printf("\t NEXT TRACK requested, prev Index %d new Index %d pos %d\n",prevTrackIndex,currentTrackIndex,trackListPosition);
-                        // #endif
 
                         //Engage the pending ACK for expected metadata
                         trackChangeAckPending = cmdID;
@@ -1198,9 +998,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     break;
                 case PB_CMD_PREVIOUS_TRACK: //Prev track
                     {
-                        // #ifdef DEBUG_MODE
-                        //     _debugSerial.printf("\t PREV TRACK requested, currentTrackIndex %d pos %d \n",currentTrackIndex,trackListPosition);
-                        // #endif
                         ESP_LOGI(IPOD_TAG,"Current index %d Tracklist pos. %d --> EXPLICIT SINGLE PREV TRACK",currentTrackIndex,trackListPosition);
                         L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
 
@@ -1220,10 +1017,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                         //Cursor operations for NEXT
                         trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS;
                         currentTrackIndex = trackList[trackListPosition];
-                        
-                        // #ifdef DEBUG_MODE
-                        // _debugSerial.printf("\t NEXT TRACK requested, prev Index %d new Index %d pos %d\n",prevTrackIndex,currentTrackIndex,trackListPosition);
-                        // #endif
 
                         //Engage the pending ACK for expected metadata
                         trackChangeAckPending = cmdID;
@@ -1237,9 +1030,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     break;
                 case PB_CMD_PREV: //Prev track
                     {
-                        // #ifdef DEBUG_MODE
-                        //     _debugSerial.printf("\t PREV requested, currentTrackIndex %d pos %d \n",currentTrackIndex,trackListPosition);
-                        // #endif
                         ESP_LOGI(IPOD_TAG,"Current index %d Tracklist pos. %d --> EXPLICIT SINGLE PREV",currentTrackIndex,trackListPosition);
                         L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
 
@@ -1273,9 +1063,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
 
         case L0x04_GetShuffle: //Get Shuffle state from the PB Engine
             {
-                // #ifdef DEBUG_MODE
-                // _debugSerial.println("GetShuffle");
-                // #endif
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetShuffle",cmdID);
                 L0x04_0x2D_ReturnShuffle(shuffleStatus);
             }
@@ -1285,18 +1072,12 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             {
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x SetShuffle req: 0x%02x vs shuffleStatus: 0x%02x",cmdID,byteArray[2],shuffleStatus);
                 shuffleStatus = byteArray[2];
-                // #ifdef DEBUG_MODE
-                // _debugSerial.printf("SetShuffle to %x\n",shuffleStatus);
-                // #endif
                 L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
             }
             break;
         
         case L0x04_GetRepeat: //Get Repeat state
             {
-                // #ifdef DEBUG_MODE
-                // _debugSerial.println("GetRepeat");
-                // #endif
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetRepeat",cmdID);
                 L0x04_0x30_ReturnRepeat(repeatStatus);
             }
@@ -1306,18 +1087,12 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             {
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x SetRepeat req: 0x%02x vs repeatStatus: 0x%02x",cmdID,byteArray[2],repeatStatus);
                 repeatStatus = byteArray[2];
-                // #ifdef DEBUG_MODE
-                // _debugSerial.printf("SetRepeat to %x\n",repeatStatus);
-                // #endif
                 L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
             }
             break;
 
         case L0x04_GetNumPlayingTracks: //Systematically return TOTAL_NUM_TRACKS
             {
-                // #ifdef DEBUG_MODE
-                // _debugSerial.println("GetNumPlayingTracks");
-                // #endif
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetNumPlayingTracks",cmdID);
                 L0x04_0x36_ReturnNumPlayingTracks(totalNumberTracks);
             }
@@ -1326,13 +1101,11 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         case L0x04_SetCurrentPlayingTrack: //Basically identical to PlayCurrentSelection
                 {
                 tempTrackIndex = swap_endian<uint32_t>(*((uint32_t*)&byteArray[2]));
-                // #ifdef DEBUG_MODE
-                //     _debugSerial.printf("SetCurrentPlayingTrack target %d \n",tempTrackIndex);
-                // #endif
                 ESP_LOGI(IPOD_TAG,"CMD 0x%04x SetCurrentPlayingTrack index %d",cmdID,tempTrackIndex);
                 if(playStatus!=PB_STATE_PLAYING) {
                     playStatus = PB_STATE_PLAYING; //Playing status forced 
-                    if(_playStatusHandler) {
+                    if(_playStatusHandler) 
+                    {
                         _playStatusHandler(A2DP_PLAY); //Send play to the a2dp
                     }
                 }
@@ -1348,9 +1121,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     //Cursor operations for PREV
                     trackListPosition = (trackListPosition+TOTAL_NUM_TRACKS-1)%TOTAL_NUM_TRACKS; //Shift trackListPosition one to the right
                     currentTrackIndex = tempTrackIndex;
-                    // #ifdef DEBUG_MODE
-                    //     _debugSerial.printf("\t PREV detected, prev Index %d new Index %d pos %d \n",prevTrackIndex,currentTrackIndex,trackListPosition);
-                    // #endif
                     
                     //Engage the pending ACK for expected metadata
                     trackChangeAckPending = cmdID;
@@ -1363,9 +1133,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 }
                 else if (tempTrackIndex == currentTrackIndex) //Somehow reselecting the current track
                 {
-                    // #ifdef DEBUG_MODE
-                    //     _debugSerial.printf("\t SAME detected, Index %d \n",currentTrackIndex);
-                    // #endif
                     ESP_LOGI(IPOD_TAG,"Selected same track as current: %d",tempTrackIndex);
                     L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
                     
@@ -1385,9 +1152,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     trackListPosition = (trackListPosition + 1) % TOTAL_NUM_TRACKS;
                     trackList[trackListPosition] = tempTrackIndex;
                     currentTrackIndex = tempTrackIndex;
-                    // #ifdef DEBUG_MODE
-                    //     _debugSerial.printf("\t NEXT detected, prev Index %d new Index %d pos %d\n",prevTrackIndex,currentTrackIndex,trackListPosition);
-                    // #endif
 
                     //Engage the pending ACK for expected metadata
                     trackChangeAckPending = cmdID;
@@ -1422,25 +1186,16 @@ void esPod::processPacket(const byte *byteArray, uint32_t len)
     switch (rxLingoID) //0x00 is general Lingo and 0x04 is extended Lingo. Nothing else is expected from the Mini
     {
     case 0x00: //General Lingo
-        // #ifdef DEBUG_MODE
-        // _debugSerial.print("Lingo 0x00 ");
-        // #endif
         ESP_LOGD(IPOD_TAG,"Lingo 0x00 Packet in processor,payload length: %d",subPayloadLen);
         processLingo0x00(subPayload,subPayloadLen);
         break;
     
     case 0x04: // Extended Interface Lingo
-        // #ifdef DEBUG_MODE
-        // _debugSerial.print("Lingo 0x04 ");
-        // #endif
         ESP_LOGD(IPOD_TAG,"Lingo 0x04 Packet in processor,payload length: %d",subPayloadLen);
         processLingo0x04(subPayload,subPayloadLen);
         break;
     
     default:
-        // #ifdef DEBUG_MODE
-        // _debugSerial.printf("Unknown Lingo : 0x%x \n",rxLingoID);
-        // #endif
         ESP_LOGW(IPOD_TAG,"Unknown Lingo packet : L0x%x",rxLingoID);
         break;
     }
@@ -1451,10 +1206,12 @@ void esPod::refresh()
 {
     ESP_LOGV(IPOD_TAG,"Refresh called");
     //Check for a new packet and update the buffer
-    while(_targetSerial.available()) {
+    while(_targetSerial.available()) 
+    {
         byte incomingByte = _targetSerial.read();
         lastConnected = millis();
-        if(!disabled) {
+        if(!disabled) 
+        {
             //A new 0xFF55 packet starter shows up
             if(_prevRxByte == 0xFF && incomingByte == 0x55 && !_rxInProgress) 
             { 
@@ -1484,25 +1241,6 @@ void esPod::refresh()
                     }
                 }
             }
-            // // Packet start was detected, but Length was not passed yet (this sort of works for 3-bytes length fields)
-            // else if(_rxLen == 0 && _rxCounter == 0 && _rxInProgress) 
-            // {
-            //     _rxLen = incomingByte;
-            //     ESP_LOGD(IPOD_TAG,"Packet length set: %d",_rxLen);
-            // }
-            // // Just plop in in the buffer
-            // else if(_rxInProgress) 
-            // {
-            //     _rxBuf[_rxCounter++] = incomingByte;
-            //     if(_rxCounter == _rxLen+1) { //We are done receiving the packet
-            //         _rxInProgress = false;
-            //         byte tempChecksum = esPod::checksum(_rxBuf, _rxLen);
-            //         ESP_LOGD(IPOD_TAG,"Packet finished, not validated yet");
-            //         if (tempChecksum == _rxBuf[_rxLen]) { //Checksum checks out
-            //             processPacket(_rxBuf,_rxLen);  
-            //         }
-            //     }
-            // }
 
             //pass to the previous received byte
             _prevRxByte = incomingByte;
@@ -1510,19 +1248,15 @@ void esPod::refresh()
     }
 
     //Reset if no message received in the last 120s
-    if((millis()-lastConnected > 120000) && !disabled) {
-        // #ifdef DEBUG_MODE
-        //     _debugSerial.println("Serial comms timeout");
-        // #endif
+    if((millis()-lastConnected > 120000) && !disabled) 
+    {
         ESP_LOGW(IPOD_TAG,"Serial comms timed out: %d ms",millis()-lastConnected);
         resetState();
     }
 
     //Send the track change Ack Pending if it has not sent already
-    if(!disabled && (trackChangeAckPending>0x00) && (millis()>(trackChangeTimestamp+TRACK_CHANGE_TIMEOUT))) {
-        // #ifdef DEBUG_MODE
-        //     _debugSerial.printf("Timeout reset of pending ACK to %x\n",trackChangeAckPending);
-        // #endif
+    if(!disabled && (trackChangeAckPending>0x00) && (millis()>(trackChangeTimestamp+TRACK_CHANGE_TIMEOUT))) 
+    {
         ESP_LOGD(IPOD_TAG,"Track change ack pending timed out ! ");        
         L0x04_0x01_iPodAck(iPodAck_OK,trackChangeAckPending);
         trackChangeAckPending = 0x00;
