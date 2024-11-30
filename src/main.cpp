@@ -25,7 +25,10 @@
 		#include "AudioTools/AudioLibs/I2SCodecStream.h"
 		#include "AudioBoard.h"
 		AudioInfo info(44100,2,16);
-		I2SCodecStream i2s(AudioKitEs8388V1);
+		DriverPins minimalPins;
+		AudioBoard minimalAudioKit(AudioDriverES8388,minimalPins);
+		//I2SCodecStream i2s(AudioKitEs8388V1);
+		I2SCodecStream i2s(minimalAudioKit);
 		BluetoothA2DPSink a2dp_sink(i2s);
 	#endif
 #endif
@@ -261,7 +264,7 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 		artistNameUpdated 	= 	false;
 		trackTitleUpdated 	= 	false;
 		trackDurationUpdated=	false;
-		ESP_LOGI("AVRC_CB","Artist+Album+Title+Duration true -> False");
+		ESP_LOGI("AVRC_CB","Artist+Album+Title+Duration : True -> False");
 		//Inform the car
 		if (espod.playStatusNotificationState==NOTIF_ON) 
 		{
@@ -311,22 +314,28 @@ void playStatusHandler(byte playCommand) {
 }
 
 void setup() {
-	esp_log_level_set("*",ESP_LOG_DEBUG); //Necessary not to spam the Serial
+	esp_log_level_set("*",ESP_LOG_NONE); //Necessary not to spam the Serial
 	ESP_LOGI("SETUP","setup() start");
 	#ifdef USE_SD //Main check for FW and start logging
 		pinMode(LED_SD,OUTPUT);
 		pinMode(SD_DETECT,INPUT);
+		pinMode(5,INPUT_PULLUP);
+		pinMode(18,INPUT_PULLUP);
 		if(digitalRead(SD_DETECT) == LOW) {
 			if(initSD()) 
 			{
 				digitalWrite(LED_SD,LOW); //Turn the SD LED ON
 				//TODO: link the log output to the SD card first here
+				#ifdef LOG_TO_SD
 				sdLoggerEnabled = initSDLogger();
 				if(sdLoggerEnabled) esp_log_level_set("*", ESP_LOG_INFO);
+				digitalWrite(LED_SD,sdLoggerEnabled);
+				#endif
 				//Attempt to update
 				updateFromFS(SD_MMC);
 			}
 		}
+		if(!digitalRead(18)) esp_log_level_set("*", ESP_LOG_INFO); //Backdoor to force Serial logs in case of no SD. Button 5
 	#endif
 	#ifdef ENABLE_A2DP
 		#ifdef USE_EXTERNAL_DAC_UDA1334A
@@ -345,6 +354,12 @@ void setup() {
 			*/
 		#endif
 		#ifdef AUDIOKIT
+
+			// add i2c codec pins: scl, sda, port, frequency
+			minimalPins.addI2C(PinFunction::CODEC, 32, 33);
+			// add i2s pins: mclk, bck, ws,data_out, data_in ,(port)
+			minimalPins.addI2S(PinFunction::CODEC, 0, 27, 25, 26, 35);
+			//minimalAudioKit.begin();
 			auto cfg = i2s.defaultConfig();
 			cfg.copyFrom(info);
 			i2s.begin(cfg);
@@ -362,6 +377,7 @@ void setup() {
 			a2dp_sink.start("espiPod 2");
 		#endif
 		ESP_LOGI("SETUP","a2dp_sink started : %s",a2dp_sink.get_name());
+		delay(5);
 		#ifdef LED_BUILTIN
 			pinMode(LED_BUILTIN,OUTPUT);
 			digitalWrite(LED_BUILTIN,LOW);
@@ -380,7 +396,7 @@ void setup() {
 		// digitalWrite(LED_BUILTIN,HIGH);
 		Serial.setRxBufferSize(1024);
 		Serial.setTxBufferSize(1024);
-		Serial.begin(115200);
+		Serial.begin(19200);
 	#endif
  	
 	//Prep and start up espod

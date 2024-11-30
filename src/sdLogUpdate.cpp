@@ -61,6 +61,7 @@ int log_to_sd_card(const char* fmt, va_list args)
 
 bool initSDLogger() {
 	bool ret = false;
+	if(!digitalRead(5)) SD_MMC.remove("/esp.log");
 	log_file = SD_MMC.open("/esp.log",FILE_APPEND);
 	if(!log_file) 
 	{
@@ -70,7 +71,7 @@ bool initSDLogger() {
 	else
 	{
 		esp_log_set_vprintf(log_to_sd_card);
-		//esp_log_level_set("*",ESP_LOG_INFO);
+		esp_log_level_set("*",ESP_LOG_INFO);
 		ret = true;
 	}
 	return ret;

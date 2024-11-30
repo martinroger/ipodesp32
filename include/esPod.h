@@ -68,7 +68,7 @@ public:
     //State variables
     bool extendedInterfaceModeActive = false;
     bool disabled = true; //espod starts disabled... it means it keeps flushing the Serial until it is ready to process something
-    uint64_t lastConnected  =   0;
+    unsigned long lastConnected  =   0;
     
     //metadata variables
     char trackTitle[255]        =   "Title";
