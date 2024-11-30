@@ -311,18 +311,18 @@ void playStatusHandler(byte playCommand) {
 }
 
 void setup() {
-	// esp_log_level_set("*",ESP_LOG_INFO);
-	//esp_log_level_set("BT_AV",ESP_LOG_WARN); //Will not work because of arduino
+	esp_log_level_set("*",ESP_LOG_DEBUG); //Necessary not to spam the Serial
 	ESP_LOGI("SETUP","setup() start");
 	#ifdef USE_SD //Main check for FW and start logging
 		pinMode(LED_SD,OUTPUT);
 		pinMode(SD_DETECT,INPUT);
 		if(digitalRead(SD_DETECT) == LOW) {
-			if(initSD()) {
+			if(initSD()) 
+			{
 				digitalWrite(LED_SD,LOW); //Turn the SD LED ON
 				//TODO: link the log output to the SD card first here
-				// sdLoggerEnabled = initSDLogger();
-				// if(sdLoggerEnabled) esp_log_level_set("*", ESP_LOG_DEBUG);//For debug only
+				sdLoggerEnabled = initSDLogger();
+				if(sdLoggerEnabled) esp_log_level_set("*", ESP_LOG_INFO);
 				//Attempt to update
 				updateFromFS(SD_MMC);
 			}
@@ -380,7 +380,7 @@ void setup() {
 		// digitalWrite(LED_BUILTIN,HIGH);
 		Serial.setRxBufferSize(1024);
 		Serial.setTxBufferSize(1024);
-		Serial.begin(19200);
+		Serial.begin(115200);
 	#endif
  	
 	//Prep and start up espod
