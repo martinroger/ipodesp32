@@ -19,6 +19,12 @@
 			#define LED_BUILTIN 22
 		#endif
 		#ifdef USE_SD
+				#ifndef LED_SD
+					#define LED_SD 19
+				#else
+					#undef LED_SD
+					#define LED_SD 19
+				#endif
 			#include "sdLogUpdate.h"
 			bool sdLoggerEnabled = false;
 		#endif
@@ -27,7 +33,6 @@
 		AudioInfo info(44100,2,16);
 		DriverPins minimalPins;
 		AudioBoard minimalAudioKit(AudioDriverES8388,minimalPins);
-		//I2SCodecStream i2s(AudioKitEs8388V1);
 		I2SCodecStream i2s(minimalAudioKit);
 		BluetoothA2DPSink a2dp_sink(i2s);
 	#endif
@@ -325,7 +330,6 @@ void setup() {
 			if(initSD()) 
 			{
 				digitalWrite(LED_SD,LOW); //Turn the SD LED ON
-				//TODO: link the log output to the SD card first here
 				#ifdef LOG_TO_SD
 				sdLoggerEnabled = initSDLogger();
 				if(sdLoggerEnabled) esp_log_level_set("*", ESP_LOG_INFO);
@@ -354,12 +358,8 @@ void setup() {
 			*/
 		#endif
 		#ifdef AUDIOKIT
-
-			// add i2c codec pins: scl, sda, port, frequency
 			minimalPins.addI2C(PinFunction::CODEC, 32, 33);
-			// add i2s pins: mclk, bck, ws,data_out, data_in ,(port)
 			minimalPins.addI2S(PinFunction::CODEC, 0, 27, 25, 26, 35);
-			//minimalAudioKit.begin();
 			auto cfg = i2s.defaultConfig();
 			cfg.copyFrom(info);
 			i2s.begin(cfg);
@@ -412,10 +412,6 @@ void setup() {
 		ESP_LOGI("SETUP","Peer connected: %s",a2dp_sink.get_peer_name());
 	#endif
 	ESP_LOGI("SETUP","Setup finished");
-	//Example
-	// byte _rxBuf[1024]   =   {0x00};
-	// ESP_LOG_BUFFER_HEXDUMP(__func__,_rxBuf,1024,ESP_LOG_ERROR);
-
 }
 
 void loop() {
@@ -423,7 +419,4 @@ void loop() {
 		espod.refresh();
 		lastTick_ts = millis();
 	}
-// 	if(sdLoggerFlushTimer && sdLoggerEnabled) {
-// 		sdcard_flush_cyclic();
-// 	}
 }

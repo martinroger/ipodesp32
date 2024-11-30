@@ -1,10 +1,5 @@
 #pragma once
-				#ifndef LED_SD
-					#define LED_SD 19
-				#else
-					#undef LED_SD
-					#define LED_SD 19
-				#endif
+
 #include <Arduino.h>
 #include <Update.h>
 #include <FS.h>
@@ -17,16 +12,10 @@
 #define SD_DATA0	2
 #define SD_DATA1	4
 
-// #ifdef TAG
-// #undef TAG
-// #endif
-
-
-
-// /// @brief Cyclically flush the FILE buffer to the actual file
-// /// @param  None
-// void sdcard_flush_cyclic(void);
-
+/// @brief vsprintf-like function that logs to a log_File stream
+/// @param fmt Format string
+/// @param args Variable list
+/// @return Number of bytes generated
 int log_to_sd_card(const char *fmt, va_list args);
 
 /// @brief Starts the logger instance
