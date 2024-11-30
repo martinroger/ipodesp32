@@ -19,13 +19,21 @@
 			#define LED_BUILTIN 22
 		#endif
 		#ifdef USE_SD
+				#ifndef LED_SD
+					#define LED_SD 19
+				#else
+					#undef LED_SD
+					#define LED_SD 19
+				#endif
 			#include "sdLogUpdate.h"
 			bool sdLoggerEnabled = false;
 		#endif
 		#include "AudioTools/AudioLibs/I2SCodecStream.h"
 		#include "AudioBoard.h"
 		AudioInfo info(44100,2,16);
-		I2SCodecStream i2s(AudioKitEs8388V1);
+		DriverPins minimalPins;
+		AudioBoard minimalAudioKit(AudioDriverES8388,minimalPins);
+		I2SCodecStream i2s(minimalAudioKit);
 		BluetoothA2DPSink a2dp_sink(i2s);
 	#endif
 #endif
@@ -261,7 +269,7 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 		artistNameUpdated 	= 	false;
 		trackTitleUpdated 	= 	false;
 		trackDurationUpdated=	false;
-		ESP_LOGI("AVRC_CB","Artist+Album+Title+Duration true -> False");
+		ESP_LOGI("AVRC_CB","Artist+Album+Title+Duration : True -> False");
 		//Inform the car
 		if (espod.playStatusNotificationState==NOTIF_ON) 
 		{
@@ -311,22 +319,27 @@ void playStatusHandler(byte playCommand) {
 }
 
 void setup() {
-	// esp_log_level_set("*",ESP_LOG_INFO);
-	//esp_log_level_set("BT_AV",ESP_LOG_WARN); //Will not work because of arduino
+	esp_log_level_set("*",ESP_LOG_NONE); //Necessary not to spam the Serial
 	ESP_LOGI("SETUP","setup() start");
 	#ifdef USE_SD //Main check for FW and start logging
 		pinMode(LED_SD,OUTPUT);
 		pinMode(SD_DETECT,INPUT);
+		pinMode(5,INPUT_PULLUP);
+		pinMode(18,INPUT_PULLUP);
 		if(digitalRead(SD_DETECT) == LOW) {
-			if(initSD()) {
+			if(initSD()) 
+			{
 				digitalWrite(LED_SD,LOW); //Turn the SD LED ON
-				//TODO: link the log output to the SD card first here
-				// sdLoggerEnabled = initSDLogger();
-				// if(sdLoggerEnabled) esp_log_level_set("*", ESP_LOG_DEBUG);//For debug only
+				#ifdef LOG_TO_SD
+				sdLoggerEnabled = initSDLogger();
+				if(sdLoggerEnabled) esp_log_level_set("*", ESP_LOG_INFO);
+				digitalWrite(LED_SD,sdLoggerEnabled);
+				#endif
 				//Attempt to update
 				updateFromFS(SD_MMC);
 			}
 		}
+		if(!digitalRead(18)) esp_log_level_set("*", ESP_LOG_INFO); //Backdoor to force Serial logs in case of no SD. Button 5
 	#endif
 	#ifdef ENABLE_A2DP
 		#ifdef USE_EXTERNAL_DAC_UDA1334A
@@ -345,6 +358,8 @@ void setup() {
 			*/
 		#endif
 		#ifdef AUDIOKIT
+			minimalPins.addI2C(PinFunction::CODEC, 32, 33);
+			minimalPins.addI2S(PinFunction::CODEC, 0, 27, 25, 26, 35);
 			auto cfg = i2s.defaultConfig();
 			cfg.copyFrom(info);
 			i2s.begin(cfg);
@@ -362,6 +377,7 @@ void setup() {
 			a2dp_sink.start("espiPod 2");
 		#endif
 		ESP_LOGI("SETUP","a2dp_sink started : %s",a2dp_sink.get_name());
+		delay(5);
 		#ifdef LED_BUILTIN
 			pinMode(LED_BUILTIN,OUTPUT);
 			digitalWrite(LED_BUILTIN,LOW);
@@ -396,10 +412,6 @@ void setup() {
 		ESP_LOGI("SETUP","Peer connected: %s",a2dp_sink.get_peer_name());
 	#endif
 	ESP_LOGI("SETUP","Setup finished");
-	//Example
-	// byte _rxBuf[1024]   =   {0x00};
-	// ESP_LOG_BUFFER_HEXDUMP(__func__,_rxBuf,1024,ESP_LOG_ERROR);
-
 }
 
 void loop() {
@@ -407,7 +419,4 @@ void loop() {
 		espod.refresh();
 		lastTick_ts = millis();
 	}
-// 	if(sdLoggerFlushTimer && sdLoggerEnabled) {
-// 		sdcard_flush_cyclic();
-// 	}
 }

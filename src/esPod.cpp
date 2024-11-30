@@ -1250,7 +1250,7 @@ void esPod::refresh()
     //Reset if no message received in the last 120s
     if((millis()-lastConnected > 120000) && !disabled) 
     {
-        ESP_LOGW(IPOD_TAG,"Serial comms timed out: %d ms",millis()-lastConnected);
+        ESP_LOGW(IPOD_TAG,"Serial comms timed out: %lu ms",millis()-lastConnected);
         resetState();
     }
 
