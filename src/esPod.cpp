@@ -684,7 +684,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 switch (byteArray[2]) //Switch on the type of track info requested (careful with overloads)
                 {
                 case 0x00: //General track Capabilities and Information
-                    ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Duration",byteArray[2],tempTrackIndex,prevTrackIndex);
+                    ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Duration",cmdID,byteArray[2],tempTrackIndex,prevTrackIndex);
                     if(tempTrackIndex==prevTrackIndex) 
                     {
                         L0x04_0x0D_ReturnIndexedPlayingTrackInfo((uint32_t)prevTrackDuration);
@@ -695,11 +695,11 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     }
                     break;
                 case 0x02: //Track Release Date (fictional)
-                    ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Release date",byteArray[2],tempTrackIndex,prevTrackIndex);
+                    ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Release date",cmdID,byteArray[2],tempTrackIndex,prevTrackIndex);
                     L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],(uint16_t)2001);
                     break;
                 case 0x01: //Track Title
-                    ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Title",byteArray[2],tempTrackIndex,prevTrackIndex);
+                    ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Title",cmdID,byteArray[2],tempTrackIndex,prevTrackIndex);
                     if(tempTrackIndex==prevTrackIndex) 
                     {
                         L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],prevTrackTitle);
@@ -710,15 +710,15 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     }
                     break;
                 case 0x05: //Track Genre
-                    ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Genre",byteArray[2],tempTrackIndex,prevTrackIndex);
+                    ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Genre",cmdID,byteArray[2],tempTrackIndex,prevTrackIndex);
                     L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],trackGenre);
                     break; 
                 case 0x06: //Track Composer
-                    ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Composer",byteArray[2],tempTrackIndex,prevTrackIndex);
+                    ESP_LOGI(IPOD_TAG,"CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Composer",cmdID,byteArray[2],tempTrackIndex,prevTrackIndex);
                     L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2],composer);
                     break; 
                 default: //In case the request is beyond the track capabilities
-                    ESP_LOGW(IPOD_TAG,"CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Type not recognised!",byteArray[2],tempTrackIndex,prevTrackIndex);
+                    ESP_LOGW(IPOD_TAG,"CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Type not recognised!",cmdID,byteArray[2],tempTrackIndex,prevTrackIndex);
                     L0x04_0x01_iPodAck(iPodAck_BadParam,cmdID);
                     break;
                 }
