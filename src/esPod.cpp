@@ -109,12 +109,25 @@ byte esPod::checksum(const byte* byteArray, uint32_t len)
 
 void esPod::sendPacket(const byte* byteArray, uint32_t len)
 {
-    _targetSerial.write(0xFF);
-    _targetSerial.write(0x55);
-    _targetSerial.write((byte)len);
-    _targetSerial.write(byteArray,len);
-    _targetSerial.write(esPod::checksum(byteArray,len));
-    ESP_LOG_BUFFER_HEX_LEVEL(IPOD_TAG,byteArray,len,ESP_LOG_VERBOSE);
+    uint32_t finalLength = len + 4;
+    byte tempBuf[finalLength] = {0x00};
+    
+    tempBuf[0] = 0xFF;
+    tempBuf[1] = 0x55;
+    tempBuf[2] = (byte)len;
+    for (uint32_t i = 0; i < len; i++)
+    {
+        tempBuf[3+i] = byteArray[i];
+    }
+    tempBuf[3+len] = esPod::checksum(byteArray,len);
+    
+    _targetSerial.write(tempBuf,finalLength);
+    // _targetSerial.write(0xFF);
+    // _targetSerial.write(0x55);
+    // _targetSerial.write((byte)len);
+    // _targetSerial.write(byteArray,len);
+    // _targetSerial.write(esPod::checksum(byteArray,len));
+    // ESP_LOG_BUFFER_HEX_LEVEL(IPOD_TAG,byteArray,len,ESP_LOG_VERBOSE);
 }
 
 #pragma endregion
