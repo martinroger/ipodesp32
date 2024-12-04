@@ -1,5 +1,8 @@
 #include <Arduino.h>
 #include "esPod.h"
+#ifndef PLAY_POS_TICK
+    #define PLAY_POS_TICK 1
+#endif
 #ifdef ENABLE_A2DP
 	#include "AudioTools.h"
 	#include "BluetoothA2DPSink.h"
@@ -25,8 +28,6 @@
 #ifndef AUDIOKIT
 	esPod espod(Serial2);
 #else
-	//HardwareSerial ipodSerial(1);
-	//esPod espod(ipodSerial);
 	#ifdef USE_ALT_SERIAL
 		HardwareSerial altSerial(1);
 		esPod espod(altSerial);
@@ -56,16 +57,10 @@ bool trackDurationUpdated	=	false;
 void connectionStateChanged(esp_a2d_connection_state_t state, void* ptr) {
 	switch (state)	{
 		case ESP_A2D_CONNECTION_STATE_CONNECTED:
-			// #ifdef LED_BUILTIN
-			// 	digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
-			// #endif
 			ESP_LOGI("A2DP_CB","ESP_A2D_CONNECTION_STATE_CONNECTED, espod enabled");
 			espod.disabled = false;
 			break;
 		case ESP_A2D_CONNECTION_STATE_DISCONNECTED:
-			// #ifdef LED_BUILTIN
-			// 	digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
-			// #endif
 			ESP_LOGI("A2DP_CB","ESP_A2D_CONNECTION_STATE_DISCONNECTED, espod disabled");
 			espod.resetState();
 			espod.disabled = true; //Todo check of this one, is risky
@@ -326,6 +321,7 @@ void setup() {
 		}
 		if(!digitalRead(18)) esp_log_level_set("*", ESP_LOG_INFO); //Backdoor to force Serial logs in case of no SD. Button 5
 	#endif
+	ESP_LOGI("BUILD","env:%s\t date: %s\t time: %s",BUILD_ENV,__DATE__,__TIME__);
 	#ifdef ENABLE_A2DP
 		#ifdef USE_EXTERNAL_DAC_UDA1334A
 			auto cfg = i2s.defaultConfig(TX_MODE);
@@ -355,7 +351,7 @@ void setup() {
 		a2dp_sink.set_on_audio_state_changed(audioStateChanged);
 		a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
 		a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE|ESP_AVRC_MD_ATTR_ARTIST|ESP_AVRC_MD_ATTR_ALBUM|ESP_AVRC_MD_ATTR_PLAYING_TIME);
-		a2dp_sink.set_avrc_rn_play_pos_callback(avrc_rn_play_pos_callback,1);
+		a2dp_sink.set_avrc_rn_play_pos_callback(avrc_rn_play_pos_callback,PLAY_POS_TICK);
 		#ifdef AUDIOKIT
 			a2dp_sink.start("MiNiPoD56");
 		#else
