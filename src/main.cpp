@@ -7,24 +7,8 @@
 		I2SStream i2s;
 		BluetoothA2DPSink a2dp_sink(i2s);
 	#endif
-	#ifdef USE_INTERNAL_DAC
-		AnalogAudioStream out;
-		BluetoothA2DPSink a2dp_sink(out);
-	#endif
 	#ifdef AUDIOKIT
-		#ifndef LED_BUILTIN
-			#define LED_BUILTIN 22
-		#else
-			#undef LED_BUILTIN
-			#define LED_BUILTIN 22
-		#endif
 		#ifdef USE_SD
-				#ifndef LED_SD
-					#define LED_SD 19
-				#else
-					#undef LED_SD
-					#define LED_SD 19
-				#endif
 			#include "sdLogUpdate.h"
 			bool sdLoggerEnabled = false;
 		#endif
@@ -43,7 +27,12 @@
 #else
 	//HardwareSerial ipodSerial(1);
 	//esPod espod(ipodSerial);
+	#ifdef USE_ALT_SERIAL
+		HardwareSerial altSerial(1);
+		esPod espod(altSerial);
+	#else
 	esPod espod(Serial);
+	#endif
 #endif
 #ifndef REFRESH_INTERVAL
 	#define REFRESH_INTERVAL 5
@@ -67,16 +56,16 @@ bool trackDurationUpdated	=	false;
 void connectionStateChanged(esp_a2d_connection_state_t state, void* ptr) {
 	switch (state)	{
 		case ESP_A2D_CONNECTION_STATE_CONNECTED:
-			#ifdef LED_BUILTIN
-				digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
-			#endif
+			// #ifdef LED_BUILTIN
+			// 	digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
+			// #endif
 			ESP_LOGI("A2DP_CB","ESP_A2D_CONNECTION_STATE_CONNECTED, espod enabled");
 			espod.disabled = false;
 			break;
 		case ESP_A2D_CONNECTION_STATE_DISCONNECTED:
-			#ifdef LED_BUILTIN
-				digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
-			#endif
+			// #ifdef LED_BUILTIN
+			// 	digitalWrite(LED_BUILTIN,!digitalRead(LED_BUILTIN));
+			// #endif
 			ESP_LOGI("A2DP_CB","ESP_A2D_CONNECTION_STATE_DISCONNECTED, espod disabled");
 			espod.resetState();
 			espod.disabled = true; //Todo check of this one, is risky
@@ -322,18 +311,14 @@ void setup() {
 	esp_log_level_set("*",ESP_LOG_NONE); //Necessary not to spam the Serial
 	ESP_LOGI("SETUP","setup() start");
 	#ifdef USE_SD //Main check for FW and start logging
-		pinMode(LED_SD,OUTPUT);
-		pinMode(SD_DETECT,INPUT);
 		pinMode(5,INPUT_PULLUP);
 		pinMode(18,INPUT_PULLUP);
 		if(digitalRead(SD_DETECT) == LOW) {
 			if(initSD()) 
 			{
-				digitalWrite(LED_SD,LOW); //Turn the SD LED ON
 				#ifdef LOG_TO_SD
 				sdLoggerEnabled = initSDLogger();
 				if(sdLoggerEnabled) esp_log_level_set("*", ESP_LOG_INFO);
-				digitalWrite(LED_SD,sdLoggerEnabled);
 				#endif
 				//Attempt to update
 				updateFromFS(SD_MMC);
@@ -389,14 +374,16 @@ void setup() {
 		Serial2.setTxBufferSize(4096);
 		Serial2.begin(19200);
 	#else
-		// ipodSerial.setPins(19,22);
-		// ipodSerial.setRxBufferSize(4096);
-		// ipodSerial.setTxBufferSize(4096);
-		// ipodSerial.begin(19200);
-		// digitalWrite(LED_BUILTIN,HIGH);
-		Serial.setRxBufferSize(1024);
-		Serial.setTxBufferSize(1024);
-		Serial.begin(19200);
+		#ifdef USE_ALT_SERIAL
+			altSerial.setPins(19,22);
+			altSerial.setRxBufferSize(1024);
+			altSerial.setTxBufferSize(1024);
+			altSerial.begin(19200);
+		#else
+			Serial.setRxBufferSize(1024);
+			Serial.setTxBufferSize(1024);
+			Serial.begin(19200);
+		#endif
 	#endif
  	
 	//Prep and start up espod
