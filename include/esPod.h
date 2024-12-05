@@ -111,6 +111,10 @@ private:
     uint32_t _rxCounter =   0;
     bool _rxInProgress  =   false;
 
+    //PlayPos notification deferrer
+    bool _deferredPlayPosNotifPending   =   false;
+    byte _deferredNotifType             =   0x00;
+    uint32_t _deferredNotifField        =   0;
 
     //Device metadata
     const char* _name           =   "ipodESP32";
@@ -166,6 +170,7 @@ public:
     void L0x04_0x21_ReturnIndexedPlayingTrackTitle(char* trackTitle);
     void L0x04_0x23_ReturnIndexedPlayingTrackArtistName(char* trackArtistName);
     void L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(char* trackAlbumName);
+    void L0x04_0x27_PlayStatusNotification(byte notification, uint32_t numField, bool defer);
     void L0x04_0x27_PlayStatusNotification(byte notification, uint32_t numField);
     void L0x04_0x27_PlayStatusNotification(byte notification);
     void L0x04_0x2D_ReturnShuffle(byte shuffleStatus);

@@ -55,6 +55,7 @@ void esPod::resetState(){
     //Playback Engine
     playStatus = PB_STATE_PAUSED;
     playStatusNotificationState = NOTIF_OFF;
+    _deferredPlayPosNotifPending = false;
     trackChangeAckPending = 0x00;
     shuffleStatus = 0x00;
     repeatStatus = 0x02;
@@ -465,6 +466,26 @@ void esPod::L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(char *trackAlbumName)
     };
     strcpy((char*)&txPacket[3],trackAlbumName);
     sendPacket(txPacket,3+strlen(trackAlbumName)+1);
+}
+
+/// @brief Deferred play position notification line to avoid sending Serial in the middle of an AVRC interrupt
+/// @param notification Notification field, should be 0x04 for track offset, 0x01 track index
+/// @param numField For 0x01 this is the new Track index, for 0x04 this is the current Track offset in ms
+/// @param defer Deferred flag, true will just buffer the info and send the notification on next refresh
+void esPod::L0x04_0x27_PlayStatusNotification(byte notification, uint32_t numField, bool defer)
+{
+    if(defer)
+    {
+        ESP_LOGI(IPOD_TAG,"Deferred: %d Play status 0x%02x Numfield: %d",defer,notification,numField);
+        _deferredPlayPosNotifPending = true;
+        _deferredNotifType = notification;
+        _deferredNotifField = numField;
+    }
+    else
+    {
+        _deferredPlayPosNotifPending = false;
+        L0x04_0x27_PlayStatusNotification(notification,numField);
+    }
 }
 
 /// @brief Only supports currently two types : 0x00 Playback Stopped, 0x01 Track index, 0x04 Track offset
@@ -1258,6 +1279,12 @@ void esPod::refresh()
             //pass to the previous received byte
             _prevRxByte = incomingByte;
         }
+    }
+
+    //Release deferred 0x27 Notification
+    if((playStatusNotificationState == NOTIF_ON) && (_deferredPlayPosNotifPending))
+    {
+        L0x04_0x27_PlayStatusNotification(_deferredNotifType,_deferredNotifField,false);
     }
 
     //Reset if no message received in the last 120s

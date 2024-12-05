@@ -96,7 +96,7 @@ void avrc_rn_play_pos_callback(uint32_t play_pos) {
 	ESP_LOGV("AVRC_CB","PlayPosition called");
 	if(espod.playStatusNotificationState==NOTIF_ON && espod.trackChangeAckPending==0x00) 
 	{
-		espod.L0x04_0x27_PlayStatusNotification(0x04,play_pos);
+		espod.L0x04_0x27_PlayStatusNotification(0x04,play_pos,true);
 	}
 }
 
