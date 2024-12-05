@@ -1260,12 +1260,33 @@ void esPod::refresh()
         }
     }
 
-    //Reset if no message received in the last 120s
-    if((millis()-lastConnected > 120000) && !disabled) 
+    //Two-stage timeout mitigation mechanism
+    if(!disabled)
     {
-        ESP_LOGW(IPOD_TAG,"Serial comms timed out: %lu ms",millis()-lastConnected);
-        resetState();
+        if((millis()-lastConnected)> 2500)
+        {
+            ESP_LOGE(IPOD_TAG,"Serial comms timed out: %lu ms",millis()-lastConnected);
+            resetState();
+            return;
+        }
+        else if ((millis()-lastConnected)> 600)
+        {
+            ESP_LOGW(IPOD_TAG,"Timeout warning: %lu ms",millis()-lastConnected);
+            if(playStatusNotificationState == NOTIF_ON )
+            {
+                L0x04_0x27_PlayStatusNotification(0x04,playPosition);
+            }
+            else
+            {
+                L0x00_0x27_GetAccessoryInfo(0x07); //Request the model number
+            }
+        }
     }
+    // if((millis()-lastConnected > 2500) && !disabled) 
+    // {
+    //     ESP_LOGW(IPOD_TAG,"Serial comms timed out: %lu ms",millis()-lastConnected);
+    //     resetState();
+    // }
 
     //Send the track change Ack Pending if it has not sent already
     if(!disabled && (trackChangeAckPending>0x00) && (millis()>(trackChangeTimestamp+TRACK_CHANGE_TIMEOUT))) 
