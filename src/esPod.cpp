@@ -1278,6 +1278,10 @@ void esPod::refresh()
             //pass to the previous received byte
             _prevRxByte = incomingByte;
         }
+        else //If the espod is disabled
+        {
+            _targetSerial.read();
+        }
     }
 
     //Reset if no message received in the last 120s
