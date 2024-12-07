@@ -616,7 +616,11 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         {
             ESP_LOGI(IPOD_TAG,"CMD: 0x%02x IdentifyDeviceLingoes",cmdID);
             L0x00_0x02_iPodAck(iPodAck_OK,cmdID);//Acknowledge, start capabilities pingpong
-            L0x00_0x27_GetAccessoryInfo(0x00); //Immediately request general capabilities
+            if(!_accessoryCapabilitiesRequested)
+            {
+                L0x00_0x27_GetAccessoryInfo(0x00); //Immediately request general capabilities
+            }
+            
         }
         break;
     
@@ -627,27 +631,42 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
             {
             case 0x00:
                 _accessoryCapabilitiesRequested = true;
-                L0x00_0x27_GetAccessoryInfo(0x01); //Request the name
+                if (!_accessoryNameRequested)
+                {
+                    L0x00_0x27_GetAccessoryInfo(0x01); //Request the name
+                }
                 break;
 
             case 0x01:
                 _accessoryNameRequested = true;
-                L0x00_0x27_GetAccessoryInfo(0x04); //Request the firmware version
+                if (!_accessoryFirmwareRequested)
+                {
+                    L0x00_0x27_GetAccessoryInfo(0x04); //Request the firmware version
+                }
                 break;
 
             case 0x04:
                 _accessoryFirmwareRequested = true;
-                L0x00_0x27_GetAccessoryInfo(0x05); //Request the hardware number
+                if (!_accessoryHardwareRequested)
+                {
+                    L0x00_0x27_GetAccessoryInfo(0x05); //Request the hardware number
+                }
                 break;
 
             case 0x05:
                 _accessoryHardwareRequested = true;
-                L0x00_0x27_GetAccessoryInfo(0x06); //Request the manufacturer name
+                if (!_accessoryManufRequested)
+                {
+                    L0x00_0x27_GetAccessoryInfo(0x06); //Request the manufacturer name
+                }
                 break;
 
             case 0x06:
                 _accessoryManufRequested = true;
-                L0x00_0x27_GetAccessoryInfo(0x07); //Request the model number
+                if (!_accessoryModelRequested)
+                {
+                    L0x00_0x27_GetAccessoryInfo(0x07); //Request the model number
+                }
                 break;
 
             case 0x07:
