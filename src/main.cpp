@@ -404,7 +404,7 @@ void loop() {
 		lastTick_ts = millis();
 	}
 
-	if((millis()-lastPlayPos_ts>500) /*&& !(espod.disabled)*/)
+	if((millis()-lastPlayPos_ts>500) && !(espod.disabled))
 	{
 		esp_avrc_ct_send_register_notification_cmd(APP_RC_CT_TL_RN_PLAY_POS_CHANGE, ESP_AVRC_RN_PLAY_POS_CHANGED, 0);
 		lastPlayPos_ts = millis();
