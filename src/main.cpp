@@ -39,6 +39,7 @@
 	#define REFRESH_INTERVAL 5
 #endif
 unsigned long lastTick_ts = 0;
+unsigned long lastPlayPos_ts = 0;
 
 char incAlbumName[255] 		= 	"incAlbum";
 char incArtistName[255] 	= 	"incArtist";
@@ -401,5 +402,11 @@ void loop() {
 	if(millis()-lastTick_ts>REFRESH_INTERVAL) {
 		espod.refresh();
 		lastTick_ts = millis();
+	}
+
+	if((millis()-lastPlayPos_ts>500) /*&& !(espod.disabled)*/)
+	{
+		esp_avrc_ct_send_register_notification_cmd(APP_RC_CT_TL_RN_PLAY_POS_CHANGE, ESP_AVRC_RN_PLAY_POS_CHANGED, 0);
+		lastPlayPos_ts = millis();
 	}
 }

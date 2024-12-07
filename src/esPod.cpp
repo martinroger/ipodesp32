@@ -1293,7 +1293,6 @@ void esPod::refresh()
         L0x04_0x01_iPodAck(iPodAck_OK,trackChangeAckPending);
         trackChangeAckPending = 0x00;
     }
-
 }
 #pragma endregion
 
