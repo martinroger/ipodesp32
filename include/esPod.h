@@ -110,6 +110,7 @@ private:
     uint32_t _rxLen     =   0;
     uint32_t _rxCounter =   0;
     bool _rxInProgress  =   false;
+    bool _preTimeOut    =   false;
 
 
     //Device metadata

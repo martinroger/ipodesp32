@@ -71,6 +71,7 @@ void esPod::resetState(){
     _rxLen = 0;
     _rxCounter = 0;
     _rxInProgress = false;
+    _preTimeOut = false;
 
     //Mini metadata
     _accessoryCapabilitiesRequested =   false;
@@ -1269,17 +1270,18 @@ void esPod::refresh()
             resetState();
             return;
         }
-        else if ((millis()-lastConnected)> 600)
+        else if (((millis()-lastConnected)> 600) && _preTimeOut == false)
         {
             ESP_LOGW(IPOD_TAG,"Timeout warning: %lu ms",millis()-lastConnected);
-            if(playStatusNotificationState == NOTIF_ON )
+            if(extendedInterfaceModeActive)
             {
-                L0x04_0x27_PlayStatusNotification(0x04,playPosition);
+                L0x00_0x04_ReturnExtendedInterfaceMode(0x01);
             }
             else
             {
                 L0x00_0x27_GetAccessoryInfo(0x07); //Request the model number
             }
+            _preTimeOut = true;
         }
     }
     // if((millis()-lastConnected > 2500) && !disabled) 
