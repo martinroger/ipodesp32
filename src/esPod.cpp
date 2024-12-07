@@ -1269,6 +1269,7 @@ void esPod::refresh()
                         if (tempChecksum == _rxBuf[_rxLen]) //Checksum checks out
                         { 
                             processPacket(_rxBuf,_rxLen);  
+                            break; //This should process messages one by one
                         }
                     }
                 }
