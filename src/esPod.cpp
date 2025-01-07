@@ -73,11 +73,17 @@ void esPod::resetState(){
     _rxInProgress = false;
 
     //Mini metadata
+    _accessoryCapabilitiesReceived  =   false;
     _accessoryCapabilitiesRequested =   false;
+    _accessoryFirmwareReceived      =   false;
     _accessoryFirmwareRequested     =   false;
+    _accessoryHardwareReceived      =   false;
     _accessoryHardwareRequested     =   false;
+    _accessoryManufReceived         =   false;
     _accessoryManufRequested        =   false;
+    _accessoryModelReceived         =   false;
     _accessoryModelRequested        =   false;
+    _accessoryNameReceived          =   false;
     _accessoryNameRequested         =   false;
 }
 
@@ -616,9 +622,10 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         {
             ESP_LOGI(IPOD_TAG,"CMD: 0x%02x IdentifyDeviceLingoes",cmdID);
             L0x00_0x02_iPodAck(iPodAck_OK,cmdID);//Acknowledge, start capabilities pingpong
-            if(!_accessoryCapabilitiesRequested)
+            if(!_accessoryCapabilitiesReceived && !_accessoryCapabilitiesRequested)
             {
                 L0x00_0x27_GetAccessoryInfo(0x00); //Immediately request general capabilities
+                _accessoryCapabilitiesRequested = true;
             }
             
         }
@@ -630,47 +637,52 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
             switch (byteArray[1]) //Ping-pong the next request based on the current response
             {
             case 0x00:
-                _accessoryCapabilitiesRequested = true;
-                if (!_accessoryNameRequested)
+                _accessoryCapabilitiesReceived = true;
+                if (!_accessoryNameReceived && !_accessoryNameRequested)
                 {
                     L0x00_0x27_GetAccessoryInfo(0x01); //Request the name
+                    _accessoryNameRequested = true;
                 }
                 break;
 
             case 0x01:
-                _accessoryNameRequested = true;
-                if (!_accessoryFirmwareRequested)
+                _accessoryNameReceived = true;
+                if (!_accessoryFirmwareReceived && !_accessoryFirmwareRequested)
                 {
                     L0x00_0x27_GetAccessoryInfo(0x04); //Request the firmware version
+                    _accessoryFirmwareRequested = true;
                 }
                 break;
 
             case 0x04:
-                _accessoryFirmwareRequested = true;
-                if (!_accessoryHardwareRequested)
+                _accessoryFirmwareReceived = true;
+                if (!_accessoryHardwareReceived && !_accessoryHardwareRequested)
                 {
                     L0x00_0x27_GetAccessoryInfo(0x05); //Request the hardware number
+                    _accessoryHardwareRequested = true;
                 }
                 break;
 
             case 0x05:
-                _accessoryHardwareRequested = true;
-                if (!_accessoryManufRequested)
+                _accessoryHardwareReceived = true;
+                if (!_accessoryManufReceived && !_accessoryManufRequested)
                 {
                     L0x00_0x27_GetAccessoryInfo(0x06); //Request the manufacturer name
+                    _accessoryManufRequested = true;
                 }
                 break;
 
             case 0x06:
-                _accessoryManufRequested = true;
-                if (!_accessoryModelRequested)
+                _accessoryManufReceived = true;
+                if (!_accessoryModelReceived && !_accessoryModelRequested)
                 {
                     L0x00_0x27_GetAccessoryInfo(0x07); //Request the model number
+                    _accessoryModelRequested = true;
                 }
                 break;
 
             case 0x07:
-                _accessoryModelRequested = true; //End of the reactionchain
+                _accessoryModelReceived = true; //End of the reactionchain
                 ESP_LOGI(IPOD_TAG,"Handshake complete.");
                 break;
             }
