@@ -1269,6 +1269,7 @@ void esPod::refresh()
                         if (tempChecksum == _rxBuf[_rxLen]) //Checksum checks out
                         { 
                             processPacket(_rxBuf,_rxLen);  
+                            break; //This should process messages one by one
                         }
                     }
                 }
@@ -1277,10 +1278,14 @@ void esPod::refresh()
             //pass to the previous received byte
             _prevRxByte = incomingByte;
         }
+        else //If the espod is disabled
+        {
+            _targetSerial.read();
+        }
     }
 
     //Reset if no message received in the last 120s
-    if((millis()-lastConnected > 120000) && !disabled) 
+    if((millis()-lastConnected > 30000) && !disabled) 
     {
         ESP_LOGW(IPOD_TAG,"Serial comms timed out: %lu ms",millis()-lastConnected);
         resetState();
