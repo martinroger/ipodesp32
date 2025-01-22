@@ -1,5 +1,4 @@
 #include <Arduino.h>
-
 #include "AudioTools.h"
 #include "BluetoothA2DPSink.h"
 #include "AudioTools/AudioLibs/I2SCodecStream.h"
@@ -9,9 +8,6 @@ DriverPins minimalPins;
 AudioBoard minimalAudioKit(AudioDriverES8388,minimalPins);
 I2SCodecStream i2s(minimalAudioKit);
 BluetoothA2DPSink a2dp_sink(i2s);
-
-#pragma region A2DP/AVRC callbacks
-
 
 
 void setup() {
@@ -30,6 +26,10 @@ void setup() {
 	}
 	delay(50);
 	ESP_LOGI("SETUP","Peer connected: %s",a2dp_sink.get_peer_name());
+
+	#ifdef TAG
+	ESP_LOGI(TAG,"Tag test");
+	#endif
 
 }
 
