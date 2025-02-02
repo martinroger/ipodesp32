@@ -1,8 +1,4 @@
 #include "esPod.h"
-#ifdef IPOD_TAG
-    #undef IPOD_TAG
-#endif
-#define IPOD_TAG "esPod"
 
 /*Heavily adapted from :
 https://github.com/chemicstry/A2DP_iPod
@@ -28,15 +24,180 @@ T swap_endian(T u)
     return dest.u;
 }
 
-
 //-----------------------------------------------------------------------
 //|         Constructor, reset, attachCallback, packet utilities        |
 //-----------------------------------------------------------------------
 #pragma region UTILS
-esPod::esPod(Stream& targetSerial) 
-    :
-        _targetSerial(targetSerial)
+
+/// @brief RX Task, sifts through the incoming serial data and compiles packets that pass the checksum and passes them to the processing Queue _cmdQueue
+/// @param pvParameters 
+void esPod::_rxTask(void *pvParameters)
 {
+    esPod* esPodInstance = static_cast<esPod*>(pvParameters);
+
+    byte prevByte               =   0x00;
+    byte incByte                =   0x00;
+    byte buf[MAX_PACKET_SIZE]   =   {0x00};
+    uint32_t expLength          =   0;
+    uint32_t cursor             =   0;
+    bool rxIncomplete           =   false;
+
+    unsigned long lastByteRX    =   millis(); //Last time a byte was RXed in a packet
+    unsigned long lastActivity  =   millis(); //Last time any RX activity was detected
+
+    aapCommand cmd;
+
+    while (1)
+    {
+        //If the esPod is disabled, flush the RX buffer and wait for 10ms
+        if(esPodInstance->disabled)
+        {
+            while(esPodInstance->_targetSerial.available())
+            {
+                esPodInstance->_targetSerial.read();
+            }
+            vTaskDelay(10);
+            continue;
+        }
+        else //esPod is enabled, process away !
+        {
+            //Might need to use a while() to process all incoming bytes
+            if (esPodInstance->_targetSerial.available())
+            {
+                //Timestamping the last activity on RX
+                lastActivity = millis();
+                incByte = esPodInstance->_targetSerial.read();
+                //If we are not in the middle of a RX, and we receive a 0xFF 0x55, start sequence, reset expected length and position cursor
+                if (prevByte == 0xFF && incByte == 0x55 && !rxIncomplete)
+                {
+                    rxIncomplete = true;
+                    expLength = 0;
+                    cursor = 0;
+                }
+                else if (rxIncomplete)
+                {
+                    //Timestamping the last byte received
+                    lastByteRX = millis();
+                    //Expected length has not been received yet
+                    if (expLength == 0 && cursor == 0)
+                    {
+                        expLength = incByte; //First byte after 0xFF 0x55
+                        if(expLength > MAX_PACKET_SIZE)
+                        {
+                            ESP_LOGW(IPOD_TAG,"Expected length is too long, discarding packet");
+                            rxIncomplete = false;
+                        }
+                        else if(expLength == 0)
+                        {
+                            ESP_LOGW(IPOD_TAG,"Expected length is 0, discarding packet");
+                            rxIncomplete = false;
+                        }
+                    }
+                    else
+                    {
+                        buf[cursor++] = incByte;
+                        if(cursor == expLength+1)
+                        {
+                            //We have received the expected length + checksum
+                            rxIncomplete = false;
+                            //Check the checksum
+                            byte calcChecksum = esPod::checksum(buf,expLength);
+                            if (calcChecksum == incByte)
+                            {
+                                //Checksum is correct, send the packet to the processing queue
+                                //Allocate memory for the payload so it doesn't become out of scope
+                                cmd.payload = new byte[expLength];
+                                cmd.length = expLength;
+                                memcpy(cmd.payload,buf,expLength);
+                                if(xQueueSend(esPodInstance->_cmdQueue,&cmd,pdMS_TO_TICKS(5)) == pdTRUE)
+                                {
+                                    ESP_LOGD(IPOD_TAG,"Packet received and sent to processing queue");
+                                }
+                                else
+                                {
+                                    ESP_LOGW(IPOD_TAG,"Packet received but could not be sent to processing queue. Discarding");
+                                    delete[] cmd.payload;
+                                    cmd.payload = nullptr;
+                                    cmd.length = 0;
+                                }
+                            }
+                            else //Checksum mismatch
+                            {
+                                ESP_LOGW(IPOD_TAG,"Checksum mismatch, discarding packet");
+                            }
+                        }
+                    }
+                }
+                //Always update the previous byte
+                prevByte = incByte;
+            }
+            else if (rxIncomplete && millis() - lastByteRX > INTERBYTE_TIMEOUT) //If we are in the middle of a packet and we haven't received a byte in 1s, discard the packet
+            {
+                ESP_LOGW(IPOD_TAG,"Packet incomplete, discarding");
+                rxIncomplete = false;
+                cmd.payload = nullptr;
+                cmd.length = 0;
+                //Probably should return a NAck to the Accessory ?
+            }
+            else if (millis() - lastActivity > SERIAL_TIMEOUT) //If we haven't received any byte in 1s, reset the RX state
+            {
+                ESP_LOGW(IPOD_TAG,"No activity in %lu ms, resetting RX state",SERIAL_TIMEOUT);
+                delete[] cmd.payload;
+                cmd.payload = nullptr;
+                cmd.length = 0;
+                esPodInstance->resetState();
+            }
+            vTaskDelay(1);
+        }
+    }
+}
+
+void esPod::_processTask(void *pvParameters)
+{
+    esPod* esPodInstance = static_cast<esPod*>(pvParameters);
+}
+
+void esPod::_txTask(void *pvParameters)
+{
+    esPod* esPodInstance = static_cast<esPod*>(pvParameters);
+}
+
+esPod::esPod(Stream &targetSerial)
+    : _targetSerial(targetSerial)
+{
+    //Create queues with pointer structures to byte arrays
+    _cmdQueue   =   xQueueCreate(CMD_QUEUE_SIZE,sizeof(aapCommand));
+    if(_cmdQueue == NULL)
+    {
+        ESP_LOGE(IPOD_TAG,"Could not create command queue");
+    }
+    _txQueue    =   xQueueCreate(TX_QUEUE_SIZE,sizeof(aapCommand));
+    if(_txQueue == NULL)
+    {
+        ESP_LOGE(IPOD_TAG,"Could not create transmit queue");
+    }
+
+    //Create FreeRTOS tasks for compiling incoming commands, processing commands and transmitting commands
+    //Could also use xTaskCreate()
+    if(_cmdQueue != NULL && _txQueue != NULL)
+    {
+        xTaskCreatePinnedToCore(_rxTask,"RX Task", RX_TASK_STACK_SIZE,this,RX_TASK_PRIORITY,&_rxTaskHandle,1);
+        xTaskCreatePinnedToCore(_processTask,"Processor Task", PROCESS_TASK_STACK_SIZE,this,PROCESS_TASK_PRIORITY,&_processTaskHandle,1);
+        xTaskCreatePinnedToCore(_txTask,"Transmit Task", TX_TASK_STACK_SIZE,this,TX_TASK_PRIORITY,&_txTaskHandle,1);
+    }
+    else
+    {
+        ESP_LOGE(IPOD_TAG,"Could not create tasks, queues not created");
+    }
+}
+
+esPod::~esPod()
+{
+    vTaskDelete(_rxTaskHandle);
+    vTaskDelete(_processTaskHandle);
+    vTaskDelete(_txTaskHandle);
+    vQueueDelete(_cmdQueue);
+    vQueueDelete(_txQueue);
 }
 
 void esPod::resetState(){
@@ -134,412 +295,6 @@ void esPod::sendPacket(const byte* byteArray, uint32_t len)
     // _targetSerial.write(byteArray,len);
     // _targetSerial.write(esPod::checksum(byteArray,len));
     // ESP_LOG_BUFFER_HEX_LEVEL(IPOD_TAG,byteArray,len,ESP_LOG_VERBOSE);
-}
-
-#pragma endregion
-
-//-----------------------------------------------------------------------
-//|                     Lingo 0x00 subfunctions                         |
-//-----------------------------------------------------------------------
-#pragma region LINGO 0x00
-
-/// @brief General response command for Lingo 0x00
-/// @param cmdStatus Has to obey to iPodAck_xxx format as defined in L0x00.h
-/// @param cmdID ID (single byte) of the Lingo 0x00 command replied to
-void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID) {
-    ESP_LOGI(IPOD_TAG,"Ack 0x%02x to command 0x%02x",cmdStatus,cmdID);
-    const byte txPacket[] = {
-        0x00,
-        0x02,
-        cmdStatus,
-        cmdID
-    };
-    sendPacket(txPacket,sizeof(txPacket));
-}
-
-/// @brief General response command for Lingo 0x00 with numerical field (used for Ack Pending). Has to be followed up with a normal iPodAck
-/// @param cmdStatus Unprotected, but should only be iPodAck_CmdPending
-/// @param cmdID Single byte ID of the command being acknowledged with Pending
-/// @param numField Pending delay in milliseconds
-void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID, uint32_t numField) {
-    ESP_LOGI(IPOD_TAG,"Ack 0x%02x to command 0x%02x Numfield: %d",cmdStatus,cmdID,numField);
-    const byte txPacket[20] = {
-        0x00,
-        0x02,
-        cmdStatus,
-        cmdID
-    };
-    *((uint32_t*)&txPacket[4]) = swap_endian<uint32_t>(numField);
-    sendPacket(txPacket,4+4);
-}
-
-
-/// @brief Returns 0x01 if the iPod is in extendedInterfaceMode, or 0x00 if not
-/// @param extendedModeByte Direct value of the extendedInterfaceMode boolean
-void esPod::L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte) {
-    ESP_LOGI(IPOD_TAG,"Extended Interface mode: 0x%02x",extendedModeByte);
-    const byte txPacket[] = {
-        0x00,
-        0x04,
-        extendedModeByte
-    };
-    sendPacket(txPacket,sizeof(txPacket));
-}
-
-/// @brief Returns as a UTF8 null-ended char array, the _name of the iPod (not changeable during runtime)
-void esPod::L0x00_0x08_ReturniPodName() {
-    ESP_LOGI(IPOD_TAG,"Name: %s",_name);
-    byte txPacket[255] = { //Prealloc to len = FF
-        0x00,
-        0x08
-    };
-    strcpy((char*)&txPacket[2],_name);
-    sendPacket(txPacket,3+strlen(_name));
-}
-
-/// @brief Returns the iPod Software Version
-void esPod::L0x00_0x0A_ReturniPodSoftwareVersion() {
-    ESP_LOGI(IPOD_TAG,"SW version: %d.%d.%d",_SWMajor,_SWMinor,_SWrevision);
-    byte txPacket[] = {
-        0x00,
-        0x0A,
-        (byte)_SWMajor,
-        (byte)_SWMinor,
-        (byte)_SWrevision
-    };
-    sendPacket(txPacket,sizeof(txPacket));
-}
-
-/// @brief Returns the iPod Serial Number (which is a string)
-void esPod::L0x00_0x0C_ReturniPodSerialNum() {
-    ESP_LOGI(IPOD_TAG,"Serial number: %s",_serialNumber);
-    byte txPacket[255] = { //Prealloc to len = FF
-        0x00,
-        0x0C
-    };
-    strcpy((char*)&txPacket[2],_serialNumber);
-    sendPacket(txPacket,3+strlen(_serialNumber));
-}
-
-/// @brief Returns the iPod model number PA146FD 720901, which corresponds to an iPod 5.5G classic
-void esPod::L0x00_0x0E_ReturniPodModelNum() {
-    ESP_LOGI(IPOD_TAG,"Model number : PA146FD 720901");
-    byte txPacket[] = {
-        0x00,
-        0x0E,
-        0x00,0x0B,0x00,0x05,0x50,0x41,0x31,0x34,0x36,0x46,0x44,0x00
-    };
-    sendPacket(txPacket,sizeof(txPacket));
-}
-
-/// @brief Returns a preprogrammed value for the Lingo Protocol Version for 0x00, 0x03 or 0x04
-/// @param targetLingo Target Lingo for which the Protocol Version is desired.
-void esPod::L0x00_0x10_ReturnLingoProtocolVersion(byte targetLingo)
-{
-    byte txPacket[] = {
-        0x00, 0x10,
-        targetLingo,
-        0x01,0x00
-    };
-    switch (targetLingo)
-    {
-    case 0x00: //For General Lingo 0x00, version 1.6
-        txPacket[4] = 0x06;
-        break;
-    case 0x03: //For Lingo 0x03, version 1.5
-        txPacket[4] = 0x05;
-        break;
-    case 0x04: //For Lingo 0x04 (Extended Interface), version 1.12
-        txPacket[4] = 0x0C;
-        break;
-    }
-    ESP_LOGI(IPOD_TAG,"Lingo 0x%02x protocol version: 1.%d",targetLingo,txPacket[4]);
-    sendPacket(txPacket,sizeof(txPacket));
-}
-
-/// @brief Query the accessory Info (model number, manufacturer, firmware version ...) using the target Info category hex
-/// @param desiredInfo Hex code for the type of information that is desired
-void esPod::L0x00_0x27_GetAccessoryInfo(byte desiredInfo)
-{
-    ESP_LOGI(IPOD_TAG,"Req'd info type: 0x%02x",desiredInfo);
-    byte txPacket[] = {
-        0x00, 0x27,
-        desiredInfo
-    };
-    sendPacket(txPacket,sizeof(txPacket));
-}
-
-
-#pragma endregion
-
-//-----------------------------------------------------------------------
-//|                     Lingo 0x04 subfunctions                         |
-//-----------------------------------------------------------------------
-#pragma region LINGO 0x04
-
-/// @brief General response command for Lingo 0x04
-/// @param cmdStatus Has to obey to iPodAck_xxx format as defined in L0x00.h
-/// @param cmdID last two ID bytes of the Lingo 0x04 command replied to
-void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID)
-{
-    ESP_LOGI(IPOD_TAG,"Ack 0x%02x to command 0x%04x",cmdStatus,cmdID);
-    const byte txPacket[] = {
-        0x04,
-        0x00,0x01,
-        cmdStatus,
-        0x00,cmdID
-    };
-    sendPacket(txPacket,sizeof(txPacket));
-}
-
-/// @brief General response command for Lingo 0x04 with numerical field (used for Ack Pending). Has to be followed up with a normal iPodAck
-/// @param cmdStatus Unprotected, but should only be iPodAck_CmdPending
-/// @param cmdID Single end-byte ID of the command being acknowledged with Pending
-/// @param numField Pending delay in milliseconds
-void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField)
-{
-    ESP_LOGI(IPOD_TAG,"Ack 0x%02x to command 0x%04x Numfield: %d",cmdStatus,cmdID,numField);
-    const byte txPacket[20] = {
-        0x04,
-        0x00,0x01,
-        cmdStatus,
-        cmdID
-    };
-    *((uint32_t*)&txPacket[5]) = swap_endian<uint32_t>(numField);
-    sendPacket(txPacket,5+4);
-}
-
-/// @brief Returns the pseudo-UTF8 string for the track info types 01/05/06
-/// @param trackInfoType 0x01 : Title / 0x05 : Genre / 0x06 : Composer
-/// @param trackInfoChars Character array to pass and package in the tail of the message
-void esPod::L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, char* trackInfoChars)
-{
-    ESP_LOGI(IPOD_TAG,"Req'd track info type: 0x%02x",trackInfoType);
-    byte txPacket[255] = {
-        0x04,
-        0x00,0x0D,
-        trackInfoType
-    };
-    strcpy((char*)&txPacket[4],trackInfoChars);
-    sendPacket(txPacket,4+strlen(trackInfoChars)+1);
-}
-
-/// @brief Returns the playing track total duration in milliseconds (Implicit track info 0x00)
-/// @param trackDuration_ms trackduration in ms
-void esPod::L0x04_0x0D_ReturnIndexedPlayingTrackInfo(uint32_t trackDuration_ms)
-{
-    ESP_LOGI(IPOD_TAG,"Track duration: %d",trackDuration_ms);
-    byte txPacket[14] = {
-        0x04,
-        0x00,0x0D,
-        0x00,
-        0x00,0x00,0x00,0x00, //This says it does not have artwork etc
-        0x00,0x00,0x00,0x01, //Track length in ms
-        0x00,0x00 //Chapter count (none)
-    };
-    *((uint32_t*)&txPacket[8]) = swap_endian<uint32_t>(trackDuration_ms);
-    sendPacket(txPacket,sizeof(txPacket));
-}
-
-/// @brief Overloaded return of the playing track info : release year
-/// @param trackInfoType Can only be 0x02
-/// @param releaseYear Fictional release year of the song
-void esPod::L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, uint16_t releaseYear)
-{
-    ESP_LOGI(IPOD_TAG,"Track info: 0x%02x Release Year: %d",trackInfoType,releaseYear);
-    byte txPacket[12] = {
-        0x04,
-        0x00,0x0D,
-        trackInfoType,
-        0x00,0x00,0x00,0x01,0x01, //First of Jan at 00:00:00
-        0x00,0x00, //year goes here
-        0x01 //it was a Monday
-    };
-    *((uint16_t*)&txPacket[9]) = swap_endian<uint16_t>(releaseYear);
-    sendPacket(txPacket,sizeof(txPacket));
-}
-
-/// @brief Returns the L0x04 Lingo Protocol Version : hardcoded to 1.12, consistent with an iPod Classic 5.5G
-void esPod::L0x04_0x13_ReturnProtocolVersion()
-{
-    ESP_LOGI(IPOD_TAG,"Lingo protocol version 1.12");
-    byte txPacket[] = {
-        0x04,
-        0x00,0x13,
-        0x01,0x0C //Protocol version 1.12
-    };
-    sendPacket(txPacket,sizeof(txPacket));
-}
-
-/// @brief Return the number of records of a given DBCategory (Playlist, tracks...)
-/// @param categoryDBRecords The number of records to return
-void esPod::L0x04_0x19_ReturnNumberCategorizedDBRecords(uint32_t categoryDBRecords)
-{
-    ESP_LOGI(IPOD_TAG,"Category DB Records: %d",categoryDBRecords);
-    byte txPacket[7] = {
-        0x04,
-        0x00,0x19,
-        0x00,0x00,0x00,0x00
-    };
-    *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(categoryDBRecords);
-    sendPacket(txPacket,sizeof(txPacket));
-}
-
-/// @brief Returns the metadata for a certain database record. Category is implicit
-/// @param index Index of the DBRecord
-/// @param recordString Metadata to include in the return
-void esPod::L0x04_0x1B_ReturnCategorizedDatabaseRecord(uint32_t index, char *recordString)
-{
-    ESP_LOGI(IPOD_TAG,"Database record at index %d : %s",index,recordString);
-    byte txPacket[255] = {
-        0x04,
-        0x00,0x1B,
-        0x00,0x00,0x00,0x00 //Index goes here
-    };
-    *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(index);
-    strcpy((char*)&txPacket[7],recordString);
-    sendPacket(txPacket,7+strlen(recordString)+1);
-}
-
-/// @brief Returns the current playback status, indicating the position out of the duration
-/// @param position Playing position in ms in the track
-/// @param duration Total duration of the track in ms
-/// @param playStatusArg Playback status (0x00 Stopped, 0x01 Playing, 0x02 Paused, 0xFF Error)
-void esPod::L0x04_0x1D_ReturnPlayStatus(uint32_t position, uint32_t duration, byte playStatusArg)
-{
-    ESP_LOGI(IPOD_TAG,"Play status 0x%02x at pos. %d / %d ms",playStatusArg,position,duration);
-    byte txPacket[] = {
-        0x04,
-        0x00,0x1D,
-        0x00,0x00,0x00,0x00,
-        0x00,0x00,0x00,0x00,
-        playStatusArg
-    };
-    *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(duration);
-    *((uint32_t*)&txPacket[7]) = swap_endian<uint32_t>(position);
-    sendPacket(txPacket,sizeof(txPacket));
-}
-
-/// @brief Returns the "Index" of the currently playing track, useful for pulling matching metadata
-/// @param trackIndex The trackIndex to return. This is different from the position in the tracklist when Shuffle is ON
-void esPod::L0x04_0x1F_ReturnCurrentPlayingTrackIndex(uint32_t trackIndex)
-{
-    ESP_LOGI(IPOD_TAG,"Track index: %d",trackIndex);
-    byte txPacket[] = {
-        0x04,
-        0x00,0x1F,
-        0x00,0x00,0x00,0x00
-    };
-    *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(trackIndex);
-    sendPacket(txPacket,sizeof(txPacket));
-}
-
-/// @brief Returns the track Title after an implicit call for it
-/// @param trackTitle Character array to return
-void esPod::L0x04_0x21_ReturnIndexedPlayingTrackTitle(char *trackTitle)
-{
-    ESP_LOGI(IPOD_TAG,"Track title: %s",trackTitle);
-    byte txPacket[255] = {
-        0x04,
-        0x00,0x21
-    };
-    strcpy((char*)&txPacket[3],trackTitle);
-    sendPacket(txPacket,3+strlen(trackTitle)+1);
-}
-
-/// @brief Returns the track Artist Name after an implicit call for it
-/// @param trackArtistName Character array to return
-void esPod::L0x04_0x23_ReturnIndexedPlayingTrackArtistName(char *trackArtistName)
-{
-    ESP_LOGI(IPOD_TAG,"Track artist: %s",trackArtistName);
-    byte txPacket[255] = {
-        0x04,
-        0x00,0x23
-    };
-    strcpy((char*)&txPacket[3],trackArtistName);
-    sendPacket(txPacket,3+strlen(trackArtistName)+1);
-}
-
-/// @brief Returns the track Album Name after an implicit call for it
-/// @param trackAlbumName Character array to return
-void esPod::L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(char *trackAlbumName)
-{
-    ESP_LOGI(IPOD_TAG,"Track album: %s",trackAlbumName);
-    byte txPacket[255] = {
-        0x04,
-        0x00,0x25
-    };
-    strcpy((char*)&txPacket[3],trackAlbumName);
-    sendPacket(txPacket,3+strlen(trackAlbumName)+1);
-}
-
-/// @brief Only supports currently two types : 0x00 Playback Stopped, 0x01 Track index, 0x04 Track offset
-/// @param notification Notification type that can be returned : 0x01 for track index change, 0x04 for the track offset
-/// @param numField For 0x01 this is the new Track index, for 0x04 this is the current Track offset in ms
-void esPod::L0x04_0x27_PlayStatusNotification(byte notification, uint32_t numField)
-{
-    ESP_LOGI(IPOD_TAG,"Play status 0x%02x Numfield: %d",notification,numField);
-    byte txPacket[] = {
-        0x04,
-        0x00,0x27,
-        notification,
-        0x00,0x00,0x00,0x00
-    };
-    *((uint32_t*)&txPacket[4]) = swap_endian<uint32_t>(numField);
-    sendPacket(txPacket,sizeof(txPacket));
-}
-
-/// @brief Returns the PlayStatusNotification when it is STOPPED (0x00)
-/// @param notification Can only be 0x00
-void esPod::L0x04_0x27_PlayStatusNotification(byte notification)
-{
-    ESP_LOGI(IPOD_TAG,"Play status 0x%02x STOPPED",notification);
-    byte txPacket[] = {
-        0x04,
-        0x00,0x27,
-        notification
-    };
-    sendPacket(txPacket,sizeof(txPacket));
-}
-
-/// @brief Returns the current shuffle status of the PBEngine
-/// @param currentShuffleStatus 0x00 No Shuffle, 0x01 Tracks, 0x02 Albums
-void esPod::L0x04_0x2D_ReturnShuffle(byte currentShuffleStatus)
-{
-    ESP_LOGI(IPOD_TAG,"Shuffle status: 0x%02x",currentShuffleStatus);
-    byte txPacket[] = {
-        0x04,
-        0x00,0x2D,
-        currentShuffleStatus
-    };
-    sendPacket(txPacket,sizeof(txPacket));
-}
-
-/// @brief Returns the current repeat status of the PBEngine
-/// @param currentRepeatStatus 0x00 No Repeat, 0x01 One Track, 0x02 All tracks
-void esPod::L0x04_0x30_ReturnRepeat(byte currentRepeatStatus)
-{
-    ESP_LOGI(IPOD_TAG,"Repeat status: 0x%02x",currentRepeatStatus);
-    byte txPacket[] = {
-        0x04,
-        0x00,0x30,
-        currentRepeatStatus
-    };
-    sendPacket(txPacket,sizeof(txPacket));
-}
-
-/// @brief Returns the number of playing tracks in the current selection (here it is all the tracks)
-/// @param numPlayingTracks Number of playing tracks to return
-void esPod::L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks)
-{
-    ESP_LOGI(IPOD_TAG,"Playing tracks: %d",numPlayingTracks);
-    byte txPacket[] = {
-        0x04,
-        0x00,0x36,
-        0x00,0x00,0x00,0x00
-    };
-    *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(numPlayingTracks);
-    sendPacket(txPacket,sizeof(txPacket));
 }
 
 #pragma endregion
@@ -1313,4 +1068,412 @@ void esPod::refresh()
 
 }
 #pragma endregion
+
+//-----------------------------------------------------------------------
+//|                     Lingo 0x00 subfunctions                         |
+//-----------------------------------------------------------------------
+#pragma region LINGO 0x00
+
+/// @brief General response command for Lingo 0x00
+/// @param cmdStatus Has to obey to iPodAck_xxx format as defined in L0x00.h
+/// @param cmdID ID (single byte) of the Lingo 0x00 command replied to
+void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID) {
+    ESP_LOGI(IPOD_TAG,"Ack 0x%02x to command 0x%02x",cmdStatus,cmdID);
+    const byte txPacket[] = {
+        0x00,
+        0x02,
+        cmdStatus,
+        cmdID
+    };
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief General response command for Lingo 0x00 with numerical field (used for Ack Pending). Has to be followed up with a normal iPodAck
+/// @param cmdStatus Unprotected, but should only be iPodAck_CmdPending
+/// @param cmdID Single byte ID of the command being acknowledged with Pending
+/// @param numField Pending delay in milliseconds
+void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID, uint32_t numField) {
+    ESP_LOGI(IPOD_TAG,"Ack 0x%02x to command 0x%02x Numfield: %d",cmdStatus,cmdID,numField);
+    const byte txPacket[20] = {
+        0x00,
+        0x02,
+        cmdStatus,
+        cmdID
+    };
+    *((uint32_t*)&txPacket[4]) = swap_endian<uint32_t>(numField);
+    sendPacket(txPacket,4+4);
+}
+
+
+/// @brief Returns 0x01 if the iPod is in extendedInterfaceMode, or 0x00 if not
+/// @param extendedModeByte Direct value of the extendedInterfaceMode boolean
+void esPod::L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte) {
+    ESP_LOGI(IPOD_TAG,"Extended Interface mode: 0x%02x",extendedModeByte);
+    const byte txPacket[] = {
+        0x00,
+        0x04,
+        extendedModeByte
+    };
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief Returns as a UTF8 null-ended char array, the _name of the iPod (not changeable during runtime)
+void esPod::L0x00_0x08_ReturniPodName() {
+    ESP_LOGI(IPOD_TAG,"Name: %s",_name);
+    byte txPacket[255] = { //Prealloc to len = FF
+        0x00,
+        0x08
+    };
+    strcpy((char*)&txPacket[2],_name);
+    sendPacket(txPacket,3+strlen(_name));
+}
+
+/// @brief Returns the iPod Software Version
+void esPod::L0x00_0x0A_ReturniPodSoftwareVersion() {
+    ESP_LOGI(IPOD_TAG,"SW version: %d.%d.%d",_SWMajor,_SWMinor,_SWrevision);
+    byte txPacket[] = {
+        0x00,
+        0x0A,
+        (byte)_SWMajor,
+        (byte)_SWMinor,
+        (byte)_SWrevision
+    };
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief Returns the iPod Serial Number (which is a string)
+void esPod::L0x00_0x0C_ReturniPodSerialNum() {
+    ESP_LOGI(IPOD_TAG,"Serial number: %s",_serialNumber);
+    byte txPacket[255] = { //Prealloc to len = FF
+        0x00,
+        0x0C
+    };
+    strcpy((char*)&txPacket[2],_serialNumber);
+    sendPacket(txPacket,3+strlen(_serialNumber));
+}
+
+/// @brief Returns the iPod model number PA146FD 720901, which corresponds to an iPod 5.5G classic
+void esPod::L0x00_0x0E_ReturniPodModelNum() {
+    ESP_LOGI(IPOD_TAG,"Model number : PA146FD 720901");
+    byte txPacket[] = {
+        0x00,
+        0x0E,
+        0x00,0x0B,0x00,0x05,0x50,0x41,0x31,0x34,0x36,0x46,0x44,0x00
+    };
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief Returns a preprogrammed value for the Lingo Protocol Version for 0x00, 0x03 or 0x04
+/// @param targetLingo Target Lingo for which the Protocol Version is desired.
+void esPod::L0x00_0x10_ReturnLingoProtocolVersion(byte targetLingo)
+{
+    byte txPacket[] = {
+        0x00, 0x10,
+        targetLingo,
+        0x01,0x00
+    };
+    switch (targetLingo)
+    {
+    case 0x00: //For General Lingo 0x00, version 1.6
+        txPacket[4] = 0x06;
+        break;
+    case 0x03: //For Lingo 0x03, version 1.5
+        txPacket[4] = 0x05;
+        break;
+    case 0x04: //For Lingo 0x04 (Extended Interface), version 1.12
+        txPacket[4] = 0x0C;
+        break;
+    }
+    ESP_LOGI(IPOD_TAG,"Lingo 0x%02x protocol version: 1.%d",targetLingo,txPacket[4]);
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief Query the accessory Info (model number, manufacturer, firmware version ...) using the target Info category hex
+/// @param desiredInfo Hex code for the type of information that is desired
+void esPod::L0x00_0x27_GetAccessoryInfo(byte desiredInfo)
+{
+    ESP_LOGI(IPOD_TAG,"Req'd info type: 0x%02x",desiredInfo);
+    byte txPacket[] = {
+        0x00, 0x27,
+        desiredInfo
+    };
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+
+#pragma endregion
+
+//-----------------------------------------------------------------------
+//|                     Lingo 0x04 subfunctions                         |
+//-----------------------------------------------------------------------
+#pragma region LINGO 0x04
+
+/// @brief General response command for Lingo 0x04
+/// @param cmdStatus Has to obey to iPodAck_xxx format as defined in L0x00.h
+/// @param cmdID last two ID bytes of the Lingo 0x04 command replied to
+void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID)
+{
+    ESP_LOGI(IPOD_TAG,"Ack 0x%02x to command 0x%04x",cmdStatus,cmdID);
+    const byte txPacket[] = {
+        0x04,
+        0x00,0x01,
+        cmdStatus,
+        0x00,cmdID
+    };
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief General response command for Lingo 0x04 with numerical field (used for Ack Pending). Has to be followed up with a normal iPodAck
+/// @param cmdStatus Unprotected, but should only be iPodAck_CmdPending
+/// @param cmdID Single end-byte ID of the command being acknowledged with Pending
+/// @param numField Pending delay in milliseconds
+void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField)
+{
+    ESP_LOGI(IPOD_TAG,"Ack 0x%02x to command 0x%04x Numfield: %d",cmdStatus,cmdID,numField);
+    const byte txPacket[20] = {
+        0x04,
+        0x00,0x01,
+        cmdStatus,
+        cmdID
+    };
+    *((uint32_t*)&txPacket[5]) = swap_endian<uint32_t>(numField);
+    sendPacket(txPacket,5+4);
+}
+
+/// @brief Returns the pseudo-UTF8 string for the track info types 01/05/06
+/// @param trackInfoType 0x01 : Title / 0x05 : Genre / 0x06 : Composer
+/// @param trackInfoChars Character array to pass and package in the tail of the message
+void esPod::L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, char* trackInfoChars)
+{
+    ESP_LOGI(IPOD_TAG,"Req'd track info type: 0x%02x",trackInfoType);
+    byte txPacket[255] = {
+        0x04,
+        0x00,0x0D,
+        trackInfoType
+    };
+    strcpy((char*)&txPacket[4],trackInfoChars);
+    sendPacket(txPacket,4+strlen(trackInfoChars)+1);
+}
+
+/// @brief Returns the playing track total duration in milliseconds (Implicit track info 0x00)
+/// @param trackDuration_ms trackduration in ms
+void esPod::L0x04_0x0D_ReturnIndexedPlayingTrackInfo(uint32_t trackDuration_ms)
+{
+    ESP_LOGI(IPOD_TAG,"Track duration: %d",trackDuration_ms);
+    byte txPacket[14] = {
+        0x04,
+        0x00,0x0D,
+        0x00,
+        0x00,0x00,0x00,0x00, //This says it does not have artwork etc
+        0x00,0x00,0x00,0x01, //Track length in ms
+        0x00,0x00 //Chapter count (none)
+    };
+    *((uint32_t*)&txPacket[8]) = swap_endian<uint32_t>(trackDuration_ms);
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief Overloaded return of the playing track info : release year
+/// @param trackInfoType Can only be 0x02
+/// @param releaseYear Fictional release year of the song
+void esPod::L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, uint16_t releaseYear)
+{
+    ESP_LOGI(IPOD_TAG,"Track info: 0x%02x Release Year: %d",trackInfoType,releaseYear);
+    byte txPacket[12] = {
+        0x04,
+        0x00,0x0D,
+        trackInfoType,
+        0x00,0x00,0x00,0x01,0x01, //First of Jan at 00:00:00
+        0x00,0x00, //year goes here
+        0x01 //it was a Monday
+    };
+    *((uint16_t*)&txPacket[9]) = swap_endian<uint16_t>(releaseYear);
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief Returns the L0x04 Lingo Protocol Version : hardcoded to 1.12, consistent with an iPod Classic 5.5G
+void esPod::L0x04_0x13_ReturnProtocolVersion()
+{
+    ESP_LOGI(IPOD_TAG,"Lingo protocol version 1.12");
+    byte txPacket[] = {
+        0x04,
+        0x00,0x13,
+        0x01,0x0C //Protocol version 1.12
+    };
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief Return the number of records of a given DBCategory (Playlist, tracks...)
+/// @param categoryDBRecords The number of records to return
+void esPod::L0x04_0x19_ReturnNumberCategorizedDBRecords(uint32_t categoryDBRecords)
+{
+    ESP_LOGI(IPOD_TAG,"Category DB Records: %d",categoryDBRecords);
+    byte txPacket[7] = {
+        0x04,
+        0x00,0x19,
+        0x00,0x00,0x00,0x00
+    };
+    *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(categoryDBRecords);
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief Returns the metadata for a certain database record. Category is implicit
+/// @param index Index of the DBRecord
+/// @param recordString Metadata to include in the return
+void esPod::L0x04_0x1B_ReturnCategorizedDatabaseRecord(uint32_t index, char *recordString)
+{
+    ESP_LOGI(IPOD_TAG,"Database record at index %d : %s",index,recordString);
+    byte txPacket[255] = {
+        0x04,
+        0x00,0x1B,
+        0x00,0x00,0x00,0x00 //Index goes here
+    };
+    *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(index);
+    strcpy((char*)&txPacket[7],recordString);
+    sendPacket(txPacket,7+strlen(recordString)+1);
+}
+
+/// @brief Returns the current playback status, indicating the position out of the duration
+/// @param position Playing position in ms in the track
+/// @param duration Total duration of the track in ms
+/// @param playStatusArg Playback status (0x00 Stopped, 0x01 Playing, 0x02 Paused, 0xFF Error)
+void esPod::L0x04_0x1D_ReturnPlayStatus(uint32_t position, uint32_t duration, byte playStatusArg)
+{
+    ESP_LOGI(IPOD_TAG,"Play status 0x%02x at pos. %d / %d ms",playStatusArg,position,duration);
+    byte txPacket[] = {
+        0x04,
+        0x00,0x1D,
+        0x00,0x00,0x00,0x00,
+        0x00,0x00,0x00,0x00,
+        playStatusArg
+    };
+    *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(duration);
+    *((uint32_t*)&txPacket[7]) = swap_endian<uint32_t>(position);
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief Returns the "Index" of the currently playing track, useful for pulling matching metadata
+/// @param trackIndex The trackIndex to return. This is different from the position in the tracklist when Shuffle is ON
+void esPod::L0x04_0x1F_ReturnCurrentPlayingTrackIndex(uint32_t trackIndex)
+{
+    ESP_LOGI(IPOD_TAG,"Track index: %d",trackIndex);
+    byte txPacket[] = {
+        0x04,
+        0x00,0x1F,
+        0x00,0x00,0x00,0x00
+    };
+    *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(trackIndex);
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief Returns the track Title after an implicit call for it
+/// @param trackTitle Character array to return
+void esPod::L0x04_0x21_ReturnIndexedPlayingTrackTitle(char *trackTitle)
+{
+    ESP_LOGI(IPOD_TAG,"Track title: %s",trackTitle);
+    byte txPacket[255] = {
+        0x04,
+        0x00,0x21
+    };
+    strcpy((char*)&txPacket[3],trackTitle);
+    sendPacket(txPacket,3+strlen(trackTitle)+1);
+}
+
+/// @brief Returns the track Artist Name after an implicit call for it
+/// @param trackArtistName Character array to return
+void esPod::L0x04_0x23_ReturnIndexedPlayingTrackArtistName(char *trackArtistName)
+{
+    ESP_LOGI(IPOD_TAG,"Track artist: %s",trackArtistName);
+    byte txPacket[255] = {
+        0x04,
+        0x00,0x23
+    };
+    strcpy((char*)&txPacket[3],trackArtistName);
+    sendPacket(txPacket,3+strlen(trackArtistName)+1);
+}
+
+/// @brief Returns the track Album Name after an implicit call for it
+/// @param trackAlbumName Character array to return
+void esPod::L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(char *trackAlbumName)
+{
+    ESP_LOGI(IPOD_TAG,"Track album: %s",trackAlbumName);
+    byte txPacket[255] = {
+        0x04,
+        0x00,0x25
+    };
+    strcpy((char*)&txPacket[3],trackAlbumName);
+    sendPacket(txPacket,3+strlen(trackAlbumName)+1);
+}
+
+/// @brief Only supports currently two types : 0x00 Playback Stopped, 0x01 Track index, 0x04 Track offset
+/// @param notification Notification type that can be returned : 0x01 for track index change, 0x04 for the track offset
+/// @param numField For 0x01 this is the new Track index, for 0x04 this is the current Track offset in ms
+void esPod::L0x04_0x27_PlayStatusNotification(byte notification, uint32_t numField)
+{
+    ESP_LOGI(IPOD_TAG,"Play status 0x%02x Numfield: %d",notification,numField);
+    byte txPacket[] = {
+        0x04,
+        0x00,0x27,
+        notification,
+        0x00,0x00,0x00,0x00
+    };
+    *((uint32_t*)&txPacket[4]) = swap_endian<uint32_t>(numField);
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief Returns the PlayStatusNotification when it is STOPPED (0x00)
+/// @param notification Can only be 0x00
+void esPod::L0x04_0x27_PlayStatusNotification(byte notification)
+{
+    ESP_LOGI(IPOD_TAG,"Play status 0x%02x STOPPED",notification);
+    byte txPacket[] = {
+        0x04,
+        0x00,0x27,
+        notification
+    };
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief Returns the current shuffle status of the PBEngine
+/// @param currentShuffleStatus 0x00 No Shuffle, 0x01 Tracks, 0x02 Albums
+void esPod::L0x04_0x2D_ReturnShuffle(byte currentShuffleStatus)
+{
+    ESP_LOGI(IPOD_TAG,"Shuffle status: 0x%02x",currentShuffleStatus);
+    byte txPacket[] = {
+        0x04,
+        0x00,0x2D,
+        currentShuffleStatus
+    };
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief Returns the current repeat status of the PBEngine
+/// @param currentRepeatStatus 0x00 No Repeat, 0x01 One Track, 0x02 All tracks
+void esPod::L0x04_0x30_ReturnRepeat(byte currentRepeatStatus)
+{
+    ESP_LOGI(IPOD_TAG,"Repeat status: 0x%02x",currentRepeatStatus);
+    byte txPacket[] = {
+        0x04,
+        0x00,0x30,
+        currentRepeatStatus
+    };
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+/// @brief Returns the number of playing tracks in the current selection (here it is all the tracks)
+/// @param numPlayingTracks Number of playing tracks to return
+void esPod::L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks)
+{
+    ESP_LOGI(IPOD_TAG,"Playing tracks: %d",numPlayingTracks);
+    byte txPacket[] = {
+        0x04,
+        0x00,0x36,
+        0x00,0x00,0x00,0x00
+    };
+    *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(numPlayingTracks);
+    sendPacket(txPacket,sizeof(txPacket));
+}
+
+#pragma endregion
+
+
 

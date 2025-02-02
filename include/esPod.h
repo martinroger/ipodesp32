@@ -3,10 +3,51 @@
 #include "L0x00.h"
 #include "L0x04.h"
 
+#ifndef IPOD_TAG
+    #define IPOD_TAG "esPod"
+#endif
+//Serial settings
+#ifndef MAX_PACKET_SIZE
+    #define MAX_PACKET_SIZE 1024
+#endif
+#ifndef SERIAL_TIMEOUT
+    #define SERIAL_TIMEOUT 2500
+#endif
+#ifndef INTERBYTE_TIMEOUT
+    #define INTERBYTE_TIMEOUT 10
+#endif
+//FreeRTOS Queues
+#ifndef CMD_QUEUE_SIZE
+    #define CMD_QUEUE_SIZE 32
+#endif
+#ifndef TX_QUEUE_SIZE
+    #define TX_QUEUE_SIZE 32
+#endif
+//RX Task settings
+#ifndef RX_TASK_STACK_SIZE
+    #define RX_TASK_STACK_SIZE 32*1024
+#endif
+#ifndef RX_TASK_PRIORITY
+    #define RX_TASK_PRIORITY 2
+#endif
+//Process Task settings
+#ifndef PROCESS_TASK_STACK_SIZE
+    #define PROCESS_TASK_STACK_SIZE 32*1024
+#endif
+#ifndef PROCESS_TASK_PRIORITY
+    #define PROCESS_TASK_PRIORITY 5
+#endif
+//TX Task settings
+#ifndef TX_TASK_STACK_SIZE
+    #define TX_TASK_STACK_SIZE 32*1024
+#endif
+#ifndef TX_TASK_PRIORITY
+    #define TX_TASK_PRIORITY 20
+#endif
+//General iPod settings
 #ifndef TOTAL_NUM_TRACKS
     #define TOTAL_NUM_TRACKS 3000
 #endif
-
 #ifndef TRACK_CHANGE_TIMEOUT
     #define TRACK_CHANGE_TIMEOUT 1100
 #endif
@@ -60,6 +101,13 @@ enum NOTIF_STATES : byte
     NOTIF_ON            =   0x01
 };
 
+struct aapCommand
+{
+    byte* payload = nullptr;
+    uint32_t length = 0;
+};
+
+
 class esPod
 {
 public:
@@ -101,6 +149,20 @@ public:
 
 
 private:
+    //FreeRTOS Queues
+    // QueueHandle_t _rxQueue;
+    QueueHandle_t _cmdQueue;
+    QueueHandle_t _txQueue;
+
+    //FreeRTOS tasks (and methods...)
+    TaskHandle_t _rxTaskHandle;
+    TaskHandle_t _processTaskHandle;
+    TaskHandle_t _txTaskHandle;
+
+    static void _rxTask(void *pvParameters);
+    static void _processTask(void *pvParameters);
+    static void _txTask(void *pvParameters);
+
     //Serial to the listening device
     Stream& _targetSerial;
 
@@ -139,12 +201,21 @@ private:
 public:
 
     esPod(Stream& targetSerial);
+    ~esPod();
     void resetState();
     void attachPlayControlHandler(playStatusHandler_t playHandler);
     
     //Packet handling
     static byte checksum(const byte* byteArray, uint32_t len);
     void sendPacket(const byte* byteArray, uint32_t len);
+        
+    //Processors
+    void processLingo0x00(const byte* byteArray, uint32_t len);
+    void processLingo0x04(const byte* byteArray, uint32_t len);
+    void processPacket(const byte* byteArray,uint32_t len);
+
+    //Cyclic functions
+    void refresh();
     
     //Lingo 0x00
     void L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID);
@@ -178,11 +249,4 @@ public:
     void L0x04_0x30_ReturnRepeat(byte repeatStatus);
     void L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks);
 
-    //Processors
-    void processLingo0x00(const byte* byteArray, uint32_t len);
-    void processLingo0x04(const byte* byteArray, uint32_t len);
-    void processPacket(const byte* byteArray,uint32_t len);
-
-    //Cyclic functions
-    void refresh();
 };
