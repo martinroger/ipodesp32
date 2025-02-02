@@ -398,8 +398,8 @@ void setup() {
 }
 
 void loop() {
-	if(millis()-lastTick_ts>REFRESH_INTERVAL) {
-		espod.refresh();
-		lastTick_ts = millis();
-	}
+	// if(millis()-lastTick_ts>REFRESH_INTERVAL) {
+	// 	espod.refresh();
+	// 	lastTick_ts = millis();
+	// }
 }

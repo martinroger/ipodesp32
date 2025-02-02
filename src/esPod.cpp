@@ -29,8 +29,8 @@ T swap_endian(T u)
 //-----------------------------------------------------------------------
 #pragma region UTILS
 
-/// @brief RX Task, sifts through the incoming serial data and compiles packets that pass the checksum and passes them to the processing Queue _cmdQueue
-/// @param pvParameters 
+/// @brief RX Task, sifts through the incoming serial data and compiles packets that pass the checksum and passes them to the processing Queue _cmdQueue. Also handles timeouts and can trigger state resets.
+/// @param pvParameters Unused
 void esPod::_rxTask(void *pvParameters)
 {
     esPod* esPodInstance = static_cast<esPod*>(pvParameters);
@@ -47,7 +47,7 @@ void esPod::_rxTask(void *pvParameters)
 
     aapCommand cmd;
 
-    while (1)
+    while (true)
     {
         //If the esPod is disabled, flush the RX buffer and wait for 10ms
         if(esPodInstance->disabled)
@@ -86,11 +86,13 @@ void esPod::_rxTask(void *pvParameters)
                         {
                             ESP_LOGW(IPOD_TAG,"Expected length is too long, discarding packet");
                             rxIncomplete = false;
+                            //TODO: Send a NACK to the Accessory
                         }
                         else if(expLength == 0)
                         {
                             ESP_LOGW(IPOD_TAG,"Expected length is 0, discarding packet");
                             rxIncomplete = false;
+                            //TODO: Send a NACK to the Accessory
                         }
                     }
                     else
@@ -124,6 +126,7 @@ void esPod::_rxTask(void *pvParameters)
                             else //Checksum mismatch
                             {
                                 ESP_LOGW(IPOD_TAG,"Checksum mismatch, discarding packet");
+                                //TODO: Send a NACK to the Accessory
                             }
                         }
                     }
@@ -137,7 +140,7 @@ void esPod::_rxTask(void *pvParameters)
                 rxIncomplete = false;
                 cmd.payload = nullptr;
                 cmd.length = 0;
-                //Probably should return a NAck to the Accessory ?
+                //TODO: Send a NACK to the Accessory
             }
             else if (millis() - lastActivity > SERIAL_TIMEOUT) //If we haven't received any byte in 1s, reset the RX state
             {
@@ -152,14 +155,121 @@ void esPod::_rxTask(void *pvParameters)
     }
 }
 
+/// @brief Processor task retrieving from the cmdQueue and processing the commands
+/// @param pvParameters 
 void esPod::_processTask(void *pvParameters)
 {
     esPod* esPodInstance = static_cast<esPod*>(pvParameters);
+    aapCommand incCmd;
+
+    while (true)
+    {
+        if (esPodInstance->disabled)
+        {
+            vTaskDelay(5*PROCESS_INTERVAL_MS);
+            continue;
+        }
+        if(xQueueReceive(esPodInstance->_cmdQueue,&incCmd,0) == pdTRUE) //Non blocking receive
+        {
+            //Process the command
+            esPodInstance->processPacket(incCmd.payload,incCmd.length);
+            //Free the memory allocated for the payload
+            delete[] incCmd.payload;
+            incCmd.payload = nullptr;
+            incCmd.length = 0;
+        }
+        
+        //Send the track change Ack Pending if it has not sent already and timeout has happened (could be a task)
+        if((esPodInstance->trackChangeAckPending>0x00) && (millis()>(esPodInstance->trackChangeTimestamp+TRACK_CHANGE_TIMEOUT))) 
+        {
+            ESP_LOGD(IPOD_TAG,"Track change ack pending timed out ! ");        
+            esPodInstance->L0x04_0x01_iPodAck(iPodAck_OK,esPodInstance->trackChangeAckPending);
+            esPodInstance->trackChangeAckPending = 0x00;
+        }
+        vTaskDelay(PROCESS_INTERVAL_MS);
+    }
+    
 }
 
+/// @brief Transmit task, retrieves from the txQueue and sends the packets over Serial at high priority but wider timing
+/// @param pvParameters 
 void esPod::_txTask(void *pvParameters)
 {
     esPod* esPodInstance = static_cast<esPod*>(pvParameters);
+    aapCommand txCmd;
+
+    while (true)
+    {
+        if (esPodInstance->disabled)
+        {
+            vTaskDelay(5*TX_INTERVAL_MS);
+            continue;
+        }
+        //Might need to replace it with a if() to space things out
+        while(xQueueReceive(esPodInstance->_txQueue,&txCmd,0) == pdTRUE)
+        {
+            //Send the packet
+            esPodInstance->sendPacket(txCmd.payload,txCmd.length);
+            //Free the memory allocated for the payload
+            delete[] txCmd.payload;
+            txCmd.payload = nullptr;
+            txCmd.length = 0;
+        }
+        vTaskDelay(TX_INTERVAL_MS);
+    }
+}
+
+
+/// @brief //Calculates the checksum of a packet that starts from i=0 ->Lingo to i=len -> Checksum
+/// @param byteArray Array from Lingo byte to Checksum byte
+/// @param len Length of array (Lingo byte to Checksum byte)
+/// @return Calculated checksum for comparison
+byte esPod::checksum(const byte* byteArray, uint32_t len)
+{
+    uint32_t tempChecksum = len;
+    for (int i=0;i<len;i++) {
+        tempChecksum += byteArray[i];
+    }
+    tempChecksum = 0x100 -(tempChecksum & 0xFF);
+    return (byte)tempChecksum;
+}
+
+/// @brief Composes and sends a packet over the _targetSerial
+/// @param byteArray Array to send, starting with the Lingo byte and without the checksum byte
+/// @param len Length of the array to send
+void esPod::sendPacket(const byte* byteArray, uint32_t len)
+{
+    uint32_t finalLength = len + 4;
+    byte tempBuf[finalLength] = {0x00};
+    
+    tempBuf[0] = 0xFF;
+    tempBuf[1] = 0x55;
+    tempBuf[2] = (byte)len;
+    for (uint32_t i = 0; i < len; i++)
+    {
+        tempBuf[3+i] = byteArray[i];
+    }
+    tempBuf[3+len] = esPod::checksum(byteArray,len);
+    
+    _targetSerial.write(tempBuf,finalLength);
+}
+
+/// @brief Adds a packet to the transmit queue
+/// @param byteArray Array of bytes to add to the queue
+/// @param len Length of data in the array
+void esPod::queuePacket(const byte *byteArray, uint32_t len)
+{
+    aapCommand cmdToQueue;
+    cmdToQueue.payload = new byte[len];
+    cmdToQueue.length = len;
+    memcpy(cmdToQueue.payload,byteArray,len);
+    if(xQueueSend(_txQueue,&cmdToQueue,pdMS_TO_TICKS(5)) != pdTRUE)
+    {
+        ESP_LOGW(IPOD_TAG,"Could not queue packet");
+        delete[] cmdToQueue.payload;
+        cmdToQueue.payload = nullptr;
+        cmdToQueue.length = 0;
+    }
 }
 
 esPod::esPod(Stream &targetSerial)
@@ -193,9 +303,23 @@ esPod::esPod(Stream &targetSerial)
 
 esPod::~esPod()
 {
+    aapCommand tempCmd;
     vTaskDelete(_rxTaskHandle);
     vTaskDelete(_processTaskHandle);
     vTaskDelete(_txTaskHandle);
+    //Remember to deallocate memory 
+    while(xQueueReceive(_cmdQueue,&tempCmd,0) == pdTRUE)
+    {
+        delete[] tempCmd.payload;
+        tempCmd.payload = nullptr;
+        tempCmd.length = 0;
+    }
+    while(xQueueReceive(_txQueue,&tempCmd,0) == pdTRUE)
+    {
+        delete[] tempCmd.payload;
+        tempCmd.payload = nullptr;
+        tempCmd.length = 0;
+    }
     vQueueDelete(_cmdQueue);
     vQueueDelete(_txQueue);
 }
@@ -205,7 +329,7 @@ void esPod::resetState(){
     ESP_LOGW(IPOD_TAG,"esPod resetState called");
     //State variables
     extendedInterfaceModeActive = false;
-    lastConnected = millis();
+    // lastConnected = millis();
     //disabled = true;  //Not for now, might need to reenable or rethink the concept later
 
     //metadata variables
@@ -226,12 +350,12 @@ void esPod::resetState(){
     for (uint16_t i = 0; i < TOTAL_NUM_TRACKS; i++) trackList[i] = 0;
     trackListPosition = 0;
 
-    //Packet-related
-    _prevRxByte = 0x00;
-    for (uint16_t i = 0; i < 1024; i++) _rxBuf[i] = 0x00;
-    _rxLen = 0;
-    _rxCounter = 0;
-    _rxInProgress = false;
+    // //Packet-related
+    // _prevRxByte = 0x00;
+    // for (uint16_t i = 0; i < 1024; i++) _rxBuf[i] = 0x00;
+    // _rxLen = 0;
+    // _rxCounter = 0;
+    // _rxInProgress = false;
 
     //Mini metadata
     _accessoryCapabilitiesReceived  =   false;
@@ -246,56 +370,32 @@ void esPod::resetState(){
     _accessoryModelRequested        =   false;
     _accessoryNameReceived          =   false;
     _accessoryNameRequested         =   false;
+
+    //Reset the queues
+    aapCommand tempCmd;
+    //Remember to deallocate memory 
+    while(xQueueReceive(_cmdQueue,&tempCmd,0) == pdTRUE)
+    {
+        delete[] tempCmd.payload;
+        tempCmd.payload = nullptr;
+        tempCmd.length = 0;
+    }
+    while(xQueueReceive(_txQueue,&tempCmd,0) == pdTRUE)
+    {
+        delete[] tempCmd.payload;
+        tempCmd.payload = nullptr;
+        tempCmd.length = 0;
+    }
+    xQueueReset(_cmdQueue);
+    xQueueReset(_txQueue);
 }
 
 void esPod::attachPlayControlHandler(playStatusHandler_t playHandler)
 {
     _playStatusHandler = playHandler;
     ESP_LOGD(IPOD_TAG,"PlayControlHandler attached.");
-    //Experimental, maybe is doing more harm than good
-/*     for (uint32_t i = 0; i < TOTAL_NUM_TRACKS; i++)
-    {
-        trackList[i] = i;
-    }
-    trackListPosition = 0;
-    currentTrackIndex = trackList[trackListPosition]; */
-    
 }
 
-//Calculates the checksum of a packet that starts from i=0 ->Lingo to i=len -> Checksum
-byte esPod::checksum(const byte* byteArray, uint32_t len)
-{
-    uint32_t tempChecksum = len;
-    for (int i=0;i<len;i++) {
-        tempChecksum += byteArray[i];
-    }
-    tempChecksum = 0x100 -(tempChecksum & 0xFF);
-    return (byte)tempChecksum;
-}
-
-
-void esPod::sendPacket(const byte* byteArray, uint32_t len)
-{
-    uint32_t finalLength = len + 4;
-    byte tempBuf[finalLength] = {0x00};
-    
-    tempBuf[0] = 0xFF;
-    tempBuf[1] = 0x55;
-    tempBuf[2] = (byte)len;
-    for (uint32_t i = 0; i < len; i++)
-    {
-        tempBuf[3+i] = byteArray[i];
-    }
-    tempBuf[3+len] = esPod::checksum(byteArray,len);
-    
-    _targetSerial.write(tempBuf,finalLength);
-    // _targetSerial.write(0xFF);
-    // _targetSerial.write(0x55);
-    // _targetSerial.write((byte)len);
-    // _targetSerial.write(byteArray,len);
-    // _targetSerial.write(esPod::checksum(byteArray,len));
-    // ESP_LOG_BUFFER_HEX_LEVEL(IPOD_TAG,byteArray,len,ESP_LOG_VERBOSE);
-}
 
 #pragma endregion
 
@@ -1001,72 +1101,72 @@ void esPod::processPacket(const byte *byteArray, uint32_t len)
 }
 
 /// @brief Refresh function for the esPod : listens to Serial, assembles packets, or ignores everything if it is disabled.
-void esPod::refresh()
-{
-    ESP_LOGV(IPOD_TAG,"Refresh called");
-    //Check for a new packet and update the buffer
-    while(_targetSerial.available()) 
-    {
-        byte incomingByte = _targetSerial.read();
-        lastConnected = millis();
-        if(!disabled) 
-        {
-            //A new 0xFF55 packet starter shows up
-            if(_prevRxByte == 0xFF && incomingByte == 0x55 && !_rxInProgress) 
-            { 
-                ESP_LOGD(IPOD_TAG,"Packet starter received");
-                _rxLen = 0; //Reset the received length
-                _rxCounter = 0; //Reset the counter to the end of payload
-                _rxInProgress = true;
-            }
-            else if(_rxInProgress)
-            {
-                if(_rxLen == 0 && _rxCounter == 0)
-                {
-                    _rxLen = incomingByte;
-                    ESP_LOGD(IPOD_TAG,"Packet length set: %d",_rxLen);
-                }
-                else
-                {
-                    _rxBuf[_rxCounter++] = incomingByte;
-                    if(_rxCounter == _rxLen+1) { //We are done receiving the packet
-                        _rxInProgress = false;
-                        byte tempChecksum = esPod::checksum(_rxBuf, _rxLen);
-                        ESP_LOGD(IPOD_TAG,"Packet finished, not validated yet");
-                        if (tempChecksum == _rxBuf[_rxLen]) //Checksum checks out
-                        { 
-                            processPacket(_rxBuf,_rxLen);  
-                            break; //This should process messages one by one
-                        }
-                    }
-                }
-            }
+// void esPod::refresh()
+// {
+//     ESP_LOGV(IPOD_TAG,"Refresh called");
+//     //Check for a new packet and update the buffer
+//     while(_targetSerial.available()) 
+//     {
+//         byte incomingByte = _targetSerial.read();
+//         lastConnected = millis();
+//         if(!disabled) 
+//         {
+//             //A new 0xFF55 packet starter shows up
+//             if(_prevRxByte == 0xFF && incomingByte == 0x55 && !_rxInProgress) 
+//             { 
+//                 ESP_LOGD(IPOD_TAG,"Packet starter received");
+//                 _rxLen = 0; //Reset the received length
+//                 _rxCounter = 0; //Reset the counter to the end of payload
+//                 _rxInProgress = true;
+//             }
+//             else if(_rxInProgress)
+//             {
+//                 if(_rxLen == 0 && _rxCounter == 0)
+//                 {
+//                     _rxLen = incomingByte;
+//                     ESP_LOGD(IPOD_TAG,"Packet length set: %d",_rxLen);
+//                 }
+//                 else
+//                 {
+//                     _rxBuf[_rxCounter++] = incomingByte;
+//                     if(_rxCounter == _rxLen+1) { //We are done receiving the packet
+//                         _rxInProgress = false;
+//                         byte tempChecksum = esPod::checksum(_rxBuf, _rxLen);
+//                         ESP_LOGD(IPOD_TAG,"Packet finished, not validated yet");
+//                         if (tempChecksum == _rxBuf[_rxLen]) //Checksum checks out
+//                         { 
+//                             processPacket(_rxBuf,_rxLen);  
+//                             break; //This should process messages one by one
+//                         }
+//                     }
+//                 }
+//             }
 
-            //pass to the previous received byte
-            _prevRxByte = incomingByte;
-        }
-        else //If the espod is disabled
-        {
-            _targetSerial.read();
-        }
-    }
+//             //pass to the previous received byte
+//             _prevRxByte = incomingByte;
+//         }
+//         else //If the espod is disabled
+//         {
+//             _targetSerial.read();
+//         }
+//     }
 
-    //Reset if no message received in the last 120s
-    if((millis()-lastConnected > 30000) && !disabled) 
-    {
-        ESP_LOGW(IPOD_TAG,"Serial comms timed out: %lu ms",millis()-lastConnected);
-        resetState();
-    }
+//     //Reset if no message received in the last 120s
+//     if((millis()-lastConnected > 30000) && !disabled) 
+//     {
+//         ESP_LOGW(IPOD_TAG,"Serial comms timed out: %lu ms",millis()-lastConnected);
+//         resetState();
+//     }
 
-    //Send the track change Ack Pending if it has not sent already
-    if(!disabled && (trackChangeAckPending>0x00) && (millis()>(trackChangeTimestamp+TRACK_CHANGE_TIMEOUT))) 
-    {
-        ESP_LOGD(IPOD_TAG,"Track change ack pending timed out ! ");        
-        L0x04_0x01_iPodAck(iPodAck_OK,trackChangeAckPending);
-        trackChangeAckPending = 0x00;
-    }
+//     //Send the track change Ack Pending if it has not sent already
+//     if(!disabled && (trackChangeAckPending>0x00) && (millis()>(trackChangeTimestamp+TRACK_CHANGE_TIMEOUT))) 
+//     {
+//         ESP_LOGD(IPOD_TAG,"Track change ack pending timed out ! ");        
+//         L0x04_0x01_iPodAck(iPodAck_OK,trackChangeAckPending);
+//         trackChangeAckPending = 0x00;
+//     }
 
-}
+// }
 #pragma endregion
 
 //-----------------------------------------------------------------------
@@ -1085,7 +1185,7 @@ void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID) {
         cmdStatus,
         cmdID
     };
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 /// @brief General response command for Lingo 0x00 with numerical field (used for Ack Pending). Has to be followed up with a normal iPodAck
@@ -1101,7 +1201,7 @@ void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID, uint32_t numField) {
         cmdID
     };
     *((uint32_t*)&txPacket[4]) = swap_endian<uint32_t>(numField);
-    sendPacket(txPacket,4+4);
+    queuePacket(txPacket,4+4);
 }
 
 
@@ -1114,7 +1214,7 @@ void esPod::L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte) {
         0x04,
         extendedModeByte
     };
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 /// @brief Returns as a UTF8 null-ended char array, the _name of the iPod (not changeable during runtime)
@@ -1125,7 +1225,7 @@ void esPod::L0x00_0x08_ReturniPodName() {
         0x08
     };
     strcpy((char*)&txPacket[2],_name);
-    sendPacket(txPacket,3+strlen(_name));
+    queuePacket(txPacket,3+strlen(_name));
 }
 
 /// @brief Returns the iPod Software Version
@@ -1138,7 +1238,7 @@ void esPod::L0x00_0x0A_ReturniPodSoftwareVersion() {
         (byte)_SWMinor,
         (byte)_SWrevision
     };
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 /// @brief Returns the iPod Serial Number (which is a string)
@@ -1149,7 +1249,7 @@ void esPod::L0x00_0x0C_ReturniPodSerialNum() {
         0x0C
     };
     strcpy((char*)&txPacket[2],_serialNumber);
-    sendPacket(txPacket,3+strlen(_serialNumber));
+    queuePacket(txPacket,3+strlen(_serialNumber));
 }
 
 /// @brief Returns the iPod model number PA146FD 720901, which corresponds to an iPod 5.5G classic
@@ -1160,7 +1260,7 @@ void esPod::L0x00_0x0E_ReturniPodModelNum() {
         0x0E,
         0x00,0x0B,0x00,0x05,0x50,0x41,0x31,0x34,0x36,0x46,0x44,0x00
     };
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 /// @brief Returns a preprogrammed value for the Lingo Protocol Version for 0x00, 0x03 or 0x04
@@ -1185,7 +1285,7 @@ void esPod::L0x00_0x10_ReturnLingoProtocolVersion(byte targetLingo)
         break;
     }
     ESP_LOGI(IPOD_TAG,"Lingo 0x%02x protocol version: 1.%d",targetLingo,txPacket[4]);
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 /// @brief Query the accessory Info (model number, manufacturer, firmware version ...) using the target Info category hex
@@ -1197,7 +1297,7 @@ void esPod::L0x00_0x27_GetAccessoryInfo(byte desiredInfo)
         0x00, 0x27,
         desiredInfo
     };
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 
@@ -1220,7 +1320,7 @@ void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID)
         cmdStatus,
         0x00,cmdID
     };
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 /// @brief General response command for Lingo 0x04 with numerical field (used for Ack Pending). Has to be followed up with a normal iPodAck
@@ -1237,7 +1337,7 @@ void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField)
         cmdID
     };
     *((uint32_t*)&txPacket[5]) = swap_endian<uint32_t>(numField);
-    sendPacket(txPacket,5+4);
+    queuePacket(txPacket,5+4);
 }
 
 /// @brief Returns the pseudo-UTF8 string for the track info types 01/05/06
@@ -1252,7 +1352,7 @@ void esPod::L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, char* t
         trackInfoType
     };
     strcpy((char*)&txPacket[4],trackInfoChars);
-    sendPacket(txPacket,4+strlen(trackInfoChars)+1);
+    queuePacket(txPacket,4+strlen(trackInfoChars)+1);
 }
 
 /// @brief Returns the playing track total duration in milliseconds (Implicit track info 0x00)
@@ -1269,7 +1369,7 @@ void esPod::L0x04_0x0D_ReturnIndexedPlayingTrackInfo(uint32_t trackDuration_ms)
         0x00,0x00 //Chapter count (none)
     };
     *((uint32_t*)&txPacket[8]) = swap_endian<uint32_t>(trackDuration_ms);
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 /// @brief Overloaded return of the playing track info : release year
@@ -1287,7 +1387,7 @@ void esPod::L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, uint16_
         0x01 //it was a Monday
     };
     *((uint16_t*)&txPacket[9]) = swap_endian<uint16_t>(releaseYear);
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 /// @brief Returns the L0x04 Lingo Protocol Version : hardcoded to 1.12, consistent with an iPod Classic 5.5G
@@ -1299,7 +1399,7 @@ void esPod::L0x04_0x13_ReturnProtocolVersion()
         0x00,0x13,
         0x01,0x0C //Protocol version 1.12
     };
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 /// @brief Return the number of records of a given DBCategory (Playlist, tracks...)
@@ -1313,7 +1413,7 @@ void esPod::L0x04_0x19_ReturnNumberCategorizedDBRecords(uint32_t categoryDBRecor
         0x00,0x00,0x00,0x00
     };
     *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(categoryDBRecords);
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 /// @brief Returns the metadata for a certain database record. Category is implicit
@@ -1329,7 +1429,7 @@ void esPod::L0x04_0x1B_ReturnCategorizedDatabaseRecord(uint32_t index, char *rec
     };
     *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(index);
     strcpy((char*)&txPacket[7],recordString);
-    sendPacket(txPacket,7+strlen(recordString)+1);
+    queuePacket(txPacket,7+strlen(recordString)+1);
 }
 
 /// @brief Returns the current playback status, indicating the position out of the duration
@@ -1348,7 +1448,7 @@ void esPod::L0x04_0x1D_ReturnPlayStatus(uint32_t position, uint32_t duration, by
     };
     *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(duration);
     *((uint32_t*)&txPacket[7]) = swap_endian<uint32_t>(position);
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 /// @brief Returns the "Index" of the currently playing track, useful for pulling matching metadata
@@ -1362,7 +1462,7 @@ void esPod::L0x04_0x1F_ReturnCurrentPlayingTrackIndex(uint32_t trackIndex)
         0x00,0x00,0x00,0x00
     };
     *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(trackIndex);
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 /// @brief Returns the track Title after an implicit call for it
@@ -1375,7 +1475,7 @@ void esPod::L0x04_0x21_ReturnIndexedPlayingTrackTitle(char *trackTitle)
         0x00,0x21
     };
     strcpy((char*)&txPacket[3],trackTitle);
-    sendPacket(txPacket,3+strlen(trackTitle)+1);
+    queuePacket(txPacket,3+strlen(trackTitle)+1);
 }
 
 /// @brief Returns the track Artist Name after an implicit call for it
@@ -1388,7 +1488,7 @@ void esPod::L0x04_0x23_ReturnIndexedPlayingTrackArtistName(char *trackArtistName
         0x00,0x23
     };
     strcpy((char*)&txPacket[3],trackArtistName);
-    sendPacket(txPacket,3+strlen(trackArtistName)+1);
+    queuePacket(txPacket,3+strlen(trackArtistName)+1);
 }
 
 /// @brief Returns the track Album Name after an implicit call for it
@@ -1401,7 +1501,7 @@ void esPod::L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(char *trackAlbumName)
         0x00,0x25
     };
     strcpy((char*)&txPacket[3],trackAlbumName);
-    sendPacket(txPacket,3+strlen(trackAlbumName)+1);
+    queuePacket(txPacket,3+strlen(trackAlbumName)+1);
 }
 
 /// @brief Only supports currently two types : 0x00 Playback Stopped, 0x01 Track index, 0x04 Track offset
@@ -1417,7 +1517,7 @@ void esPod::L0x04_0x27_PlayStatusNotification(byte notification, uint32_t numFie
         0x00,0x00,0x00,0x00
     };
     *((uint32_t*)&txPacket[4]) = swap_endian<uint32_t>(numField);
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 /// @brief Returns the PlayStatusNotification when it is STOPPED (0x00)
@@ -1430,7 +1530,7 @@ void esPod::L0x04_0x27_PlayStatusNotification(byte notification)
         0x00,0x27,
         notification
     };
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 /// @brief Returns the current shuffle status of the PBEngine
@@ -1443,7 +1543,7 @@ void esPod::L0x04_0x2D_ReturnShuffle(byte currentShuffleStatus)
         0x00,0x2D,
         currentShuffleStatus
     };
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 /// @brief Returns the current repeat status of the PBEngine
@@ -1456,7 +1556,7 @@ void esPod::L0x04_0x30_ReturnRepeat(byte currentRepeatStatus)
         0x00,0x30,
         currentRepeatStatus
     };
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 /// @brief Returns the number of playing tracks in the current selection (here it is all the tracks)
@@ -1470,7 +1570,7 @@ void esPod::L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks)
         0x00,0x00,0x00,0x00
     };
     *((uint32_t*)&txPacket[3]) = swap_endian<uint32_t>(numPlayingTracks);
-    sendPacket(txPacket,sizeof(txPacket));
+    queuePacket(txPacket,sizeof(txPacket));
 }
 
 #pragma endregion

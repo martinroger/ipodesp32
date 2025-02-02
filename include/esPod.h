@@ -3,6 +3,8 @@
 #include "L0x00.h"
 #include "L0x04.h"
 
+#pragma region MACROS
+//Logging tag
 #ifndef IPOD_TAG
     #define IPOD_TAG "esPod"
 #endif
@@ -14,7 +16,7 @@
     #define SERIAL_TIMEOUT 2500
 #endif
 #ifndef INTERBYTE_TIMEOUT
-    #define INTERBYTE_TIMEOUT 10
+    #define INTERBYTE_TIMEOUT 100
 #endif
 //FreeRTOS Queues
 #ifndef CMD_QUEUE_SIZE
@@ -37,12 +39,18 @@
 #ifndef PROCESS_TASK_PRIORITY
     #define PROCESS_TASK_PRIORITY 5
 #endif
+#ifndef PROCESS_INTERVAL_MS
+    #define PROCESS_INTERVAL_MS 5
+#endif
 //TX Task settings
 #ifndef TX_TASK_STACK_SIZE
     #define TX_TASK_STACK_SIZE 32*1024
 #endif
 #ifndef TX_TASK_PRIORITY
     #define TX_TASK_PRIORITY 20
+#endif
+#ifndef TX_INTERVAL_MS
+    #define TX_INTERVAL_MS 30
 #endif
 //General iPod settings
 #ifndef TOTAL_NUM_TRACKS
@@ -51,6 +59,10 @@
 #ifndef TRACK_CHANGE_TIMEOUT
     #define TRACK_CHANGE_TIMEOUT 1100
 #endif
+
+#pragma endregion
+
+#pragma region ENUMS
 
 enum PB_STATUS : byte
 {
@@ -101,12 +113,15 @@ enum NOTIF_STATES : byte
     NOTIF_ON            =   0x01
 };
 
+#pragma endregion
+
 struct aapCommand
 {
     byte* payload = nullptr;
     uint32_t length = 0;
 };
 
+#pragma region CLASS DECLARATION
 
 class esPod
 {
@@ -116,7 +131,7 @@ public:
     //State variables
     bool extendedInterfaceModeActive = false;
     bool disabled = true; //espod starts disabled... it means it keeps flushing the Serial until it is ready to process something
-    unsigned long lastConnected  =   0;
+    // unsigned long lastConnected  =   0;
     
     //metadata variables
     char trackTitle[255]        =   "Title";
@@ -166,12 +181,17 @@ private:
     //Serial to the listening device
     Stream& _targetSerial;
 
+    //Packet utilities
+    static byte checksum(const byte* byteArray, uint32_t len);
+    void sendPacket(const byte* byteArray, uint32_t len);
+    void queuePacket(const byte* byteArray, uint32_t len);
+
     //Packet-related 
-    byte _prevRxByte    =   0x00;
-    byte _rxBuf[1024]   =   {0x00};
-    uint32_t _rxLen     =   0;
-    uint32_t _rxCounter =   0;
-    bool _rxInProgress  =   false;
+    // byte _prevRxByte    =   0x00;
+    // byte _rxBuf[1024]   =   {0x00};
+    // uint32_t _rxLen     =   0;
+    // uint32_t _rxCounter =   0;
+    // bool _rxInProgress  =   false;
 
 
     //Device metadata
@@ -205,9 +225,7 @@ public:
     void resetState();
     void attachPlayControlHandler(playStatusHandler_t playHandler);
     
-    //Packet handling
-    static byte checksum(const byte* byteArray, uint32_t len);
-    void sendPacket(const byte* byteArray, uint32_t len);
+
         
     //Processors
     void processLingo0x00(const byte* byteArray, uint32_t len);
@@ -215,7 +233,7 @@ public:
     void processPacket(const byte* byteArray,uint32_t len);
 
     //Cyclic functions
-    void refresh();
+    // void refresh();
     
     //Lingo 0x00
     void L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID);
@@ -250,3 +268,5 @@ public:
     void L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks);
 
 };
+
+#pragma endregion
