@@ -38,6 +38,15 @@
 #ifndef REFRESH_INTERVAL
 	#define REFRESH_INTERVAL 5
 #endif
+#ifndef AVRC_QUEUE_SIZE
+    #define AVRC_QUEUE_SIZE 32
+#endif
+#ifndef PROCESS_AVRC_TASK_STACK_SIZE
+	#define PROCESS_AVRC_TASK_STACK_SIZE 8192
+#endif
+#ifndef PROCESS_AVRC_TASK_PRIORITY
+	#define PROCESS_AVRC_TASK_PRIORITY 6
+#endif
 // unsigned long lastTick_ts = 0;
 
 // char incAlbumName[255] 		= 	"incAlbum";
@@ -74,9 +83,24 @@ static void processAVRCTask(void* pvParameters) {
 	bool trackTitleUpdated 		= 	false;
 	bool trackDurationUpdated	=	false;
 
+	#ifdef STACK_HIGH_WATERMARK_LOG
+    UBaseType_t uxHighWaterMark;
+    UBaseType_t minHightWaterMark = PROCESS_AVRC_TASK_STACK_SIZE;
+    #endif
+
 
 	//Main loop
 	while(true) {
+		//Stack high watermark logging
+        #ifdef STACK_HIGH_WATERMARK_LOG
+        uxHighWaterMark = uxTaskGetStackHighWaterMark(NULL);
+        if(uxHighWaterMark < minHightWaterMark) 
+        {
+            minHightWaterMark = uxHighWaterMark;
+            ESP_LOGI("HWM Logging","Process AVRC Task High Watermark: %d, used stack: %d",minHightWaterMark,PROCESS_AVRC_TASK_STACK_SIZE-minHightWaterMark);
+        }
+        #endif
+		//Check incoming metadata in queue
 		if(xQueueReceive(avrcMetadataQueue,&incMetadata,0) == pdTRUE) {
 			//Start processing
 			switch (incMetadata.id)	
@@ -537,7 +561,7 @@ void setup() {
 	}
 	else 
 	{
-		xTaskCreatePinnedToCore(processAVRCTask,"processAVRCTask",8192,NULL,6,&processAVRCTaskHandle,ARDUINO_RUNNING_CORE);
+		xTaskCreatePinnedToCore(processAVRCTask,"processAVRCTask",PROCESS_AVRC_TASK_STACK_SIZE,NULL,PROCESS_AVRC_TASK_PRIORITY,&processAVRCTaskHandle,ARDUINO_RUNNING_CORE);
 		if(processAVRCTaskHandle == nullptr) 
 		{
 			ESP_LOGE("SETUP","Failed to create processAVRCTask");
