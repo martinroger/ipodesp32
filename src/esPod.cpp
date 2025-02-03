@@ -348,8 +348,10 @@ esPod::esPod(Stream &targetSerial)
         }
         else
         {
-            _pendingTimer_0x00 = xTimerCreate("Pending Timer 0x00",pdMS_TO_TICKS(1000),pdFALSE,(void*)&_pendingcmdId_0x00,esPod::_pendingTimerCallback_0x00);
-            _pendingTimer_0x04 = xTimerCreate("Pending Timer 0x04",pdMS_TO_TICKS(1000),pdFALSE,(void*)&_pendingcmdId_0x04,esPod::_pendingTimerCallback_0x04);
+            // _pendingCmdId_0x00 = 0x00;
+            // _pendingCmdId_0x04 = 0x00;
+            _pendingTimer_0x00 = xTimerCreate("Pending Timer 0x00",pdMS_TO_TICKS(1000),pdFALSE,(void*)&_pendingCmdId_0x00,esPod::_pendingTimerCallback_0x00);
+            _pendingTimer_0x04 = xTimerCreate("Pending Timer 0x04",pdMS_TO_TICKS(1000),pdFALSE,(void*)&_pendingCmdId_0x04,esPod::_pendingTimerCallback_0x04);
             if(_pendingTimer_0x00 == NULL || _pendingTimer_0x04 == NULL)
             {
                 ESP_LOGE(IPOD_TAG,"Could not create timers");
