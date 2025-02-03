@@ -68,8 +68,23 @@ void esPod::_rxTask(void *pvParameters)
 
     aapCommand cmd;
 
+    #ifdef STACK_HIGH_WATERMARK_LOG
+    UBaseType_t uxHighWaterMark;
+    UBaseType_t minHightWaterMark = RX_TASK_STACK_SIZE;
+    #endif
+
     while (true)
     {
+        //Stack high watermark logging
+        #ifdef STACK_HIGH_WATERMARK_LOG
+        uxHighWaterMark = uxTaskGetStackHighWaterMark(NULL);
+        if(uxHighWaterMark < minHightWaterMark) 
+        {
+            minHightWaterMark = uxHighWaterMark;
+            ESP_LOGI(IPOD_TAG,"RX Task High Watermark: %d, used stack: %d",minHightWaterMark,RX_TASK_STACK_SIZE-minHightWaterMark);
+        }
+        #endif
+
         //If the esPod is disabled, flush the RX buffer and wait for 10ms
         if(esPodInstance->disabled)
         {
@@ -173,6 +188,7 @@ void esPod::_rxTask(void *pvParameters)
             }
             vTaskDelay(1);
         }
+        
     }
 }
 
@@ -183,10 +199,33 @@ void esPod::_processTask(void *pvParameters)
     esPod* esPodInstance = static_cast<esPod*>(pvParameters);
     aapCommand incCmd;
 
+    #ifdef STACK_HIGH_WATERMARK_LOG
+    UBaseType_t uxHighWaterMark;
+    UBaseType_t minHightWaterMark = PROCESS_TASK_STACK_SIZE;
+    #endif
+
     while (true)
     {
+        //Stack high watermark logging
+        #ifdef STACK_HIGH_WATERMARK_LOG
+        uxHighWaterMark = uxTaskGetStackHighWaterMark(NULL);
+        if(uxHighWaterMark < minHightWaterMark) 
+        {
+            minHightWaterMark = uxHighWaterMark;
+            ESP_LOGI(IPOD_TAG,"Process Task High Watermark: %d, used stack: %d",minHightWaterMark,PROCESS_TASK_STACK_SIZE-minHightWaterMark);
+        }
+        #endif
+        
+        //If the esPod is disabled, check the queue and purge it before jumping to the next cycle
         if (esPodInstance->disabled)
         {
+            while(xQueueReceive(esPodInstance->_cmdQueue,&incCmd,0) == pdTRUE) //Non blocking receive
+            {
+                //Do not process, just free the memory
+                delete[] incCmd.payload;
+                incCmd.payload = nullptr;
+                incCmd.length = 0;
+            }
             vTaskDelay(5*PROCESS_INTERVAL_MS);
             continue;
         }
@@ -219,10 +258,33 @@ void esPod::_txTask(void *pvParameters)
     esPod* esPodInstance = static_cast<esPod*>(pvParameters);
     aapCommand txCmd;
 
+    #ifdef STACK_HIGH_WATERMARK_LOG
+    UBaseType_t uxHighWaterMark;
+    UBaseType_t minHightWaterMark = TX_TASK_STACK_SIZE;
+    #endif
+
     while (true)
     {
+        //Stack high watermark logging
+        #ifdef STACK_HIGH_WATERMARK_LOG
+        uxHighWaterMark = uxTaskGetStackHighWaterMark(NULL);
+        if(uxHighWaterMark < minHightWaterMark) 
+        {
+            minHightWaterMark = uxHighWaterMark;
+            ESP_LOGI(IPOD_TAG,"TX Task High Watermark: %d, used stack: %d",minHightWaterMark,TX_TASK_STACK_SIZE-minHightWaterMark);
+        }
+        #endif
+        
+        //If the esPod is disabled, check the queue and purge it before jumping to the next cycle
         if (esPodInstance->disabled)
         {
+            while(xQueueReceive(esPodInstance->_txQueue,&txCmd,0) == pdTRUE)
+            {
+                //Do not process, just free the memory
+                delete[] txCmd.payload;
+                txCmd.payload = nullptr;
+                txCmd.length = 0;
+            }
             vTaskDelay(5*TX_INTERVAL_MS);
             continue;
         }
