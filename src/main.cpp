@@ -38,7 +38,7 @@
 #ifndef REFRESH_INTERVAL
 	#define REFRESH_INTERVAL 5
 #endif
-unsigned long lastTick_ts = 0;
+//unsigned long lastTick_ts = 0;
 
 char incAlbumName[255] 		= 	"incAlbum";
 char incArtistName[255] 	= 	"incArtist";

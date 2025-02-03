@@ -201,12 +201,12 @@ void esPod::_processTask(void *pvParameters)
         }
         
         //Send the track change Ack Pending if it has not sent already and timeout has happened (could be a task)
-        if((esPodInstance->trackChangeAckPending>0x00) && (millis()>(esPodInstance->trackChangeTimestamp+TRACK_CHANGE_TIMEOUT))) 
-        {
-            ESP_LOGD(IPOD_TAG,"Track change ack pending timed out ! ");        
-            esPodInstance->L0x04_0x01_iPodAck(iPodAck_OK,esPodInstance->trackChangeAckPending);
-            esPodInstance->trackChangeAckPending = 0x00;
-        }
+        // if((esPodInstance->trackChangeAckPending>0x00) && (millis()>(esPodInstance->trackChangeTimestamp+TRACK_CHANGE_TIMEOUT))) 
+        // {
+        //     ESP_LOGD(IPOD_TAG,"Track change ack pending timed out ! ");        
+        //     esPodInstance->L0x04_0x01_iPodAck(iPodAck_OK,esPodInstance->trackChangeAckPending);
+        //     esPodInstance->trackChangeAckPending = 0x00;
+        // }
         vTaskDelay(PROCESS_INTERVAL_MS);
     }
     
@@ -264,6 +264,11 @@ void esPod::_pendingTimerCallback_0x04(TimerHandle_t xTimer)
     byte* pendingCmdId = (byte*)pvTimerGetTimerID(xTimer);
     //Send the ACK in the message queue
     esPodInstance->L0x04_0x01_iPodAck(iPodAck_OK,*pendingCmdId);
+    //Special case for the Track Change Ack Pending
+    if(*pendingCmdId == esPodInstance->trackChangeAckPending)
+    {
+        esPodInstance->trackChangeAckPending = 0x00;
+    }
     //Reset the pending command ID
     *pendingCmdId = 0x00;
 }
