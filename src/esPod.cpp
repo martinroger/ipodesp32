@@ -24,6 +24,27 @@ T swap_endian(T u)
     return dest.u;
 }
 
+void startTimer(TimerHandle_t timer, unsigned long time_ms)
+{
+    //If the timer is already active, it needs to be stop without a callback call first
+    if(xTimerIsTimerActive(timer) == pdTRUE)
+    {
+        xTimerStop(timer,0);
+    }
+    //Change the period and start the timer
+    xTimerChangePeriod(timer,pdMS_TO_TICKS(time_ms),0);
+    xTimerStart(timer,0);
+}
+
+void stopTimer(TimerHandle_t timer)
+{
+    //If the timer is already active, it needs to be stop without a callback call first
+    if(xTimerIsTimerActive(timer) == pdTRUE)
+    {
+        xTimerStop(timer,0);
+    }
+}
+
 //-----------------------------------------------------------------------
 //|         Constructor, reset, attachCallback, packet utilities        |
 //-----------------------------------------------------------------------
@@ -219,6 +240,33 @@ void esPod::_txTask(void *pvParameters)
     }
 }
 
+/// @brief Callback for L0x00 pending Ack timer
+/// @param xTimer 
+void esPod::_pendingTimerCallback_0x00(TimerHandle_t xTimer)
+{
+    //Get a static instance of the esPod class
+    esPod* esPodInstance = static_cast<esPod*>(pvTimerGetTimerID(xTimer));
+    //Retrieve the pending command ID
+    byte* pendingCmdId = (byte*)pvTimerGetTimerID(xTimer);
+    //Send the ACK in the message queue
+    esPodInstance->L0x00_0x02_iPodAck(iPodAck_OK,*pendingCmdId);
+    //Reset the pending command ID
+    *pendingCmdId = 0x00;
+}
+
+/// @brief Callback for L0x04 pending Ack timer
+/// @param xTimer 
+void esPod::_pendingTimerCallback_0x04(TimerHandle_t xTimer)
+{
+    //Get a static instance of the esPod class
+    esPod* esPodInstance = static_cast<esPod*>(pvTimerGetTimerID(xTimer));
+    //Retrieve the pending command ID
+    byte* pendingCmdId = (byte*)pvTimerGetTimerID(xTimer);
+    //Send the ACK in the message queue
+    esPodInstance->L0x04_0x01_iPodAck(iPodAck_OK,*pendingCmdId);
+    //Reset the pending command ID
+    *pendingCmdId = 0x00;
+}
 
 /// @brief //Calculates the checksum of a packet that starts from i=0 ->Lingo to i=len -> Checksum
 /// @param byteArray Array from Lingo byte to Checksum byte
@@ -294,6 +342,20 @@ esPod::esPod(Stream &targetSerial)
         xTaskCreatePinnedToCore(_rxTask,"RX Task", RX_TASK_STACK_SIZE,this,RX_TASK_PRIORITY,&_rxTaskHandle,1);
         xTaskCreatePinnedToCore(_processTask,"Processor Task", PROCESS_TASK_STACK_SIZE,this,PROCESS_TASK_PRIORITY,&_processTaskHandle,1);
         xTaskCreatePinnedToCore(_txTask,"Transmit Task", TX_TASK_STACK_SIZE,this,TX_TASK_PRIORITY,&_txTaskHandle,1);
+        if (_rxTaskHandle == NULL || _processTaskHandle == NULL || _txTaskHandle == NULL)
+        {
+           ESP_LOGE(IPOD_TAG,"Could not create tasks");
+        }
+        else
+        {
+            _pendingTimer_0x00 = xTimerCreate("Pending Timer 0x00",pdMS_TO_TICKS(1000),pdFALSE,(void*)&_pendingcmdId_0x00,esPod::_pendingTimerCallback_0x00);
+            _pendingTimer_0x04 = xTimerCreate("Pending Timer 0x04",pdMS_TO_TICKS(1000),pdFALSE,(void*)&_pendingcmdId_0x04,esPod::_pendingTimerCallback_0x04);
+            if(_pendingTimer_0x00 == NULL || _pendingTimer_0x04 == NULL)
+            {
+                ESP_LOGE(IPOD_TAG,"Could not create timers");
+            }
+        }
+        
     }
     else
     {
@@ -307,6 +369,9 @@ esPod::~esPod()
     vTaskDelete(_rxTaskHandle);
     vTaskDelete(_processTaskHandle);
     vTaskDelete(_txTaskHandle);
+    //Stop timers that might be running
+    stopTimer(_pendingTimer_0x00);
+    stopTimer(_pendingTimer_0x04);
     //Remember to deallocate memory 
     while(xQueueReceive(_cmdQueue,&tempCmd,0) == pdTRUE)
     {

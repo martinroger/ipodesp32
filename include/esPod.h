@@ -178,6 +178,16 @@ private:
     static void _processTask(void *pvParameters);
     static void _txTask(void *pvParameters);
 
+    //FreeRTOS timers for delayed acks
+    TimerHandle_t _pendingTimer_0x00;
+    TimerHandle_t _pendingTimer_0x04;
+
+    //Callbacks for each timer
+    static void _pendingTimerCallback_0x00(TimerHandle_t xTimer);
+    static void _pendingTimerCallback_0x04(TimerHandle_t xTimer);
+    static byte _pendingcmdId_0x00;
+    static byte _pendingcmdId_0x04;
+
     //Serial to the listening device
     Stream& _targetSerial;
 
