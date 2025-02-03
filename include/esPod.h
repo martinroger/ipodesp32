@@ -182,9 +182,9 @@ private:
     Stream& _targetSerial;
 
     //Packet utilities
-    static byte checksum(const byte* byteArray, uint32_t len);
-    void sendPacket(const byte* byteArray, uint32_t len);
-    void queuePacket(const byte* byteArray, uint32_t len);
+    static byte _checksum(const byte* byteArray, uint32_t len);
+    void _sendPacket(const byte* byteArray, uint32_t len);
+    void _queuePacket(const byte* byteArray, uint32_t len);
 
     //Packet-related 
     // byte _prevRxByte    =   0x00;
@@ -224,8 +224,6 @@ public:
     ~esPod();
     void resetState();
     void attachPlayControlHandler(playStatusHandler_t playHandler);
-    
-
         
     //Processors
     void processLingo0x00(const byte* byteArray, uint32_t len);

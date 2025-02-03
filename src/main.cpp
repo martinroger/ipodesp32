@@ -241,7 +241,7 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 	//Check if it is time to send a notification
 	if(albumNameUpdated && artistNameUpdated && trackTitleUpdated && trackDurationUpdated )
 	{ 
-		//If all fields have received at least one update and the trackChangeAckPending is still hanging. The failsafe for this one is in the espod.refresh()
+		//If all fields have received at least one update and the trackChangeAckPending is still hanging. The failsafe for this one is in the espod _processTask
 		if (espod.trackChangeAckPending>0x00) 
 		{
 			ESP_LOGI("AVRC_CB","Artist+Album+Title+Duration +++ ACK Pending 0x%x\n\tPending duration: %d",espod.trackChangeAckPending,millis()-espod.trackChangeTimestamp);
