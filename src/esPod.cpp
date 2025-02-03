@@ -455,6 +455,12 @@ void esPod::resetState(){
     }
     xQueueReset(_cmdQueue);
     xQueueReset(_txQueue);
+
+    //Stop timers
+    stopTimer(_pendingTimer_0x00);
+    stopTimer(_pendingTimer_0x04);
+    _pendingCmdId_0x00 = 0x00;
+    _pendingCmdId_0x04 = 0x00;
 }
 
 void esPod::attachPlayControlHandler(playStatusHandler_t playHandler)
@@ -1246,6 +1252,12 @@ void esPod::processPacket(const byte *byteArray, uint32_t len)
 /// @param cmdID ID (single byte) of the Lingo 0x00 command replied to
 void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID) {
     ESP_LOGI(IPOD_TAG,"Ack 0x%02x to command 0x%02x",cmdStatus,cmdID);
+    if(_pendingCmdId_0x00 == cmdID) //If the command ID is the same as the pending one
+    {
+        stopTimer(_pendingTimer_0x00); //Stop the timer
+        _pendingCmdId_0x00 = 0x00; //Reset the pending command
+    }
+    //Queue the packet
     const byte txPacket[] = {
         0x00,
         0x02,
@@ -1269,8 +1281,10 @@ void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID, uint32_t numField) {
     };
     *((uint32_t*)&txPacket[4]) = swap_endian<uint32_t>(numField);
     _queuePacket(txPacket,4+4);
+    //Starting delayed timer for the iPodAck
+    _pendingCmdId_0x00 = cmdID;
+    startTimer(_pendingTimer_0x00,numField);
 }
-
 
 /// @brief Returns 0x01 if the iPod is in extendedInterfaceMode, or 0x00 if not
 /// @param extendedModeByte Direct value of the extendedInterfaceMode boolean
@@ -1381,6 +1395,13 @@ void esPod::L0x00_0x27_GetAccessoryInfo(byte desiredInfo)
 void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID)
 {
     ESP_LOGI(IPOD_TAG,"Ack 0x%02x to command 0x%04x",cmdStatus,cmdID);
+    //Stop the timer if the same command is acknowledged before the elapsed time
+    if(cmdID == _pendingCmdId_0x04) //If the pending command is the one being acknowledged
+    {
+        stopTimer(_pendingTimer_0x04);
+        _pendingCmdId_0x04 = 0x00;
+    }
+    //Queue the ack packet
     const byte txPacket[] = {
         0x04,
         0x00,0x01,
@@ -1405,6 +1426,9 @@ void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField)
     };
     *((uint32_t*)&txPacket[5]) = swap_endian<uint32_t>(numField);
     _queuePacket(txPacket,5+4);
+    //Starting delayed timer for the iPodAck
+    _pendingCmdId_0x04 = cmdID;
+    startTimer(_pendingTimer_0x04,numField);
 }
 
 /// @brief Returns the pseudo-UTF8 string for the track info types 01/05/06
