@@ -13,7 +13,7 @@
     #define MAX_PACKET_SIZE 1024
 #endif
 #ifndef SERIAL_TIMEOUT
-    #define SERIAL_TIMEOUT 2500
+    #define SERIAL_TIMEOUT 125000
 #endif
 #ifndef INTERBYTE_TIMEOUT
     #define INTERBYTE_TIMEOUT 100
