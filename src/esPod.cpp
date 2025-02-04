@@ -64,14 +64,14 @@ void esPod::_rxTask(void *pvParameters)
         }
         #endif
 
-        //If the esPod is disabled, flush the RX buffer and wait for 10ms
+        //If the esPod is disabled, flush the RX buffer and wait for 2*RX_TASK_INTERVAL_MS before checking again
         if(esPodInstance->disabled)
         {
             while(esPodInstance->_targetSerial.available())
             {
                 esPodInstance->_targetSerial.read();
             }
-            vTaskDelay(10);
+            vTaskDelay(2*RX_TASK_INTERVAL_MS);
             continue;
         }
         else //esPod is enabled, process away !
@@ -160,9 +160,13 @@ void esPod::_rxTask(void *pvParameters)
             else if (millis() - lastActivity > SERIAL_TIMEOUT) //If we haven't received any byte in 1s, reset the RX state
             {
                 ESP_LOGW(IPOD_TAG,"No activity in %lu ms, resetting RX state",SERIAL_TIMEOUT);
-                delete[] cmd.payload;
-                cmd.payload = nullptr;
-                cmd.length = 0;
+                //Might be taken care of in the resetState() call
+                // if(cmd.payload != nullptr)
+                // {
+                //     delete[] cmd.payload;
+                //     cmd.payload = nullptr;
+                //     cmd.length = 0;
+                // }
                 //Reset the timestamp for next Serial timeout
                 lastActivity = millis();
                 esPodInstance->resetState();
