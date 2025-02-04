@@ -184,6 +184,8 @@ void esPod::_rxTask(void *pvParameters)
                 delete[] cmd.payload;
                 cmd.payload = nullptr;
                 cmd.length = 0;
+                //Reset the timestamp for next Serial timeout
+                lastActivity = millis();
                 esPodInstance->resetState();
             }
             vTaskDelay(1);
