@@ -27,14 +27,14 @@
 #endif
 //RX Task settings
 #ifndef RX_TASK_STACK_SIZE
-    #define RX_TASK_STACK_SIZE 32*1024
+    #define RX_TASK_STACK_SIZE 4096
 #endif
 #ifndef RX_TASK_PRIORITY
     #define RX_TASK_PRIORITY 2
 #endif
 //Process Task settings
 #ifndef PROCESS_TASK_STACK_SIZE
-    #define PROCESS_TASK_STACK_SIZE 32*1024
+    #define PROCESS_TASK_STACK_SIZE 4096
 #endif
 #ifndef PROCESS_TASK_PRIORITY
     #define PROCESS_TASK_PRIORITY 5
@@ -44,7 +44,7 @@
 #endif
 //TX Task settings
 #ifndef TX_TASK_STACK_SIZE
-    #define TX_TASK_STACK_SIZE 32*1024
+    #define TX_TASK_STACK_SIZE 4096
 #endif
 #ifndef TX_TASK_PRIORITY
     #define TX_TASK_PRIORITY 20
