@@ -13,10 +13,10 @@
     #define MAX_PACKET_SIZE 1024
 #endif
 #ifndef SERIAL_TIMEOUT
-    #define SERIAL_TIMEOUT 125000
+    #define SERIAL_TIMEOUT 30000
 #endif
 #ifndef INTERBYTE_TIMEOUT
-    #define INTERBYTE_TIMEOUT 100
+    #define INTERBYTE_TIMEOUT 500
 #endif
 //FreeRTOS Queues
 #ifndef CMD_QUEUE_SIZE
@@ -32,6 +32,9 @@
 #ifndef RX_TASK_PRIORITY
     #define RX_TASK_PRIORITY 2
 #endif
+#ifndef RX_TASK_INTERVAL_MS
+    #define RX_TASK_INTERVAL_MS 15
+#endif
 //Process Task settings
 #ifndef PROCESS_TASK_STACK_SIZE
     #define PROCESS_TASK_STACK_SIZE 4096
@@ -40,7 +43,7 @@
     #define PROCESS_TASK_PRIORITY 5
 #endif
 #ifndef PROCESS_INTERVAL_MS
-    #define PROCESS_INTERVAL_MS 5
+    #define PROCESS_INTERVAL_MS 20
 #endif
 //TX Task settings
 #ifndef TX_TASK_STACK_SIZE
@@ -50,7 +53,7 @@
     #define TX_TASK_PRIORITY 20
 #endif
 #ifndef TX_INTERVAL_MS
-    #define TX_INTERVAL_MS 30
+    #define TX_INTERVAL_MS 90
 #endif
 //General iPod settings
 #ifndef TOTAL_NUM_TRACKS

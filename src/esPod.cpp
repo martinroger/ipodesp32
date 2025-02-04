@@ -188,7 +188,7 @@ void esPod::_rxTask(void *pvParameters)
                 lastActivity = millis();
                 esPodInstance->resetState();
             }
-            vTaskDelay(1);
+            vTaskDelay(RX_TASK_INTERVAL_MS);
         }
         
     }
@@ -291,7 +291,7 @@ void esPod::_txTask(void *pvParameters)
             continue;
         }
         //Might need to replace it with a if() to space things out
-        while(xQueueReceive(esPodInstance->_txQueue,&txCmd,0) == pdTRUE)
+        if(xQueueReceive(esPodInstance->_txQueue,&txCmd,0) == pdTRUE)
         {
             //Send the packet
             esPodInstance->_sendPacket(txCmd.payload,txCmd.length);
