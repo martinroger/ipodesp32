@@ -25,6 +25,9 @@
 #ifndef TX_QUEUE_SIZE
     #define TX_QUEUE_SIZE 32
 #endif
+#ifndef TIMER_QUEUE_SIZE
+    #define TIMER_QUEUE_SIZE 10
+#endif
 //RX Task settings
 #ifndef RX_TASK_STACK_SIZE
     #define RX_TASK_STACK_SIZE 4096
@@ -54,6 +57,16 @@
 #endif
 #ifndef TX_INTERVAL_MS
     #define TX_INTERVAL_MS 90
+#endif
+//Timer Task settings
+#ifndef TIMER_TASK_STACK_SIZE
+    #define TIMER_TASK_STACK_SIZE 2048
+#endif
+#ifndef TIMER_TASK_PRIORITY
+    #define TIMER_TASK_PRIORITY 1
+#endif
+#ifndef TIMER_INTERVAL_MS
+    #define TIMER_INTERVAL_MS 5
 #endif
 //General iPod settings
 #ifndef TOTAL_NUM_TRACKS
@@ -124,6 +137,11 @@ struct aapCommand
     uint32_t length = 0;
 };
 
+struct TimerCallbackMessage {
+    byte cmdID;
+    byte timerType; // 0 for 0x00, 1 for 0x04
+};
+
 #pragma region CLASS DECLARATION
 
 class esPod
@@ -171,15 +189,18 @@ private:
     // QueueHandle_t _rxQueue;
     QueueHandle_t _cmdQueue;
     QueueHandle_t _txQueue;
+    QueueHandle_t _timerQueue;
 
     //FreeRTOS tasks (and methods...)
     TaskHandle_t _rxTaskHandle;
     TaskHandle_t _processTaskHandle;
     TaskHandle_t _txTaskHandle;
+    TaskHandle_t _timerTaskHandle;
 
     static void _rxTask(void *pvParameters);
     static void _processTask(void *pvParameters);
     static void _txTask(void *pvParameters);
+    static void _timerTask(void *pvParameters); // Add this line
 
     //FreeRTOS timers for delayed acks
     TimerHandle_t _pendingTimer_0x00;

@@ -50,6 +50,8 @@ void stopTimer(TimerHandle_t timer)
 //-----------------------------------------------------------------------
 #pragma region UTILS
 
+#pragma region Tasks
+
 /// @brief RX Task, sifts through the incoming serial data and compiles packets that pass the checksum and passes them to the processing Queue _cmdQueue. Also handles timeouts and can trigger state resets.
 /// @param pvParameters Unused
 void esPod::_rxTask(void *pvParameters)
@@ -308,38 +310,53 @@ void esPod::_txTask(void *pvParameters)
     }
 }
 
+/// @brief Low priority task to queue acks *outside* of the timer interrupt context
+/// @param pvParameters 
+void esPod::_timerTask(void *pvParameters)
+{
+    esPod* esPodInstance = static_cast<esPod*>(pvParameters);
+    TimerCallbackMessage msg;
+
+    while (true)
+    {
+        if (xQueueReceive(esPodInstance->_timerQueue, &msg, 0) == pdTRUE)
+        {
+            if (msg.timerType == 0)
+            {
+                esPodInstance->L0x00_0x02_iPodAck(iPodAck_OK, msg.cmdID);
+            }
+            else if (msg.timerType == 1)
+            {
+                esPodInstance->L0x04_0x01_iPodAck(iPodAck_OK, msg.cmdID);
+            }
+        }
+        vTaskDelay(pdMS_TO_TICKS(TIMER_INTERVAL_MS));
+    }
+}
+
+#pragma endregion
+
 /// @brief Callback for L0x00 pending Ack timer
 /// @param xTimer 
 void esPod::_pendingTimerCallback_0x00(TimerHandle_t xTimer)
 {
-    //Get a static instance of the esPod class
     esPod* esPodInstance = static_cast<esPod*>(pvTimerGetTimerID(xTimer));
-    //Retrieve the pending command ID
-    byte* pendingCmdId = (byte*)pvTimerGetTimerID(xTimer);
-    //Send the ACK in the message queue
-    esPodInstance->L0x00_0x02_iPodAck(iPodAck_OK,*pendingCmdId);
-    //Reset the pending command ID
-    *pendingCmdId = 0x00;
+    //byte* pendingCmdId = (byte*)pvTimerGetTimerID(xTimer);
+    TimerCallbackMessage msg = { esPodInstance->_pendingCmdId_0x00, 0 };
+    xQueueSendFromISR(esPodInstance->_timerQueue, &msg, NULL);
 }
 
 /// @brief Callback for L0x04 pending Ack timer
 /// @param xTimer 
 void esPod::_pendingTimerCallback_0x04(TimerHandle_t xTimer)
 {
-    //Get a static instance of the esPod class
     esPod* esPodInstance = static_cast<esPod*>(pvTimerGetTimerID(xTimer));
-    //Retrieve the pending command ID
-    byte* pendingCmdId = (byte*)pvTimerGetTimerID(xTimer);
-    //Send the ACK in the message queue
-    esPodInstance->L0x04_0x01_iPodAck(iPodAck_OK,*pendingCmdId);
-    //Special case for the Track Change Ack Pending
-    if(*pendingCmdId == esPodInstance->trackChangeAckPending)
-    {
-        esPodInstance->trackChangeAckPending = 0x00;
-    }
-    //Reset the pending command ID
-    *pendingCmdId = 0x00;
+    //byte* pendingCmdId = (byte*)pvTimerGetTimerID(xTimer);
+    TimerCallbackMessage msg = { esPodInstance->_pendingCmdId_0x04, 1 };
+    xQueueSendFromISR(esPodInstance->_timerQueue, &msg, NULL);
 }
+
+#pragma region Packet management
 
 /// @brief //Calculates the checksum of a packet that starts from i=0 ->Lingo to i=len -> Checksum
 /// @param byteArray Array from Lingo byte to Checksum byte
@@ -393,48 +410,46 @@ void esPod::_queuePacket(const byte *byteArray, uint32_t len)
     }
 }
 
+#pragma endregion
+
 esPod::esPod(Stream &targetSerial)
     : _targetSerial(targetSerial)
 {
-    //Create queues with pointer structures to byte arrays
-    _cmdQueue   =   xQueueCreate(CMD_QUEUE_SIZE,sizeof(aapCommand));
-    if(_cmdQueue == NULL)
+    // Create queues with pointer structures to byte arrays
+    _cmdQueue = xQueueCreate(CMD_QUEUE_SIZE, sizeof(aapCommand));
+    _txQueue = xQueueCreate(TX_QUEUE_SIZE, sizeof(aapCommand));
+    _timerQueue = xQueueCreate(TIMER_QUEUE_SIZE, sizeof(TimerCallbackMessage));
+
+    if (_cmdQueue == NULL || _txQueue == NULL || _timerQueue == NULL) // Add _timerQueue check
     {
-        ESP_LOGE(IPOD_TAG,"Could not create command queue");
-    }
-    _txQueue    =   xQueueCreate(TX_QUEUE_SIZE,sizeof(aapCommand));
-    if(_txQueue == NULL)
-    {
-        ESP_LOGE(IPOD_TAG,"Could not create transmit queue");
+        ESP_LOGE(IPOD_TAG, "Could not create queues");
     }
 
-    //Create FreeRTOS tasks for compiling incoming commands, processing commands and transmitting commands
-    //Could also use xTaskCreate()
-    if(_cmdQueue != NULL && _txQueue != NULL)
+    // Create FreeRTOS tasks for compiling incoming commands, processing commands and transmitting commands
+    if (_cmdQueue != NULL && _txQueue != NULL && _timerQueue != NULL) // Add _timerQueue check
     {
-        xTaskCreatePinnedToCore(_rxTask,"RX Task", RX_TASK_STACK_SIZE,this,RX_TASK_PRIORITY,&_rxTaskHandle,1);
-        xTaskCreatePinnedToCore(_processTask,"Processor Task", PROCESS_TASK_STACK_SIZE,this,PROCESS_TASK_PRIORITY,&_processTaskHandle,1);
-        xTaskCreatePinnedToCore(_txTask,"Transmit Task", TX_TASK_STACK_SIZE,this,TX_TASK_PRIORITY,&_txTaskHandle,1);
+        xTaskCreatePinnedToCore(_rxTask, "RX Task", RX_TASK_STACK_SIZE, this, RX_TASK_PRIORITY, &_rxTaskHandle, 1);
+        xTaskCreatePinnedToCore(_processTask, "Processor Task", PROCESS_TASK_STACK_SIZE, this, PROCESS_TASK_PRIORITY, &_processTaskHandle, 1);
+        xTaskCreatePinnedToCore(_txTask, "Transmit Task", TX_TASK_STACK_SIZE, this, TX_TASK_PRIORITY, &_txTaskHandle, 1);
+        xTaskCreatePinnedToCore(_timerTask, "Timer Task", TIMER_TASK_STACK_SIZE, this, TIMER_TASK_PRIORITY, &_timerTaskHandle, 1);
+
         if (_rxTaskHandle == NULL || _processTaskHandle == NULL || _txTaskHandle == NULL)
         {
-           ESP_LOGE(IPOD_TAG,"Could not create tasks");
+            ESP_LOGE(IPOD_TAG, "Could not create tasks");
         }
         else
         {
-            // _pendingCmdId_0x00 = 0x00;
-            // _pendingCmdId_0x04 = 0x00;
-            _pendingTimer_0x00 = xTimerCreate("Pending Timer 0x00",pdMS_TO_TICKS(1000),pdFALSE,(void*)&_pendingCmdId_0x00,esPod::_pendingTimerCallback_0x00);
-            _pendingTimer_0x04 = xTimerCreate("Pending Timer 0x04",pdMS_TO_TICKS(1000),pdFALSE,(void*)&_pendingCmdId_0x04,esPod::_pendingTimerCallback_0x04);
-            if(_pendingTimer_0x00 == NULL || _pendingTimer_0x04 == NULL)
+            _pendingTimer_0x00 = xTimerCreate("Pending Timer 0x00", pdMS_TO_TICKS(1000), pdFALSE, (void*)&_pendingCmdId_0x00, esPod::_pendingTimerCallback_0x00);
+            _pendingTimer_0x04 = xTimerCreate("Pending Timer 0x04", pdMS_TO_TICKS(1000), pdFALSE, (void*)&_pendingCmdId_0x04, esPod::_pendingTimerCallback_0x04);
+            if (_pendingTimer_0x00 == NULL || _pendingTimer_0x04 == NULL)
             {
-                ESP_LOGE(IPOD_TAG,"Could not create timers");
+                ESP_LOGE(IPOD_TAG, "Could not create timers");
             }
         }
-        
     }
     else
     {
-        ESP_LOGE(IPOD_TAG,"Could not create tasks, queues not created");
+        ESP_LOGE(IPOD_TAG, "Could not create tasks, queues not created");
     }
 }
 
@@ -1738,6 +1753,4 @@ void esPod::L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks)
 }
 
 #pragma endregion
-
-
 
