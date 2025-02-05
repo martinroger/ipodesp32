@@ -321,11 +321,11 @@ void esPod::_timerTask(void *pvParameters)
     {
         if (xQueueReceive(esPodInstance->_timerQueue, &msg, 0) == pdTRUE)
         {
-            if (msg.timerType == 0)
+            if (msg.targetLingo == 0x00)
             {
                 esPodInstance->L0x00_0x02_iPodAck(iPodAck_OK, msg.cmdID);
             }
-            else if (msg.timerType == 1)
+            else if (msg.targetLingo == 0x04)
             {
                 esPodInstance->L0x04_0x01_iPodAck(iPodAck_OK, msg.cmdID);
             }
@@ -341,8 +341,7 @@ void esPod::_timerTask(void *pvParameters)
 void esPod::_pendingTimerCallback_0x00(TimerHandle_t xTimer)
 {
     esPod* esPodInstance = static_cast<esPod*>(pvTimerGetTimerID(xTimer));
-    //byte* pendingCmdId = (byte*)pvTimerGetTimerID(xTimer);
-    TimerCallbackMessage msg = { esPodInstance->_pendingCmdId_0x00, 0 };
+    TimerCallbackMessage msg = { esPodInstance->_pendingCmdId_0x00, 0x00 };
     xQueueSendFromISR(esPodInstance->_timerQueue, &msg, NULL);
 }
 
@@ -351,8 +350,7 @@ void esPod::_pendingTimerCallback_0x00(TimerHandle_t xTimer)
 void esPod::_pendingTimerCallback_0x04(TimerHandle_t xTimer)
 {
     esPod* esPodInstance = static_cast<esPod*>(pvTimerGetTimerID(xTimer));
-    //byte* pendingCmdId = (byte*)pvTimerGetTimerID(xTimer);
-    TimerCallbackMessage msg = { esPodInstance->_pendingCmdId_0x04, 1 };
+    TimerCallbackMessage msg = { esPodInstance->_pendingCmdId_0x04, 0x04 };
     xQueueSendFromISR(esPodInstance->_timerQueue, &msg, NULL);
 }
 
@@ -439,8 +437,8 @@ esPod::esPod(Stream &targetSerial)
         }
         else
         {
-            _pendingTimer_0x00 = xTimerCreate("Pending Timer 0x00", pdMS_TO_TICKS(1000), pdFALSE, (void*)&_pendingCmdId_0x00, esPod::_pendingTimerCallback_0x00);
-            _pendingTimer_0x04 = xTimerCreate("Pending Timer 0x04", pdMS_TO_TICKS(1000), pdFALSE, (void*)&_pendingCmdId_0x04, esPod::_pendingTimerCallback_0x04);
+            _pendingTimer_0x00 = xTimerCreate("Pending Timer 0x00", pdMS_TO_TICKS(1000), pdFALSE, this, esPod::_pendingTimerCallback_0x00);
+            _pendingTimer_0x04 = xTimerCreate("Pending Timer 0x04", pdMS_TO_TICKS(1000), pdFALSE, this, esPod::_pendingTimerCallback_0x04);
             if (_pendingTimer_0x00 == NULL || _pendingTimer_0x04 == NULL)
             {
                 ESP_LOGE(IPOD_TAG, "Could not create timers");
@@ -462,6 +460,8 @@ esPod::~esPod()
     //Stop timers that might be running
     stopTimer(_pendingTimer_0x00);
     stopTimer(_pendingTimer_0x04);
+    xTimerDelete(_pendingTimer_0x00,0);
+    xTimerDelete(_pendingTimer_0x04,0);
     //Remember to deallocate memory 
     while(xQueueReceive(_cmdQueue,&tempCmd,0) == pdTRUE)
     {
@@ -477,6 +477,7 @@ esPod::~esPod()
     }
     vQueueDelete(_cmdQueue);
     vQueueDelete(_txQueue);
+    vQueueDelete(_timerQueue);
 }
 
 void esPod::resetState(){
@@ -595,7 +596,10 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
                 L0x00_0x02_iPodAck(iPodAck_CmdPending,cmdID,1000);
                 extendedInterfaceModeActive = true;
             }
-            L0x00_0x02_iPodAck(iPodAck_OK,cmdID);
+            else
+            {
+                L0x00_0x02_iPodAck(iPodAck_OK,cmdID);
+            }
         }
         break;
     

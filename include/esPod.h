@@ -137,9 +137,10 @@ struct aapCommand
     uint32_t length = 0;
 };
 
-struct TimerCallbackMessage {
-    byte cmdID;
-    byte timerType; // 0 for 0x00, 1 for 0x04
+struct TimerCallbackMessage 
+{
+    byte cmdID;         //Command ID to be acked
+    byte targetLingo;     //Targeted Lingo
 };
 
 #pragma region CLASS DECLARATION
