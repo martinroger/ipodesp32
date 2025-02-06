@@ -47,16 +47,6 @@
 #ifndef PROCESS_AVRC_TASK_PRIORITY
 	#define PROCESS_AVRC_TASK_PRIORITY 6
 #endif
-// unsigned long lastTick_ts = 0;
-
-// char incAlbumName[255] 		= 	"incAlbum";
-// char incArtistName[255] 	= 	"incArtist";
-// char incTrackTitle[255] 	= 	"incTitle";
-// uint32_t incTrackDuration 	= 	0;
-// bool albumNameUpdated 		= 	false;
-// bool artistNameUpdated 		= 	false;
-// bool trackTitleUpdated 		= 	false;
-// bool trackDurationUpdated	=	false;
 
 //Metada structure
 struct avrcMetadata
@@ -264,7 +254,7 @@ static void processAVRCTask(void* pvParameters) {
 			delete[] incMetadata.payload;
 			incMetadata.payload = nullptr;
 		}
-		vTaskDelay(1);
+		vTaskDelay(pdMS_TO_TICKS(2));
 	}
 }
 

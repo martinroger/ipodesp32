@@ -71,7 +71,7 @@ void esPod::_rxTask(void *pvParameters)
             {
                 esPodInstance->_targetSerial.read();
             }
-            vTaskDelay(2*RX_TASK_INTERVAL_MS);
+            vTaskDelay(pdMS_TO_TICKS(2*RX_TASK_INTERVAL_MS));
             continue;
         }
         else //esPod is enabled, process away !
@@ -171,7 +171,7 @@ void esPod::_rxTask(void *pvParameters)
                 lastActivity = millis();
                 esPodInstance->resetState();
             }
-            vTaskDelay(RX_TASK_INTERVAL_MS);
+            vTaskDelay(pdMS_TO_TICKS(RX_TASK_INTERVAL_MS));
         }
         
     }
@@ -211,7 +211,7 @@ void esPod::_processTask(void *pvParameters)
                 incCmd.payload = nullptr;
                 incCmd.length = 0;
             }
-            vTaskDelay(5*PROCESS_INTERVAL_MS);
+            vTaskDelay(pdMS_TO_TICKS(5*PROCESS_INTERVAL_MS));
             continue;
         }
         if(xQueueReceive(esPodInstance->_cmdQueue,&incCmd,0) == pdTRUE) //Non blocking receive
@@ -231,7 +231,7 @@ void esPod::_processTask(void *pvParameters)
             esPodInstance->L0x04_0x01_iPodAck(iPodAck_OK,esPodInstance->trackChangeAckPending);
             esPodInstance->trackChangeAckPending = 0x00;
         }
-        vTaskDelay(PROCESS_INTERVAL_MS);
+        vTaskDelay(pdMS_TO_TICKS(PROCESS_INTERVAL_MS));
     }
     
 }
@@ -270,13 +270,13 @@ void esPod::_txTask(void *pvParameters)
                 txCmd.payload = nullptr;
                 txCmd.length = 0;
             }
-            vTaskDelay(5*TX_INTERVAL_MS);
+            vTaskDelay(pdMS_TO_TICKS(2*TX_INTERVAL_MS));
             continue;
         }
         //Might need to replace it with a if() to space things out
         if(xQueueReceive(esPodInstance->_txQueue,&txCmd,0) == pdTRUE)
         {
-            vTaskDelay(TX_INTERVAL_MS);
+            vTaskDelay(pdMS_TO_TICKS(TX_INTERVAL_MS));
             //Send the packet
             esPodInstance->_sendPacket(txCmd.payload,txCmd.length);
             //Free the memory allocated for the payload
@@ -284,10 +284,12 @@ void esPod::_txTask(void *pvParameters)
             txCmd.payload = nullptr;
             txCmd.length = 0;
         }
-        //vTaskDelay(TX_INTERVAL_MS);
+        else
+        {
+            vTaskDelay(pdMS_TO_TICKS(5));
+        }
     }
 }
-
 
 /// @brief //Calculates the checksum of a packet that starts from i=0 ->Lingo to i=len -> Checksum
 /// @param byteArray Array from Lingo byte to Checksum byte
