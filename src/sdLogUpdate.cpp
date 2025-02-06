@@ -117,7 +117,8 @@ void updateFromFS(fs::FS &fs) {
 			}
 			updateBin.close();
 
-			fs.remove("/update.bin");
+			fs.remove("/firmware.cur");
+			fs.rename("/update.bin","/firmware.cur");
 			if(restartRequired) ESP.restart();
 		} 
 		else 
