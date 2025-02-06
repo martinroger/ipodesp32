@@ -276,6 +276,7 @@ void esPod::_txTask(void *pvParameters)
         //Might need to replace it with a if() to space things out
         if(xQueueReceive(esPodInstance->_txQueue,&txCmd,0) == pdTRUE)
         {
+            vTaskDelay(TX_INTERVAL_MS);
             //Send the packet
             esPodInstance->_sendPacket(txCmd.payload,txCmd.length);
             //Free the memory allocated for the payload
@@ -283,7 +284,7 @@ void esPod::_txTask(void *pvParameters)
             txCmd.payload = nullptr;
             txCmd.length = 0;
         }
-        vTaskDelay(TX_INTERVAL_MS);
+        //vTaskDelay(TX_INTERVAL_MS);
     }
 }
 
