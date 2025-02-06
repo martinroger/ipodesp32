@@ -332,6 +332,10 @@ void esPod::_timerTask(void *pvParameters)
             else if (msg.targetLingo == 0x04)
             {
                 esPodInstance->L0x04_0x01_iPodAck(iPodAck_OK, msg.cmdID);
+                if (msg.cmdID == esPodInstance->trackChangeAckPending)
+                {
+                    esPodInstance->trackChangeAckPending = 0x00;
+                }
             }
         }
         vTaskDelay(pdMS_TO_TICKS(TIMER_INTERVAL_MS));
@@ -435,7 +439,7 @@ esPod::esPod(Stream &targetSerial)
         xTaskCreatePinnedToCore(_txTask, "Transmit Task", TX_TASK_STACK_SIZE, this, TX_TASK_PRIORITY, &_txTaskHandle, 1);
         xTaskCreatePinnedToCore(_timerTask, "Timer Task", TIMER_TASK_STACK_SIZE, this, TIMER_TASK_PRIORITY, &_timerTaskHandle, 1);
 
-        if (_rxTaskHandle == NULL || _processTaskHandle == NULL || _txTaskHandle == NULL)
+        if (_rxTaskHandle == NULL || _processTaskHandle == NULL || _txTaskHandle == NULL || _timerTaskHandle == NULL)
         {
             ESP_LOGE(IPOD_TAG, "Could not create tasks");
         }
@@ -461,6 +465,7 @@ esPod::~esPod()
     vTaskDelete(_rxTaskHandle);
     vTaskDelete(_processTaskHandle);
     vTaskDelete(_txTaskHandle);
+    vTaskDelete(_timerTaskHandle);
     //Stop timers that might be running
     stopTimer(_pendingTimer_0x00);
     stopTimer(_pendingTimer_0x04);
