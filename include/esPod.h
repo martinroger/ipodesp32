@@ -56,7 +56,7 @@
     #define TX_TASK_PRIORITY 20
 #endif
 #ifndef TX_INTERVAL_MS
-    #define TX_INTERVAL_MS 60
+    #define TX_INTERVAL_MS 90
 #endif
 //Timer Task settings
 #ifndef TIMER_TASK_STACK_SIZE
