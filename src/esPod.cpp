@@ -486,7 +486,7 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     { 
     case L0x00_RequestExtendedInterfaceMode: //Mini requests extended interface mode status
         {
-            ESP_LOGI(IPOD_TAG,"CMD: 0x%02x RequestExtendedInterfaceMode",cmdID);
+            ESP_LOGD(IPOD_TAG,"CMD: 0x%02x RequestExtendedInterfaceMode",cmdID);
             if(extendedInterfaceModeActive) {
                 L0x00_0x04_ReturnExtendedInterfaceMode(0x01); //Report that extended interface mode is active
             }
@@ -891,7 +891,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     //Engage the pending ACK for expected metadata
                     trackChangeAckPending = cmdID;
                     trackChangeTimestamp = millis();
-                    ESP_LOGI(IPOD_TAG,"Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> PREV ",prevTrackIndex,currentTrackIndex,trackListPosition,(trackChangeAckPending>0x00),trackChangeTimestamp);
+                    ESP_LOGD(IPOD_TAG,"Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> PREV ",prevTrackIndex,currentTrackIndex,trackListPosition,(trackChangeAckPending>0x00),trackChangeTimestamp);
                     L0x04_0x01_iPodAck(iPodAck_CmdPending,cmdID,TRACK_CHANGE_TIMEOUT);
 
                     //Fire the A2DP when ready
@@ -899,13 +899,13 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 }
                 else if (tempTrackIndex == currentTrackIndex) //Somehow reselecting the current track
                 {
-                    ESP_LOGI(IPOD_TAG,"Selected same track as current: %d",tempTrackIndex);
+                    ESP_LOGD(IPOD_TAG,"Selected same track as current: %d",tempTrackIndex);
                     L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
                     
                     //Fire the A2DP when ready
                     if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Fire the metadata trigger indirectly
                 }
-                else    //If it is not the previous or the current track, it automaticallybecomes a next track
+                else    //If it is not the previous or the current track, it automatically becomes a next track
                 {
                     //This is only for when the system requires the data of the previously active track
                     prevTrackIndex = currentTrackIndex; 
@@ -922,7 +922,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     //Engage the pending ACK for expected metadata
                     trackChangeAckPending = cmdID;
                     trackChangeTimestamp = millis();
-                    ESP_LOGI(IPOD_TAG,"Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> NEXT ",prevTrackIndex,currentTrackIndex,trackListPosition,(trackChangeAckPending>0x00),trackChangeTimestamp);
+                    ESP_LOGD(IPOD_TAG,"Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> NEXT ",prevTrackIndex,currentTrackIndex,trackListPosition,(trackChangeAckPending>0x00),trackChangeTimestamp);
                     L0x04_0x01_iPodAck(iPodAck_CmdPending,cmdID,TRACK_CHANGE_TIMEOUT);
 
                     //Fire the A2DP when ready
@@ -974,7 +974,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                         //Engage the pending ACK for expected metadata
                         trackChangeAckPending = cmdID;
                         trackChangeTimestamp = millis();
-                        ESP_LOGI(IPOD_TAG,"Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> EXPLICIT NEXT TRACK",prevTrackIndex,currentTrackIndex,trackListPosition,(trackChangeAckPending>0x00),trackChangeTimestamp);
+                        ESP_LOGD(IPOD_TAG,"Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> EXPLICIT NEXT TRACK",prevTrackIndex,currentTrackIndex,trackListPosition,(trackChangeAckPending>0x00),trackChangeTimestamp);
                         L0x04_0x01_iPodAck(iPodAck_CmdPending,cmdID,TRACK_CHANGE_TIMEOUT);
 
                         //Fire the A2DP when ready
@@ -983,7 +983,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     break;
                 case PB_CMD_PREVIOUS_TRACK: //Prev track
                     {
-                        ESP_LOGI(IPOD_TAG,"Current index %d Tracklist pos. %d --> EXPLICIT SINGLE PREV TRACK",currentTrackIndex,trackListPosition);
+                        ESP_LOGD(IPOD_TAG,"Current index %d Tracklist pos. %d --> EXPLICIT SINGLE PREV TRACK",currentTrackIndex,trackListPosition);
                         L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
 
                         //Fire the A2DP when ready
@@ -1006,7 +1006,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                         //Engage the pending ACK for expected metadata
                         trackChangeAckPending = cmdID;
                         trackChangeTimestamp = millis();
-                        ESP_LOGI(IPOD_TAG,"Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> EXPLICIT NEXT",prevTrackIndex,currentTrackIndex,trackListPosition,(trackChangeAckPending>0x00),trackChangeTimestamp);
+                        ESP_LOGD(IPOD_TAG,"Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> EXPLICIT NEXT",prevTrackIndex,currentTrackIndex,trackListPosition,(trackChangeAckPending>0x00),trackChangeTimestamp);
                         L0x04_0x01_iPodAck(iPodAck_CmdPending,cmdID,TRACK_CHANGE_TIMEOUT);
 
                         //Fire the A2DP when ready
@@ -1015,7 +1015,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     break;
                 case PB_CMD_PREV: //Prev track
                     {
-                        ESP_LOGI(IPOD_TAG,"Current index %d Tracklist pos. %d --> EXPLICIT SINGLE PREV",currentTrackIndex,trackListPosition);
+                        ESP_LOGD(IPOD_TAG,"Current index %d Tracklist pos. %d --> EXPLICIT SINGLE PREV",currentTrackIndex,trackListPosition);
                         L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
 
                         //Fire the A2DP when ready
@@ -1110,7 +1110,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     //Engage the pending ACK for expected metadata
                     trackChangeAckPending = cmdID;
                     trackChangeTimestamp = millis();
-                    ESP_LOGI(IPOD_TAG,"Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> PREV ",prevTrackIndex,currentTrackIndex,trackListPosition,(trackChangeAckPending>0x00),trackChangeTimestamp);
+                    ESP_LOGD(IPOD_TAG,"Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> PREV ",prevTrackIndex,currentTrackIndex,trackListPosition,(trackChangeAckPending>0x00),trackChangeTimestamp);
                     L0x04_0x01_iPodAck(iPodAck_CmdPending,cmdID,TRACK_CHANGE_TIMEOUT);
 
                     //Fire the A2DP when ready
@@ -1118,13 +1118,13 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 }
                 else if (tempTrackIndex == currentTrackIndex) //Somehow reselecting the current track
                 {
-                    ESP_LOGI(IPOD_TAG,"Selected same track as current: %d",tempTrackIndex);
+                    ESP_LOGD(IPOD_TAG,"Selected same track as current: %d",tempTrackIndex);
                     L0x04_0x01_iPodAck(iPodAck_OK,cmdID);
                     
                     //Fire the A2DP when ready
                     if(_playStatusHandler) _playStatusHandler(A2DP_PREV); //Fire the metadata trigger indirectly
                 }
-                else    //If it is not the previous or the current track, it automaticallybecomes a next track
+                else    //If it is not the previous or the current track, it automatically becomes a next track
                 {
                     //This is only for when the system requires the data of the previously active track
                     prevTrackIndex = currentTrackIndex; 
@@ -1141,7 +1141,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                     //Engage the pending ACK for expected metadata
                     trackChangeAckPending = cmdID;
                     trackChangeTimestamp = millis();
-                    ESP_LOGI(IPOD_TAG,"Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> NEXT ",prevTrackIndex,currentTrackIndex,trackListPosition,(trackChangeAckPending>0x00),trackChangeTimestamp);
+                    ESP_LOGD(IPOD_TAG,"Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> NEXT ",prevTrackIndex,currentTrackIndex,trackListPosition,(trackChangeAckPending>0x00),trackChangeTimestamp);
                     L0x04_0x01_iPodAck(iPodAck_CmdPending,cmdID,TRACK_CHANGE_TIMEOUT);
 
                     //Fire the A2DP when ready
@@ -1293,7 +1293,7 @@ void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID, uint32_t numField) {
 /// @brief Returns 0x01 if the iPod is in extendedInterfaceMode, or 0x00 if not
 /// @param extendedModeByte Direct value of the extendedInterfaceMode boolean
 void esPod::L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte) {
-    ESP_LOGI(IPOD_TAG,"Extended Interface mode: 0x%02x",extendedModeByte);
+    ESP_LOGD(IPOD_TAG,"Extended Interface mode: 0x%02x",extendedModeByte);
     const byte txPacket[] = {
         0x00,
         0x04,

@@ -53,11 +53,11 @@ bool trackDurationUpdated	=	false;
 void connectionStateChanged(esp_a2d_connection_state_t state, void* ptr) {
 	switch (state)	{
 		case ESP_A2D_CONNECTION_STATE_CONNECTED:
-			ESP_LOGI("A2DP_CB","ESP_A2D_CONNECTION_STATE_CONNECTED, espod enabled");
+			ESP_LOGD("A2DP_CB","ESP_A2D_CONNECTION_STATE_CONNECTED, espod enabled");
 			espod.disabled = false;
 			break;
 		case ESP_A2D_CONNECTION_STATE_DISCONNECTED:
-			ESP_LOGI("A2DP_CB","ESP_A2D_CONNECTION_STATE_DISCONNECTED, espod disabled");
+			ESP_LOGD("A2DP_CB","ESP_A2D_CONNECTION_STATE_DISCONNECTED, espod disabled");
 			espod.resetState();
 			espod.disabled = true; //Todo check of this one, is risky
 			break;
@@ -72,15 +72,15 @@ void audioStateChanged(esp_a2d_audio_state_t state,void* ptr) {
 	{
 		case ESP_A2D_AUDIO_STATE_STARTED:
 			espod.playStatus = PB_STATE_PLAYING;
-			ESP_LOGI("A2DP_CB","ESP_A2D_AUDIO_STATE_STARTED, espod.playStatus = PB_STATE_PLAYING");
+			ESP_LOGD("A2DP_CB","ESP_A2D_AUDIO_STATE_STARTED, espod.playStatus = PB_STATE_PLAYING");
 			break;
 		case ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND:
 			espod.playStatus = PB_STATE_PAUSED;
-			ESP_LOGI("A2DP_CB","ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND, espod.playStatus = PB_STATE_PAUSED");
+			ESP_LOGD("A2DP_CB","ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND, espod.playStatus = PB_STATE_PAUSED");
 			break;
 		case ESP_A2D_AUDIO_STATE_STOPPED:
 			espod.playStatus = PB_STATE_STOPPED;
-			ESP_LOGI("A2DP_CB","ESP_A2D_AUDIO_STATE_STOPPED, espod.playStatus = PB_STATE_STOPPED");
+			ESP_LOGD("A2DP_CB","ESP_A2D_AUDIO_STATE_STOPPED, espod.playStatus = PB_STATE_STOPPED");
 			break;
 	}
 }
@@ -268,31 +268,31 @@ void playStatusHandler(byte playCommand) {
   	switch (playCommand) {
 		case A2DP_STOP:
 			a2dp_sink.stop();
-			ESP_LOGI("A2DP_CB","A2DP_STOP");
+			ESP_LOGD("A2DP_CB","A2DP_STOP");
 			break;
 		case A2DP_PLAY:
 			a2dp_sink.play();
-			ESP_LOGI("A2DP_CB","A2DP_PLAY");
+			ESP_LOGD("A2DP_CB","A2DP_PLAY");
 			break;
 
 		case A2DP_PAUSE:
 			a2dp_sink.pause();
-			ESP_LOGI("A2DP_CB","A2DP_PAUSE");
+			ESP_LOGD("A2DP_CB","A2DP_PAUSE");
 			break;
 
 		case A2DP_REWIND:
 			a2dp_sink.previous();
-			ESP_LOGI("A2DP_CB","A2DP_REWIND");
+			ESP_LOGD("A2DP_CB","A2DP_REWIND");
 			break;
 
 		case A2DP_NEXT:
 			a2dp_sink.next();
-			ESP_LOGI("A2DP_CB","A2DP_NEXT");
+			ESP_LOGD("A2DP_CB","A2DP_NEXT");
 			break;
 
 		case A2DP_PREV: 
 			a2dp_sink.previous();
-			ESP_LOGI("A2DP_CB","A2DP_PREV");
+			ESP_LOGD("A2DP_CB","A2DP_PREV");
 			break;
 	}
   	#endif
