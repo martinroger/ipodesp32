@@ -515,6 +515,7 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
             if(extendedInterfaceModeActive) {
                 L0x00_0x02_iPodAck(iPodAck_OK,cmdID);
                 extendedInterfaceModeActive = false;
+                playStatusNotificationState = NOTIF_OFF;
             }
             else
             {
