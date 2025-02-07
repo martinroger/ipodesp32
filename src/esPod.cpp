@@ -63,7 +63,7 @@ void esPod::_rxTask(void *pvParameters)
     byte buf[MAX_PACKET_SIZE]   =   {0x00};
     uint32_t expLength          =   0;
     uint32_t cursor             =   0;
-    bool rxIncomplete           =   false;
+    //bool rxIncomplete           =   false;
 
     unsigned long lastByteRX    =   millis(); //Last time a byte was RXed in a packet
     unsigned long lastActivity  =   millis(); //Last time any RX activity was detected
@@ -99,20 +99,20 @@ void esPod::_rxTask(void *pvParameters)
         }
         else //esPod is enabled, process away !
         {
-            //Might need to use a while() to process all incoming bytes
-            if (esPodInstance->_targetSerial.available())
+            //Use of while instead of if()
+            while(esPodInstance->_targetSerial.available())
             {
                 //Timestamping the last activity on RX
                 lastActivity = millis();
                 incByte = esPodInstance->_targetSerial.read();
                 //If we are not in the middle of a RX, and we receive a 0xFF 0x55, start sequence, reset expected length and position cursor
-                if (prevByte == 0xFF && incByte == 0x55 && !rxIncomplete)
+                if (prevByte == 0xFF && incByte == 0x55 && !esPodInstance->_rxIncomplete)
                 {
-                    rxIncomplete = true;
+                    esPodInstance->_rxIncomplete = true;
                     expLength = 0;
                     cursor = 0;
                 }
-                else if (rxIncomplete)
+                else if (esPodInstance->_rxIncomplete)
                 {
                     //Timestamping the last byte received
                     lastByteRX = millis();
@@ -123,13 +123,13 @@ void esPod::_rxTask(void *pvParameters)
                         if(expLength > MAX_PACKET_SIZE)
                         {
                             ESP_LOGW(IPOD_TAG,"Expected length is too long, discarding packet");
-                            rxIncomplete = false;
+                            esPodInstance->_rxIncomplete = false;
                             //TODO: Send a NACK to the Accessory
                         }
                         else if(expLength == 0)
                         {
                             ESP_LOGW(IPOD_TAG,"Expected length is 0, discarding packet");
-                            rxIncomplete = false;
+                            esPodInstance->_rxIncomplete = false;
                             //TODO: Send a NACK to the Accessory
                         }
                     }
@@ -139,7 +139,7 @@ void esPod::_rxTask(void *pvParameters)
                         if(cursor == expLength+1)
                         {
                             //We have received the expected length + checksum
-                            rxIncomplete = false;
+                            esPodInstance->_rxIncomplete = false;
                             //Check the checksum
                             byte calcChecksum = esPod::_checksum(buf,expLength);
                             if (calcChecksum == incByte)
@@ -172,15 +172,15 @@ void esPod::_rxTask(void *pvParameters)
                 //Always update the previous byte
                 prevByte = incByte;
             }
-            else if (rxIncomplete && millis() - lastByteRX > INTERBYTE_TIMEOUT) //If we are in the middle of a packet and we haven't received a byte in 1s, discard the packet
+            if (esPodInstance->_rxIncomplete && millis() - lastByteRX > INTERBYTE_TIMEOUT) //If we are in the middle of a packet and we haven't received a byte in 1s, discard the packet
             {
                 ESP_LOGW(IPOD_TAG,"Packet incomplete, discarding");
-                rxIncomplete = false;
+                esPodInstance->_rxIncomplete = false;
                 cmd.payload = nullptr;
                 cmd.length = 0;
                 //TODO: Send a NACK to the Accessory
             }
-            else if (millis() - lastActivity > SERIAL_TIMEOUT) //If we haven't received any byte in 1s, reset the RX state
+            if (millis() - lastActivity > SERIAL_TIMEOUT) //If we haven't received any byte in 1s, reset the RX state
             {
                 ESP_LOGW(IPOD_TAG,"No activity in %lu ms, resetting RX state",SERIAL_TIMEOUT);
                 //Might be taken care of in the resetState() call
@@ -294,6 +294,11 @@ void esPod::_txTask(void *pvParameters)
                 txCmd.length = 0;
             }
             vTaskDelay(pdMS_TO_TICKS(2*TX_INTERVAL_MS));
+            continue;
+        }
+        if(esPodInstance->_rxIncomplete) //_rxTask has not managed to get a complete packet, wait 10ms more and jump to the next cycle
+        {
+            vTaskDelay(pdMS_TO_TICKS(10));
             continue;
         }
         //Might need to replace it with a if() to space things out
