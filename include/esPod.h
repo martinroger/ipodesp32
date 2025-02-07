@@ -53,7 +53,7 @@
     #define TX_TASK_PRIORITY 20
 #endif
 #ifndef TX_INTERVAL_MS
-    #define TX_INTERVAL_MS 60
+    #define TX_INTERVAL_MS 90
 #endif
 //General iPod settings
 #ifndef TOTAL_NUM_TRACKS

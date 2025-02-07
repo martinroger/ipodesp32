@@ -509,6 +509,21 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         }
         break;
     
+    case L0x00_ExitExtendedInterfaceMode: //Mini exits extended interface mode
+        {
+            ESP_LOGI(IPOD_TAG,"CMD: 0x%02x ExitExtendedInterfaceMode",cmdID);
+            if(extendedInterfaceModeActive) {
+                L0x00_0x02_iPodAck(iPodAck_OK,cmdID);
+                extendedInterfaceModeActive = false;
+                playStatusNotificationState = NOTIF_OFF;
+            }
+            else
+            {
+                L0x00_0x02_iPodAck(iPodAck_BadParam,cmdID);
+            }
+        }
+        break;
+    
     case L0x00_RequestiPodName: //Mini requests ipod name
         {
             ESP_LOGI(IPOD_TAG,"CMD: 0x%02x RequestiPodName",cmdID);
@@ -1274,7 +1289,6 @@ void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID, uint32_t numField) {
     *((uint32_t*)&txPacket[4]) = swap_endian<uint32_t>(numField);
     _queuePacket(txPacket,4+4);
 }
-
 
 /// @brief Returns 0x01 if the iPod is in extendedInterfaceMode, or 0x00 if not
 /// @param extendedModeByte Direct value of the extendedInterfaceMode boolean
