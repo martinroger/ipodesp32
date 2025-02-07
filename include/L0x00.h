@@ -1,5 +1,6 @@
 #define L0x00_RequestExtendedInterfaceMode  0x03
 #define L0x00_EnterExtendedInterfaceMode    0x05
+#define L0x00_ExitExtendedInterfaceMode     0x06
 #define L0x00_RequestiPodName               0x07
 #define L0x00_RequestiPodSoftwareVersion    0x09
 #define L0x00_RequestiPodSerialNum          0x0B
