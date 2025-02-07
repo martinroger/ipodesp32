@@ -103,11 +103,11 @@ static void processAVRCTask(void* pvParameters) {
 					{
 						strcpy(espod.albumName,incAlbumName);
 						albumNameUpdated = true;
-						ESP_LOGI("AVRC_CB","Album rxed, ACK pending, albumNameUpdated to %s",espod.albumName);
+						ESP_LOGD("AVRC_CB","Album rxed, ACK pending, albumNameUpdated to %s",espod.albumName);
 					}
 					else 
 					{
-						ESP_LOGI("AVRC_CB","Album rxed, ACK pending, already updated to %s",espod.albumName);
+						ESP_LOGD("AVRC_CB","Album rxed, ACK pending, already updated to %s",espod.albumName);
 					}
 				}
 				else //There is no pending track change from iPod : active or passive track change from avrc target
@@ -117,11 +117,11 @@ static void processAVRCTask(void* pvParameters) {
 						strcpy(espod.prevAlbumName,espod.albumName);
 						strcpy(espod.albumName,incAlbumName);
 						albumNameUpdated = true;
-						ESP_LOGI("AVRC_CB","Album rxed, NO ACK pending, albumNameUpdated to %s",espod.albumName);
+						ESP_LOGD("AVRC_CB","Album rxed, NO ACK pending, albumNameUpdated to %s",espod.albumName);
 					}
 					else  //Despammer for double sends
 					{
-						ESP_LOGI("AVRC_CB","Album rxed, NO ACK pending, already updated to %s",espod.albumName);
+						ESP_LOGD("AVRC_CB","Album rxed, NO ACK pending, already updated to %s",espod.albumName);
 					}
 				}
 				break;
@@ -135,11 +135,11 @@ static void processAVRCTask(void* pvParameters) {
 					{
 						strcpy(espod.artistName,incArtistName);
 						artistNameUpdated = true;
-						ESP_LOGI("AVRC_CB","Artist rxed, ACK pending, artistNameUpdated to %s",espod.artistName);
+						ESP_LOGD("AVRC_CB","Artist rxed, ACK pending, artistNameUpdated to %s",espod.artistName);
 					}
 					else 
 					{
-						ESP_LOGI("AVRC_CB","Artist rxed, ACK pending, already updated to %s",espod.artistName);
+						ESP_LOGD("AVRC_CB","Artist rxed, ACK pending, already updated to %s",espod.artistName);
 					}
 				}
 				else  //There is no pending track change from iPod : active or passive track change from avrc target
@@ -149,11 +149,11 @@ static void processAVRCTask(void* pvParameters) {
 						strcpy(espod.prevArtistName,espod.artistName);
 						strcpy(espod.artistName,incArtistName);
 						artistNameUpdated = true;
-						ESP_LOGI("AVRC_CB","Artist rxed, NO ACK pending, artistNameUdpated to %s",espod.artistName);
+						ESP_LOGD("AVRC_CB","Artist rxed, NO ACK pending, artistNameUpdated to %s",espod.artistName);
 					}
 					else  //Despammer for double sends
 					{
-						ESP_LOGI("AVRC_CB","Artist rxed, NO ACK pending, already updated to %s",espod.artistName);
+						ESP_LOGD("AVRC_CB","Artist rxed, NO ACK pending, already updated to %s",espod.artistName);
 					}
 				}
 				break;
@@ -168,11 +168,11 @@ static void processAVRCTask(void* pvParameters) {
 						strcpy(espod.trackTitle,incTrackTitle);
 						trackTitleUpdated = true;
 
-						ESP_LOGI("AVRC_CB","Title rxed, ACK pending, trackTitleUpdated to %s",espod.trackTitle);
+						ESP_LOGD("AVRC_CB","Title rxed, ACK pending, trackTitleUpdated to %s",espod.trackTitle);
 					}
 					else 
 					{
-						ESP_LOGI("AVRC_CB","Title rxed, ACK pending, already updated to %s",espod.trackTitle);
+						ESP_LOGD("AVRC_CB","Title rxed, ACK pending, already updated to %s",espod.trackTitle);
 					}
 				}
 				else { //There is no pending track change from iPod : active or passive track change from avrc target
@@ -187,11 +187,11 @@ static void processAVRCTask(void* pvParameters) {
 						strcpy(espod.prevTrackTitle,espod.trackTitle);
 						strcpy(espod.trackTitle,incTrackTitle);
 						trackTitleUpdated = true;
-						ESP_LOGI("AVRC_CB","Title rxed, NO ACK pending, AUTONEXT, trackTitleUpdated to %s\n\ttrackPos %d trackIndex %d",espod.trackTitle,espod.trackListPosition,espod.currentTrackIndex);
+						ESP_LOGD("AVRC_CB","Title rxed, NO ACK pending, AUTONEXT, trackTitleUpdated to %s\n\ttrackPos %d trackIndex %d",espod.trackTitle,espod.trackListPosition,espod.currentTrackIndex);
 					}
 					else //Despammer for double sends
 					{ 
-						ESP_LOGI("AVRC_CB","Title rxed, NO ACK pending, same name : %s",espod.trackTitle);
+						ESP_LOGD("AVRC_CB","Title rxed, NO ACK pending, same name : %s",espod.trackTitle);
 					}
 				}
 				break;
@@ -205,11 +205,11 @@ static void processAVRCTask(void* pvParameters) {
 					{ 
 						espod.trackDuration = incTrackDuration;
 						trackDurationUpdated = true;
-						ESP_LOGI("AVRC_CB","Duration rxed, ACK pending, trackDurationUpdated to %d",espod.trackDuration);
+						ESP_LOGD("AVRC_CB","Duration rxed, ACK pending, trackDurationUpdated to %d",espod.trackDuration);
 					}
 					else 
 					{
-						ESP_LOGI("AVRC_CB","Duration rxed, ACK pending, already updated to %d",espod.trackDuration);
+						ESP_LOGD("AVRC_CB","Duration rxed, ACK pending, already updated to %d",espod.trackDuration);
 					}
 				}
 				else { //There is no pending track change from iPod : active or passive track change from avrc target
@@ -217,11 +217,11 @@ static void processAVRCTask(void* pvParameters) {
 					{ 
 						espod.trackDuration = incTrackDuration;
 						trackDurationUpdated = true;
-						ESP_LOGI("AVRC_CB","Duration rxed, NO ACK pending, trackDurationUpdated to %d",espod.trackDuration);
+						ESP_LOGD("AVRC_CB","Duration rxed, NO ACK pending, trackDurationUpdated to %d",espod.trackDuration);
 					}
 					else //Despammer for double sends
 					{ 
-						ESP_LOGI("AVRC_CB","Duration rxed, NO ACK pending, already updated to %d",espod.trackDuration);
+						ESP_LOGD("AVRC_CB","Duration rxed, NO ACK pending, already updated to %d",espod.trackDuration);
 					}
 				}
 				break;
@@ -233,16 +233,16 @@ static void processAVRCTask(void* pvParameters) {
 				//If all fields have received at least one update and the trackChangeAckPending is still hanging. The failsafe for this one is in the espod _processTask
 				if (espod.trackChangeAckPending>0x00) 
 				{
-					ESP_LOGI("AVRC_CB","Artist+Album+Title+Duration +++ ACK Pending 0x%x\n\tPending duration: %d",espod.trackChangeAckPending,millis()-espod.trackChangeTimestamp);
+					ESP_LOGD("AVRC_CB","Artist+Album+Title+Duration +++ ACK Pending 0x%x\n\tPending duration: %d",espod.trackChangeAckPending,millis()-espod.trackChangeTimestamp);
 					espod.L0x04_0x01_iPodAck(iPodAck_OK,espod.trackChangeAckPending);
 					espod.trackChangeAckPending = 0x00;
-					ESP_LOGI("AVRC_CB","trackChangeAckPending reset to 0x00");
+					ESP_LOGD("AVRC_CB","trackChangeAckPending reset to 0x00");
 				}
 				albumNameUpdated 	= 	false;
 				artistNameUpdated 	= 	false;
 				trackTitleUpdated 	= 	false;
 				trackDurationUpdated=	false;
-				ESP_LOGI("AVRC_CB","Artist+Album+Title+Duration : True -> False");
+				ESP_LOGD("AVRC_CB","Artist+Album+Title+Duration : True -> False");
 				//Inform the car
 				if (espod.playStatusNotificationState==NOTIF_ON) 
 				{
