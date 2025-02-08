@@ -273,21 +273,20 @@ void esPod::_txTask(void *pvParameters)
             vTaskDelay(pdMS_TO_TICKS(2*TX_INTERVAL_MS));
             continue;
         }
-        if(esPodInstance->_rxIncomplete) //_rxTask has not managed to get a complete packet, wait 10ms more and jump to the next cycle
+        if(!esPodInstance->_rxIncomplete) //_rxTask is not in the middle of a packet
         {
-            vTaskDelay(pdMS_TO_TICKS(10));
-            continue;
-        }
-        //Might need to replace it with a if() to space things out
-        if(xQueueReceive(esPodInstance->_txQueue,&txCmd,0) == pdTRUE)
-        {
+            //Retrieve from the queue and send the packet
+            if(xQueueReceive(esPodInstance->_txQueue,&txCmd,0) == pdTRUE)
+            {
+                //vTaskDelay(pdMS_TO_TICKS(TX_INTERVAL_MS));
+                //Send the packet
+                esPodInstance->_sendPacket(txCmd.payload,txCmd.length);
+                //Free the memory allocated for the payload
+                delete[] txCmd.payload;
+                txCmd.payload = nullptr;
+                txCmd.length = 0;
+            }
             vTaskDelay(pdMS_TO_TICKS(TX_INTERVAL_MS));
-            //Send the packet
-            esPodInstance->_sendPacket(txCmd.payload,txCmd.length);
-            //Free the memory allocated for the payload
-            delete[] txCmd.payload;
-            txCmd.payload = nullptr;
-            txCmd.length = 0;
         }
         else
         {
