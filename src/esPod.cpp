@@ -212,7 +212,7 @@ void esPod::_processTask(void *pvParameters)
                 incCmd.payload = nullptr;
                 incCmd.length = 0;
             }
-            vTaskDelay(pdMS_TO_TICKS(5*PROCESS_INTERVAL_MS));
+            vTaskDelay(pdMS_TO_TICKS(2*PROCESS_INTERVAL_MS));
             continue;
         }
         if(xQueueReceive(esPodInstance->_cmdQueue,&incCmd,0) == pdTRUE) //Non blocking receive
@@ -291,7 +291,7 @@ void esPod::_txTask(void *pvParameters)
         }
         else
         {
-            vTaskDelay(pdMS_TO_TICKS(5));
+            vTaskDelay(pdMS_TO_TICKS(RX_TASK_INTERVAL_MS));
         }
     }
 }
