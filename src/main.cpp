@@ -254,7 +254,7 @@ static void processAVRCTask(void* pvParameters) {
 			delete[] incMetadata.payload;
 			incMetadata.payload = nullptr;
 		}
-		vTaskDelay(pdMS_TO_TICKS(2));
+		vTaskDelay(pdMS_TO_TICKS(5));
 	}
 }
 
