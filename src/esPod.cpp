@@ -568,10 +568,10 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         {
             ESP_LOGI(IPOD_TAG,"CMD: 0x%02x IdentifyDeviceLingoes",cmdID);
             L0x00_0x02_iPodAck(iPodAck_OK,cmdID);//Acknowledge, start capabilities pingpong
-            if(!_accessoryCapabilitiesReceived && !_accessoryCapabilitiesRequested)
+            if(!_accessoryCapabilitiesReceived)
             {
                 L0x00_0x27_GetAccessoryInfo(0x00); //Immediately request general capabilities
-                _accessoryCapabilitiesRequested = true;
+                //_accessoryCapabilitiesRequested = true;
             }
             
         }
