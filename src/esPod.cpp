@@ -631,6 +631,10 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
                 _accessoryModelReceived = true; //End of the reactionchain
                 ESP_LOGI(IPOD_TAG,"Handshake complete.");
                 break;
+            
+            default:
+                L0x00_0x02_iPodAck(iPodAck_OK,cmdID);
+                break;
             }
         }
         break;

@@ -47,8 +47,11 @@
 #ifndef PROCESS_AVRC_TASK_PRIORITY
 	#define PROCESS_AVRC_TASK_PRIORITY 6
 #endif
+#ifndef AVRC_INTERVAL_MS
+    #define AVRC_INTERVAL_MS 5
+#endif
 
-//Metada structure
+//Metadata structure
 struct avrcMetadata
 {
 	uint8_t id = 0;
@@ -254,7 +257,7 @@ static void processAVRCTask(void* pvParameters) {
 			delete[] incMetadata.payload;
 			incMetadata.payload = nullptr;
 		}
-		vTaskDelay(pdMS_TO_TICKS(5));
+		vTaskDelay(pdMS_TO_TICKS(AVRC_INTERVAL_MS));
 	}
 }
 
