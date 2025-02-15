@@ -62,6 +62,9 @@
 #ifndef TRACK_CHANGE_TIMEOUT
     #define TRACK_CHANGE_TIMEOUT 1100
 #endif
+#ifndef HEARTBEAT_INTERVAL_MS
+    #define HEARTBEAT_INTERVAL_MS 10000
+#endif
 
 #pragma endregion
 
@@ -124,6 +127,7 @@ struct aapCommand
     uint32_t length = 0;
 };
 
+
 #pragma region CLASS DECLARATION
 
 class esPod
@@ -180,6 +184,10 @@ private:
     static void _rxTask(void *pvParameters);
     static void _processTask(void *pvParameters);
     static void _txTask(void *pvParameters);
+
+    //Heartbeat Timer
+    TimerHandle_t _heartbeatTimer;
+    static void _heartbeatTimerCallback(TimerHandle_t xTimer);
 
     //Serial to the listening device
     Stream& _targetSerial;

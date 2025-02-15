@@ -24,6 +24,8 @@ T swap_endian(T u)
     return dest.u;
 }
 
+
+
 //-----------------------------------------------------------------------
 //|         Constructor, reset, attachCallback, packet utilities        |
 //-----------------------------------------------------------------------
@@ -296,6 +298,17 @@ void esPod::_txTask(void *pvParameters)
     }
 }
 
+/// @brief Heartbeat Timer CB that sends a GetAccessoryInfo command to the accessory when the esPod is not disabled.
+/// @param xTimer TimerHandle to the heartbeat Timer (not used)
+void esPod::_heartbeatTimerCallback(TimerHandle_t xTimer)
+{
+    esPod* esPodInstance = static_cast<esPod*>(pvTimerGetTimerID(xTimer));
+    if(!esPodInstance->disabled)
+    {
+        esPodInstance->L0x00_0x27_GetAccessoryInfo(0x00);
+    }
+}
+
 /// @brief //Calculates the checksum of a packet that starts from i=0 ->Lingo to i=len -> Checksum
 /// @param byteArray Array from Lingo byte to Checksum byte
 /// @param len Length of array (Lingo byte to Checksum byte)
@@ -375,6 +388,17 @@ esPod::esPod(Stream &targetSerial)
     {
         ESP_LOGE(IPOD_TAG,"Could not create tasks, queues not created");
     }
+
+    //Create a timer for the heartbeat
+    _heartbeatTimer = xTimerCreate("Heartbeat Timer",pdMS_TO_TICKS(HEARTBEAT_INTERVAL_MS),pdTRUE,this,esPod::_heartbeatTimerCallback);
+    if (_heartbeatTimer == NULL)
+    {
+        ESP_LOGE(IPOD_TAG,"Could not create heartbeat timer");
+    }
+    else
+    {
+        xTimerStart(_heartbeatTimer,0);
+    }
 }
 
 esPod::~esPod()
@@ -383,6 +407,8 @@ esPod::~esPod()
     vTaskDelete(_rxTaskHandle);
     vTaskDelete(_processTaskHandle);
     vTaskDelete(_txTaskHandle);
+    xTimerStop(_heartbeatTimer,pdMS_TO_TICKS(100));
+    xTimerDelete(_heartbeatTimer,pdMS_TO_TICKS(100));
     //Remember to deallocate memory 
     while(xQueueReceive(_cmdQueue,&tempCmd,0) == pdTRUE)
     {
