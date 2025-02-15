@@ -108,6 +108,7 @@ void esPod::_rxTask(void *pvParameters)
                 //If we are not in the middle of a RX, and we receive a 0xFF 0x55, start sequence, reset expected length and position cursor
                 if (prevByte == 0xFF && incByte == 0x55 && !esPodInstance->_rxIncomplete)
                 {
+                    lastByteRX = millis();
                     esPodInstance->_rxIncomplete = true;
                     expLength = 0;
                     cursor = 0;
@@ -133,7 +134,7 @@ void esPod::_rxTask(void *pvParameters)
                             //TODO: Send a NACK to the Accessory
                         }
                     }
-                    else
+                    else //Length is already received
                     {
                         buf[cursor++] = incByte;
                         if(cursor == expLength+1)
@@ -176,11 +177,11 @@ void esPod::_rxTask(void *pvParameters)
             {
                 ESP_LOGW(IPOD_TAG,"Packet incomplete, discarding");
                 esPodInstance->_rxIncomplete = false;
-                cmd.payload = nullptr;
-                cmd.length = 0;
+                // cmd.payload = nullptr;
+                // cmd.length = 0;
                 //TODO: Send a NACK to the Accessory
             }
-            if (millis() - lastActivity > SERIAL_TIMEOUT) //If we haven't received any byte in 1s, reset the RX state
+            if (millis() - lastActivity > SERIAL_TIMEOUT) //If we haven't received any byte in 30s, reset the RX state
             {
                 ESP_LOGW(IPOD_TAG,"No activity in %lu ms, resetting RX state",SERIAL_TIMEOUT);
                 //Might be taken care of in the resetState() call
@@ -234,7 +235,7 @@ void esPod::_processTask(void *pvParameters)
                 incCmd.payload = nullptr;
                 incCmd.length = 0;
             }
-            vTaskDelay(pdMS_TO_TICKS(5*PROCESS_INTERVAL_MS));
+            vTaskDelay(pdMS_TO_TICKS(2*PROCESS_INTERVAL_MS));
             continue;
         }
         if(xQueueReceive(esPodInstance->_cmdQueue,&incCmd,0) == pdTRUE) //Non blocking receive
@@ -293,7 +294,7 @@ void esPod::_txTask(void *pvParameters)
                 txCmd.payload = nullptr;
                 txCmd.length = 0;
             }
-            vTaskDelay(pdMS_TO_TICKS(2*TX_INTERVAL_MS));
+            vTaskDelay(pdMS_TO_TICKS(TX_INTERVAL_MS));
             continue;
         }
         if(!esPodInstance->_rxIncomplete) //_rxTask is not in the middle of a packet
@@ -313,7 +314,7 @@ void esPod::_txTask(void *pvParameters)
         }
         else
         {
-            vTaskDelay(pdMS_TO_TICKS(5));
+            vTaskDelay(pdMS_TO_TICKS(RX_TASK_INTERVAL_MS));
         }
     }
 }
@@ -670,10 +671,10 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         {
             ESP_LOGI(IPOD_TAG,"CMD: 0x%02x IdentifyDeviceLingoes",cmdID);
             L0x00_0x02_iPodAck(iPodAck_OK,cmdID);//Acknowledge, start capabilities pingpong
-            if(!_accessoryCapabilitiesReceived && !_accessoryCapabilitiesRequested)
+            if(!_accessoryCapabilitiesReceived)
             {
                 L0x00_0x27_GetAccessoryInfo(0x00); //Immediately request general capabilities
-                _accessoryCapabilitiesRequested = true;
+                //_accessoryCapabilitiesRequested = true;
             }
             
         }
@@ -732,6 +733,10 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
             case 0x07:
                 _accessoryModelReceived = true; //End of the reactionchain
                 ESP_LOGI(IPOD_TAG,"Handshake complete.");
+                break;
+            
+            default:
+                L0x00_0x02_iPodAck(iPodAck_OK,cmdID);
                 break;
             }
         }

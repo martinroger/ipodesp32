@@ -36,7 +36,7 @@
     #define RX_TASK_PRIORITY 2
 #endif
 #ifndef RX_TASK_INTERVAL_MS
-    #define RX_TASK_INTERVAL_MS 15
+    #define RX_TASK_INTERVAL_MS 10
 #endif
 //Process Task settings
 #ifndef PROCESS_TASK_STACK_SIZE
@@ -46,7 +46,7 @@
     #define PROCESS_TASK_PRIORITY 5
 #endif
 #ifndef PROCESS_INTERVAL_MS
-    #define PROCESS_INTERVAL_MS 20
+    #define PROCESS_INTERVAL_MS 15
 #endif
 //TX Task settings
 #ifndef TX_TASK_STACK_SIZE
@@ -56,7 +56,7 @@
     #define TX_TASK_PRIORITY 20
 #endif
 #ifndef TX_INTERVAL_MS
-    #define TX_INTERVAL_MS 90
+    #define TX_INTERVAL_MS 20
 #endif
 //Timer Task settings
 #ifndef TIMER_TASK_STACK_SIZE
