@@ -60,7 +60,7 @@ void esPod::_rxTask(void *pvParameters)
         if(uxHighWaterMark < minHightWaterMark) 
         {
             minHightWaterMark = uxHighWaterMark;
-            ESP_LOGI(IPOD_TAG,"RX Task High Watermark: %d, used stack: %d",minHightWaterMark,RX_TASK_STACK_SIZE-minHightWaterMark);
+            ESP_LOGI("HWM","RX Task High Watermark: %d, used stack: %d",minHightWaterMark,RX_TASK_STACK_SIZE-minHightWaterMark);
         }
         #endif
 
@@ -100,13 +100,13 @@ void esPod::_rxTask(void *pvParameters)
                         expLength = incByte; //First byte after 0xFF 0x55
                         if(expLength > MAX_PACKET_SIZE)
                         {
-                            ESP_LOGW(IPOD_TAG,"Expected length is too long, discarding packet");
+                            ESP_LOGW(__func__,"Expected length is too long, discarding packet");
                             esPodInstance->_rxIncomplete = false;
                             //TODO: Send a NACK to the Accessory
                         }
                         else if(expLength == 0)
                         {
-                            ESP_LOGW(IPOD_TAG,"Expected length is 0, discarding packet");
+                            ESP_LOGW(__func__,"Expected length is 0, discarding packet");
                             esPodInstance->_rxIncomplete = false;
                             //TODO: Send a NACK to the Accessory
                         }
@@ -129,11 +129,11 @@ void esPod::_rxTask(void *pvParameters)
                                 memcpy(cmd.payload,buf,expLength);
                                 if(xQueueSend(esPodInstance->_cmdQueue,&cmd,pdMS_TO_TICKS(5)) == pdTRUE)
                                 {
-                                    ESP_LOGD(IPOD_TAG,"Packet received and sent to processing queue");
+                                    ESP_LOGD(__func__,"Packet received and sent to processing queue");
                                 }
                                 else
                                 {
-                                    ESP_LOGW(IPOD_TAG,"Packet received but could not be sent to processing queue. Discarding");
+                                    ESP_LOGW(__func__,"Packet received but could not be sent to processing queue. Discarding");
                                     delete[] cmd.payload;
                                     cmd.payload = nullptr;
                                     cmd.length = 0;
@@ -141,7 +141,7 @@ void esPod::_rxTask(void *pvParameters)
                             }
                             else //Checksum mismatch
                             {
-                                ESP_LOGW(IPOD_TAG,"Checksum mismatch, discarding packet");
+                                ESP_LOGW(__func__,"Checksum mismatch, discarding packet");
                                 //TODO: Send a NACK to the Accessory
                             }
                         }
@@ -152,7 +152,7 @@ void esPod::_rxTask(void *pvParameters)
             }
             if (esPodInstance->_rxIncomplete && millis() - lastByteRX > INTERBYTE_TIMEOUT) //If we are in the middle of a packet and we haven't received a byte in 1s, discard the packet
             {
-                ESP_LOGW(IPOD_TAG,"Packet incomplete, discarding");
+                ESP_LOGW(__func__,"Packet incomplete, discarding");
                 esPodInstance->_rxIncomplete = false;
                 // cmd.payload = nullptr;
                 // cmd.length = 0;
@@ -160,7 +160,7 @@ void esPod::_rxTask(void *pvParameters)
             }
             if (millis() - lastActivity > SERIAL_TIMEOUT) //If we haven't received any byte in 30s, reset the RX state
             {
-                ESP_LOGW(IPOD_TAG,"No activity in %lu ms, resetting RX state",SERIAL_TIMEOUT);
+                ESP_LOGW(__func__,"No activity in %lu ms, resetting RX state",SERIAL_TIMEOUT);
                 //Might be taken care of in the resetState() call
                 // if(cmd.payload != nullptr)
                 // {
@@ -198,7 +198,7 @@ void esPod::_processTask(void *pvParameters)
         if(uxHighWaterMark < minHightWaterMark) 
         {
             minHightWaterMark = uxHighWaterMark;
-            ESP_LOGI(IPOD_TAG,"Process Task High Watermark: %d, used stack: %d",minHightWaterMark,PROCESS_TASK_STACK_SIZE-minHightWaterMark);
+            ESP_LOGI("HWM","Process Task High Watermark: %d, used stack: %d",minHightWaterMark,PROCESS_TASK_STACK_SIZE-minHightWaterMark);
         }
         #endif
         
@@ -228,7 +228,7 @@ void esPod::_processTask(void *pvParameters)
         //Send the track change Ack Pending if it has not sent already and timeout has happened (could be a task)
         if((esPodInstance->trackChangeAckPending>0x00) && (millis()>(esPodInstance->trackChangeTimestamp+TRACK_CHANGE_TIMEOUT))) 
         {
-            ESP_LOGD(IPOD_TAG,"Track change ack pending timed out ! ");        
+            ESP_LOGD(__func__,"Track change ack pending timed out ! ");        
             esPodInstance->L0x04_0x01_iPodAck(iPodAck_OK,esPodInstance->trackChangeAckPending);
             esPodInstance->trackChangeAckPending = 0x00;
         }
@@ -257,7 +257,7 @@ void esPod::_txTask(void *pvParameters)
         if(uxHighWaterMark < minHightWaterMark) 
         {
             minHightWaterMark = uxHighWaterMark;
-            ESP_LOGI(IPOD_TAG,"TX Task High Watermark: %d, used stack: %d",minHightWaterMark,TX_TASK_STACK_SIZE-minHightWaterMark);
+            ESP_LOGI("HWM","TX Task High Watermark: %d, used stack: %d",minHightWaterMark,TX_TASK_STACK_SIZE-minHightWaterMark);
         }
         #endif
         
@@ -341,7 +341,7 @@ void esPod::_queuePacket(const byte *byteArray, uint32_t len)
     memcpy(cmdToQueue.payload,byteArray,len);
     if(xQueueSend(_txQueue,&cmdToQueue,pdMS_TO_TICKS(5)) != pdTRUE)
     {
-        ESP_LOGW(IPOD_TAG,"Could not queue packet");
+        ESP_LOGW(__func__,"Could not queue packet");
         delete[] cmdToQueue.payload;
         cmdToQueue.payload = nullptr;
         cmdToQueue.length = 0;
