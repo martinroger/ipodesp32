@@ -317,6 +317,8 @@ void setup() {
 		}
 		if(!digitalRead(18)) esp_log_level_set("*", ESP_LOG_INFO); //Backdoor to force Serial logs in case of no SD. Button 5
 	#endif
+	ESP_LOGI("RESET","Reset reason: %d",esp_reset_reason());
+	delay(5);
 	ESP_LOGI("BUILD","env:%s\t date: %s\t time: %s\tbranch:%s",PIOENV,__DATE__,__TIME__,BUILD_BRANCH);
 	#ifdef ENABLE_A2DP
 		#ifdef USE_EXTERNAL_DAC_UDA1334A
