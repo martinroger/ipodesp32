@@ -33,7 +33,7 @@
     #define RX_TASK_PRIORITY 2
 #endif
 #ifndef RX_TASK_INTERVAL_MS
-    #define RX_TASK_INTERVAL_MS 15
+    #define RX_TASK_INTERVAL_MS 10
 #endif
 //Process Task settings
 #ifndef PROCESS_TASK_STACK_SIZE
@@ -43,7 +43,7 @@
     #define PROCESS_TASK_PRIORITY 5
 #endif
 #ifndef PROCESS_INTERVAL_MS
-    #define PROCESS_INTERVAL_MS 20
+    #define PROCESS_INTERVAL_MS 15
 #endif
 //TX Task settings
 #ifndef TX_TASK_STACK_SIZE
@@ -53,7 +53,7 @@
     #define TX_TASK_PRIORITY 20
 #endif
 #ifndef TX_INTERVAL_MS
-    #define TX_INTERVAL_MS 90
+    #define TX_INTERVAL_MS 20
 #endif
 //General iPod settings
 #ifndef TOTAL_NUM_TRACKS
@@ -134,9 +134,8 @@ public:
     //State variables
     bool extendedInterfaceModeActive = false;
     bool disabled = true; //espod starts disabled... it means it keeps flushing the Serial until it is ready to process something
-    // unsigned long lastConnected  =   0;
     
-    //metadata variables
+    //Metadata variables
     char trackTitle[255]        =   "Title";
     char prevTrackTitle[255]    =   " ";
     char artistName[255]        =   "Artist";
@@ -168,7 +167,6 @@ public:
 
 private:
     //FreeRTOS Queues
-    // QueueHandle_t _rxQueue;
     QueueHandle_t _cmdQueue;
     QueueHandle_t _txQueue;
 
@@ -190,13 +188,6 @@ private:
     void _queuePacket(const byte* byteArray, uint32_t len);
 
     bool _rxIncomplete = false;
-    //Packet-related 
-    // byte _prevRxByte    =   0x00;
-    // byte _rxBuf[1024]   =   {0x00};
-    // uint32_t _rxLen     =   0;
-    // uint32_t _rxCounter =   0;
-    // bool _rxInProgress  =   false;
-    
 
     //Device metadata
     const char* _name           =   "ipodESP32";
@@ -233,14 +224,10 @@ public:
     void processLingo0x00(const byte* byteArray, uint32_t len);
     void processLingo0x04(const byte* byteArray, uint32_t len);
     void processPacket(const byte* byteArray,uint32_t len);
-
-    //Cyclic functions
-    // void refresh();
     
     //Lingo 0x00
     void L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID);
     void L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField);
-    //void L0x00_0x02_iPodAck_pending(uint32_t pendingDelayMS, byte cmdID);
     void L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte);
     void L0x00_0x08_ReturniPodName();
     void L0x00_0x0A_ReturniPodSoftwareVersion();
@@ -268,7 +255,6 @@ public:
     void L0x04_0x2D_ReturnShuffle(byte shuffleStatus);
     void L0x04_0x30_ReturnRepeat(byte repeatStatus);
     void L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks);
-
 };
 
 #pragma endregion
