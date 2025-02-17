@@ -305,7 +305,24 @@ void esPod::_heartbeatTimerCallback(TimerHandle_t xTimer)
     esPod* esPodInstance = static_cast<esPod*>(pvTimerGetTimerID(xTimer));
     if(!esPodInstance->disabled)
     {
-        esPodInstance->L0x00_0x27_GetAccessoryInfo(0x00);
+        byte txPacket[] = {
+            0x00, 0x27,
+            0x00
+        };
+        // _queuePacket(txPacket,sizeof(txPacket));
+        aapCommand cmdToQueue;
+        cmdToQueue.payload = new byte[sizeof(txPacket)];
+        cmdToQueue.length = sizeof(txPacket);
+        memcpy(cmdToQueue.payload,txPacket,sizeof(txPacket));
+        if(xQueueSendFromISR(esPodInstance->_cmdQueue,&cmdToQueue,NULL) != pdTRUE)
+        {
+            ESP_LOGW(IPOD_TAG,"Could not queue packet");
+            delete[] cmdToQueue.payload;
+            cmdToQueue.payload = nullptr;
+            cmdToQueue.length = 0;
+        }
+        
+        //esPodInstance->L0x00_0x27_GetAccessoryInfo(0x00);
     }
 }
 
