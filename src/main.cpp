@@ -1,30 +1,28 @@
 #include <Arduino.h>
 #include "esPod.h"
-#ifndef PLAY_POS_TICK
-    #define PLAY_POS_TICK 1
-#endif
-#ifdef ENABLE_A2DP
-	#include "AudioTools.h"
-	#include "BluetoothA2DPSink.h"
-	#ifdef USE_EXTERNAL_DAC_UDA1334A
-		I2SStream i2s;
-		BluetoothA2DPSink a2dp_sink(i2s);
-	#endif
-	#ifdef AUDIOKIT
-		#ifdef USE_SD
-			#include "sdLogUpdate.h"
-			bool sdLoggerEnabled = false;
-		#endif
-		#include "AudioTools/AudioLibs/I2SCodecStream.h"
-		#include "AudioBoard.h"
-		AudioInfo info(44100,2,16);
-		DriverPins minimalPins;
-		AudioBoard minimalAudioKit(AudioDriverES8388,minimalPins);
-		I2SCodecStream i2s(minimalAudioKit);
-		BluetoothA2DPSink a2dp_sink(i2s);
-	#endif
-#endif
+#include "AudioTools.h"
+#include "BluetoothA2DPSink.h"
 
+#pragma region A2DP Sink Configuration
+#ifdef AUDIOKIT
+	#ifdef USE_SD
+		#include "sdLogUpdate.h"
+		bool sdLoggerEnabled = false;
+	#endif
+	#include "AudioTools/AudioLibs/I2SCodecStream.h"
+	#include "AudioBoard.h"
+	AudioInfo info(44100,2,16);
+	DriverPins minimalPins;
+	AudioBoard minimalAudioKit(AudioDriverES8388,minimalPins);
+	I2SCodecStream i2s(minimalAudioKit);
+	BluetoothA2DPSink a2dp_sink(i2s);
+#else
+	I2SStream i2s;
+	BluetoothA2DPSink a2dp_sink(i2s);
+#endif
+#pragma endregion
+
+#pragma region Serial Declaration
 #ifndef AUDIOKIT
 	esPod espod(Serial2);
 #else
@@ -35,9 +33,9 @@
 	esPod espod(Serial);
 	#endif
 #endif
-#ifndef REFRESH_INTERVAL
-	#define REFRESH_INTERVAL 5
-#endif
+#pragma endregion
+
+#pragma region FreeRTOS tasks defines
 #ifndef AVRC_QUEUE_SIZE
     #define AVRC_QUEUE_SIZE 32
 #endif
@@ -50,6 +48,9 @@
 #ifndef AVRC_INTERVAL_MS
     #define AVRC_INTERVAL_MS 5
 #endif
+#pragma endregion
+
+#pragma region AVRC Task and Queue declaration/definition
 
 //Metadata structure
 struct avrcMetadata
@@ -261,9 +262,9 @@ static void processAVRCTask(void* pvParameters) {
 	}
 }
 
+#pragma endregion
 
 #pragma region A2DP/AVRC callbacks
-#ifdef ENABLE_A2DP
 /// @brief callback on changes of A2DP connection and AVRCP connection. Turns a LED on, enables the espod.
 /// @param state New state passed by the callback.
 /// @param ptr Not used.
@@ -276,7 +277,7 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void* ptr) {
 		case ESP_A2D_CONNECTION_STATE_DISCONNECTED:
 			ESP_LOGD("A2DP_CB","ESP_A2D_CONNECTION_STATE_DISCONNECTED, espod disabled");
 			espod.resetState();
-			espod.disabled = true; //Todo check of this one, is risky
+			espod.disabled = true;
 			break;
 	}
 }
@@ -328,13 +329,13 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 	}
 }
 
-#endif
+
 #pragma endregion
 
 /// @brief Callback function that passes intended operations from the esPod to the A2DP player
 /// @param playCommand A2DP_xx command instruction. It does not match the PB_CMD_xx codes !!!
 void playStatusHandler(byte playCommand) {
-	#ifdef ENABLE_A2DP
+
   	switch (playCommand) {
 		case A2DP_STOP:
 			a2dp_sink.stop();
@@ -365,15 +366,15 @@ void playStatusHandler(byte playCommand) {
 			ESP_LOGD("A2DP_CB","A2DP_PREV");
 			break;
 	}
-  	#endif
+
 }
 
+#pragma region SETUP
 void setup() {
 	esp_log_level_set("*",ESP_LOG_NONE); //Necessary not to spam the Serial
 	ESP_LOGI("SETUP","setup() start");
-	#ifdef USE_SD //Main check for FW and start logging
-		pinMode(5,INPUT_PULLUP);
-		pinMode(18,INPUT_PULLUP);
+	//Initialise SD card if present and activated
+	#ifdef USE_SD 
 		if(digitalRead(SD_DETECT) == LOW) {
 			if(initSD()) 
 			{
@@ -385,11 +386,15 @@ void setup() {
 				updateFromFS(SD_MMC);
 			}
 		}
-		if(!digitalRead(18)) esp_log_level_set("*", ESP_LOG_INFO); //Backdoor to force Serial logs in case of no SD. Button 5
 	#endif
+
+	//Inform of possible errors that led to a reset
 	ESP_LOGI("RESET","Reset reason: %d",esp_reset_reason());
 	delay(5);
+
+	//Publish build information
 	ESP_LOGI("BUILD","env:%s\t date: %s\t time: %s\tbranch:%s",PIOENV,__DATE__,__TIME__,BUILD_BRANCH);
+
 	//Initialise the metadata queue and start the transfer task
 	avrcMetadataQueue = xQueueCreate(16,sizeof(avrcMetadata));
 	if(avrcMetadataQueue == nullptr) 
@@ -407,8 +412,15 @@ void setup() {
 		}
 	}
 	
-	#ifdef ENABLE_A2DP
-		#ifdef USE_EXTERNAL_DAC_UDA1334A
+	//Initialise the Codec or DAC for the I2S stream (and optionally I2C configuraiton)
+	#ifdef AUDIOKIT
+			minimalPins.addI2C(PinFunction::CODEC, 32, 33);
+			minimalPins.addI2S(PinFunction::CODEC, 0, 27, 25, 26, 35);
+			auto cfg = i2s.defaultConfig();
+			cfg.copyFrom(info);
+			i2s.begin(cfg);
+		
+		#else
 			auto cfg = i2s.defaultConfig(TX_MODE);
 			cfg.pin_ws = 25;
 			cfg.pin_bck = 26;
@@ -423,20 +435,15 @@ void setup() {
 			BCLK  ->  26
 			*/
 		#endif
-		#ifdef AUDIOKIT
-			minimalPins.addI2C(PinFunction::CODEC, 32, 33);
-			minimalPins.addI2S(PinFunction::CODEC, 0, 27, 25, 26, 35);
-			auto cfg = i2s.defaultConfig();
-			cfg.copyFrom(info);
-			i2s.begin(cfg);
-		#endif
+		
+		//Configure the A2DP Sink and start it
 		ESP_LOGI("SETUP","a2dp_sink callbacks attach start");
 		a2dp_sink.set_auto_reconnect(true); //Auto-reconnect
 		a2dp_sink.set_on_connection_state_changed(connectionStateChanged);
 		a2dp_sink.set_on_audio_state_changed(audioStateChanged);
 		a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
 		a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE|ESP_AVRC_MD_ATTR_ARTIST|ESP_AVRC_MD_ATTR_ALBUM|ESP_AVRC_MD_ATTR_PLAYING_TIME);
-		a2dp_sink.set_avrc_rn_play_pos_callback(avrc_rn_play_pos_callback,PLAY_POS_TICK);
+		a2dp_sink.set_avrc_rn_play_pos_callback(avrc_rn_play_pos_callback,1); //Cannot be faster than 1s
 		#ifdef AUDIOKIT
 			a2dp_sink.start("MiNiPoD56");
 		#else
@@ -444,15 +451,11 @@ void setup() {
 		#endif
 		ESP_LOGI("SETUP","a2dp_sink started : %s",a2dp_sink.get_name());
 		delay(5);
-		#ifdef LED_BUILTIN
-			pinMode(LED_BUILTIN,OUTPUT);
-			digitalWrite(LED_BUILTIN,LOW);
-		#endif
-	#endif
-
+	
+	//Start IAP Serial with large buffers
 	#ifndef AUDIOKIT
-		Serial2.setRxBufferSize(4096);
-		Serial2.setTxBufferSize(4096);
+		Serial2.setRxBufferSize(1024);
+		Serial2.setTxBufferSize(1024);
 		Serial2.begin(19200);
 	#else
 		#ifdef USE_ALT_SERIAL
@@ -470,7 +473,6 @@ void setup() {
 	//Prep and start up espod
 	espod.attachPlayControlHandler(playStatusHandler);
 
-	#ifdef ENABLE_A2DP
 	//Let's wait for something to start before we enable espod and start the game.
 		ESP_LOGI("SETUP","Waiting for peer");
 		while(a2dp_sink.get_connection_state()!=ESP_A2D_CONNECTION_STATE_CONNECTED) {
@@ -478,9 +480,9 @@ void setup() {
 		}
 		delay(50);
 		ESP_LOGI("SETUP","Peer connected: %s",a2dp_sink.get_peer_name());
-	#endif
 	ESP_LOGI("SETUP","Setup finished");
 }
 
-void loop() {
-}
+#pragma endregion
+
+void loop() {}
