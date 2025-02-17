@@ -1,9 +1,5 @@
 #include "esPod.h"
 
-/*Heavily adapted from :
-https://github.com/chemicstry/A2DP_iPod
-*/
-
 //ESP32 is Little-Endian, iPod is Big-Endian
 template <typename T>
 T swap_endian(T u)
@@ -63,7 +59,6 @@ void esPod::_rxTask(void *pvParameters)
     byte buf[MAX_PACKET_SIZE]   =   {0x00};
     uint32_t expLength          =   0;
     uint32_t cursor             =   0;
-    //bool rxIncomplete           =   false;
 
     unsigned long lastByteRX    =   millis(); //Last time a byte was RXed in a packet
     unsigned long lastActivity  =   millis(); //Last time any RX activity was detected
@@ -184,13 +179,6 @@ void esPod::_rxTask(void *pvParameters)
             if (millis() - lastActivity > SERIAL_TIMEOUT) //If we haven't received any byte in 30s, reset the RX state
             {
                 ESP_LOGW(__func__,"No activity in %lu ms, resetting RX state",SERIAL_TIMEOUT);
-                //Might be taken care of in the resetState() call
-                // if(cmd.payload != nullptr)
-                // {
-                //     delete[] cmd.payload;
-                //     cmd.payload = nullptr;
-                //     cmd.length = 0;
-                // }
                 //Reset the timestamp for next Serial timeout
                 lastActivity = millis();
                 esPodInstance->resetState();
@@ -499,10 +487,8 @@ void esPod::resetState(){
     ESP_LOGW(IPOD_TAG,"esPod resetState called");
     //State variables
     extendedInterfaceModeActive = false;
-    // lastConnected = millis();
-    //disabled = true;  //Not for now, might need to reenable or rethink the concept later
 
-    //metadata variables
+    //Metadata variables
     trackDuration = 1;
     prevTrackDuration = 1;
     playPosition = 0;
@@ -520,13 +506,6 @@ void esPod::resetState(){
     for (uint16_t i = 0; i < TOTAL_NUM_TRACKS; i++) trackList[i] = 0;
     trackListPosition = 0;
 
-    // //Packet-related
-    // _prevRxByte = 0x00;
-    // for (uint16_t i = 0; i < 1024; i++) _rxBuf[i] = 0x00;
-    // _rxLen = 0;
-    // _rxCounter = 0;
-    // _rxInProgress = false;
-
     //Mini metadata
     _accessoryCapabilitiesReceived  =   false;
     _accessoryCapabilitiesRequested =   false;
@@ -543,6 +522,7 @@ void esPod::resetState(){
 
     //Reset the queues
     aapCommand tempCmd;
+
     //Remember to deallocate memory 
     while(xQueueReceive(_cmdQueue,&tempCmd,0) == pdTRUE)
     {
@@ -674,7 +654,6 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
             if(!_accessoryCapabilitiesReceived)
             {
                 L0x00_0x27_GetAccessoryInfo(0x00); //Immediately request general capabilities
-                //_accessoryCapabilitiesRequested = true;
             }
             
         }
@@ -1298,73 +1277,6 @@ void esPod::processPacket(const byte *byteArray, uint32_t len)
     }
 }
 
-/// @brief Refresh function for the esPod : listens to Serial, assembles packets, or ignores everything if it is disabled.
-// void esPod::refresh()
-// {
-//     ESP_LOGV(IPOD_TAG,"Refresh called");
-//     //Check for a new packet and update the buffer
-//     while(_targetSerial.available()) 
-//     {
-//         byte incomingByte = _targetSerial.read();
-//         lastConnected = millis();
-//         if(!disabled) 
-//         {
-//             //A new 0xFF55 packet starter shows up
-//             if(_prevRxByte == 0xFF && incomingByte == 0x55 && !_rxInProgress) 
-//             { 
-//                 ESP_LOGD(IPOD_TAG,"Packet starter received");
-//                 _rxLen = 0; //Reset the received length
-//                 _rxCounter = 0; //Reset the counter to the end of payload
-//                 _rxInProgress = true;
-//             }
-//             else if(_rxInProgress)
-//             {
-//                 if(_rxLen == 0 && _rxCounter == 0)
-//                 {
-//                     _rxLen = incomingByte;
-//                     ESP_LOGD(IPOD_TAG,"Packet length set: %d",_rxLen);
-//                 }
-//                 else
-//                 {
-//                     _rxBuf[_rxCounter++] = incomingByte;
-//                     if(_rxCounter == _rxLen+1) { //We are done receiving the packet
-//                         _rxInProgress = false;
-//                         byte tempChecksum = esPod::checksum(_rxBuf, _rxLen);
-//                         ESP_LOGD(IPOD_TAG,"Packet finished, not validated yet");
-//                         if (tempChecksum == _rxBuf[_rxLen]) //Checksum checks out
-//                         { 
-//                             processPacket(_rxBuf,_rxLen);  
-//                             break; //This should process messages one by one
-//                         }
-//                     }
-//                 }
-//             }
-
-//             //pass to the previous received byte
-//             _prevRxByte = incomingByte;
-//         }
-//         else //If the espod is disabled
-//         {
-//             _targetSerial.read();
-//         }
-//     }
-
-//     //Reset if no message received in the last 120s
-//     if((millis()-lastConnected > 30000) && !disabled) 
-//     {
-//         ESP_LOGW(IPOD_TAG,"Serial comms timed out: %lu ms",millis()-lastConnected);
-//         resetState();
-//     }
-
-//     //Send the track change Ack Pending if it has not sent already
-//     if(!disabled && (trackChangeAckPending>0x00) && (millis()>(trackChangeTimestamp+TRACK_CHANGE_TIMEOUT))) 
-//     {
-//         ESP_LOGD(IPOD_TAG,"Track change ack pending timed out ! ");        
-//         L0x04_0x01_iPodAck(iPodAck_OK,trackChangeAckPending);
-//         trackChangeAckPending = 0x00;
-//     }
-
-// }
 #pragma endregion
 
 //-----------------------------------------------------------------------

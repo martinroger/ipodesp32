@@ -58,8 +58,8 @@ struct avrcMetadata
 	uint8_t* payload = nullptr;
 };
 
+//AVRC Queue and Task
 QueueHandle_t avrcMetadataQueue;
-
 TaskHandle_t processAVRCTaskHandle;
 
 /// @brief Low priority task to process a queue of received metadata
@@ -326,163 +326,6 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text) {
 		delete[] incMetadata.payload;
 		incMetadata.payload = nullptr;
 	}
-
-	// switch (id)	
-	// {
-	// 	case ESP_AVRC_MD_ATTR_ALBUM:
-	// 		strcpy(incAlbumName,(char*)text); //Buffer the incoming album string
-	// 		if(espod.trackChangeAckPending>0x00)  //There is a pending metadata update
-	// 		{
-	// 			if(!albumNameUpdated)  //The album Name has not been updated yet
-	// 			{
-	// 				strcpy(espod.albumName,incAlbumName);
-	// 				albumNameUpdated = true;
-	// 				ESP_LOGI("AVRC_CB","Album rxed, ACK pending, albumNameUpdated to %s",espod.albumName);
-	// 			}
-	// 			else 
-	// 			{
-	// 				ESP_LOGI("AVRC_CB","Album rxed, ACK pending, already updated to %s",espod.albumName);
-	// 			}
-	// 		}
-	// 		else //There is no pending track change from iPod : active or passive track change from avrc target
-	// 		{
-	// 			if(strcmp(incAlbumName,espod.albumName)!=0)  //Different incoming metadata
-	// 			{
-	// 				strcpy(espod.prevAlbumName,espod.albumName);
-	// 				strcpy(espod.albumName,incAlbumName);
-	// 				albumNameUpdated = true;
-	// 				ESP_LOGI("AVRC_CB","Album rxed, NO ACK pending, albumNameUpdated to %s",espod.albumName);
-	// 			}
-	// 			else  //Despammer for double sends
-	// 			{
-	// 				ESP_LOGI("AVRC_CB","Album rxed, NO ACK pending, already updated to %s",espod.albumName);
-	// 			}
-	// 		}
-	// 		break;
-
-
-	// 	case ESP_AVRC_MD_ATTR_ARTIST:
-	// 		strcpy(incArtistName,(char*)text); //Buffer the incoming artist string
-	// 		if(espod.trackChangeAckPending>0x00) //There is a pending metadata update
-	// 		{
-	// 			if(!artistNameUpdated)  //The artist name has not been updated yet
-	// 			{
-	// 				strcpy(espod.artistName,incArtistName);
-	// 				artistNameUpdated = true;
-	// 				ESP_LOGI("AVRC_CB","Artist rxed, ACK pending, artistNameUpdated to %s",espod.artistName);
-	// 			}
-	// 			else 
-	// 			{
-	// 				ESP_LOGI("AVRC_CB","Artist rxed, ACK pending, already updated to %s",espod.artistName);
-	// 			}
-	// 		}
-	// 		else  //There is no pending track change from iPod : active or passive track change from avrc target
-	// 		{
-	// 			if(strcmp(incArtistName,espod.artistName)!=0)  //Different incoming metadata
-	// 			{
-	// 				strcpy(espod.prevArtistName,espod.artistName);
-	// 				strcpy(espod.artistName,incArtistName);
-	// 				artistNameUpdated = true;
-	// 				ESP_LOGI("AVRC_CB","Artist rxed, NO ACK pending, artistNameUdpated to %s",espod.artistName);
-	// 			}
-	// 			else  //Despammer for double sends
-	// 			{
-	// 				ESP_LOGI("AVRC_CB","Artist rxed, NO ACK pending, already updated to %s",espod.artistName);
-	// 			}
-	// 		}
-	// 		break;
-
-
-	// 	case ESP_AVRC_MD_ATTR_TITLE: //Title change triggers the NEXT track assumption if unexpected. It is too intensive to try to do NEXT/PREV guesswork
-	// 		strcpy(incTrackTitle,(char*)text); //Buffer the incoming track title
-	// 		if(espod.trackChangeAckPending>0x00)//There is a pending metadata update
-	// 		{ 
-	// 			if(!trackTitleUpdated) //The track title has not been updated yet
-	// 			{ 
-	// 				strcpy(espod.trackTitle,incTrackTitle);
-	// 				trackTitleUpdated = true;
-
-	// 				ESP_LOGI("AVRC_CB","Title rxed, ACK pending, trackTitleUpdated to %s",espod.trackTitle);
-	// 			}
-	// 			else 
-	// 			{
-	// 				ESP_LOGI("AVRC_CB","Title rxed, ACK pending, already updated to %s",espod.trackTitle);
-	// 			}
-	// 		}
-	// 		else { //There is no pending track change from iPod : active or passive track change from avrc target
-	// 			if(strcmp(incTrackTitle,espod.trackTitle)!=0)  //Different from current track Title -> Systematic NEXT
-	// 			{
-	// 				//Assume it is Next, perform cursor operations
-	// 				espod.trackListPosition = (espod.trackListPosition + 1 ) % TOTAL_NUM_TRACKS;
-	// 				espod.prevTrackIndex = espod.currentTrackIndex;
-	// 				espod.currentTrackIndex = (espod.currentTrackIndex + 1 ) % TOTAL_NUM_TRACKS;
-	// 				espod.trackList[espod.trackListPosition] = (espod.currentTrackIndex);
-	// 				//Copy new title and flag that data has been updated
-	// 				strcpy(espod.prevTrackTitle,espod.trackTitle);
-	// 				strcpy(espod.trackTitle,incTrackTitle);
-	// 				trackTitleUpdated = true;
-	// 				ESP_LOGI("AVRC_CB","Title rxed, NO ACK pending, AUTONEXT, trackTitleUpdated to %s\n\ttrackPos %d trackIndex %d",espod.trackTitle,espod.trackListPosition,espod.currentTrackIndex);
-	// 			}
-	// 			else //Despammer for double sends
-	// 			{ 
-	// 				ESP_LOGI("AVRC_CB","Title rxed, NO ACK pending, same name : %s",espod.trackTitle);
-	// 			}
-	// 		}
-	// 		break;
-
-
-	// 	case ESP_AVRC_MD_ATTR_PLAYING_TIME: 
-	// 		incTrackDuration = String((char*)text).toInt();
-	// 		if(espod.trackChangeAckPending>0x00) //There is a pending metadata update
-	// 		{ 
-	// 			if(!trackDurationUpdated) //The duration has not been updated yet
-	// 			{ 
-	// 				espod.trackDuration = incTrackDuration;
-	// 				trackDurationUpdated = true;
-	// 				ESP_LOGI("AVRC_CB","Duration rxed, ACK pending, trackDurationUpdated to %d",espod.trackDuration);
-	// 			}
-	// 			else 
-	// 			{
-	// 				ESP_LOGI("AVRC_CB","Duration rxed, ACK pending, already updated to %d",espod.trackDuration);
-	// 			}
-	// 		}
-	// 		else { //There is no pending track change from iPod : active or passive track change from avrc target
-	// 			if(incTrackDuration != espod.trackDuration) //Different incoming metadata
-	// 			{ 
-	// 				espod.trackDuration = incTrackDuration;
-	// 				trackDurationUpdated = true;
-	// 				ESP_LOGI("AVRC_CB","Duration rxed, NO ACK pending, trackDurationUpdated to %d",espod.trackDuration);
-	// 			}
-	// 			else //Despammer for double sends
-	// 			{ 
-	// 				ESP_LOGI("AVRC_CB","Duration rxed, NO ACK pending, already updated to %d",espod.trackDuration);
-	// 			}
-	// 		}
-	// 		break;
-	// }
-
-	// //Check if it is time to send a notification
-	// if(albumNameUpdated && artistNameUpdated && trackTitleUpdated && trackDurationUpdated )
-	// { 
-	// 	//If all fields have received at least one update and the trackChangeAckPending is still hanging. The failsafe for this one is in the espod _processTask
-	// 	if (espod.trackChangeAckPending>0x00) 
-	// 	{
-	// 		ESP_LOGI("AVRC_CB","Artist+Album+Title+Duration +++ ACK Pending 0x%x\n\tPending duration: %d",espod.trackChangeAckPending,millis()-espod.trackChangeTimestamp);
-	// 		espod.L0x04_0x01_iPodAck(iPodAck_OK,espod.trackChangeAckPending);
-	// 		espod.trackChangeAckPending = 0x00;
-	// 		ESP_LOGI("AVRC_CB","trackChangeAckPending reset to 0x00");
-	// 	}
-	// 	albumNameUpdated 	= 	false;
-	// 	artistNameUpdated 	= 	false;
-	// 	trackTitleUpdated 	= 	false;
-	// 	trackDurationUpdated=	false;
-	// 	ESP_LOGI("AVRC_CB","Artist+Album+Title+Duration : True -> False");
-	// 	//Inform the car
-	// 	if (espod.playStatusNotificationState==NOTIF_ON) 
-	// 	{
-	// 		espod.L0x04_0x27_PlayStatusNotification(0x01,espod.currentTrackIndex);
-	// 	}
-	// }
 }
 
 #endif
@@ -640,8 +483,4 @@ void setup() {
 }
 
 void loop() {
-	// if(millis()-lastTick_ts>REFRESH_INTERVAL) {
-	// 	espod.refresh();
-	// 	lastTick_ts = millis();
-	// }
 }
