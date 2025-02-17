@@ -50,6 +50,13 @@
 #endif
 #pragma endregion
 
+#pragma region Helper Functions
+void initializeSDCard();
+void initializeSerial();
+void initializeA2DPSink();
+esp_err_t initializeAVRCTask();
+#pragma endregion
+
 #pragma region AVRC Task and Queue declaration/definition
 
 //Metadata structure
@@ -62,6 +69,8 @@ struct avrcMetadata
 //AVRC Queue and Task
 QueueHandle_t avrcMetadataQueue;
 TaskHandle_t processAVRCTaskHandle;
+
+
 
 /// @brief Low priority task to process a queue of received metadata
 /// @param pvParameters 
@@ -374,19 +383,7 @@ void setup() {
 	esp_log_level_set("*",ESP_LOG_NONE); //Necessary not to spam the Serial
 	ESP_LOGI("SETUP","setup() start");
 	//Initialise SD card if present and activated
-	#ifdef USE_SD 
-		if(digitalRead(SD_DETECT) == LOW) {
-			if(initSD()) 
-			{
-				#ifdef LOG_TO_SD
-				sdLoggerEnabled = initSDLogger();
-				if(sdLoggerEnabled) esp_log_level_set("*", ESP_LOG_INFO);
-				#endif
-				//Attempt to update
-				updateFromFS(SD_MMC);
-			}
-		}
-	#endif
+	initializeSDCard();
 
 	//Inform of possible errors that led to a reset
 	ESP_LOGI("RESET","Reset reason: %d",esp_reset_reason());
@@ -395,94 +392,115 @@ void setup() {
 	//Publish build information
 	ESP_LOGI("BUILD","env:%s\t date: %s\t time: %s\tbranch:%s",PIOENV,__DATE__,__TIME__,BUILD_BRANCH);
 
-	//Initialise the metadata queue and start the transfer task
-	avrcMetadataQueue = xQueueCreate(16,sizeof(avrcMetadata));
-	if(avrcMetadataQueue == nullptr) 
-	{
-		ESP_LOGE("SETUP","Failed to create metadata queue");
-		return;
+	if(initializeAVRCTask() != ESP_OK) {
+		esp_restart();
 	}
-	else 
-	{
-		xTaskCreatePinnedToCore(processAVRCTask,"processAVRCTask",PROCESS_AVRC_TASK_STACK_SIZE,NULL,PROCESS_AVRC_TASK_PRIORITY,&processAVRCTaskHandle,ARDUINO_RUNNING_CORE);
-		if(processAVRCTaskHandle == nullptr) 
-		{
-			ESP_LOGE("SETUP","Failed to create processAVRCTask");
-			return;
-		}
-	}
-	
-	//Initialise the Codec or DAC for the I2S stream (and optionally I2C configuraiton)
-	#ifdef AUDIOKIT
-			minimalPins.addI2C(PinFunction::CODEC, 32, 33);
-			minimalPins.addI2S(PinFunction::CODEC, 0, 27, 25, 26, 35);
-			auto cfg = i2s.defaultConfig();
-			cfg.copyFrom(info);
-			i2s.begin(cfg);
-		
-		#else
-			auto cfg = i2s.defaultConfig(TX_MODE);
-			cfg.pin_ws = 25;
-			cfg.pin_bck = 26;
-			cfg.pin_data = 22;
-			cfg.sample_rate = 44100;
-			cfg.i2s_format = I2S_LSB_FORMAT;
-			i2s.begin(cfg);
-			/*
-			Default pins are as follows :
-			WSEL  ->  25
-			DIN   ->  22
-			BCLK  ->  26
-			*/
-		#endif
-		
-		//Configure the A2DP Sink and start it
-		ESP_LOGI("SETUP","a2dp_sink callbacks attach start");
-		a2dp_sink.set_auto_reconnect(true); //Auto-reconnect
-		a2dp_sink.set_on_connection_state_changed(connectionStateChanged);
-		a2dp_sink.set_on_audio_state_changed(audioStateChanged);
-		a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
-		a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE|ESP_AVRC_MD_ATTR_ARTIST|ESP_AVRC_MD_ATTR_ALBUM|ESP_AVRC_MD_ATTR_PLAYING_TIME);
-		a2dp_sink.set_avrc_rn_play_pos_callback(avrc_rn_play_pos_callback,1); //Cannot be faster than 1s
-		#ifdef AUDIOKIT
-			a2dp_sink.start("MiNiPoD56");
-		#else
-			a2dp_sink.start("espiPod 2");
-		#endif
-		ESP_LOGI("SETUP","a2dp_sink started : %s",a2dp_sink.get_name());
-		delay(5);
-	
-	//Start IAP Serial with large buffers
-	#ifndef AUDIOKIT
-		Serial2.setRxBufferSize(1024);
-		Serial2.setTxBufferSize(1024);
-		Serial2.begin(19200);
-	#else
-		#ifdef USE_ALT_SERIAL
-			altSerial.setPins(19,22);
-			altSerial.setRxBufferSize(1024);
-			altSerial.setTxBufferSize(1024);
-			altSerial.begin(19200);
-		#else
-			Serial.setRxBufferSize(1024);
-			Serial.setTxBufferSize(1024);
-			Serial.begin(19200);
-		#endif
-	#endif
+	initializeA2DPSink();
+	initializeSerial();
  	
 	//Prep and start up espod
 	espod.attachPlayControlHandler(playStatusHandler);
 
 	//Let's wait for something to start before we enable espod and start the game.
-		ESP_LOGI("SETUP","Waiting for peer");
-		while(a2dp_sink.get_connection_state()!=ESP_A2D_CONNECTION_STATE_CONNECTED) {
-			delay(10);
-		}
-		delay(50);
-		ESP_LOGI("SETUP","Peer connected: %s",a2dp_sink.get_peer_name());
+	ESP_LOGI("SETUP","Waiting for peer");
+	while(a2dp_sink.get_connection_state()!=ESP_A2D_CONNECTION_STATE_CONNECTED) {
+		delay(10);
+	}
+	delay(50);
+	ESP_LOGI("SETUP","Peer connected: %s",a2dp_sink.get_peer_name());
 	ESP_LOGI("SETUP","Setup finished");
 }
 
 #pragma endregion
 
 void loop() {}
+
+#pragma region Helper Function Definitions
+void initializeSDCard() {
+    #ifdef USE_SD
+        if (digitalRead(SD_DETECT) == LOW) {
+            if (initSD()) {
+                #ifdef LOG_TO_SD
+                sdLoggerEnabled = initSDLogger();
+                if (sdLoggerEnabled) esp_log_level_set("*", ESP_LOG_INFO);
+                #endif
+                updateFromFS(SD_MMC);
+            }
+        }
+    #endif
+}
+
+void initializeSerial() {
+    #ifndef AUDIOKIT
+        Serial2.setRxBufferSize(1024);
+        Serial2.setTxBufferSize(1024);
+        Serial2.begin(19200);
+    #else
+        #ifdef USE_ALT_SERIAL
+            altSerial.setPins(19, 22);
+            altSerial.setRxBufferSize(1024);
+            altSerial.setTxBufferSize(1024);
+            altSerial.begin(19200);
+        #else
+            Serial.setRxBufferSize(1024);
+            Serial.setTxBufferSize(1024);
+            Serial.begin(19200);
+        #endif
+    #endif
+}
+
+void initializeA2DPSink() {
+    #ifdef AUDIOKIT
+        minimalPins.addI2C(PinFunction::CODEC, 32, 33);
+        minimalPins.addI2S(PinFunction::CODEC, 0, 27, 25, 26, 35);
+        auto cfg = i2s.defaultConfig();
+        cfg.copyFrom(info);
+        i2s.begin(cfg);
+    #else
+        auto cfg = i2s.defaultConfig(TX_MODE);
+        cfg.pin_ws = 25;
+        cfg.pin_bck = 26;
+        cfg.pin_data = 22;
+        cfg.sample_rate = 44100;
+        cfg.i2s_format = I2S_LSB_FORMAT;
+        i2s.begin(cfg);
+		/*
+		Default pins are as follows :
+		WSEL  ->  25
+		DIN   ->  22
+		BCLK  ->  26
+		*/
+    #endif
+
+    a2dp_sink.set_auto_reconnect(true);
+    a2dp_sink.set_on_connection_state_changed(connectionStateChanged);
+    a2dp_sink.set_on_audio_state_changed(audioStateChanged);
+    a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
+    a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE | ESP_AVRC_MD_ATTR_ARTIST | ESP_AVRC_MD_ATTR_ALBUM | ESP_AVRC_MD_ATTR_PLAYING_TIME);
+    a2dp_sink.set_avrc_rn_play_pos_callback(avrc_rn_play_pos_callback, 1);
+
+    #ifdef AUDIOKIT
+        a2dp_sink.start("MiNiPoD56");
+    #else
+        a2dp_sink.start("espiPod 2");
+    #endif
+    ESP_LOGI("SETUP", "a2dp_sink started: %s", a2dp_sink.get_name());
+    delay(5);
+}
+
+esp_err_t initializeAVRCTask() {
+    avrcMetadataQueue = xQueueCreate(AVRC_QUEUE_SIZE, sizeof(avrcMetadata));
+    if (avrcMetadataQueue == nullptr) {
+        ESP_LOGE("SETUP", "Failed to create metadata queue");
+        return ESP_FAIL;
+    }
+
+    xTaskCreatePinnedToCore(processAVRCTask, "processAVRCTask", PROCESS_AVRC_TASK_STACK_SIZE, NULL, PROCESS_AVRC_TASK_PRIORITY, &processAVRCTaskHandle, ARDUINO_RUNNING_CORE);
+    if (processAVRCTaskHandle == nullptr) {
+        ESP_LOGE("SETUP", "Failed to create processAVRCTask");
+        return ESP_FAIL;
+    }
+	
+	return ESP_OK;
+}
+#pragma endregion
