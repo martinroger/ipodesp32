@@ -235,14 +235,6 @@ void esPod::_processTask(void *pvParameters)
             incCmd.payload = nullptr;
             incCmd.length = 0;
         }
-        
-        //Send the track change Ack Pending if it has not sent already and timeout has happened (could be a task)
-        // if((esPodInstance->trackChangeAckPending>0x00) && (millis()>(esPodInstance->trackChangeTimestamp+TRACK_CHANGE_TIMEOUT))) 
-        // {
-        //     ESP_LOGD(__func__,"Track change ack pending timed out ! ");        
-        //     esPodInstance->L0x04_0x01_iPodAck(iPodAck_OK,esPodInstance->trackChangeAckPending);
-        //     esPodInstance->trackChangeAckPending = 0x00;
-        // }
         vTaskDelay(pdMS_TO_TICKS(PROCESS_INTERVAL_MS));
     }
     
