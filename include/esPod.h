@@ -186,7 +186,6 @@ public:
 
 private:
     //FreeRTOS Queues
-    // QueueHandle_t _rxQueue;
     QueueHandle_t _cmdQueue;
     QueueHandle_t _txQueue;
     QueueHandle_t _timerQueue;
