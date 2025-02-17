@@ -1,5 +1,9 @@
 #include "esPod.h"
 
+//-----------------------------------------------------------------------
+//|                           Local utilities                           |
+//-----------------------------------------------------------------------
+#pragma region Local utilities
 //ESP32 is Little-Endian, iPod is Big-Endian
 template <typename T>
 T swap_endian(T u)
@@ -20,9 +24,12 @@ T swap_endian(T u)
     return dest.u;
 }
 
-void startTimer(TimerHandle_t timer, unsigned long time_ms)
+/// @brief (Re)starts a timer and changes the interval on the fly. 
+/// @param timer Timer handle to (re)start.
+/// @param time_ms New interval in milliseconds. No verification is done if this is 0! Defaults to TRACK_CHANGE_TIMEOUT.
+void startTimer(TimerHandle_t timer, unsigned long time_ms = TRACK_CHANGE_TIMEOUT)
 {
-    //If the timer is already active, it needs to be stop without a callback call first
+    //If the timer is already active, it needs to be stopped without a callback call first
     if(xTimerIsTimerActive(timer) == pdTRUE)
     {
         xTimerStop(timer,0);
@@ -32,6 +39,8 @@ void startTimer(TimerHandle_t timer, unsigned long time_ms)
     xTimerStart(timer,0);
 }
 
+/// @brief Stops a running timer. No status is returned if it was already stopped.
+/// @param timer Handle to the Timer that needs to be stopped.
 void stopTimer(TimerHandle_t timer)
 {
     //If the timer is already active, it needs to be stop without a callback call first
@@ -40,14 +49,12 @@ void stopTimer(TimerHandle_t timer)
         xTimerStop(timer,0);
     }
 }
+#pragma endregion
 
 //-----------------------------------------------------------------------
-//|         Constructor, reset, attachCallback, packet utilities        |
+//|                      Cardinal tasks and Timers                      |
 //-----------------------------------------------------------------------
-#pragma region UTILS
-
 #pragma region Tasks
-
 /// @brief RX Task, sifts through the incoming serial data and compiles packets that pass the checksum and passes them to the processing Queue _cmdQueue. Also handles timeouts and can trigger state resets.
 /// @param pvParameters Unused
 void esPod::_rxTask(void *pvParameters)
@@ -229,7 +236,7 @@ void esPod::_processTask(void *pvParameters)
         if(xQueueReceive(esPodInstance->_cmdQueue,&incCmd,0) == pdTRUE) //Non blocking receive
         {
             //Process the command
-            esPodInstance->processPacket(incCmd.payload,incCmd.length);
+            esPodInstance->_processPacket(incCmd.payload,incCmd.length);
             //Free the memory allocated for the payload
             delete[] incCmd.payload;
             incCmd.payload = nullptr;
@@ -326,8 +333,9 @@ void esPod::_timerTask(void *pvParameters)
         vTaskDelay(pdMS_TO_TICKS(TIMER_INTERVAL_MS));
     }
 }
-
 #pragma endregion
+
+#pragma region Timer Callbacks
 
 /// @brief Callback for L0x00 pending Ack timer
 /// @param xTimer 
@@ -346,9 +354,12 @@ void esPod::_pendingTimerCallback_0x04(TimerHandle_t xTimer)
     TimerCallbackMessage msg = { esPodInstance->_pendingCmdId_0x04, 0x04 };
     xQueueSendFromISR(esPodInstance->_timerQueue, &msg, NULL);
 }
+#pragma endregion
 
+//-----------------------------------------------------------------------
+//|                          Packet management                          |
+//-----------------------------------------------------------------------
 #pragma region Packet management
-
 /// @brief //Calculates the checksum of a packet that starts from i=0 ->Lingo to i=len -> Checksum
 /// @param byteArray Array from Lingo byte to Checksum byte
 /// @param len Length of array (Lingo byte to Checksum byte)
@@ -401,6 +412,37 @@ void esPod::_queuePacket(const byte *byteArray, uint32_t len)
     }
 }
 
+/// @brief Processes a valid packet and calls the relevant Lingo processor
+/// @param byteArray Checksum-validated packet starting at LingoID
+/// @param len Length of valid data in the packet
+void esPod::_processPacket(const byte *byteArray, uint32_t len)
+{
+    byte rxLingoID = byteArray[0];
+    const byte* subPayload = byteArray+1; //Squeeze the Lingo out
+    uint32_t subPayloadLen = len-1;
+    switch (rxLingoID) //0x00 is general Lingo and 0x04 is extended Lingo. Nothing else is expected from the Mini
+    {
+    case 0x00: //General Lingo
+        ESP_LOGD(IPOD_TAG,"Lingo 0x00 Packet in processor,payload length: %d",subPayloadLen);
+        processLingo0x00(subPayload,subPayloadLen);
+        break;
+    
+    case 0x04: // Extended Interface Lingo
+        ESP_LOGD(IPOD_TAG,"Lingo 0x04 Packet in processor,payload length: %d",subPayloadLen);
+        processLingo0x04(subPayload,subPayloadLen);
+        break;
+    
+    default:
+        ESP_LOGW(IPOD_TAG,"Unknown Lingo packet : L0x%x",rxLingoID);
+        break;
+    }
+}
+#pragma endregion
+
+//-----------------------------------------------------------------------
+//|         Constructor, reset, attachCallback for PB control           |
+//-----------------------------------------------------------------------
+#pragma region Constructor, destructor, reset and external PB Contoller attach
 /// @brief Constructor for the esPod class
 /// @param targetSerial (Serial) stream on which the esPod will be communicating
 esPod::esPod(Stream &targetSerial)
@@ -544,8 +586,6 @@ void esPod::attachPlayControlHandler(playStatusHandler_t playHandler)
     _playStatusHandler = playHandler;
     ESP_LOGD(IPOD_TAG,"PlayControlHandler attached.");
 }
-
-
 #pragma endregion
 
 //-----------------------------------------------------------------------
@@ -569,9 +609,9 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
                 L0x00_0x04_ReturnExtendedInterfaceMode(0x01); //Report that extended interface mode is active
             }
             else
-        {
-            L0x00_0x04_ReturnExtendedInterfaceMode(0x00); //Report that extended interface mode is not active
-        }
+            {
+                L0x00_0x04_ReturnExtendedInterfaceMode(0x00); //Report that extended interface mode is not active
+            }
         }
         break;
 
@@ -1236,40 +1276,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         }
     }
 }
-
-#pragma endregion
-
-//-----------------------------------------------------------------------
-//|                            Packet Disneyland                        |
-//-----------------------------------------------------------------------
-#pragma region Packet Disneyland
-
-/// @brief Processes a valid packet and calls the relevant Lingo processor
-/// @param byteArray Checksum-validated packet starting at LingoID
-/// @param len Length of valid data in the packet
-void esPod::processPacket(const byte *byteArray, uint32_t len)
-{
-    byte rxLingoID = byteArray[0];
-    const byte* subPayload = byteArray+1; //Squeeze the Lingo out
-    uint32_t subPayloadLen = len-1;
-    switch (rxLingoID) //0x00 is general Lingo and 0x04 is extended Lingo. Nothing else is expected from the Mini
-    {
-    case 0x00: //General Lingo
-        ESP_LOGD(IPOD_TAG,"Lingo 0x00 Packet in processor,payload length: %d",subPayloadLen);
-        processLingo0x00(subPayload,subPayloadLen);
-        break;
-    
-    case 0x04: // Extended Interface Lingo
-        ESP_LOGD(IPOD_TAG,"Lingo 0x04 Packet in processor,payload length: %d",subPayloadLen);
-        processLingo0x04(subPayload,subPayloadLen);
-        break;
-    
-    default:
-        ESP_LOGW(IPOD_TAG,"Unknown Lingo packet : L0x%x",rxLingoID);
-        break;
-    }
-}
-
 #pragma endregion
 
 //-----------------------------------------------------------------------
