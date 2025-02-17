@@ -1,7 +1,7 @@
 #include <sdLogUpdate.h>
 
 #ifdef TAG
-#undef TAG
+    #undef TAG
 #endif
 #define TAG "SD_MMC"
 
