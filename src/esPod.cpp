@@ -336,6 +336,8 @@ void esPod::_queuePacket(const byte *byteArray, uint32_t len)
     }
 }
 
+/// @brief Constructor for the esPod class
+/// @param targetSerial (Serial) stream on which the esPod will be communicating
 esPod::esPod(Stream &targetSerial)
     : _targetSerial(targetSerial)
 {
@@ -364,6 +366,7 @@ esPod::esPod(Stream &targetSerial)
     }
 }
 
+/// @brief Destructor for the esPod class. Normally not used.
 esPod::~esPod()
 {
     aapCommand tempCmd;
