@@ -1,7 +1,8 @@
 #include <Arduino.h>
-#include "esPod.h"
+
 #include "AudioTools.h"
 #include "BluetoothA2DPSink.h"
+#include "esPod.h"
 
 #pragma region A2DP Sink Configuration and Serial Initialization
 #ifdef AUDIOKIT
@@ -9,8 +10,8 @@
 #include "sdLogUpdate.h"
 bool sdLoggerEnabled = false;
 #endif
-#include "AudioTools/AudioLibs/I2SCodecStream.h"
 #include "AudioBoard.h"
+#include "AudioTools/AudioLibs/I2SCodecStream.h"
 AudioInfo info(44100, 2, 16);
 DriverPins minimalPins;
 AudioBoard minimalAudioKit(AudioDriverES8388, minimalPins);
@@ -88,7 +89,9 @@ void setup()
     ESP_LOGI("SETUP", "Setup finished");
 }
 
-void loop() {}
+void loop()
+{
+}
 
 #pragma region AVRC Task and Queue declaration/definition
 // Metadata universal structure
@@ -131,7 +134,8 @@ static void processAVRCTask(void *pvParameters)
         if (uxHighWaterMark < minHightWaterMark)
         {
             minHightWaterMark = uxHighWaterMark;
-            ESP_LOGI("HWM Logging", "Process AVRC Task High Watermark: %d, used stack: %d", minHightWaterMark, PROCESS_AVRC_TASK_STACK_SIZE - minHightWaterMark);
+            ESP_LOGI("HWM Logging", "Process AVRC Task High Watermark: %d, used stack: %d", minHightWaterMark,
+                     PROCESS_AVRC_TASK_STACK_SIZE - minHightWaterMark);
         }
 #endif
         // Check incoming metadata in queue
@@ -141,7 +145,8 @@ static void processAVRCTask(void *pvParameters)
             switch (incMetadata.id)
             {
             case ESP_AVRC_MD_ATTR_ALBUM:
-                strcpy(incAlbumName, (char *)incMetadata.payload); // Buffer the incoming album string
+                strcpy(incAlbumName,
+                       (char *)incMetadata.payload); // Buffer the incoming album string
                 if (espod.trackChangeAckPending > 0x00)
                 { // There is a pending metadata update
                     if (!albumNameUpdated)
@@ -156,7 +161,8 @@ static void processAVRCTask(void *pvParameters)
                     }
                 }
                 else
-                { // There is no pending track change from iPod : active or passive track change from avrc target
+                { // There is no pending track change from iPod : active or
+                  // passive track change from avrc target
                     if (strcmp(incAlbumName, espod.albumName) != 0)
                     { // Different incoming metadata
                         strcpy(espod.prevAlbumName, espod.albumName);
@@ -172,11 +178,13 @@ static void processAVRCTask(void *pvParameters)
                 break;
 
             case ESP_AVRC_MD_ATTR_ARTIST:
-                strcpy(incArtistName, (char *)incMetadata.payload); // Buffer the incoming artist string
+                strcpy(incArtistName,
+                       (char *)incMetadata.payload); // Buffer the incoming artist string
                 if (espod.trackChangeAckPending > 0x00)
                 { // There is a pending metadata update
                     if (!artistNameUpdated)
-                    { // The artist name has not been updated yet
+                    { // The artist name has not been updated
+                      // yet
                         strcpy(espod.artistName, incArtistName);
                         artistNameUpdated = true;
                         ESP_LOGD("AVRC_CB", "Artist rxed, ACK pending, artistNameUpdated to %s", espod.artistName);
@@ -187,7 +195,8 @@ static void processAVRCTask(void *pvParameters)
                     }
                 }
                 else
-                { // There is no pending track change from iPod : active or passive track change from avrc target
+                { // There is no pending track change from iPod : active or
+                  // passive track change from avrc target
                     if (strcmp(incArtistName, espod.artistName) != 0)
                     { // Different incoming metadata
                         strcpy(espod.prevArtistName, espod.artistName);
@@ -202,12 +211,17 @@ static void processAVRCTask(void *pvParameters)
                 }
                 break;
 
-            case ESP_AVRC_MD_ATTR_TITLE:                            // Title change triggers the NEXT track assumption if unexpected. It is too intensive to try to do NEXT/PREV guesswork
-                strcpy(incTrackTitle, (char *)incMetadata.payload); // Buffer the incoming track title
+            case ESP_AVRC_MD_ATTR_TITLE: // Title change triggers the NEXT track
+                                         // assumption if unexpected. It is too
+                                         // intensive to try to do NEXT/PREV
+                                         // guesswork
+                strcpy(incTrackTitle,
+                       (char *)incMetadata.payload); // Buffer the incoming track title
                 if (espod.trackChangeAckPending > 0x00)
                 { // There is a pending metadata update
                     if (!trackTitleUpdated)
-                    { // The track title has not been updated yet
+                    { // The track title has not been updated
+                      // yet
                         strcpy(espod.trackTitle, incTrackTitle);
                         trackTitleUpdated = true;
                         ESP_LOGD("AVRC_CB", "Title rxed, ACK pending, trackTitleUpdated to %s", espod.trackTitle);
@@ -218,7 +232,8 @@ static void processAVRCTask(void *pvParameters)
                     }
                 }
                 else
-                { // There is no pending track change from iPod : active or passive track change from avrc target
+                { // There is no pending track change from iPod : active or
+                  // passive track change from avrc target
                     if (strcmp(incTrackTitle, espod.trackTitle) != 0)
                     { // Different from current track Title -> Systematic NEXT
                         // Assume it is Next, perform cursor operations
@@ -230,7 +245,10 @@ static void processAVRCTask(void *pvParameters)
                         strcpy(espod.prevTrackTitle, espod.trackTitle);
                         strcpy(espod.trackTitle, incTrackTitle);
                         trackTitleUpdated = true;
-                        ESP_LOGD("AVRC_CB", "Title rxed, NO ACK pending, AUTONEXT, trackTitleUpdated to %s\n\ttrackPos %d trackIndex %d", espod.trackTitle, espod.trackListPosition, espod.currentTrackIndex);
+                        ESP_LOGD("AVRC_CB",
+                                 "Title rxed, NO ACK pending, AUTONEXT, trackTitleUpdated "
+                                 "to %s\n\ttrackPos %d trackIndex %d",
+                                 espod.trackTitle, espod.trackListPosition, espod.currentTrackIndex);
                     }
                     else
                     { // Despammer for double sends
@@ -244,10 +262,12 @@ static void processAVRCTask(void *pvParameters)
                 if (espod.trackChangeAckPending > 0x00)
                 { // There is a pending metadata update
                     if (!trackDurationUpdated)
-                    { // The duration has not been updated yet
+                    { // The duration has not been updated
+                      // yet
                         espod.trackDuration = incTrackDuration;
                         trackDurationUpdated = true;
-                        ESP_LOGD("AVRC_CB", "Duration rxed, ACK pending, trackDurationUpdated to %d", espod.trackDuration);
+                        ESP_LOGD("AVRC_CB", "Duration rxed, ACK pending, trackDurationUpdated to %d",
+                                 espod.trackDuration);
                     }
                     else
                     {
@@ -255,16 +275,19 @@ static void processAVRCTask(void *pvParameters)
                     }
                 }
                 else
-                { // There is no pending track change from iPod : active or passive track change from avrc target
+                { // There is no pending track change from iPod : active or
+                  // passive track change from avrc target
                     if (incTrackDuration != espod.trackDuration)
                     { // Different incoming metadata
                         espod.trackDuration = incTrackDuration;
                         trackDurationUpdated = true;
-                        ESP_LOGD("AVRC_CB", "Duration rxed, NO ACK pending, trackDurationUpdated to %d", espod.trackDuration);
+                        ESP_LOGD("AVRC_CB", "Duration rxed, NO ACK pending, trackDurationUpdated to %d",
+                                 espod.trackDuration);
                     }
                     else
                     { // Despammer for double sends
-                        ESP_LOGD("AVRC_CB", "Duration rxed, NO ACK pending, already updated to %d", espod.trackDuration);
+                        ESP_LOGD("AVRC_CB", "Duration rxed, NO ACK pending, already updated to %d",
+                                 espod.trackDuration);
                     }
                 }
                 break;
@@ -273,10 +296,15 @@ static void processAVRCTask(void *pvParameters)
             // Check if it is time to send a notification
             if (albumNameUpdated && artistNameUpdated && trackTitleUpdated && trackDurationUpdated)
             {
-                // If all fields have received at least one update and the trackChangeAckPending is still hanging. The failsafe for this one is in the espod _processTask
+                // If all fields have received at least one update and the
+                // trackChangeAckPending is still hanging. The failsafe for this one is
+                // in the espod _processTask
                 if (espod.trackChangeAckPending > 0x00)
                 {
-                    ESP_LOGD("AVRC_CB", "Artist+Album+Title+Duration +++ ACK Pending 0x%x\n\tPending duration: %d", espod.trackChangeAckPending, millis() - espod.trackChangeTimestamp);
+                    ESP_LOGD("AVRC_CB",
+                             "Artist+Album+Title+Duration +++ ACK Pending "
+                             "0x%x\n\tPending duration: %d",
+                             espod.trackChangeAckPending, millis() - espod.trackChangeTimestamp);
                     espod.L0x04_0x01_iPodAck(iPodAck_OK, espod.trackChangeAckPending);
                     espod.trackChangeAckPending = 0x00;
                     ESP_LOGD("AVRC_CB", "trackChangeAckPending reset to 0x00");
@@ -372,7 +400,8 @@ void initializeA2DPSink()
     a2dp_sink.set_on_connection_state_changed(connectionStateChanged);
     a2dp_sink.set_on_audio_state_changed(audioStateChanged);
     a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
-    a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE | ESP_AVRC_MD_ATTR_ARTIST | ESP_AVRC_MD_ATTR_ALBUM | ESP_AVRC_MD_ATTR_PLAYING_TIME);
+    a2dp_sink.set_avrc_metadata_attribute_mask(ESP_AVRC_MD_ATTR_TITLE | ESP_AVRC_MD_ATTR_ARTIST |
+                                               ESP_AVRC_MD_ATTR_ALBUM | ESP_AVRC_MD_ATTR_PLAYING_TIME);
     a2dp_sink.set_avrc_rn_play_pos_callback(avrc_rn_play_pos_callback, 1);
 
 #ifdef AUDIOKIT
@@ -384,7 +413,8 @@ void initializeA2DPSink()
     delay(5);
 }
 
-/// @brief Initializes the AVRC metadata queue, and attempts to start the related task
+/// @brief Initializes the AVRC metadata queue, and attempts to start the
+/// related task
 /// @return ESP_FAIL if the queue or task could not be created, ESP_OK otherwise
 esp_err_t initializeAVRCTask()
 {
@@ -395,7 +425,8 @@ esp_err_t initializeAVRCTask()
         return ESP_FAIL;
     }
 
-    xTaskCreatePinnedToCore(processAVRCTask, "processAVRCTask", PROCESS_AVRC_TASK_STACK_SIZE, NULL, PROCESS_AVRC_TASK_PRIORITY, &processAVRCTaskHandle, ARDUINO_RUNNING_CORE);
+    xTaskCreatePinnedToCore(processAVRCTask, "processAVRCTask", PROCESS_AVRC_TASK_STACK_SIZE, NULL,
+                            PROCESS_AVRC_TASK_PRIORITY, &processAVRCTaskHandle, ARDUINO_RUNNING_CORE);
     if (processAVRCTaskHandle == nullptr)
     {
         ESP_LOGE("SETUP", "Failed to create processAVRCTask");
@@ -407,7 +438,8 @@ esp_err_t initializeAVRCTask()
 #pragma endregion
 
 #pragma region A2DP/AVRC callbacks Definitions
-/// @brief Callback on changes of A2DP connection and AVRCP connection. On disconnect the esPod becomes silent.
+/// @brief Callback on changes of A2DP connection and AVRCP connection. On
+/// disconnect the esPod becomes silent.
 /// @param state New state passed by the callback.
 /// @param ptr Not used.
 void connectionStateChanged(esp_a2d_connection_state_t state, void *ptr)
@@ -426,7 +458,9 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void *ptr)
     }
 }
 
-/// @brief Callback for the change of playstate after connection. Aligns the state of the esPod to the state of the phone. Play should be called by the espod interaction
+/// @brief Callback for the change of playstate after connection. Aligns the
+/// state of the esPod to the state of the phone. Play should be called by the
+/// espod interaction
 /// @param state The A2DP Stream to align to.
 /// @param ptr Not used.
 void audioStateChanged(esp_a2d_audio_state_t state, void *ptr)
@@ -439,7 +473,8 @@ void audioStateChanged(esp_a2d_audio_state_t state, void *ptr)
         break;
     case ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND:
         espod.playStatus = PB_STATE_PAUSED;
-        ESP_LOGD("A2DP_CB", "ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND, espod.playStatus = PB_STATE_PAUSED");
+        ESP_LOGD("A2DP_CB", "ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND, espod.playStatus "
+                            "= PB_STATE_PAUSED");
         break;
     case ESP_A2D_AUDIO_STATE_STOPPED:
         espod.playStatus = PB_STATE_STOPPED;
@@ -448,7 +483,8 @@ void audioStateChanged(esp_a2d_audio_state_t state, void *ptr)
     }
 }
 
-/// @brief Play position callback returning the ms spent since start on every interval - normally 1s
+/// @brief Play position callback returning the ms spent since start on every
+/// interval - normally 1s
 /// @param play_pos Playing Position in ms
 void avrc_rn_play_pos_callback(uint32_t play_pos)
 {
@@ -462,7 +498,8 @@ void avrc_rn_play_pos_callback(uint32_t play_pos)
 
 /// @brief Catch callback for the AVRC metadata. There can be duplicates !
 /// @param id Metadata attribute ID : ESP_AVRC_MD_ATTR_xxx
-/// @param text Text data passed around, sometimes it's a uint32_t disguised as text
+/// @param text Text data passed around, sometimes it's a uint32_t disguised as
+/// text
 void avrc_metadata_callback(uint8_t id, const uint8_t *text)
 {
     avrcMetadata incMetadata;
@@ -477,8 +514,10 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text)
     }
 }
 
-/// @brief Callback function that passes intended playback operations from the esPod to the A2DP player (i.e. the phone)
-/// @param playCommand A2DP_xx command instruction. It does not match the PB_CMD_xx codes !!!
+/// @brief Callback function that passes intended playback operations from the
+/// esPod to the A2DP player (i.e. the phone)
+/// @param playCommand A2DP_xx command instruction. It does not match the
+/// PB_CMD_xx codes !!!
 void playStatusHandler(byte playCommand)
 {
     switch (playCommand)
