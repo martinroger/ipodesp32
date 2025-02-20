@@ -20,7 +20,7 @@ int log_to_sd_card(const char* fmt, va_list args) {
 
 bool initSDLogger() {
     bool ret = false;
-    if (!digitalRead(5)) SD_MMC.remove("/esp.log");
+    // if (!digitalRead(5)) SD_MMC.remove("/esp.log");
     log_file = SD_MMC.open("/esp.log", FILE_APPEND);
     if (!log_file) {
         ret = false;
