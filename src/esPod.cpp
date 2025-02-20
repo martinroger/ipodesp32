@@ -284,7 +284,7 @@ void esPod::_txTask(void *pvParameters)
             vTaskDelay(pdMS_TO_TICKS(TX_INTERVAL_MS));
             continue;
         }
-        if(!esPodInstance->_rxIncomplete) //_rxTask is not in the middle of a packet
+        if(!esPodInstance->_rxIncomplete && esPodInstance->_pendingCmdId_0x00 == 0x00 && esPodInstance->_pendingCmdId_0x04 == 0x00) //_rxTask is not in the middle of a packet, there isn't a valid pending for either lingoes
         {
             //Retrieve from the queue and send the packet
             if(xQueueReceive(esPodInstance->_txQueue,&txCmd,0) == pdTRUE)
@@ -404,6 +404,24 @@ void esPod::_queuePacket(const byte *byteArray, uint32_t len)
     cmdToQueue.length = len;
     memcpy(cmdToQueue.payload,byteArray,len);
     if(xQueueSend(_txQueue,&cmdToQueue,pdMS_TO_TICKS(5)) != pdTRUE)
+    {
+        ESP_LOGW(__func__,"Could not queue packet");
+        delete[] cmdToQueue.payload;
+        cmdToQueue.payload = nullptr;
+        cmdToQueue.length = 0;
+    }
+}
+
+/// @brief Adds a packet to the transmit queue, but at the front for immediate processing
+/// @param byteArray Array of bytes to add to the queue
+/// @param len Length of data in the array
+void esPod::_queuePacketToFront(const byte *byteArray, uint32_t len)
+{
+    aapCommand cmdToQueue;
+    cmdToQueue.payload = new byte[len];
+    cmdToQueue.length = len;
+    memcpy(cmdToQueue.payload,byteArray,len);
+    if(xQueueSendToFront(_txQueue,&cmdToQueue,pdMS_TO_TICKS(5)) != pdTRUE)
     {
         ESP_LOGW(__func__,"Could not queue packet");
         delete[] cmdToQueue.payload;
@@ -1288,11 +1306,6 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
 /// @param cmdID ID (single byte) of the Lingo 0x00 command replied to
 void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID) {
     ESP_LOGI(IPOD_TAG,"Ack 0x%02x to command 0x%02x",cmdStatus,cmdID);
-    if(_pendingCmdId_0x00 == cmdID) //If the command ID is the same as the pending one
-    {
-        stopTimer(_pendingTimer_0x00); //Stop the timer
-        _pendingCmdId_0x00 = 0x00; //Reset the pending command
-    }
     //Queue the packet
     const byte txPacket[] = {
         0x00,
@@ -1300,7 +1313,14 @@ void esPod::L0x00_0x02_iPodAck(byte cmdStatus,byte cmdID) {
         cmdStatus,
         cmdID
     };
-    _queuePacket(txPacket,sizeof(txPacket));
+    //Stop the timer if the same command is acknowledged before the elapsed time
+    if(cmdID == _pendingCmdId_0x00) //If the command ID is the same as the pending one
+    {
+        stopTimer(_pendingTimer_0x00); //Stop the timer
+        _pendingCmdId_0x00 = 0x00; //Reset the pending command
+        _queuePacketToFront(txPacket,sizeof(txPacket)); //Jump the queue
+    }
+    else _queuePacket(txPacket,sizeof(txPacket));
 }
 
 /// @brief General response command for Lingo 0x00 with numerical field (used for Ack Pending). Has to be followed up with a normal iPodAck
@@ -1428,15 +1448,8 @@ void esPod::L0x00_0x27_GetAccessoryInfo(byte desiredInfo)
 /// @brief General response command for Lingo 0x04
 /// @param cmdStatus Has to obey to iPodAck_xxx format as defined in L0x00.h
 /// @param cmdID last two ID bytes of the Lingo 0x04 command replied to
-void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID)
-{
+void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID) {
     ESP_LOGI(IPOD_TAG,"Ack 0x%02x to command 0x%04x",cmdStatus,cmdID);
-    //Stop the timer if the same command is acknowledged before the elapsed time
-    if(cmdID == _pendingCmdId_0x04) //If the pending command is the one being acknowledged
-    {
-        stopTimer(_pendingTimer_0x04);
-        _pendingCmdId_0x04 = 0x00;
-    }
     //Queue the ack packet
     const byte txPacket[] = {
         0x04,
@@ -1444,7 +1457,14 @@ void esPod::L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID)
         cmdStatus,
         0x00,cmdID
     };
-    _queuePacket(txPacket,sizeof(txPacket));
+    //Stop the timer if the same command is acknowledged before the elapsed time
+    if(cmdID == _pendingCmdId_0x04) //If the pending command is the one being acknowledged
+    {
+        stopTimer(_pendingTimer_0x04);
+        _pendingCmdId_0x04 = 0x00;
+        _queuePacketToFront(txPacket,sizeof(txPacket)); //Jump the queue
+    }
+    else _queuePacket(txPacket,sizeof(txPacket)); //Queue at the back
 }
 
 /// @brief General response command for Lingo 0x04 with numerical field (used for Ack Pending). Has to be followed up with a normal iPodAck

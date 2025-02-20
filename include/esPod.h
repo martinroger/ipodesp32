@@ -82,6 +82,7 @@ private:
     static byte _checksum(const byte* byteArray, uint32_t len);
     void _sendPacket(const byte* byteArray, uint32_t len);
     void _queuePacket(const byte* byteArray, uint32_t len);
+    void _queuePacketToFront(const byte* byteArray, uint32_t len);
     void _processPacket(const byte* byteArray,uint32_t len);
 
     bool _rxIncomplete = false;
