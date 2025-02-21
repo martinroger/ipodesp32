@@ -638,16 +638,8 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     case L0x00_EnterExtendedInterfaceMode: // Mini forces extended interface mode
     {
         ESP_LOGI(IPOD_TAG, "CMD: 0x%02x EnterExtendedInterfaceMode", cmdID);
-        if (!extendedInterfaceModeActive)
-        {
-            // Send a first iPodAck Command pending with a 1000ms timeout
-            L0x00_0x02_iPodAck(iPodAck_CmdPending, cmdID, 1000);
-            extendedInterfaceModeActive = true;
-        }
-        else
-        {
-            L0x00_0x02_iPodAck(iPodAck_OK, cmdID);
-        }
+        extendedInterfaceModeActive = true;
+        L0x00_0x02_iPodAck(iPodAck_OK, cmdID);
     }
     break;
 
