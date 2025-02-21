@@ -5,13 +5,13 @@
 #include <FS.h>
 #include <SD_MMC.h>
 
-#define SD_DETECT  34
-#define SD_CLK     14
-#define SD_DATA2   12
-#define SD_DATA3   13
-#define SD_CMD     15
-#define SD_DATA0   2
-#define SD_DATA1   4
+#define SD_DETECT 34
+#define SD_CLK 14
+#define SD_DATA2 12
+#define SD_DATA3 13
+#define SD_CMD 15
+#define SD_DATA0 2
+#define SD_DATA1 4
 
 /// @brief vsprintf-like function that logs to a log_File stream
 /// @param fmt Format string
@@ -19,7 +19,7 @@
 /// @return Number of bytes generated
 int log_to_sd_card(const char *fmt, va_list args);
 
-/// @brief Starts the logger instance
+/// @brief Starts the SD logger instance
 /// @return Returns true if it is all successfully started, false otherwise
 bool initSDLogger();
 
