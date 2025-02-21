@@ -72,7 +72,13 @@ void setup()
     delay(5);
 
     // Publish build information
-    ESP_LOGI("BUILD", "env:%s\t date: %s\t time: %s\tbranch:%s", PIOENV, __DATE__, __TIME__, BUILD_BRANCH);
+    ESP_LOGI("BUILD_INFO", "env:%s\t date: %s\t time: %s", PIOENV, __DATE__, __TIME__);
+    delay(5);
+    ESP_LOGI("VERSION", "%s", VERSION_STRING);
+    delay(5);
+    ESP_LOGI("BRANCH", "%s", VERSION_BRANCH);
+    delay(5);
+
 
     if (initializeAVRCTask() != ESP_OK)
         esp_restart();

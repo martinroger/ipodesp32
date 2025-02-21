@@ -19,7 +19,7 @@
 /// @return Number of bytes generated
 int log_to_sd_card(const char *fmt, va_list args);
 
-/// @brief Starts the logger instance
+/// @brief Starts the SD logger instance
 /// @return Returns true if it is all successfully started, false otherwise
 bool initSDLogger();
 
