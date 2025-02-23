@@ -1,4 +1,4 @@
-21573910615700979
+21579131715022686
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -51359,6 +51359,27 @@ CP2104_USB_Board
 18
 18
 DIY
+CPDQ
+
+CPDQ5V0-HF 
+0
+2
+2
+DIY
+CPDQ-L
+
+CPDQ5V0-HF 
+0
+2
+2
+DIY
+CPDQ-M
+
+CPDQ5V0-HF 
+0
+2
+2
+DIY
 GCT_USB4105-GF-A
 
 
@@ -82956,6 +82977,13 @@ Undefined or Miscellaneous
 0
 34
 34
+SamacSys_Parts
+CPDUC5V0RHF
+CPDUC5V0R-HF-1
+TVS Diode (Bi-directional)
+0
+2
+2
 SamacSys_Parts
 CSTNE16M0VH3C000R0
 CSTNE16M0VH3C000R0

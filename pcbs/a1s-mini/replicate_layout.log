@@ -1,67 +1,63 @@
-02-23 01:24:10 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 359:Plugin executed on: 'win32'
-02-23 01:24:10 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 360:Plugin executed with python version: '3.9.14 (main, Dec 23 2022, 23:36:19) [MSC v.1934 64 bit (AMD64)]'
-02-23 01:24:10 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 361:KiCad build version: (7.0.0)
-02-23 01:24:10 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 362:Plugin version: 2.0.9
-02-23 01:24:10 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 363:Frame repr: <wx._core.Frame object at 0x000001AE39AB10D0>
-02-23 01:24:10 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 387:Preparing replicator with U3 as a reference
-02-23 01:24:10 com_github_MitjaNemec_ReplicateLayout.replicate_layout 113:getting a list of all footprints on board
-02-23 01:24:10 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 435:source anchor footprint is 'U3'
-Located on: ['CP2102_0']
+02-23 22:44:44 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 359:Plugin executed on: 'win32'
+02-23 22:44:44 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 360:Plugin executed with python version: '3.9.14 (main, Dec 23 2022, 23:36:19) [MSC v.1934 64 bit (AMD64)]'
+02-23 22:44:44 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 361:KiCad build version: (7.0.0)
+02-23 22:44:44 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 362:Plugin version: 2.0.9
+02-23 22:44:44 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 363:Frame repr: <wx._core.Frame object at 0x0000029843B00EE0>
+02-23 22:44:44 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 387:Preparing replicator with U4 as a reference
+02-23 22:44:44 com_github_MitjaNemec_ReplicateLayout.replicate_layout 113:getting a list of all footprints on board
+02-23 22:44:44 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 435:source anchor footprint is 'U4'
+Located on: ['CP2102_1']
 With filenames: ['CP2102.kicad_sch']
-With sheet_id:['CP2102_0']
-02-23 01:24:10 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 442:Corresponding footprints are 
+With sheet_id:['CP2102_1']
+02-23 22:44:44 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 442:Corresponding footprints are 
 [('U3', ['CP2102_0']), ('U4', ['CP2102_1'])]
-02-23 01:24:10 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 454:Showing dialog
-02-23 01:24:10 com_github_MitjaNemec_ReplicateLayout.replicate_layout 384:constructing a list of sheets suitable for replication on level:'CP2102_0', file:'CP2102.kicad_sch'
-02-23 01:24:10 com_github_MitjaNemec_ReplicateLayout.replicate_layout 421:suitable sheets are:[['CP2102_1']]
-02-23 01:24:10 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1341:Level selected: ['CP2102_0']
-02-23 01:24:10 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1176:Filtering list of tracks
-02-23 01:24:10 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 460:Toolbar position: wx.Point(3402, 88)
-02-23 01:24:10 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 465:Dialog position: wx.Point(3038, 88)
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 384:constructing a list of sheets suitable for replication on level:'CP2102_0', file:'CP2102.kicad_sch'
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 421:suitable sheets are:[['CP2102_1']]
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 207:Replicating layout
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 230:Starting replication of sheets: [['CP2102_1']]
-on level: ['CP2102_0']
+02-23 22:44:44 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 454:Showing dialog
+02-23 22:44:44 com_github_MitjaNemec_ReplicateLayout.replicate_layout 384:constructing a list of sheets suitable for replication on level:'CP2102_1', file:'CP2102.kicad_sch'
+02-23 22:44:44 com_github_MitjaNemec_ReplicateLayout.replicate_layout 421:suitable sheets are:[['CP2102_0']]
+02-23 22:44:44 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1341:Level selected: ['CP2102_1']
+02-23 22:44:44 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1176:Filtering list of tracks
+02-23 22:44:44 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 460:Toolbar position: wx.Point(3402, 88)
+02-23 22:44:44 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 465:Dialog position: wx.Point(3038, 88)
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 384:constructing a list of sheets suitable for replication on level:'CP2102_1', file:'CP2102.kicad_sch'
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 421:suitable sheets are:[['CP2102_0']]
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 207:Replicating layout
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 230:Starting replication of sheets: [['CP2102_0']]
+on level: ['CP2102_1']
 with tracks=True, zone=True, text=True, text=True, intersecting=False, remove=False, locked footprints=False, group_only=False
-02-23 01:24:13 root 299:updating GUI message: 'Preparing for replication'
-02-23 01:24:13 root 304:updating GUI with: 0
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 300:Getting the list of source footprints
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 310:Getting the list of all the remaining footprints
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 317:Getting source tracks
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1176:Filtering list of tracks
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 321:Getting source zones
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 325:Getting source text items
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 329:Getting source drawing items
-02-23 01:24:13 root 299:updating GUI message: 'Replicating footprints'
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 733:Replicating footprints
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 739:Replicating footprints on sheet ['CP2102_1']
-02-23 01:24:13 root 299:updating GUI message: 'Replicating tracks'
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 898:Replicating tracks
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 904:Replicating tracks on sheet ['CP2102_1']
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 714:Cannot pair src net: ['', 'CP2102_0', 'DCD'] and dst net: ['GND']
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 714:Cannot pair src net: ['RTS0'] and dst net: ['', 'CP2102_1', 'RTS']
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 714:Cannot pair src net: ['DTR0'] and dst net: ['', 'CP2102_1', 'DTR']
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 728:Net pairs for sheet ['CP2102_1'] :[('unconnected-(U3-~{TXT}{slash}GPIO.0-Pad19)', 'unconnected-(U4-~{TXT}{slash}GPIO.0-Pad19)'), ('unconnected-(U3-RS485{slash}GPIO.2-Pad17)', 'unconnected-(U4-RS485{slash}GPIO.2-Pad17)'), ('unconnected-(U3-NC-Pad10)', 'unconnected-(U4-NC-Pad10)'), ('Net-(U3-~{RST})', 'Net-(U4-~{RST})'), ('+3.3V', '+3.3V'), ('unconnected-(U3-~{RXT}{slash}GPIO.1-Pad18)', 'unconnected-(U4-~{RXT}{slash}GPIO.1-Pad18)'), ('/CP2102_0/D+', '/CP2102_1/D+'), ('unconnected-(U3-GPIO.5-Pad21)', 'unconnected-(U4-GPIO.5-Pad21)'), ('unconnected-(U3-~{WAKEUP}{slash}GPIO.3-Pad16)', 'unconnected-(U4-~{WAKEUP}{slash}GPIO.3-Pad16)'), ('TXD0', 'TXD1'), ('/CP2102_0/DSR', '/CP2102_1/DSR'), ('Net-(U3-VBUS)', 'Net-(U4-VBUS)'), ('unconnected-(U3-CHR0-Pad15)', 'unconnected-(U4-CHR0-Pad15)'), ('GND', 'GND'), ('/CP2102_0/RI', '/CP2102_1/RI'), ('unconnected-(U3-CHREN-Pad13)', 'unconnected-(U4-CHREN-Pad13)'), ('unconnected-(U3-GPIO.4-Pad22)', 'unconnected-(U4-GPIO.4-Pad22)'), ('Net-(U3-TXD)', 'Net-(U4-TXD)'), ('unconnected-(U3-GPIO.6-Pad20)', 'unconnected-(U4-GPIO.6-Pad20)'), ('unconnected-(U3-CHR1-Pad14)', 'unconnected-(U4-CHR1-Pad14)'), ('VBUS', 'VBUS'), ('/CP2102_0/D-', '/CP2102_1/D-'), ('', ''), ('Net-(U3-RXD)', 'Net-(U4-RXD)'), ('unconnected-(U3-~{SUSPEND}-Pad11)', 'unconnected-(U4-~{SUSPEND}-Pad11)'), ('unconnected-(U3-SUSPEND-Pad12)', 'unconnected-(U4-SUSPEND-Pad12)'), ('/CP2102_0/CTS', '/CP2102_1/CTS'), ('RXD0', 'RXD1')]
-02-23 01:24:13 root 299:updating GUI message: 'Replicating zones'
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 956:Replicating zones
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 963:Replicating zones on sheet ['CP2102_1']
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 714:Cannot pair src net: ['', 'CP2102_0', 'DCD'] and dst net: ['GND']
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 714:Cannot pair src net: ['RTS0'] and dst net: ['', 'CP2102_1', 'RTS']
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 714:Cannot pair src net: ['DTR0'] and dst net: ['', 'CP2102_1', 'DTR']
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 728:Net pairs for sheet ['CP2102_1'] :[('unconnected-(U3-~{TXT}{slash}GPIO.0-Pad19)', 'unconnected-(U4-~{TXT}{slash}GPIO.0-Pad19)'), ('unconnected-(U3-RS485{slash}GPIO.2-Pad17)', 'unconnected-(U4-RS485{slash}GPIO.2-Pad17)'), ('unconnected-(U3-NC-Pad10)', 'unconnected-(U4-NC-Pad10)'), ('Net-(U3-~{RST})', 'Net-(U4-~{RST})'), ('+3.3V', '+3.3V'), ('unconnected-(U3-~{RXT}{slash}GPIO.1-Pad18)', 'unconnected-(U4-~{RXT}{slash}GPIO.1-Pad18)'), ('/CP2102_0/D+', '/CP2102_1/D+'), ('unconnected-(U3-GPIO.5-Pad21)', 'unconnected-(U4-GPIO.5-Pad21)'), ('unconnected-(U3-~{WAKEUP}{slash}GPIO.3-Pad16)', 'unconnected-(U4-~{WAKEUP}{slash}GPIO.3-Pad16)'), ('TXD0', 'TXD1'), ('/CP2102_0/DSR', '/CP2102_1/DSR'), ('Net-(U3-VBUS)', 'Net-(U4-VBUS)'), ('unconnected-(U3-CHR0-Pad15)', 'unconnected-(U4-CHR0-Pad15)'), ('GND', 'GND'), ('/CP2102_0/RI', '/CP2102_1/RI'), ('unconnected-(U3-CHREN-Pad13)', 'unconnected-(U4-CHREN-Pad13)'), ('unconnected-(U3-GPIO.4-Pad22)', 'unconnected-(U4-GPIO.4-Pad22)'), ('Net-(U3-TXD)', 'Net-(U4-TXD)'), ('unconnected-(U3-GPIO.6-Pad20)', 'unconnected-(U4-GPIO.6-Pad20)'), ('unconnected-(U3-CHR1-Pad14)', 'unconnected-(U4-CHR1-Pad14)'), ('VBUS', 'VBUS'), ('/CP2102_0/D-', '/CP2102_1/D-'), ('', ''), ('Net-(U3-RXD)', 'Net-(U4-RXD)'), ('unconnected-(U3-~{SUSPEND}-Pad11)', 'unconnected-(U4-~{SUSPEND}-Pad11)'), ('unconnected-(U3-SUSPEND-Pad12)', 'unconnected-(U4-SUSPEND-Pad12)'), ('/CP2102_0/CTS', '/CP2102_1/CTS'), ('RXD0', 'RXD1')]
-02-23 01:24:13 root 299:updating GUI message: 'Replicating text'
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1034:Replicating text
-02-23 01:24:13 root 304:updating GUI with: 0
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1041:Replicating text on sheet ['CP2102_1']
-02-23 01:24:13 root 299:updating GUI message: 'Replicating drawings'
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1074:Replicating drawings
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1080:Replicating drawings on sheet ['CP2102_1']
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 223:Replication complete
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 226:Letting the user know there are some issues with replicated design
-02-23 01:24:13 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 230:Looks like the design has an exotic connectivity that is not supported by the plugin
+02-23 22:44:50 root 299:updating GUI message: 'Preparing for replication'
+02-23 22:44:50 root 304:updating GUI with: 0
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 300:Getting the list of source footprints
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 310:Getting the list of all the remaining footprints
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 317:Getting source tracks
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1176:Filtering list of tracks
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 321:Getting source zones
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 325:Getting source text items
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 329:Getting source drawing items
+02-23 22:44:50 root 299:updating GUI message: 'Replicating footprints'
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 733:Replicating footprints
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 739:Replicating footprints on sheet ['CP2102_0']
+02-23 22:44:50 root 299:updating GUI message: 'Replicating tracks'
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 898:Replicating tracks
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 904:Replicating tracks on sheet ['CP2102_0']
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 714:Cannot pair src net: ['', 'CP2102_1', 'RTS'] and dst net: ['RTS0']
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 714:Cannot pair src net: ['', 'CP2102_1', 'DTR'] and dst net: ['DTR0']
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 728:Net pairs for sheet ['CP2102_0'] :[('/CP2102_1/DCD', '/CP2102_0/DCD'), ('Net-(U4-~{RST})', 'Net-(U3-~{RST})'), ('unconnected-(U4-CHR1-Pad14)', 'unconnected-(U3-CHR1-Pad14)'), ('Net-(U4-TXD)', 'Net-(U3-TXD)'), ('/CP2102_1/D+', '/CP2102_0/D+'), ('Net-(U4-RXD)', 'Net-(U3-RXD)'), ('unconnected-(U4-~{SUSPEND}-Pad11)', 'unconnected-(U3-~{SUSPEND}-Pad11)'), ('unconnected-(U4-SUSPEND-Pad12)', 'unconnected-(U3-SUSPEND-Pad12)'), ('unconnected-(U4-CHREN-Pad13)', 'unconnected-(U3-CHREN-Pad13)'), ('/CP2102_1/D-', '/CP2102_0/D-'), ('unconnected-(U4-NC-Pad10)', 'unconnected-(U3-NC-Pad10)'), ('/CP2102_1/RI', '/CP2102_0/RI'), ('unconnected-(U4-GPIO.6-Pad20)', 'unconnected-(U3-GPIO.6-Pad20)'), ('unconnected-(U4-CHR0-Pad15)', 'unconnected-(U3-CHR0-Pad15)'), ('RXD1', 'RXD0'), ('/CP2102_1/CTS', '/CP2102_0/CTS'), ('unconnected-(U4-GPIO.5-Pad21)', 'unconnected-(U3-GPIO.5-Pad21)'), ('+3.3V', '+3.3V'), ('Net-(U4-VBUS)', 'Net-(U3-VBUS)'), ('GND', 'GND'), ('unconnected-(U4-RS485{slash}GPIO.2-Pad17)', 'unconnected-(U3-RS485{slash}GPIO.2-Pad17)'), ('TXD1', 'TXD0'), ('unconnected-(U4-~{RXT}{slash}GPIO.1-Pad18)', 'unconnected-(U3-~{RXT}{slash}GPIO.1-Pad18)'), ('', ''), ('unconnected-(U4-GPIO.4-Pad22)', 'unconnected-(U3-GPIO.4-Pad22)'), ('unconnected-(U4-~{TXT}{slash}GPIO.0-Pad19)', 'unconnected-(U3-~{TXT}{slash}GPIO.0-Pad19)'), ('unconnected-(U4-~{WAKEUP}{slash}GPIO.3-Pad16)', 'unconnected-(U3-~{WAKEUP}{slash}GPIO.3-Pad16)'), ('VBUS', 'VBUS'), ('/CP2102_1/DSR', '/CP2102_0/DSR')]
+02-23 22:44:50 root 299:updating GUI message: 'Replicating zones'
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 956:Replicating zones
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 963:Replicating zones on sheet ['CP2102_0']
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 714:Cannot pair src net: ['', 'CP2102_1', 'RTS'] and dst net: ['RTS0']
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 714:Cannot pair src net: ['', 'CP2102_1', 'DTR'] and dst net: ['DTR0']
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 728:Net pairs for sheet ['CP2102_0'] :[('/CP2102_1/DCD', '/CP2102_0/DCD'), ('Net-(U4-~{RST})', 'Net-(U3-~{RST})'), ('unconnected-(U4-CHR1-Pad14)', 'unconnected-(U3-CHR1-Pad14)'), ('Net-(U4-TXD)', 'Net-(U3-TXD)'), ('/CP2102_1/D+', '/CP2102_0/D+'), ('Net-(U4-RXD)', 'Net-(U3-RXD)'), ('unconnected-(U4-~{SUSPEND}-Pad11)', 'unconnected-(U3-~{SUSPEND}-Pad11)'), ('unconnected-(U4-SUSPEND-Pad12)', 'unconnected-(U3-SUSPEND-Pad12)'), ('unconnected-(U4-CHREN-Pad13)', 'unconnected-(U3-CHREN-Pad13)'), ('/CP2102_1/D-', '/CP2102_0/D-'), ('unconnected-(U4-NC-Pad10)', 'unconnected-(U3-NC-Pad10)'), ('/CP2102_1/RI', '/CP2102_0/RI'), ('unconnected-(U4-GPIO.6-Pad20)', 'unconnected-(U3-GPIO.6-Pad20)'), ('unconnected-(U4-CHR0-Pad15)', 'unconnected-(U3-CHR0-Pad15)'), ('RXD1', 'RXD0'), ('/CP2102_1/CTS', '/CP2102_0/CTS'), ('unconnected-(U4-GPIO.5-Pad21)', 'unconnected-(U3-GPIO.5-Pad21)'), ('+3.3V', '+3.3V'), ('Net-(U4-VBUS)', 'Net-(U3-VBUS)'), ('GND', 'GND'), ('unconnected-(U4-RS485{slash}GPIO.2-Pad17)', 'unconnected-(U3-RS485{slash}GPIO.2-Pad17)'), ('TXD1', 'TXD0'), ('unconnected-(U4-~{RXT}{slash}GPIO.1-Pad18)', 'unconnected-(U3-~{RXT}{slash}GPIO.1-Pad18)'), ('', ''), ('unconnected-(U4-GPIO.4-Pad22)', 'unconnected-(U3-GPIO.4-Pad22)'), ('unconnected-(U4-~{TXT}{slash}GPIO.0-Pad19)', 'unconnected-(U3-~{TXT}{slash}GPIO.0-Pad19)'), ('unconnected-(U4-~{WAKEUP}{slash}GPIO.3-Pad16)', 'unconnected-(U3-~{WAKEUP}{slash}GPIO.3-Pad16)'), ('VBUS', 'VBUS'), ('/CP2102_1/DSR', '/CP2102_0/DSR')]
+02-23 22:44:50 root 299:updating GUI message: 'Replicating text'
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1034:Replicating text
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1041:Replicating text on sheet ['CP2102_0']
+02-23 22:44:50 root 299:updating GUI message: 'Replicating drawings'
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1074:Replicating drawings
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1080:Replicating drawings on sheet ['CP2102_0']
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 223:Replication complete
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 226:Letting the user know there are some issues with replicated design
+02-23 22:44:50 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 230:Looks like the design has an exotic connectivity that is not supported by the plugin
  Make sure that you check the connectivity around:
-Footprint U4, pad 1
-Footprint U4, pad 24
-Footprint U4, pad 28
+Footprint U3, pad 28
+Footprint U3, pad 24
 

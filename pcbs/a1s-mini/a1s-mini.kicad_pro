@@ -45,7 +45,7 @@
         "silk_text_thickness": 0.15,
         "silk_text_upright": false,
         "zones": {
-          "min_clearance": 0.254
+          "min_clearance": 0.15239999999999998
         }
       },
       "diff_pair_dimensions": [
@@ -434,7 +434,7 @@
         "clearance": 0.1524,
         "diff_pair_gap": 0.1524,
         "diff_pair_via_gap": 0.25,
-        "diff_pair_width": 0.1524,
+        "diff_pair_width": 0.254,
         "line_style": 0,
         "microvia_diameter": 0.6,
         "microvia_drill": 0.3,
@@ -451,7 +451,7 @@
         "clearance": 0.1524,
         "diff_pair_gap": 0.1524,
         "diff_pair_via_gap": 0.25,
-        "diff_pair_width": 0.1524,
+        "diff_pair_width": 0.381,
         "line_style": 0,
         "microvia_diameter": 0.6,
         "microvia_drill": 0.3,
@@ -468,7 +468,7 @@
         "clearance": 0.1524,
         "diff_pair_gap": 0.1524,
         "diff_pair_via_gap": 0.25,
-        "diff_pair_width": 0.1524,
+        "diff_pair_width": 0.508,
         "line_style": 0,
         "microvia_diameter": 0.6,
         "microvia_drill": 0.3,
@@ -485,7 +485,7 @@
         "clearance": 0.1524,
         "diff_pair_gap": 0.1524,
         "diff_pair_via_gap": 0.25,
-        "diff_pair_width": 0.1524,
+        "diff_pair_width": 0.2032,
         "line_style": 0,
         "microvia_diameter": 0.6,
         "microvia_drill": 0.3,
@@ -505,6 +505,10 @@
     "netclass_assignments": {
       "+3.3V": "15mil",
       "+5V": "15mil",
+      "/CP2102_0/D+": "10mil",
+      "/CP2102_0/D-": "10mil",
+      "/CP2102_1/D+": "10mil",
+      "/CP2102_1/D-": "10mil",
       "AGND": "8mil",
       "LOUT": "8mil",
       "ROUT": "8mil"
