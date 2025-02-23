@@ -1,4 +1,4 @@
-21572158244427993
+21573910615700979
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -51358,6 +51358,13 @@ CP2104_USB_Board
 0
 18
 18
+DIY
+GCT_USB4105-GF-A
+
+
+0
+16
+16
 Diode_SMD
 D_0201_0603Metric
 Diode SMD 0201 (0603 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: https://www.vishay.com/docs/20052/crcw0201e3.pdf), generated with kicad-footprint-generator
@@ -83013,6 +83020,13 @@ Relay or Contactor
 4
 4
 SamacSys_Parts
+GSB1C4621DS1HR
+GSB1C4621DS1HR-1
+Connector
+0
+16
+16
+SamacSys_Parts
 INDC6060X450N
 SRN
 Inductor
@@ -83041,9 +83055,23 @@ Inductor
 2
 2
 SamacSys_Parts
+L8050QLT1G
+L8050QLT1G-1
+Integrated Circuit
+0
+3
+3
+SamacSys_Parts
 LEDC1608X55N
 LTST-C191KRKT
 LED
+0
+2
+2
+SamacSys_Parts
+LESD5D50CT1G
+LESD5D5.0CT1G-1
+TVS Diode (Bi-directional)
 0
 2
 2
@@ -83061,6 +83089,20 @@ Connector
 0
 38
 38
+SamacSys_Parts
+SJ3524SMTTRPI
+SJ-3524-SMT-TR-PI-2
+Connector
+0
+6
+6
+SamacSys_Parts
+SOD3716X145N
+1N5819HW-7-F
+Diode
+0
+2
+2
 SamacSys_Parts
 SODFL3617X108N
 SS24FL-1
@@ -83149,6 +83191,13 @@ SamacSys_Parts
 SOT230P700X180-4N
 SOT-223-
 Integrated Circuit
+0
+4
+4
+SamacSys_Parts
+TL3305BF260QG
+TL3305BF260QG-2
+Switch
 0
 4
 4
