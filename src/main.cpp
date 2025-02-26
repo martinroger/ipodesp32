@@ -79,7 +79,6 @@ void setup()
     ESP_LOGI("BRANCH", "%s", VERSION_BRANCH);
     delay(5);
 
-
     if (initializeAVRCTask() != ESP_OK)
         esp_restart();
     initializeA2DPSink();
@@ -140,7 +139,7 @@ static void processAVRCTask(void *pvParameters)
         if (uxHighWaterMark < minHightWaterMark)
         {
             minHightWaterMark = uxHighWaterMark;
-            ESP_LOGI("HWM Logging", "Process AVRC Task High Watermark: %d, used stack: %d", minHightWaterMark,
+            ESP_LOGI("HWM", "Process AVRC Task High Watermark: %d, used stack: %d", minHightWaterMark,
                      PROCESS_AVRC_TASK_STACK_SIZE - minHightWaterMark);
         }
 #endif
