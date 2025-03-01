@@ -26,7 +26,13 @@ esPod espod(Serial);
 #else
 I2SStream i2s;
 HardwareSerial ipodSerial(1);
-BluetoothA2DPSink a2dp_sink(i2s);
+BluetoothA2DPSink a2dp_sink;
+
+void read_data_stream(const uint8_t *data, uint32_t length)
+{
+	i2s.write(data, length);
+}
+
 esPod espod(ipodSerial);
 #endif
 #pragma endregion
@@ -388,6 +394,7 @@ void initializeA2DPSink()
 	cfg.copyFrom(info);
 	i2s.begin(cfg);
 #else
+	a2dp_sink.set_stream_reader(read_data_stream, false);
 	auto cfg = i2s.defaultConfig(TX_MODE);
 	cfg.pin_ws = 25;   // Default is 15
 	cfg.pin_data = 26; // Default is 22
