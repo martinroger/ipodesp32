@@ -1,54 +1,60 @@
-02-27 23:21:03 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 359:Plugin executed on: 'win32'
-02-27 23:21:03 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 360:Plugin executed with python version: '3.9.14 (main, Dec 23 2022, 23:36:19) [MSC v.1934 64 bit (AMD64)]'
-02-27 23:21:03 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 361:KiCad build version: (7.0.0)
-02-27 23:21:03 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 362:Plugin version: 2.0.9
-02-27 23:21:03 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 363:Frame repr: <wx._core.Frame object at 0x0000017D64080EE0>
-02-27 23:21:03 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 387:Preparing replicator with J5 as a reference
-02-27 23:21:03 com_github_MitjaNemec_ReplicateLayout.replicate_layout 113:getting a list of all footprints on board
-02-27 23:21:03 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 435:source anchor footprint is 'J5'
+02-28 12:59:17 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 359:Plugin executed on: 'win32'
+02-28 12:59:17 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 360:Plugin executed with python version: '3.9.14 (main, Dec 23 2022, 23:36:19) [MSC v.1934 64 bit (AMD64)]'
+02-28 12:59:17 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 361:KiCad build version: (7.0.0)
+02-28 12:59:17 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 362:Plugin version: 2.0.9
+02-28 12:59:17 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 363:Frame repr: <wx._core.Frame object at 0x000001D9984F0EE0>
+02-28 12:59:17 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 387:Preparing replicator with J5 as a reference
+02-28 12:59:17 com_github_MitjaNemec_ReplicateLayout.replicate_layout 113:getting a list of all footprints on board
+02-28 12:59:17 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 435:source anchor footprint is 'J5'
 Located on: ['USB C 0']
 With filenames: ['USBC.kicad_sch']
 With sheet_id:['USB C 0']
-02-27 23:21:03 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 442:Corresponding footprints are 
+02-28 12:59:17 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 442:Corresponding footprints are 
 [('J5', ['USB C 0']), ('J6', ['USB C 1'])]
-02-27 23:21:03 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 454:Showing dialog
-02-27 23:21:04 com_github_MitjaNemec_ReplicateLayout.replicate_layout 384:constructing a list of sheets suitable for replication on level:'USB C 0', file:'USBC.kicad_sch'
-02-27 23:21:04 com_github_MitjaNemec_ReplicateLayout.replicate_layout 421:suitable sheets are:[['USB C 1']]
-02-27 23:21:04 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1341:Level selected: ['USB C 0']
-02-27 23:21:04 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1176:Filtering list of tracks
-02-27 23:21:04 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 460:Toolbar position: wx.Point(3402, 88)
-02-27 23:21:04 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 465:Dialog position: wx.Point(3038, 88)
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 384:constructing a list of sheets suitable for replication on level:'USB C 0', file:'USBC.kicad_sch'
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 421:suitable sheets are:[['USB C 1']]
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 207:Replicating layout
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 230:Starting replication of sheets: [['USB C 1']]
+02-28 12:59:17 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 454:Showing dialog
+02-28 12:59:17 com_github_MitjaNemec_ReplicateLayout.replicate_layout 384:constructing a list of sheets suitable for replication on level:'USB C 0', file:'USBC.kicad_sch'
+02-28 12:59:17 com_github_MitjaNemec_ReplicateLayout.replicate_layout 421:suitable sheets are:[['USB C 1']]
+02-28 12:59:17 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1341:Level selected: ['USB C 0']
+02-28 12:59:17 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1176:Filtering list of tracks
+02-28 12:59:17 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 460:Toolbar position: wx.Point(3402, 88)
+02-28 12:59:17 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 465:Dialog position: wx.Point(3038, 88)
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 384:constructing a list of sheets suitable for replication on level:'USB C 0', file:'USBC.kicad_sch'
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 421:suitable sheets are:[['USB C 1']]
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 207:Replicating layout
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 230:Starting replication of sheets: [['USB C 1']]
 on level: ['USB C 0']
-with tracks=True, zone=True, text=True, text=True, intersecting=False, remove=False, locked footprints=False, group_only=False
-02-27 23:21:07 root 299:updating GUI message: 'Preparing for replication'
-02-27 23:21:07 root 304:updating GUI with: 0
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 300:Getting the list of source footprints
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 310:Getting the list of all the remaining footprints
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 317:Getting source tracks
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1176:Filtering list of tracks
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 321:Getting source zones
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 325:Getting source text items
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 329:Getting source drawing items
-02-27 23:21:07 root 299:updating GUI message: 'Replicating footprints'
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 733:Replicating footprints
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 739:Replicating footprints on sheet ['USB C 1']
-02-27 23:21:07 root 299:updating GUI message: 'Replicating tracks'
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 898:Replicating tracks
-02-27 23:21:07 root 304:updating GUI with: 0
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 904:Replicating tracks on sheet ['USB C 1']
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 728:Net pairs for sheet ['USB C 1'] :[('VBUS', 'VBUS'), ('', ''), ('unconnected-(J5-SBU2-PadB8)', 'unconnected-(J6-SBU2-PadB8)'), ('/CP2102_0/D-', '/CP2102_1/D-'), ('Net-(J5-CC1)', 'Net-(J6-CC1)'), ('GND', 'GND'), ('unconnected-(J5-SBU1-PadA8)', 'unconnected-(J6-SBU1-PadA8)'), ('Net-(J5-CC2)', 'Net-(J6-CC2)'), ('/CP2102_0/D+', '/CP2102_1/D+'), ('Net-(J5-SHELL_GND)', 'Net-(J6-SHELL_GND)'), ('+5V', '+5V')]
-02-27 23:21:07 root 299:updating GUI message: 'Replicating zones'
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 956:Replicating zones
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 963:Replicating zones on sheet ['USB C 1']
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 728:Net pairs for sheet ['USB C 1'] :[('VBUS', 'VBUS'), ('', ''), ('unconnected-(J5-SBU2-PadB8)', 'unconnected-(J6-SBU2-PadB8)'), ('/CP2102_0/D-', '/CP2102_1/D-'), ('Net-(J5-CC1)', 'Net-(J6-CC1)'), ('GND', 'GND'), ('unconnected-(J5-SBU1-PadA8)', 'unconnected-(J6-SBU1-PadA8)'), ('Net-(J5-CC2)', 'Net-(J6-CC2)'), ('/CP2102_0/D+', '/CP2102_1/D+'), ('Net-(J5-SHELL_GND)', 'Net-(J6-SHELL_GND)'), ('+5V', '+5V')]
-02-27 23:21:07 root 299:updating GUI message: 'Replicating text'
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1034:Replicating text
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1041:Replicating text on sheet ['USB C 1']
-02-27 23:21:07 root 299:updating GUI message: 'Replicating drawings'
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1074:Replicating drawings
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1080:Replicating drawings on sheet ['USB C 1']
-02-27 23:21:07 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 223:Replication complete
+with tracks=True, zone=True, text=True, text=True, intersecting=False, remove=True, locked footprints=False, group_only=False
+02-28 12:59:22 root 299:updating GUI message: 'Preparing for replication'
+02-28 12:59:22 root 304:updating GUI with: 0
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 300:Getting the list of source footprints
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 310:Getting the list of all the remaining footprints
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 317:Getting source tracks
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1176:Filtering list of tracks
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 321:Getting source zones
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 325:Getting source text items
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 329:Getting source drawing items
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 262:Removing tracks and zones, before footprint placement
+02-28 12:59:22 root 299:updating GUI message: 'Removing zones and tracks'
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1122:Remove bounding box top:101024000, bottom:114569000, Left:170441000, Right:185755000
+02-28 12:59:22 root 299:updating GUI message: 'Replicating footprints'
+02-28 12:59:22 root 304:updating GUI with: 0
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 733:Replicating footprints
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 739:Replicating footprints on sheet ['USB C 1']
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 270:Removing tracks and zones, after footprint placement
+02-28 12:59:22 root 299:updating GUI message: 'Removing zones and tracks'
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1122:Remove bounding box top:101024000, bottom:114569000, Left:170441000, Right:185755000
+02-28 12:59:22 root 299:updating GUI message: 'Replicating tracks'
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 898:Replicating tracks
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 904:Replicating tracks on sheet ['USB C 1']
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 728:Net pairs for sheet ['USB C 1'] :[('/CP2102_0/D+', '/CP2102_1/D+'), ('GND', 'GND'), ('/CP2102_0/D-', '/CP2102_1/D-'), ('Net-(J5-SHELL_GND)', 'Net-(J6-SHELL_GND)'), ('Net-(J5-CC2)', 'Net-(J6-CC2)'), ('', ''), ('+5V', '+5V'), ('unconnected-(J5-SBU2-PadB8)', 'unconnected-(J6-SBU2-PadB8)'), ('unconnected-(J5-SBU1-PadA8)', 'unconnected-(J6-SBU1-PadA8)'), ('VBUS', 'VBUS'), ('Net-(J5-CC1)', 'Net-(J6-CC1)')]
+02-28 12:59:22 root 299:updating GUI message: 'Replicating zones'
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 956:Replicating zones
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 963:Replicating zones on sheet ['USB C 1']
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 728:Net pairs for sheet ['USB C 1'] :[('/CP2102_0/D+', '/CP2102_1/D+'), ('GND', 'GND'), ('/CP2102_0/D-', '/CP2102_1/D-'), ('Net-(J5-SHELL_GND)', 'Net-(J6-SHELL_GND)'), ('Net-(J5-CC2)', 'Net-(J6-CC2)'), ('', ''), ('+5V', '+5V'), ('unconnected-(J5-SBU2-PadB8)', 'unconnected-(J6-SBU2-PadB8)'), ('unconnected-(J5-SBU1-PadA8)', 'unconnected-(J6-SBU1-PadA8)'), ('VBUS', 'VBUS'), ('Net-(J5-CC1)', 'Net-(J6-CC1)')]
+02-28 12:59:22 root 299:updating GUI message: 'Replicating text'
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1034:Replicating text
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1041:Replicating text on sheet ['USB C 1']
+02-28 12:59:22 root 299:updating GUI message: 'Replicating drawings'
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1074:Replicating drawings
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.replicate_layout 1080:Replicating drawings on sheet ['USB C 1']
+02-28 12:59:22 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 223:Replication complete
