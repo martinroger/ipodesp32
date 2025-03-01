@@ -387,18 +387,12 @@ void initializeA2DPSink()
     i2s.begin(cfg);
 #else
     auto cfg = i2s.defaultConfig(TX_MODE);
-    cfg.pin_ws = 25;
-    cfg.pin_bck = 26;
-    cfg.pin_data = 22;
+    cfg.pin_ws = 26; // Default is 15
+    cfg.pin_data = 27; // Default is 22
+    cfg.pin_bck = 14; // Default is 14
     cfg.sample_rate = 44100;
     cfg.i2s_format = I2S_LSB_FORMAT;
     i2s.begin(cfg);
-    /*
-    Default pins are as follows :
-    WSEL  ->  25
-    DIN   ->  22
-    BCLK  ->  26
-    */
 #endif
 
     a2dp_sink.set_auto_reconnect(true);
