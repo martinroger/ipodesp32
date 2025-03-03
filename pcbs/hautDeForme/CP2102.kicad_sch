@@ -5,9 +5,9 @@
   (paper "A4")
 
   (title_block
-    (title "CP2102 28Pin Auxiliary circuit")
-    (date "2025-03-01")
-    (rev "0.2.0")
+    (title "Haut de Forme")
+    (date "2025-03-03")
+    (rev "0.1.0")
     (company "Martin Roger")
   )
 
@@ -333,7 +333,6 @@
       )
     )
   )
-
 
   (junction (at 142.24 58.42) (diameter 0) (color 0 0 0 0)
     (uuid 24bc4dc9-80a4-481f-aaee-e204c5eac0cd)
@@ -927,7 +926,7 @@
   (symbol (lib_id "Device:R_Small") (at 107.95 86.36 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid b75854b2-ec08-47b3-b7d2-0940057c1966)
-    (property "Reference" "R15" (at 107.95 81.28 90)
+    (property "Reference" "R23" (at 107.95 81.28 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "22.1K 1%" (at 107.95 83.82 90)
@@ -1100,7 +1099,7 @@
   (symbol (lib_id "Device:R_Small") (at 113.03 95.25 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid e7d29a54-3b53-4e17-a126-0bb480349ad9)
-    (property "Reference" "R16" (at 115.57 94.615 0)
+    (property "Reference" "R24" (at 115.57 94.615 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "47.5K 1%" (at 115.57 97.155 0)
@@ -1141,7 +1140,7 @@
   (symbol (lib_id "Interface_USB:CP2102N-Axx-xQFN28") (at 153.67 101.6 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid fa806bcf-feac-415a-a938-87b28985e173)
-    (property "Reference" "U3" (at 155.6259 134.62 0)
+    (property "Reference" "U4" (at 155.6259 134.62 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "CP2102N" (at 155.6259 137.16 0)

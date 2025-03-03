@@ -5,9 +5,9 @@
   (paper "A4")
 
   (title_block
-    (title "A1S Mini Board")
-    (date "2025-03-01")
-    (rev "0.2.0")
+    (title "Haut de Forme")
+    (date "2025-03-03")
+    (rev "0.1.0")
     (company "Martin Roger")
   )
 
@@ -1643,7 +1643,7 @@
   )
 
   (symbol (lib_id "Connector_Generic:Conn_02x07_Odd_Even") (at 124.46 104.14 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
+    (in_bom no) (on_board yes) (dnp yes)
     (uuid 44b75e56-8d55-4519-bac6-bfc1c143e015)
     (property "Reference" "J1" (at 125.73 91.44 0)
       (effects (font (size 1.27 1.27)))

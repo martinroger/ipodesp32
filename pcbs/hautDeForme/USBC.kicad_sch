@@ -5,8 +5,9 @@
   (paper "A4")
 
   (title_block
-    (date "2025-03-01")
-    (rev "0.2.0")
+    (title "Haut de Forme")
+    (date "2025-03-03")
+    (rev "0.1.0")
     (company "Martin Roger")
   )
 
@@ -456,7 +457,6 @@
     )
   )
 
-
   (junction (at 105.41 78.74) (diameter 0) (color 0 0 0 0)
     (uuid 6aaba72c-4e15-492a-b759-38422b86e1eb)
   )
@@ -668,7 +668,7 @@
   (symbol (lib_id "USB4105-GF-A:USB4105-GF-A") (at 85.09 58.42 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 0f7cd647-f895-495b-810b-45ba79af6943)
-    (property "Reference" "J5" (at 85.09 41.91 0)
+    (property "Reference" "J6" (at 85.09 41.91 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "USB4105-GF-A" (at 85.09 44.45 0)
@@ -735,7 +735,7 @@
   (symbol (lib_id "Device:R_Small") (at 123.19 55.88 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 44bd7630-8582-4b23-8677-87b291487fce)
-    (property "Reference" "R22" (at 123.19 50.8 90)
+    (property "Reference" "R30" (at 123.19 50.8 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "5.1K 1%" (at 123.19 53.34 90)
@@ -820,7 +820,7 @@
   (symbol (lib_id "SamacSys_Parts:1N5819HW-7-F") (at 176.53 33.02 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 747c773e-167b-435c-aaeb-4f78d72f2bc2)
-    (property "Reference" "D10" (at 168.91 26.67 0)
+    (property "Reference" "D14" (at 168.91 26.67 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1N5819HW-7-F" (at 168.91 29.21 0)
@@ -876,7 +876,7 @@
   (symbol (lib_id "Device:R_Small") (at 59.69 53.34 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 9791d902-ee39-4ec3-b200-320171eb1037)
-    (property "Reference" "R20" (at 59.69 48.26 90)
+    (property "Reference" "R28" (at 59.69 48.26 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "5.1K 1%" (at 59.69 50.8 90)
