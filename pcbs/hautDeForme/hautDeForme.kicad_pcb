@@ -2087,6 +2087,11 @@
       (net 44 "Net-(J6-SHELL_GND)") (pinfunction "SHELL_GND__2") (pintype "power_in") (solder_mask_margin 0.102) (tstamp 69c1c957-4189-4a51-99f9-38a22e972a41))
     (pad "SH4" thru_hole oval (at 4.32 0 270) (size 1 1.8) (drill oval 0.6 1.4) (layers "*.Cu" "*.Mask")
       (net 44 "Net-(J6-SHELL_GND)") (pinfunction "SHELL_GND__3") (pintype "power_in") (solder_mask_margin 0.102) (tstamp 4f52d30a-1c8e-444c-908a-722046aa8d03))
+    (model "${KICAD_GIT_LIB_DIR}/3d/USB4105-GF-A.step"
+      (offset (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz -90 0 0))
+    )
   )
 
   (footprint "Package_TO_SOT_SMD:SOT-143" (layer "B.Cu")
