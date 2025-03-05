@@ -1,41 +1,89 @@
 [![PlatformIO CI](https://github.com/martinroger/ipodesp32/actions/workflows/platformIO.yml/badge.svg)](https://github.com/martinroger/ipodesp32/actions/workflows/platformIO.yml)
 
-# iPodESP32 : an iPod emulator for 2nd gen BMW Minis
+# iPodESP32 : an iPod emulator for 2nd gen Minis
 
-## What is it for?
+## Summary
 
-**TL;DR : This is an iPod emulator that creates a bridge between an older car head unit (typically one found on a LCI BMW Mini Cooper, aka "Boost CD") and a mobile phone, and allows streaming audio content over A2DP to the car while retaining the radio commands such as Next, Previous and Track metadata display.**
+**Second generation Minis (R56, R57, R58...) did not come with Bluetooth music streaming unless the Visual Boost or Mini Connected navigation option was selected (which wasn't hugely popular). Some of the later Minis (usually called LCI, or facelift Mini) started shipping with iPod support in the form of an USB receptacle, a 3.5mm AUX input and a special "Y-Cable". This repository is an attempt at bridging that gap with an ESP32 and a bag of tricks.**
 
-Second-generation BMW Mini Coopers (R56, 55, 57, 58...) usually did not come with Bluetooth music streaming capabilities, except for some that had the "Visual Boost" or "Mini Connected" packages selected. These are easily identifiable because they replace the large central speedometer with a touch-screen surrounded by a speedo ring.
+## How to identify compatible Minis
+
+This solution is theoretically compatible with any facelift Mark II Mini, so usually with a manufacturing date after 2009 (varying a bit by market). This encompasses also Countryman minis and might even work on BMW vehicles, but remains untested.
+
+An example of a 2013 post-facelift Mini R56 :
 
 ![A 2013 Mini Cooper S R56 GP2](/img/miniGP2.png)
 
-In the case of "LCI" (aka facelift), post-2010 Mini Coopers and derivatives, a good portion of them came with the "Radio Boost CD" head unit, which in some cases may feature Hands-free Bluetooth, USB input and an Aux 3.5mm jack input (typically those with option $6ND).
+The key requirements to make sure this can be used on a Mini are :
+
+- A "Radio Boost CD" head unit, as pictured below, regardless of the availability of the Hands-Free Bluetooth Phone calls (option $6ND)
+- The USB input and 3.5mm jack AUX input receptacle, usually installed forward of the cup holders. See below for visual references.
+- A PC with a recent version of Windows or Linux
+- An internet connection to clone this project, build it, flash it.
+- A compatible ESP32 hardware... see the section below, loads are supported !
+- No actual iPod or Y cable is needed !
 
 ![Radio Boost CD](/img/boostCD.png)
 
-Here is what the USB+Aux connection typically looks like :
+_A radio boot CD head unit, taken out of the center console_
 
 ![Mini R56 USB Aux connection block](/img/usbAux.png)
 
-A large number of thoses are capable of reading USB drives and the likes on the USB input, and in some cases they also can "control" good old 30-pins iPods, via a now-rare and often-faked "Y-cable".
+_The USB+Aux receptacle installed forward of the cupholders_
 
-This normally allows access to a special audio source on the screen ("iPod") and provides some niceties like Playback control, metadata display and even Playlist/Artist/Album/Genre browsing.
+In theory these should be the only requirements, though it is possible that in some cases the car requires some coding to enable iPod support even despite the presence of the correct head unit and USB+AUX receptacle.
 
-Unfortunately, connecting any other device on this USB will usually not work, as it is not operating in Host mode and our modern phones are now too advanced anyways.
+## Alternative solutions
 
-As a palliative, some companies like **[Bovee](https://a.co/d/5lkZTkV)** or **[Gitank](https://thegitank.com/products/gitank-bluetooth-5-0-aptx-hd-adapter-with-y-cable-for-bmw-and-mini-cooper-usb-aux-ipod-iphone-music-interface-300b)** created some similar types of emulators, that connect to the USB + Aux and appear on the phones as BT Speakers.
+Over the year, some companies (mostly in China) have developped similar devices, such as the ones sold by **[Bovee](https://a.co/d/5lkZTkV)** or **[Gitank](https://thegitank.com/products/gitank-bluetooth-5-0-aptx-hd-adapter-with-y-cable-for-bmw-and-mini-cooper-usb-aux-ipod-iphone-music-interface-300b)**. The general principle is the same : a BT speaker is running an A2DP profile, while sufficient iPod-like communication is performed with the Mini to make it think there is an actual iPod connected.
 
 I have had a very mixed bag of results with those, and it appeared to be even worse when using an Android phone, as the Playback/Synchronisation/Metadata seemed to be mostly reserved to iPhone users.
 
-Taking this into account, I chose to combine together a *USB <-> Serial* interface connected to an *ESP32 WROOM32* development board, hook this up to an external DAC with a 3.5mm audio jack socket, and finally to spin some code in order to make my Mini think that there is a very special type of iPod connected to it... the kind that doesn't exist !
+## The iPodESP32 solution
 
-**The objectives were** :
-- To retain control of the playback via the car's inputs (Next/Previous buttons, radio knob, steering wheel buttons)
-- To be able to display some metadata on the screen so it doesn't look ugly
-- To not modify anything irreversibly on the car
-- To stream music from the phone to the car as seamlessly as possible, via BT
+Beyond the lame name, the solution proposed here does the following :
 
+- Emulates an iPod Classic 5 - the U2 edition to be precise
+- Passes song metadata from the phone/tablet (**Android or iOs**... or even others ?) regardless of what is playing the songs (Spotify remains the most tested to this date)
+- Enables direct playback control from the radio interface, including steering wheel controls if present
+- Auto-reconnects on ignition on, auto-pauses on ignition off
+- Auto-pause and passes to whichever handsfree solution is present in case of phone call
+- Provides many different interfaces for debug logging... because surely I didn't catch all them bugs
+- Does not require any permanent modification of the car
+
+## Supported base hardware setups
+
+Because I could not find a one-size-fits-all solution (see [further technical details if you are curious](/doc/theoryOfOperation.md)), I devised some "standard" solutions. It is important to mention however, that this project's SW can easily be adapted to slight variations of the hardware. There are essentially two families of hardware that are implemented today, to support a variety of budgets : DAC-based, and CODEC-based. The performance difference between the two is barely noticeable.
+
+### DAC-based hardware : ESP32 WROOM32 devkits, UDA1334A "Adafruit" DAC, CP2104 Serial interface
+
+This is the most basic, and most "DIY"-looking solution. It is also one of the least compact but the cheapest to build and try out the functionality with reversible costs. The following hardware is required :
+
+- An **ESP WROOM32 MCU-based** devkit board, the most commons being the "ESP32 DevKit C V4" for which there are [countless clones](https://www.az-delivery.de/it/products/esp-32-dev-kit-c-v4), or the [NodeMCU 32S](https://www.waveshare.com/nodemcu-32s.htm) . In general the hard requirements are that **BT Classic or BT EDR be supported**, that there is enough Flash space (over 2MB required, >=4MB advised). If you want to use the "Sandwich" carrier board to make things clean, be wary of use a compatible pin mapping. Please note : MCUs like the **ESP32-S3 that only support Bluetooth Low Energy are NOT SUPPORTED !!**
+![Waveshare NodeMCU32S](/img/nodeMCU32s.png) 
+- An "Adafruit" UDA1334 DAC breakout board. I do love the original Adafruit board, however they are difficult and expensive to get hands on in Europe, so I can also recommend like-for-like clones which are [quite available all over the place](https://www.amazon.com/AITRIP-CJMCU-1334-UDA1334A-Decoder-Arduino/dp/B09DG21C7G)
+![UDA1334A DAC Decoder](/img/UDA1334A.png)
+- A CP2104-based USB-UART interface, with one absolutely essential requirement : **the "DCD" (Device Carrier Detect) pin MUST be accessible**. My personal favourite is the very commonly found interface usually stamped "CNT-003B", which has the good taste of also being compatible with the "Sandwich" carrier board (if used). Please note : after modifying the VID and PID on the UART interface, it will NOT be usable without reprogramming in other applications.
+![CNT-003B](/img/CNT003B.jpg)
+- Optionally, I have designed a cheap PCB carrier called the "Sandwich" board, which can be used for doing the right connections and keeping things tight. You can also use jumper cables and prototyping boards first !
+- A handful of 2.54mm header pins, if not supplied with the various boards.
+
+Please note the following : 
+- Usually the USB-UART comes with horizontal 2.54mm headers already soldered (as in the picture). If you want to use the sandwich board, **you will have to unsolder them**. In all cases it is recommended to solder header rows to both lines of 6pins on the sides, for easier mounting in the carrier board.
+- Using the [software provided by Silabs in AN220](https://www.silabs.com/documents/public/example-code/AN220SW.zip) (the makers of the UART chip), you will need to edit the VID and PID of the chip to emulate a Prolific PL2303HXA. This means editing the Vendor ID to 0x067b and the Product ID to 0x2303 (see further for screenshots and a step-by-step). This is not irreversible, but may cause a BSOD in Windows, and is [hard to reverse without Linux access](https://blog.manzelseet.com/fixing-cp2102-with-custom-vidpid.html).
+- Variants of this solution are easy to do with different DAC units, such as the popular PCM5102 breakout board. However, for those no sandwich is provided ...
+
+Respect where is due to the underlying libraries needed for this sort of build : 
+- [AudioTools](https://github.com/pschatzmann/arduino-audio-tools)
+- [ESP32-A2DP library](https://github.com/pschatzmann/ESP32-A2DP)
+
+For complete and detailed assembly instructions, please refer to **this Wiki page**.
+
+---
+
+---
+
+---
 ## How does it work ?
 ### General aspects
 
@@ -47,7 +95,7 @@ This offers a packet-parsing method, processing loops and a bunch of properties 
 
 All of this fancy code is living on an **ESP32 WROOM32 MCU**, and for the sake of easy sourcing, in my case a *[NodeMCU 32S](https://www.waveshare.com/nodemcu-32s.htm)*. Please do not that alternative ESP MCUs might work as long as they have enough Flash space (about 2MB), RAM (320kB or more) and processing power... on top of supporting Bluetooth Classic (**so no ESP32-S3 for example**).
 
-![Waveshare NodeMCU32S](/img/nodeMCU32s.png)
+
 
 The I2S stream generated from the ESP32 goes to a DAC chip (in my case an *UDA1334A*, but others are usable) to generate an audio signal on the aux Jack, and the Car <-> ESP32 interfacing is done through a very specific Serial interface chip (more on that below).
 
@@ -92,7 +140,7 @@ Before I may get around to providing an all-in-one board, the best solution is t
 
 In my case I went for a **UDA1334A**, which is really a copy of a board apparently originally sold by Adafruit, and is [quite available all over the place](https://www.amazon.com/AITRIP-CJMCU-1334-UDA1334A-Decoder-Arduino/dp/B09DG21C7G).
 
-![UDA1334A DAC Decoder](/img/UDA1334A.png)
+
 
 ### Jumper wires
 
