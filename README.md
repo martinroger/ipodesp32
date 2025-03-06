@@ -70,14 +70,40 @@ This is the most basic, and most "DIY"-looking solution. It is also one of the l
 
 Please note the following : 
 - Usually the USB-UART comes with horizontal 2.54mm headers already soldered (as in the picture). If you want to use the sandwich board, **you will have to unsolder them**. In all cases it is recommended to solder header rows to both lines of 6pins on the sides, for easier mounting in the carrier board.
-- Using the [software provided by Silabs in AN220](https://www.silabs.com/documents/public/example-code/AN220SW.zip) (the makers of the UART chip), you will need to edit the VID and PID of the chip to emulate a Prolific PL2303HXA. This means editing the Vendor ID to 0x067b and the Product ID to 0x2303 (see further for screenshots and a step-by-step). This is not irreversible, but may cause a BSOD in Windows, and is [hard to reverse without Linux access](https://blog.manzelseet.com/fixing-cp2102-with-custom-vidpid.html).
+- Using the [software provided by Silabs in AN220](https://www.silabs.com/documents/public/example-code/AN220SW.zip) (the makers of the UART chip), you will need to edit the VID and PID of the chip to emulate a Prolific PL2303HXA. This means editing the Vendor ID to 0x067b and the Product ID to 0x2303 ([see further for screenshots and a step-by-step](https://github.com/martinroger/ipodesp32/wiki/Editing-the-CP210x-VID-and-PID)). This is not irreversible, but may cause a BSOD in Windows, and is [hard to reverse without Linux access](https://blog.manzelseet.com/fixing-cp2102-with-custom-vidpid.html).
 - Variants of this solution are easy to do with different DAC units, such as the popular PCM5102 breakout board. However, for those no sandwich is provided ...
 
 Respect where is due to the underlying libraries needed for this sort of build : 
 - [AudioTools](https://github.com/pschatzmann/arduino-audio-tools)
 - [ESP32-A2DP library](https://github.com/pschatzmann/ESP32-A2DP)
 
-For complete and detailed assembly instructions, please refer to **this Wiki page**.
+For complete and detailed assembly instructions, please refer to [**this Wiki page**](https://github.com/martinroger/ipodesp32/wiki/DIY-DAC%E2%80%90based-solution-(UDA1334A)).
+
+### CODEC-based hardware : AiThinker ESP A1S AudioKit (+ recommended "Top Hat") board
+
+**At this date, this is the recommended option for people wanting a "clean" solution**
+
+The ESP32-WROOM and ESP32-WROVER modules have been transformed in audio-specific modules by Ai-Thinker called the ESP32 A1S. It is now easily found pre-assembled on a nifty audio development board usually called "ESP32 AudioKit", with a few different revisions available on popular Chinese websites.
+
+![ESP32 A1S AudioKit](/img/esp32A1SAudioKit.jpg)
+
+The board is quite well made and is supported by another awesome library called [arduino-audio-driver](https://github.com/pschatzmann/arduino-audio-driver) that integrates perfectly with [AudioTools](https://github.com/pschatzmann/arduino-audio-tools) and [ESP32-A2DP library](https://github.com/pschatzmann/ESP32-A2DP). Two issues remain with the board however : the DCD pin of the onboard CP2102 UART chip is not easily accessible (and not grounded) and the interface itself is sensitive to fluctuations in the 5V supply of the USB, which I have observed to happen, because of how it is wired. 
+
+To remedy those hardware shortcomings, two options exist : 
+- Combining an LDO breakout board (5V->3V3, recommended 0.8A output and some ESD protection diodes ) such as [the ones based on the ever popular AMS1117-3V3](https://a.co/d/54oFsbZ) or even some switched break-out 3V3 power supplies, as long as their output voltage is relatively "clean", with a CP2102 or CP2104-based USB-UART breakout board **with accessible DCD pin**. A bit of soldering and/or wires is necessary, [correct connections are available on this wiki page.](https://github.com/martinroger/ipodesp32/wiki/AudioKit---floating-LDO-and-UART-interface)
+- Buying/Copying the provided "Haut-de-forme" board (Top-Hat, in French) which essentially integrates a CP2104 UART interface with an LDO in a convenient form factor that mounts quite low on top of the AudioKit board. Full instructions are available on [this wiki page.](https://github.com/martinroger/ipodesp32/wiki/AudioKit-and-Haut%E2%80%90de%E2%80%90Forme-board)
+
+In any of the scenarios it will be necessary to edit the VID and PID on the UART interface in order for it to be recognized by the car. [Same instructions apply as for the more DIY solution.](https://github.com/martinroger/ipodesp32/wiki/Editing-the-CP210x-VID-and-PID)
+
+To note : there is the possibility of modifying the board itself by uncovering some of the solder mask near the DCD pin of the CP2102 and trying to hand solder a bridge or an enameled wire. It is quite difficult to do as the package is a QFN2x, and issues can still persist if there are inconsistencies in the grounding or if the USB supply on the car is a bit fluctuating, as the UART chip is **not powered from the onboard LDO**. There is no easy palliative for that shortcoming, so it may work inconsistently (in my experience at least).
+
+### CODEC-based hardware : A1S Mini Board AiO
+
+The Audiokit board features a large amount of unused hardware (AMP outputs, microphones, line-in) for this application, and has the aforementioned circuitry shortcomings. In order to propose an All-in-One solution, I designed the "A1S Mini Board" which is essentially a remix of the AudioKit hardware, featuring the following :
+- 2 USB-UART converters : one for communication with the car (and editable VID/PID) and one for programming/updating.
+- A 3.5mm audio jack for connection to the AUX output
+
+Unfortunately, because the ESP32 A1S module is currently not in production anymore, the board comes without it and requires sourcing and soldering one separately, until I can find a different solution with the PCB supplier. Limited batches may be produced if there is interest !
 
 ---
 
