@@ -23,7 +23,9 @@ The key requirements to make sure this can be used on a Mini are :
 - A compatible ESP32 hardware... see the section below, loads are supported !
 - No actual iPod or Y cable is needed !
 
+<p align="center">
 ![Radio Boost CD](/img/boostCD.png)
+</p>
 
 _A radio boot CD head unit, taken out of the center console_
 
@@ -60,13 +62,21 @@ Because I could not find a one-size-fits-all solution (see [further technical de
 This is the most basic, and most "DIY"-looking solution. It is also one of the least compact but the cheapest to build and try out the functionality with reversible costs. The following hardware is required :
 
 - An **ESP WROOM32 MCU-based** devkit board, the most commons being the "ESP32 DevKit C V4" for which there are [countless clones](https://www.az-delivery.de/it/products/esp-32-dev-kit-c-v4), or the [NodeMCU 32S](https://www.waveshare.com/nodemcu-32s.htm) . In general the hard requirements are that **BT Classic or BT EDR be supported**, that there is enough Flash space (over 2MB required, >=4MB advised). If you want to use the "Sandwich" carrier board to make things clean, be wary of use a compatible pin mapping. Please note : MCUs like the **ESP32-S3 that only support Bluetooth Low Energy are NOT SUPPORTED !!**
+
 ![Waveshare NodeMCU32S](/img/nodeMCU32s.png) 
+
 - An "Adafruit" UDA1334 DAC breakout board. I do love the original Adafruit board, however they are difficult and expensive to get hands on in Europe, so I can also recommend like-for-like clones which are [quite available all over the place](https://www.amazon.com/AITRIP-CJMCU-1334-UDA1334A-Decoder-Arduino/dp/B09DG21C7G)
+
 ![UDA1334A DAC Decoder](/img/UDA1334A.png)
+
 - A CP2104-based USB-UART interface, with one absolutely essential requirement : **the "DCD" (Device Carrier Detect) pin MUST be accessible**. My personal favourite is the very commonly found interface usually stamped "CNT-003B", which has the good taste of also being compatible with the "Sandwich" carrier board (if used). Please note : after modifying the VID and PID on the UART interface, it will NOT be usable without reprogramming in other applications.
+
 ![CNT-003B](/img/CNT003B.jpg)
+
 - Optionally, I have designed a cheap PCB carrier called the "Sandwich" board, which can be used for doing the right connections and keeping things tight. You can also use jumper cables and prototyping boards first !
 - A handful of 2.54mm header pins, if not supplied with the various boards.
+
+![Sandwich board render](/img/sandwichBoard.png)
 
 Please note the following : 
 - Usually the USB-UART comes with horizontal 2.54mm headers already soldered (as in the picture). If you want to use the sandwich board, **you will have to unsolder them**. In all cases it is recommended to solder header rows to both lines of 6pins on the sides, for easier mounting in the carrier board.
@@ -93,6 +103,14 @@ To remedy those hardware shortcomings, two options exist :
 - Combining an LDO breakout board (5V->3V3, recommended 0.8A output and some ESD protection diodes ) such as [the ones based on the ever popular AMS1117-3V3](https://a.co/d/54oFsbZ) or even some switched break-out 3V3 power supplies, as long as their output voltage is relatively "clean", with a CP2102 or CP2104-based USB-UART breakout board **with accessible DCD pin**. A bit of soldering and/or wires is necessary, [correct connections are available on this wiki page.](https://github.com/martinroger/ipodesp32/wiki/AudioKit---floating-LDO-and-UART-interface)
 - Buying/Copying the provided "Haut-de-forme" board (Top-Hat, in French) which essentially integrates a CP2104 UART interface with an LDO in a convenient form factor that mounts quite low on top of the AudioKit board. Full instructions are available on [this wiki page.](https://github.com/martinroger/ipodesp32/wiki/AudioKit-and-Haut%E2%80%90de%E2%80%90Forme-board)
 
+![LDO breakout board](/img/LDOBoard.jpg)
+
+_A common AMS1117 LDO breakout board_
+
+![Haut de forme board](/img/hautDeForme.png)
+
+_A render of the Haut de Forme board_
+
 In any of the scenarios it will be necessary to edit the VID and PID on the UART interface in order for it to be recognized by the car. [Same instructions apply as for the more DIY solution.](https://github.com/martinroger/ipodesp32/wiki/Editing-the-CP210x-VID-and-PID)
 
 To note : there is the possibility of modifying the board itself by uncovering some of the solder mask near the DCD pin of the CP2102 and trying to hand solder a bridge or an enameled wire. It is quite difficult to do as the package is a QFN2x, and issues can still persist if there are inconsistencies in the grounding or if the USB supply on the car is a bit fluctuating, as the UART chip is **not powered from the onboard LDO**. There is no easy palliative for that shortcoming, so it may work inconsistently (in my experience at least).
@@ -104,6 +122,10 @@ The Audiokit board features a large amount of unused hardware (AMP outputs, micr
 - A 3.5mm audio jack for connection to the AUX output
 
 Unfortunately, because the ESP32 A1S module is currently not in production anymore, the board comes without it and requires sourcing and soldering one separately, until I can find a different solution with the PCB supplier. Limited batches may be produced if there is interest !
+
+![A1S Mini board](/img/a1sMini.png)
+
+_A render of the A1S Mini board_
 
 ---
 
