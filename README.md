@@ -23,9 +23,7 @@ The key requirements to make sure this can be used on a Mini are :
 - A compatible ESP32 hardware... see the section below, loads are supported !
 - No actual iPod or Y cable is needed !
 
-<p align="center">
 ![Radio Boost CD](/img/boostCD.png)
-</p>
 
 _A radio boot CD head unit, taken out of the center console_
 
@@ -55,7 +53,7 @@ Beyond the lame name, the solution proposed here does the following :
 
 ## Supported base hardware setups
 
-Because I could not find a one-size-fits-all solution (see [further technical details if you are curious](/doc/theoryOfOperation.md)), I devised some "standard" solutions. It is important to mention however, that this project's SW can easily be adapted to slight variations of the hardware. There are essentially two families of hardware that are implemented today, to support a variety of budgets : DAC-based, and CODEC-based. The performance difference between the two is barely noticeable.
+Because I could not find a one-size-fits-all solution (see [further technical details if you are curious](https://github.com/martinroger/ipodesp32/wiki/Theory-Of-Operation)), I devised some "standard" solutions. It is important to mention however, that this project's SW can easily be adapted to slight variations of the hardware. There are essentially two families of hardware that are implemented today, to support a variety of budgets : DAC-based, and CODEC-based. The performance difference between the two is barely noticeable.
 
 ### DAC-based hardware : ESP32 WROOM32 devkits, UDA1334A "Adafruit" DAC, CP2104 Serial interface
 
@@ -127,106 +125,8 @@ Unfortunately, because the ESP32 A1S module is currently not in production anymo
 
 _A render of the A1S Mini board_
 
----
 
----
-
----
-## How does it work ?
-### General aspects
-
-The iPodESP32 relies primarily on three specific aspects :
--  **A2DP Bluetooth streaming to an I2S DAC** : this is done using the most excellent combination of [pschatzmann's ESP32-A2DP](https://github.com/pschatzmann/ESP32-A2DP) library, which provides an Arduino-compatible wrapper of the ESP A2DP API and links it with his [AudioTools](https://github.com/pschatzmann/arduino-audio-tools) library, which allows for advanced I2S audio streaming control to a DAC.
--  **AVRCP Control of the "target" over Bluetooth**, as in Playback control of the target Phone : this is integrated in the [ESP32-A2DP library](https://github.com/pschatzmann/ESP32-A2DP) and allows to control playback and fetch metadata from the source phone
--  **The iPod-emulating esPod class**, which is available in this repository, that provides a limited implementation of Apple's iAP accessory communication protocol, from the point of view of an iPod Classic 5.5.
-This offers a packet-parsing method, processing loops and a bunch of properties to monitor and act upon the "state" of this "iPod" and allow it to control and receive commands for playback. This is the bit of code I developped.
-
-All of this fancy code is living on an **ESP32 WROOM32 MCU**, and for the sake of easy sourcing, in my case a *[NodeMCU 32S](https://www.waveshare.com/nodemcu-32s.htm)*. Please do not that alternative ESP MCUs might work as long as they have enough Flash space (about 2MB), RAM (320kB or more) and processing power... on top of supporting Bluetooth Classic (**so no ESP32-S3 for example**).
-
-
-
-The I2S stream generated from the ESP32 goes to a DAC chip (in my case an *UDA1334A*, but others are usable) to generate an audio signal on the aux Jack, and the Car <-> ESP32 interfacing is done through a very specific Serial interface chip (more on that below).
-
-### Operating sequence
-
-1.  **The iPodESP32 boots up** when power comes in the USB port of the car, and waits silently for a device to connect with it over Bluetooth.
-2.  **Once a device connects to the iPodESP32**, it starts listening to the handshake packets coming from the vehicle and responds favourably to them, signalling that an iPod 5.5 is connected and ready, with Shuffle Off and the first track loaded. This makes the iPod option available in the media sources.
-3.  **Once the audio source is pointing to the iPod on the Mini**, the iPodESP32 attempts to start playback, which usually launches the default media player, and fetches the current song metadata. From the perspective of the vehicle this means that there should be an audio stream going to the Aux jack and music should be playing.
-4.  **When a song ends** and the list moves to the next song, the iPodESP32 attempts to fetch the new metadata and signals to the Mini that a new song is playing. This usually works OK and the displayed data is updated.
-5.  **When a track is skipped** - backwards or forwards - via the Mini head unit, the iPodESP32 tries to reproduce the correct command on the phone via AVRCP. This usually leads to a successful load of the new track metadata too.
-6.  **When the car is stopped** or the iPod mode is left, the iPodESP32 pauses playback on the phone and resets itself.
-
-## What is needed ?
-### PL2303-based USB-Serial interface
-
-Unfortunately BMW's head unit doesn't seem to **natively** recognise the most widely available USB-Serial chips like the *FTDI 232* or the *CH340* and other variants, possibly because of trade deals and of their release dates.
-
-Most if not all the Y-cables used to connect iPods to the Mini use a **PL2303HX chip** to let the iPod communicate over Serial with the car.
-
-Working USB-Serial chips need to report the VID and PID of the **PL2303HX** converter to be recognised and unfortunately it is difficult to source in small quantities. Additionally this has been a widely copied chip so there is a host of fakes available on the Internet. These should just as fine as the real ones, but they are obviously not the real deal.
-
-Hardcore DIY makers can get a PL2303G interface board like the [one manufactured by Waveshare](https://www.waveshare.com/product/pl2303-usb-uart-board-type-c.htm?sku=20265) and edit the OTPROM (only once) with the PL2303HX VID and PIDs, but PL2303HX alternatives from [Amazon/Aliexpress](https://a.co/d/a89Kzf7) and consorts might work just as well without trying to find a way to edit the VID and PID.
-
-![PL2303 Converters](/img/PL2303.png)
-
-### A BT Classic ESP32 board
-
-My personal choice in that case was to use a **NodeMCU 32S** based on the WROOM32, which is readily available in many shapes and forms and can be bought in many outlets at a very cheap price.
-These usually feature largely enough RAM and Flash to host the app and run without stuttering.
-
-Other boards, such as the **[Sparkfun Thing Plus](https://www.sparkfun.com/products/20168)**, will work, as will some of the **[DevKit C V4](https://www.az-delivery.de/it/products/esp-32-dev-kit-c-v4)** from AZ-Delivery.
-
-**Please note : ESP32-S3 do not support BT classic, and therefore WILL NOT WORK.**
-
-![SparkFun Thing Plus](/img/SparkfunThingPlus.png)
-
-### An external DAC breakout board
-
-Please note, because of deprecation issues with ESP's A2DP-I2S implementation, this project uses now [pschatzmann's Arduino Audio Tools lib](https://github.com/pschatzmann/arduino-audio-tools) for the A2DP-I2S implementation. It works just the same with some syntax adjustments.
-
-Before I may get around to providing an all-in-one board, the best solution is to use an external DAC with a 3.5mm barrel jack output. The possible models are described, along with some configuration hints, on [pschatzmann's ESP32-A2DP library wiki](https://github.com/pschatzmann/arduino-audio-tools/wiki/External-DAC) pages.
-
-In my case I went for a **UDA1334A**, which is really a copy of a board apparently originally sold by Adafruit, and is [quite available all over the place](https://www.amazon.com/AITRIP-CJMCU-1334-UDA1334A-Decoder-Arduino/dp/B09DG21C7G).
-
-
-
-### Jumper wires
-
-For the *McGyver style*, a handful of jumper wires can suffice to connect all this hardware together.
-
-*I may provide a base PCB at a later point to provide a "standard" footpring and cleaner set-up, but it is not an absolute necessity.*  
-
-## What is supported ?
-
-At the time of writing, this is what is supported :
-- Auto-reconnect to the phone
-- iPod emulation to the car
-- Skip FW/RW and restart song
-- Metadata update, sometimes with a couple small issues (but less and less)
-- Auto-pause on leave
-
-Some features are also partially supported but known to generate some bugs or unintended effects :
-- Shuffle mode does not affect the Shuffle state of the phone, and can lead to some issues with Next/Previous commands needing to be alternatively activated and metadata fetching delays
-- Controlling playback from the phone (Pause/Play, Next/Previous) should work but can generate synchronisation issues
-- Repeat tracks control is essentially ineffective
-- Metadata update can sometimes need a bit of encouragement by pressing the "Track" button on the Mini, though there is a patch coming for that
-- Sometimes starting can be laggy or paused with Spotify if there is a no data connection available on the mobile phone. This is unfortunately an issue with online streaming. Forcing "play" on the phone, or skipping to the next track on the phone usually resolves everything.
-
-Some features that seem to be there but are actually not doing what they are originally intended to :
-- Artist/Genre/Album browsing and selection : it will display only one entry to the current song and will not allow dynamic selections
-- Playlist selection : this is a limitation of how AVRC is often implemented on phones and in the ESP API : it is not possible to browse for playlists from the Head Unit
-- Non ASCII track metadata will generate garbage on the display (but play fine)
-
-## Remaining work to do
-
-- [x] Work on improving the reliability of the metadata fetching and displaying, especially on song changes
-- [x] Revise the Previous/Next detection, especially when performed directly on the phone
-- [ ] Extend the code to more external DACs
-- [ ] Design and get manufactured a all-in-one PCB, for the clean looks of it
-- [ ] Design a 3D-printable enclosure
-- [ ] Look into using more modern transmission Codecs like AptX
-
-## How to flash it
+## How to flash the firmware
 
 This repository is built around a **Platformio project and VSCode**, which allows automatic pulling of the right libraries, at the right version, from the right places, and good auto-configuration based on a couple build flags.
 
@@ -236,7 +136,7 @@ For the recommended hardware configuration, the simplest is to **clone this repo
 
 For more exotic configurations, the build flags may need to be updated and the *main.cpp* file may also require some fiddling. I may provide some pre-made configurations in the future.
 
-Please be aware that it is not currently possible to flash via the PL2303HX because it is not connected to the UART0 pins of the ESP32. Use USB CDC or the embedded USB-UART chips on the ESP32 devboard to flash via the main UART.
+Please be aware that it is not possible to flash using the UART with the modified PID and VID, because it will not be recognised properly.
 
 ### For those who do not know
 
@@ -246,42 +146,21 @@ Unzip the release file and from within the folder, right-click and choose "Open 
 
 ![Open with Code](/img/openWithCode.png)
 
-The PlatformIO extension should automatically recognize and configure the project (which might take a few minutes). Once it is ready, select the build configuration you need (most likely *nodeMCUESP32S_externalDAC* ) and hit the "Build and Upload" arrow in the bottom bar, after connecting your NodeMCU32S board to the computer and letting it install the drivers.
+The PlatformIO extension should automatically recognize and configure the project (which might take a few minutes). Once it is ready, select the build configuration you need ([more info here](https://github.com/martinroger/ipodesp32/wiki/Flashing-the-firmware) ) and hit the "Build and Upload" arrow in the bottom bar, after connecting your NodeMCU32S board to the computer and letting it install the drivers.
 
 ![Build and Upload](/img/selectAndUpload.png)
 
-VS Code should automatically find the target board and upload the software to it. After this, disconnect it, remount/reconnect as below, and look over Bluetooth for iPodEsp 2.
+VS Code should automatically find the target board and upload the software to it. After this, disconnect it, remount/reconnect as below, and look over Bluetooth for iPodEsp or MiniPod.
 
-## Resources for a clean build
+## How to use it, and some tips
 
-To be completed when a clean build exists... 
+Although it should be pretty straightforward at this stage, to use this, you need to connect the USB with the modified VID/PID to the USB receptacle of the car, and the audio jack to the AUX input (with a male-male stereo cable, for example).
 
-### Connection diagram
+In its default configuration, the controller will wait for an established BT connection to a phone before it starts signalling to the vehicle that it is available. This is only necessary the first time a phone is connected to it, in other cases the controller will try to auto-reconnect.
 
-For a NodeMCU32S or a Devkit C V4, the shape of the board may change but the pin numbers remain the same. The view and schematics are looking like so :
+Once the controller has established connection with the phone, it starts the handshake process with the head unit, and if all is good the Aux and USB options in the "Mode" source selector of the head unit are replaced by an "iPod" option. This normally takes a few seconds if the controller was just connected, so re-check after 10s if the iPod option is not available.
+If it still doesn't come up, in some occasions it is necessary to disconnect the USB cable, wait 5-10 seconds and reconnect it and wait for the BT pairing to go through (check your phone!).
 
-![DevKit C V4 Routing](/img/routingDevKitCV4.png)
+The Mini will try to automatically start playback once the iPod option is selected. Depending on your phone configuration, it may automatically open your favourite music player and start playing. In some cases it might be necessary to manually open a music player for things to get started. At this stage the display should update with the track info.
 
-![Devkit C V4 Scheme](/img/SchemeDevKitCV4.png)
-
-Pins numbers may change according to the DAC being used or the board. For the case of a Adafruit-style UDA1334A, the table is as follows :
-
-|UDA1334A|Pin number on DevKit board |
-|--|--|
-| WSEL | 25 |
-| DIN | 22 |
-| BCLK | 26 |
-| VIN | 3V3 or 5V |
-| GND | GND |
-
-And on the PL2303 interface board :
-|PL2303|Pin number on DevKit board|
-|--|--|
-|TX|RX0|
-|RX|TX0|
-|VIN|5V or VIN|
-|GND|GND|
-
-### Enclosure
-
-To be designed.
+When you leave the car, the USB gets shut down after about 2 minutes (no risks of draining the battery) and normally the Mini negotiates a playback pause as the ignition is turned off... 
