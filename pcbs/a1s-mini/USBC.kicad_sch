@@ -1,1033 +1,2657 @@
-(kicad_sch (version 20230121) (generator eeschema)
-
-  (uuid c6d28adb-d270-46fa-91ca-086e241c3638)
-
-  (paper "A4")
-
-  (title_block
-    (date "2025-03-01")
-    (rev "0.2.0")
-    (company "Martin Roger")
-  )
-
-  (lib_symbols
-    (symbol "Device:C_Small" (pin_numbers hide) (pin_names (offset 0.254) hide) (in_bom yes) (on_board yes)
-      (property "Reference" "C" (at 0.254 1.778 0)
-        (effects (font (size 1.27 1.27)) (justify left))
-      )
-      (property "Value" "C_Small" (at 0.254 -2.032 0)
-        (effects (font (size 1.27 1.27)) (justify left))
-      )
-      (property "Footprint" "" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "Datasheet" "~" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_keywords" "capacitor cap" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_description" "Unpolarized capacitor, small symbol" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_fp_filters" "C_*" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (symbol "C_Small_0_1"
-        (polyline
-          (pts
-            (xy -1.524 -0.508)
-            (xy 1.524 -0.508)
-          )
-          (stroke (width 0.3302) (type default))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy -1.524 0.508)
-            (xy 1.524 0.508)
-          )
-          (stroke (width 0.3048) (type default))
-          (fill (type none))
-        )
-      )
-      (symbol "C_Small_1_1"
-        (pin passive line (at 0 2.54 270) (length 2.032)
-          (name "~" (effects (font (size 1.27 1.27))))
-          (number "1" (effects (font (size 1.27 1.27))))
-        )
-        (pin passive line (at 0 -2.54 90) (length 2.032)
-          (name "~" (effects (font (size 1.27 1.27))))
-          (number "2" (effects (font (size 1.27 1.27))))
-        )
-      )
-    )
-    (symbol "Device:R_Small" (pin_numbers hide) (pin_names (offset 0.254) hide) (in_bom yes) (on_board yes)
-      (property "Reference" "R" (at 0.762 0.508 0)
-        (effects (font (size 1.27 1.27)) (justify left))
-      )
-      (property "Value" "R_Small" (at 0.762 -1.016 0)
-        (effects (font (size 1.27 1.27)) (justify left))
-      )
-      (property "Footprint" "" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "Datasheet" "~" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_keywords" "R resistor" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_description" "Resistor, small symbol" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_fp_filters" "R_*" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (symbol "R_Small_0_1"
-        (rectangle (start -0.762 1.778) (end 0.762 -1.778)
-          (stroke (width 0.2032) (type default))
-          (fill (type none))
-        )
-      )
-      (symbol "R_Small_1_1"
-        (pin passive line (at 0 2.54 270) (length 0.762)
-          (name "~" (effects (font (size 1.27 1.27))))
-          (number "1" (effects (font (size 1.27 1.27))))
-        )
-        (pin passive line (at 0 -2.54 90) (length 0.762)
-          (name "~" (effects (font (size 1.27 1.27))))
-          (number "2" (effects (font (size 1.27 1.27))))
-        )
-      )
-    )
-    (symbol "Power_Protection:SP0503BAHT" (pin_names hide) (in_bom yes) (on_board yes)
-      (property "Reference" "D" (at 5.715 2.54 0)
-        (effects (font (size 1.27 1.27)) (justify left))
-      )
-      (property "Value" "SP0503BAHT" (at 5.715 0.635 0)
-        (effects (font (size 1.27 1.27)) (justify left))
-      )
-      (property "Footprint" "Package_TO_SOT_SMD:SOT-143" (at 5.715 -1.27 0)
-        (effects (font (size 1.27 1.27)) (justify left) hide)
-      )
-      (property "Datasheet" "http://www.littelfuse.com/~/media/files/littelfuse/technical%20resources/documents/data%20sheets/sp05xxba.pdf" (at 3.175 3.175 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_keywords" "usb esd protection suppression transient" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_description" "TVS Diode Array, 5.5V Standoff, 3 Channels, SOT-143 package" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_fp_filters" "SOT?143*" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (symbol "SP0503BAHT_0_0"
-        (pin passive line (at 0 -5.08 90) (length 2.54)
-          (name "A" (effects (font (size 1.27 1.27))))
-          (number "1" (effects (font (size 1.27 1.27))))
-        )
-      )
-      (symbol "SP0503BAHT_0_1"
-        (rectangle (start -4.445 2.54) (end 4.445 -2.54)
-          (stroke (width 0.254) (type default))
-          (fill (type background))
-        )
-        (circle (center 0 -1.27) (radius 0.254)
-          (stroke (width 0) (type default))
-          (fill (type outline))
-        )
-        (polyline
-          (pts
-            (xy -2.54 2.54)
-            (xy -2.54 1.27)
-          )
-          (stroke (width 0) (type default))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy 0 -1.27)
-            (xy 0 -2.54)
-          )
-          (stroke (width 0) (type default))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy 0 -1.27)
-            (xy 0 1.27)
-          )
-          (stroke (width 0) (type default))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy 0 2.54)
-            (xy 0 1.27)
-          )
-          (stroke (width 0) (type default))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy 0.635 1.27)
-            (xy 0.762 1.27)
-          )
-          (stroke (width 0) (type default))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy 2.54 2.54)
-            (xy 2.54 1.27)
-          )
-          (stroke (width 0) (type default))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy 0.635 1.27)
-            (xy -0.762 1.27)
-            (xy -0.762 1.016)
-          )
-          (stroke (width 0) (type default))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy -3.302 1.016)
-            (xy -3.302 1.27)
-            (xy -1.905 1.27)
-            (xy -1.778 1.27)
-          )
-          (stroke (width 0) (type default))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy -2.54 1.27)
-            (xy -2.54 -1.27)
-            (xy 2.54 -1.27)
-            (xy 2.54 1.27)
-          )
-          (stroke (width 0) (type default))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy -2.54 1.27)
-            (xy -1.905 0)
-            (xy -3.175 0)
-            (xy -2.54 1.27)
-          )
-          (stroke (width 0) (type default))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy 0.635 0)
-            (xy -0.635 0)
-            (xy 0 1.27)
-            (xy 0.635 0)
-          )
-          (stroke (width 0) (type default))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy 1.778 1.016)
-            (xy 1.778 1.27)
-            (xy 3.175 1.27)
-            (xy 3.302 1.27)
-          )
-          (stroke (width 0) (type default))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy 2.54 1.27)
-            (xy 1.905 0)
-            (xy 3.175 0)
-            (xy 2.54 1.27)
-          )
-          (stroke (width 0) (type default))
-          (fill (type none))
-        )
-      )
-      (symbol "SP0503BAHT_1_1"
-        (pin passive line (at -2.54 5.08 270) (length 2.54)
-          (name "K" (effects (font (size 1.27 1.27))))
-          (number "2" (effects (font (size 1.27 1.27))))
-        )
-        (pin passive line (at 0 5.08 270) (length 2.54)
-          (name "K" (effects (font (size 1.27 1.27))))
-          (number "3" (effects (font (size 1.27 1.27))))
-        )
-        (pin passive line (at 2.54 5.08 270) (length 2.54)
-          (name "K" (effects (font (size 1.27 1.27))))
-          (number "4" (effects (font (size 1.27 1.27))))
-        )
-      )
-    )
-    (symbol "SamacSys_Parts:1N5819HW-7-F" (pin_names (offset 0.762)) (in_bom yes) (on_board yes)
-      (property "Reference" "D" (at 11.43 5.08 0)
-        (effects (font (size 1.27 1.27)) (justify left))
-      )
-      (property "Value" "1N5819HW-7-F" (at 11.43 2.54 0)
-        (effects (font (size 1.27 1.27)) (justify left))
-      )
-      (property "Footprint" "SOD3716X145N" (at 11.43 0 0)
-        (effects (font (size 1.27 1.27)) (justify left) hide)
-      )
-      (property "Datasheet" "https://www.diodes.com//assets/Datasheets/1N5819HW.pdf" (at 11.43 -2.54 0)
-        (effects (font (size 1.27 1.27)) (justify left) hide)
-      )
-      (property "Description" "Diode Schottky 1A 40V SOD123 Diodes Inc 1N5819HW-7-F, SMT Schottky Diode, 40V 1A, 2-Pin SOD-123" (at 11.43 -5.08 0)
-        (effects (font (size 1.27 1.27)) (justify left) hide)
-      )
-      (property "Height" "1.45" (at 11.43 -7.62 0)
-        (effects (font (size 1.27 1.27)) (justify left) hide)
-      )
-      (property "Manufacturer_Name" "Diodes Incorporated" (at 11.43 -10.16 0)
-        (effects (font (size 1.27 1.27)) (justify left) hide)
-      )
-      (property "Manufacturer_Part_Number" "1N5819HW-7-F" (at 11.43 -12.7 0)
-        (effects (font (size 1.27 1.27)) (justify left) hide)
-      )
-      (property "Mouser Part Number" "621-1N5819HW-F" (at 11.43 -15.24 0)
-        (effects (font (size 1.27 1.27)) (justify left) hide)
-      )
-      (property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Diodes-Incorporated/1N5819HW-7-F?qs=NQ47qNm99eDyWTEd07miYA%3D%3D" (at 11.43 -17.78 0)
-        (effects (font (size 1.27 1.27)) (justify left) hide)
-      )
-      (property "Arrow Part Number" "1N5819HW-7-F" (at 11.43 -20.32 0)
-        (effects (font (size 1.27 1.27)) (justify left) hide)
-      )
-      (property "Arrow Price/Stock" "https://www.arrow.com/en/products/1n5819hw-7-f/diodes-incorporated?utm_currency=USD&region=nac" (at 11.43 -22.86 0)
-        (effects (font (size 1.27 1.27)) (justify left) hide)
-      )
-      (property "ki_description" "Diode Schottky 1A 40V SOD123 Diodes Inc 1N5819HW-7-F, SMT Schottky Diode, 40V 1A, 2-Pin SOD-123" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (symbol "1N5819HW-7-F_0_0"
-        (pin passive line (at 0 0 0) (length 2.54)
-          (name "~" (effects (font (size 1.27 1.27))))
-          (number "1" (effects (font (size 1.27 1.27))))
-        )
-        (pin passive line (at 15.24 0 180) (length 2.54)
-          (name "~" (effects (font (size 1.27 1.27))))
-          (number "2" (effects (font (size 1.27 1.27))))
-        )
-      )
-      (symbol "1N5819HW-7-F_0_1"
-        (polyline
-          (pts
-            (xy 2.54 0)
-            (xy 5.08 0)
-          )
-          (stroke (width 0.1524) (type solid))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy 5.08 2.54)
-            (xy 5.08 -2.54)
-          )
-          (stroke (width 0.1524) (type solid))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy 10.16 0)
-            (xy 12.7 0)
-          )
-          (stroke (width 0.1524) (type solid))
-          (fill (type none))
-        )
-        (polyline
-          (pts
-            (xy 5.08 0)
-            (xy 10.16 2.54)
-            (xy 10.16 -2.54)
-            (xy 5.08 0)
-          )
-          (stroke (width 0.254) (type solid))
-          (fill (type outline))
-        )
-      )
-    )
-    (symbol "USB4105-GF-A:USB4105-GF-A" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
-      (property "Reference" "J" (at -15.24 13.97 0)
-        (effects (font (size 1.27 1.27)) (justify left bottom))
-      )
-      (property "Value" "USB4105-GF-A" (at -15.24 -27.94 0)
-        (effects (font (size 1.27 1.27)) (justify left bottom))
-      )
-      (property "Footprint" "USB4105-GF-A:GCT_USB4105-GF-A" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) (justify bottom) hide)
-      )
-      (property "Datasheet" "" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "PARTREV" "B4" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) (justify bottom) hide)
-      )
-      (property "STANDARD" "Manufacturer Recommendations" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) (justify bottom) hide)
-      )
-      (property "MAXIMUM_PACKAGE_HEIGHT" "3.31 mm" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) (justify bottom) hide)
-      )
-      (property "MANUFACTURER" "GCT" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) (justify bottom) hide)
-      )
-      (symbol "USB4105-GF-A_0_0"
-        (rectangle (start -15.24 -25.4) (end 15.24 12.7)
-          (stroke (width 0.254) (type default))
-          (fill (type background))
-        )
-        (pin power_in line (at 20.32 -10.16 180) (length 5.08)
-          (name "GND" (effects (font (size 1.016 1.016))))
-          (number "A1_B12" (effects (font (size 1.016 1.016))))
-        )
-        (pin power_in line (at 20.32 10.16 180) (length 5.08)
-          (name "VBUS" (effects (font (size 1.016 1.016))))
-          (number "A4_B9" (effects (font (size 1.016 1.016))))
-        )
-        (pin bidirectional line (at -20.32 5.08 0) (length 5.08)
-          (name "CC1" (effects (font (size 1.016 1.016))))
-          (number "A5" (effects (font (size 1.016 1.016))))
-        )
-        (pin bidirectional line (at -20.32 2.54 0) (length 5.08)
-          (name "DP1" (effects (font (size 1.016 1.016))))
-          (number "A6" (effects (font (size 1.016 1.016))))
-        )
-        (pin bidirectional line (at -20.32 0 0) (length 5.08)
-          (name "DN1" (effects (font (size 1.016 1.016))))
-          (number "A7" (effects (font (size 1.016 1.016))))
-        )
-        (pin bidirectional line (at -20.32 -2.54 0) (length 5.08)
-          (name "SBU1" (effects (font (size 1.016 1.016))))
-          (number "A8" (effects (font (size 1.016 1.016))))
-        )
-        (pin power_in line (at 20.32 -12.7 180) (length 5.08)
-          (name "GND__1" (effects (font (size 1.016 1.016))))
-          (number "B1_A12" (effects (font (size 1.016 1.016))))
-        )
-        (pin power_in line (at 20.32 7.62 180) (length 5.08)
-          (name "VBUS__1" (effects (font (size 1.016 1.016))))
-          (number "B4_A9" (effects (font (size 1.016 1.016))))
-        )
-        (pin bidirectional line (at 20.32 2.54 180) (length 5.08)
-          (name "CC2" (effects (font (size 1.016 1.016))))
-          (number "B5" (effects (font (size 1.016 1.016))))
-        )
-        (pin bidirectional line (at 20.32 0 180) (length 5.08)
-          (name "DP2" (effects (font (size 1.016 1.016))))
-          (number "B6" (effects (font (size 1.016 1.016))))
-        )
-        (pin bidirectional line (at 20.32 -2.54 180) (length 5.08)
-          (name "DN2" (effects (font (size 1.016 1.016))))
-          (number "B7" (effects (font (size 1.016 1.016))))
-        )
-        (pin bidirectional line (at 20.32 -5.08 180) (length 5.08)
-          (name "SBU2" (effects (font (size 1.016 1.016))))
-          (number "B8" (effects (font (size 1.016 1.016))))
-        )
-        (pin power_in line (at 20.32 -15.24 180) (length 5.08)
-          (name "SHELL_GND" (effects (font (size 1.016 1.016))))
-          (number "SH1" (effects (font (size 1.016 1.016))))
-        )
-        (pin power_in line (at 20.32 -17.78 180) (length 5.08)
-          (name "SHELL_GND__1" (effects (font (size 1.016 1.016))))
-          (number "SH2" (effects (font (size 1.016 1.016))))
-        )
-        (pin power_in line (at 20.32 -20.32 180) (length 5.08)
-          (name "SHELL_GND__2" (effects (font (size 1.016 1.016))))
-          (number "SH3" (effects (font (size 1.016 1.016))))
-        )
-        (pin power_in line (at 20.32 -22.86 180) (length 5.08)
-          (name "SHELL_GND__3" (effects (font (size 1.016 1.016))))
-          (number "SH4" (effects (font (size 1.016 1.016))))
-        )
-      )
-    )
-  )
-
-
-  (junction (at 105.41 78.74) (diameter 0) (color 0 0 0 0)
-    (uuid 6aaba72c-4e15-492a-b759-38422b86e1eb)
-  )
-  (junction (at 184.15 33.02) (diameter 0) (color 0 0 0 0)
-    (uuid 8247191d-40ef-4374-977c-41a04f55422f)
-  )
-  (junction (at 113.03 68.58) (diameter 0) (color 0 0 0 0)
-    (uuid a0bee443-7205-436d-a3ed-f8a052520a9c)
-  )
-  (junction (at 105.41 76.2) (diameter 0) (color 0 0 0 0)
-    (uuid c4ab0b2f-da2f-43e0-860f-727bc8d59df5)
-  )
-  (junction (at 113.03 71.12) (diameter 0) (color 0 0 0 0)
-    (uuid cb2c447c-4eee-4f47-b6e2-bf31b7647183)
-  )
-
-  (no_connect (at 64.77 60.96) (uuid 93797f33-cf43-47ae-bde6-f8ae9a26e326))
-  (no_connect (at 105.41 63.5) (uuid b51348ea-8e4f-4daf-ac4e-3e452727efbc))
-
-  (wire (pts (xy 184.15 33.02) (xy 184.15 54.61))
-    (stroke (width 0) (type default))
-    (uuid 0972559a-095e-4c06-a540-a77227023ddb)
-  )
-  (wire (pts (xy 184.15 33.02) (xy 190.5 33.02))
-    (stroke (width 0) (type default))
-    (uuid 224f6946-6fe3-4a51-b256-3954248391ae)
-  )
-  (wire (pts (xy 105.41 76.2) (xy 113.03 76.2))
-    (stroke (width 0) (type default))
-    (uuid 27d7d893-29db-4874-98d4-bd0cf3a1d5e4)
-  )
-  (wire (pts (xy 62.23 53.34) (xy 64.77 53.34))
-    (stroke (width 0) (type default))
-    (uuid 2e1e7486-ca05-40ac-9697-e7e377567efc)
-  )
-  (wire (pts (xy 118.11 115.57) (xy 118.11 119.38))
-    (stroke (width 0) (type default))
-    (uuid 303a3a4d-538c-4564-8bea-3ad60c67aab1)
-  )
-  (wire (pts (xy 176.53 33.02) (xy 184.15 33.02))
-    (stroke (width 0) (type default))
-    (uuid 343556aa-0a8d-4d4e-bb79-4de279e96220)
-  )
-  (wire (pts (xy 105.41 71.12) (xy 113.03 71.12))
-    (stroke (width 0) (type default))
-    (uuid 36e229df-21f4-45d2-bed6-81c36af1f34e)
-  )
-  (wire (pts (xy 115.57 95.25) (xy 115.57 105.41))
-    (stroke (width 0) (type default))
-    (uuid 379976a9-6f61-43e6-8ece-9405367ba0b5)
-  )
-  (wire (pts (xy 26.67 55.88) (xy 64.77 55.88))
-    (stroke (width 0) (type default))
-    (uuid 3995c01a-b297-43fd-9e99-21231fada0bc)
-  )
-  (wire (pts (xy 184.15 59.69) (xy 184.15 74.93))
-    (stroke (width 0) (type default))
-    (uuid 3a2ce033-f0b1-415d-98f9-81184faa2b03)
-  )
-  (wire (pts (xy 125.73 55.88) (xy 130.81 55.88))
-    (stroke (width 0) (type default))
-    (uuid 3f747393-226e-49a0-9151-f9145f77ee8d)
-  )
-  (wire (pts (xy 105.41 76.2) (xy 105.41 78.74))
-    (stroke (width 0) (type default))
-    (uuid 48889f02-1ce9-4e0c-a05c-4e88628ea90c)
-  )
-  (wire (pts (xy 105.41 48.26) (xy 113.03 48.26))
-    (stroke (width 0) (type default))
-    (uuid 4c9f746d-7e22-438c-a8a4-21bba8ba4040)
-  )
-  (wire (pts (xy 105.41 78.74) (xy 105.41 81.28))
-    (stroke (width 0) (type default))
-    (uuid 535eef5c-22f7-489e-b17b-ec9e550b9921)
-  )
-  (wire (pts (xy 148.59 33.02) (xy 161.29 33.02))
-    (stroke (width 0) (type default))
-    (uuid 5c649e2b-a8df-4bd3-a614-caef7bfa2dfc)
-  )
-  (wire (pts (xy 46.99 58.42) (xy 64.77 58.42))
-    (stroke (width 0) (type default))
-    (uuid 651bc12f-ce86-4437-ac4f-8076a6145af2)
-  )
-  (wire (pts (xy 105.41 68.58) (xy 113.03 68.58))
-    (stroke (width 0) (type default))
-    (uuid 7798539d-9e6f-43c9-a692-767f16f70b69)
-  )
-  (wire (pts (xy 54.61 53.34) (xy 57.15 53.34))
-    (stroke (width 0) (type default))
-    (uuid 7fb9d922-82d4-42bc-9554-886d3be43bd3)
-  )
-  (wire (pts (xy 105.41 55.88) (xy 120.65 55.88))
-    (stroke (width 0) (type default))
-    (uuid 87b1680c-e3fd-46be-b970-753ab963a224)
-  )
-  (wire (pts (xy 120.65 100.33) (xy 120.65 105.41))
-    (stroke (width 0) (type default))
-    (uuid cd2be5e0-201d-4f86-ae03-71eb9585b579)
-  )
-  (wire (pts (xy 118.11 100.33) (xy 118.11 105.41))
-    (stroke (width 0) (type default))
-    (uuid d28c8bd8-4c08-43cd-aa20-435b6c5894b6)
-  )
-  (wire (pts (xy 105.41 50.8) (xy 113.03 50.8))
-    (stroke (width 0) (type default))
-    (uuid d74cb97a-cb51-4199-b74d-321ddb954010)
-  )
-  (wire (pts (xy 113.03 68.58) (xy 120.65 68.58))
-    (stroke (width 0) (type default))
-    (uuid dde803ed-ab23-40b0-99e9-951c80d63b36)
-  )
-  (wire (pts (xy 105.41 60.96) (xy 113.03 60.96))
-    (stroke (width 0) (type default))
-    (uuid e4b50e0d-3228-4013-8875-1492f086d9f7)
-  )
-  (wire (pts (xy 105.41 58.42) (xy 113.03 58.42))
-    (stroke (width 0) (type default))
-    (uuid e7e9989f-8808-4448-9279-2e1c7445096f)
-  )
-  (wire (pts (xy 113.03 68.58) (xy 113.03 71.12))
-    (stroke (width 0) (type default))
-    (uuid e88b8dde-b26d-48a0-a326-107d9b11adb2)
-  )
-  (wire (pts (xy 105.41 73.66) (xy 105.41 76.2))
-    (stroke (width 0) (type default))
-    (uuid ea031cb3-d4df-4950-9344-d89c90af4d2d)
-  )
-
-  (hierarchical_label "VBUS" (shape passive) (at 113.03 48.26 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 0e15c999-e7f6-48d0-a313-cfa7d96fa89c)
-  )
-  (hierarchical_label "VCC_5V" (shape passive) (at 190.5 33.02 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 11bedd14-58e2-487f-91b2-f0e11e3a8ccb)
-  )
-  (hierarchical_label "GND" (shape passive) (at 184.15 74.93 270) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid 1e25ce1d-f386-46a7-a4bb-f61dc0c1c8b1)
-  )
-  (hierarchical_label "USB_DN" (shape passive) (at 113.03 60.96 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 1fd56975-1a77-407d-8dc8-ef0003397f08)
-  )
-  (hierarchical_label "GND" (shape passive) (at 118.11 119.38 270) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid 3866e05c-4cf6-4001-8c61-a284efdabf7d)
-  )
-  (hierarchical_label "GND" (shape passive) (at 120.65 68.58 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 3d765f97-958b-42a4-a339-b93004db5fa6)
-  )
-  (hierarchical_label "VBUS" (shape passive) (at 113.03 50.8 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 8892e499-4c2f-45b6-b191-ee19d7a16326)
-  )
-  (hierarchical_label "VBUS" (shape passive) (at 148.59 33.02 180) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid 8ac50b67-d001-45ba-8f0b-cc3dfc842318)
-  )
-  (hierarchical_label "USB_DP" (shape passive) (at 113.03 58.42 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 9306030f-986d-43f2-ad52-1ad29c2868dc)
-  )
-  (hierarchical_label "GND" (shape passive) (at 130.81 55.88 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 97cbfb93-985e-4ab8-a5a3-a276ec416739)
-  )
-  (hierarchical_label "USB_DP" (shape passive) (at 118.11 100.33 90) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid b4027717-310a-4b1d-a1f1-ba1240e6b0f2)
-  )
-  (hierarchical_label "USB_DN" (shape passive) (at 46.99 58.42 180) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid bbab7eb0-0ca0-484e-a4e5-4d70a5839681)
-  )
-  (hierarchical_label "VBUS" (shape passive) (at 115.57 95.25 90) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid e04bd612-7ac6-4729-9467-99ba20b81028)
-  )
-  (hierarchical_label "USB_DN" (shape passive) (at 120.65 100.33 90) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid f4ced305-3556-42c4-8a72-a4166a146c37)
-  )
-  (hierarchical_label "USB_DP" (shape passive) (at 26.67 55.88 180) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid f613b934-0f36-4bae-bb00-ce1a95600c31)
-  )
-  (hierarchical_label "GND" (shape passive) (at 54.61 53.34 180) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid fed237ff-ca0b-4932-b7b8-daaa26b3df6f)
-  )
-
-  (netclass_flag "" (length 2.54) (shape round) (at 35.56 55.88 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid 726a43bc-4562-48b5-b4bd-e302bac7fecd)
-    (property "Netclass" "10mil" (at 36.1696 53.34 0)
-      (effects (font (size 1.27 1.27) italic) (justify left))
-    )
-  )
-  (netclass_flag "" (length 2.54) (shape round) (at 53.34 58.42 180) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid ceeb22bc-8a03-4cc7-8929-8cbee2ffad68)
-    (property "Netclass" "10mil" (at 53.9496 60.96 0)
-      (effects (font (size 1.27 1.27) italic) (justify left))
-    )
-  )
-
-  (symbol (lib_id "USB4105-GF-A:USB4105-GF-A") (at 85.09 58.42 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid 0f7cd647-f895-495b-810b-45ba79af6943)
-    (property "Reference" "J5" (at 85.09 41.91 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Value" "USB4105-GF-A" (at 85.09 44.45 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "DIY:GCT_USB4105-GF-A" (at 85.09 58.42 0)
-      (effects (font (size 1.27 1.27)) (justify bottom) hide)
-    )
-    (property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/5492/USB4105.pdf" (at 85.09 58.42 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "PARTREV" "B4" (at 85.09 58.42 0)
-      (effects (font (size 1.27 1.27)) (justify bottom) hide)
-    )
-    (property "STANDARD" "Manufacturer Recommendations" (at 85.09 58.42 0)
-      (effects (font (size 1.27 1.27)) (justify bottom) hide)
-    )
-    (property "MAXIMUM_PACKAGE_HEIGHT" "3.31 mm" (at 85.09 58.42 0)
-      (effects (font (size 1.27 1.27)) (justify bottom) hide)
-    )
-    (property "MANUFACTURER" "GCT" (at 85.09 58.42 0)
-      (effects (font (size 1.27 1.27)) (justify bottom) hide)
-    )
-    (property "Description" "CONN RCP USB2.0 TYP C 24P SMD RA" (at 85.09 58.42 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Manufacturer_Name" "GCT" (at 85.09 58.42 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Manufacturer_Part_Number" "USB4105-GF-A" (at 85.09 58.42 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Instructions/Notes" "" (at 85.09 58.42 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Type" "SMD" (at 85.09 58.42 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "A1_B12" (uuid b3e82f2a-4fed-4831-92de-15e24b54364d))
-    (pin "A4_B9" (uuid 5672d8f5-2d47-485c-8c5c-54f348e01354))
-    (pin "A5" (uuid 9022018c-6b59-4580-9b25-98085a100f89))
-    (pin "A6" (uuid 76cba979-21e6-479a-a132-128734e49448))
-    (pin "A7" (uuid dc82220e-100b-402f-aeb2-2f0377e0f61c))
-    (pin "A8" (uuid 8d0090c1-9f21-44ec-b189-a7126dcfbd3f))
-    (pin "B1_A12" (uuid 7b1124d8-4486-4f61-be2a-1ff7c0b62147))
-    (pin "B4_A9" (uuid d4c0ba6b-40af-4dd0-89c9-ace8aabaf1be))
-    (pin "B5" (uuid 19c31b57-b108-437c-af86-c0ac44d6b812))
-    (pin "B6" (uuid 6d215838-669e-47e7-855b-09e4c0b89de6))
-    (pin "B7" (uuid f5cfd37a-5265-4c41-8f77-8128bf1695af))
-    (pin "B8" (uuid 16b966ca-163d-4048-b82b-524c126fd77d))
-    (pin "SH1" (uuid 4293b10a-1873-40b0-8de3-338b828c216d))
-    (pin "SH2" (uuid c8c530fc-7f81-4eec-997f-16f2de1011fd))
-    (pin "SH3" (uuid 68722b7f-e86f-4de0-bc6e-66a3107b41c3))
-    (pin "SH4" (uuid 45028350-c9c4-4cfe-a53d-b8378a816d87))
-    (instances
-      (project "a1s-mini"
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/53d69b61-aed6-4e37-bc10-846d5fa685f3"
-          (reference "J5") (unit 1)
-        )
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
-          (reference "J6") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "Device:R_Small") (at 123.19 55.88 90) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid 44bd7630-8582-4b23-8677-87b291487fce)
-    (property "Reference" "R22" (at 123.19 50.8 90)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Value" "5.1K 1%" (at 123.19 53.34 90)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (at 123.19 55.88 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "https://www.yageo.com/upload/media/product/products/datasheet/rchip/PYu-RC_Group_51_RoHS_L_12.pdf" (at 123.19 55.88 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Description" "RES 5.1K OHM 1% 1/10W 0603" (at 123.19 55.88 90)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Manufacturer_Name" "YAGEO" (at 123.19 55.88 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Manufacturer_Part_Number" "RC0603FR-075K1L" (at 123.19 55.88 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Instructions/Notes" "" (at 123.19 55.88 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Type" "SMD" (at 123.19 55.88 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid 72c0fa0d-6936-4d4d-9494-4c51a0756fec))
-    (pin "2" (uuid e1a08d24-21cd-4bf3-a27f-cbd49b668c7f))
-    (instances
-      (project "a1s-mini"
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/53d69b61-aed6-4e37-bc10-846d5fa685f3"
-          (reference "R22") (unit 1)
-        )
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
-          (reference "R30") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "Device:R_Small") (at 113.03 73.66 0) (mirror x) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no)
-    (uuid 5c0cec25-b186-4512-a7a4-4634a7162127)
-    (property "Reference" "R4" (at 118.11 73.66 90)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Value" "0R" (at 115.57 73.66 90)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (at 113.03 73.66 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "https://www.seielect.com/catalog/sei-rmcf_rmcp.pdf" (at 113.03 73.66 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Description" "RES 0 OHM JUMPER 1/10W 0603" (at 113.03 73.66 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Manufacturer_Name" "StackPole Electronics" (at 113.03 73.66 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Manufacturer_Part_Number" "RMCF0603ZT0R00" (at 113.03 73.66 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Instructions/Notes" "" (at 113.03 73.66 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Type" "SMD" (at 113.03 73.66 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid 10c9e249-f71d-4058-b7bf-024dbe739437))
-    (pin "2" (uuid b0517389-a5da-4a07-9884-5ec24e880303))
-    (instances
-      (project "a1s-mini"
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e"
-          (reference "R4") (unit 1)
-        )
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-          (reference "R10") (unit 1)
-        )
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/53d69b61-aed6-4e37-bc10-846d5fa685f3"
-          (reference "R21") (unit 1)
-        )
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
-          (reference "R29") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "SamacSys_Parts:1N5819HW-7-F") (at 176.53 33.02 180) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid 747c773e-167b-435c-aaeb-4f78d72f2bc2)
-    (property "Reference" "D10" (at 168.91 26.67 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Value" "1N5819HW-7-F" (at 168.91 29.21 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "Diode_SMD:D_SOD-123" (at 165.1 33.02 0)
-      (effects (font (size 1.27 1.27)) (justify left) hide)
-    )
-    (property "Datasheet" "https://www.diodes.com//assets/Datasheets/1N5819HW.pdf" (at 165.1 30.48 0)
-      (effects (font (size 1.27 1.27)) (justify left) hide)
-    )
-    (property "Description" "DIODE SCHOTTKY 40V 1A SOD123" (at 165.1 27.94 0)
-      (effects (font (size 1.27 1.27)) (justify left) hide)
-    )
-    (property "Height" "1.45" (at 165.1 25.4 0)
-      (effects (font (size 1.27 1.27)) (justify left) hide)
-    )
-    (property "Manufacturer_Name" "Diodes Incorporated" (at 165.1 22.86 0)
-      (effects (font (size 1.27 1.27)) (justify left) hide)
-    )
-    (property "Manufacturer_Part_Number" "1N5819HW-7-F" (at 165.1 20.32 0)
-      (effects (font (size 1.27 1.27)) (justify left) hide)
-    )
-    (property "Mouser Part Number" "621-1N5819HW-F" (at 165.1 17.78 0)
-      (effects (font (size 1.27 1.27)) (justify left) hide)
-    )
-    (property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Diodes-Incorporated/1N5819HW-7-F?qs=NQ47qNm99eDyWTEd07miYA%3D%3D" (at 165.1 15.24 0)
-      (effects (font (size 1.27 1.27)) (justify left) hide)
-    )
-    (property "Arrow Part Number" "1N5819HW-7-F" (at 165.1 12.7 0)
-      (effects (font (size 1.27 1.27)) (justify left) hide)
-    )
-    (property "Arrow Price/Stock" "https://www.arrow.com/en/products/1n5819hw-7-f/diodes-incorporated?utm_currency=USD&region=nac" (at 165.1 10.16 0)
-      (effects (font (size 1.27 1.27)) (justify left) hide)
-    )
-    (property "Instructions/Notes" "" (at 176.53 33.02 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Type" "SMD" (at 176.53 33.02 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid 5937497f-7032-41bc-aaa4-96e45ab66b2d))
-    (pin "2" (uuid 81e5f1fd-533a-4f34-afa5-eacdd1d53096))
-    (instances
-      (project "a1s-mini"
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/53d69b61-aed6-4e37-bc10-846d5fa685f3"
-          (reference "D10") (unit 1)
-        )
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
-          (reference "D14") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "Device:R_Small") (at 59.69 53.34 90) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid 9791d902-ee39-4ec3-b200-320171eb1037)
-    (property "Reference" "R20" (at 59.69 48.26 90)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Value" "5.1K 1%" (at 59.69 50.8 90)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (at 59.69 53.34 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "https://www.yageo.com/upload/media/product/products/datasheet/rchip/PYu-RC_Group_51_RoHS_L_12.pdf" (at 59.69 53.34 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Description" "RES 5.1K OHM 1% 1/10W 0603" (at 59.69 53.34 90)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Manufacturer_Name" "YAGEO" (at 59.69 53.34 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Manufacturer_Part_Number" "RC0603FR-075K1L" (at 59.69 53.34 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Instructions/Notes" "" (at 59.69 53.34 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Type" "SMD" (at 59.69 53.34 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid 2d9ec85c-b889-4541-bfd9-082a79841ba6))
-    (pin "2" (uuid 68a7681a-8d99-4d62-a467-b51ca838237f))
-    (instances
-      (project "a1s-mini"
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/53d69b61-aed6-4e37-bc10-846d5fa685f3"
-          (reference "R20") (unit 1)
-        )
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
-          (reference "R28") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "Device:C_Small") (at 184.15 57.15 180) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid f1d8cb7c-1bcc-4ef4-aa7f-5a5f6678cf0b)
-    (property "Reference" "C8" (at 186.69 56.5086 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-    )
-    (property "Value" "10uF 10V" (at 186.69 59.0486 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-    )
-    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric" (at 184.15 57.15 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/43/CL10A106KP8NNNC_Spec.pdf" (at 184.15 57.15 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Description" "CAP CER 10UF 10V X5R 0603" (at 184.15 57.15 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Manufacturer_Name" "Samsung Electro-Mechanics" (at 184.15 57.15 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Manufacturer_Part_Number" "CL10A106KP8NNNC" (at 184.15 57.15 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Instructions/Notes" "" (at 184.15 57.15 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Type" "SMD" (at 184.15 57.15 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid fa1e71ef-a38c-4fdc-a824-f21262135a4a))
-    (pin "2" (uuid 4071fe0f-a3ca-420f-87e7-bee1f87419b7))
-    (instances
-      (project "a1s-mini"
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e"
-          (reference "C8") (unit 1)
-        )
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-          (reference "C11") (unit 1)
-        )
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/53d69b61-aed6-4e37-bc10-846d5fa685f3"
-          (reference "C12") (unit 1)
-        )
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
-          (reference "C15") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "Power_Protection:SP0503BAHT") (at 118.11 110.49 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid f741de64-30d5-46b7-8d64-9a8c73f36988)
-    (property "Reference" "D15" (at 124.46 109.855 0)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Value" "SP0503BAHTG" (at 124.46 112.395 0)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Footprint" "Package_TO_SOT_SMD:SOT-143" (at 123.825 111.76 0)
-      (effects (font (size 1.27 1.27)) (justify left) hide)
-    )
-    (property "Datasheet" "http://www.littelfuse.com/~/media/files/littelfuse/technical%20resources/documents/data%20sheets/sp05xxba.pdf" (at 121.285 107.315 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Description" "TVS DIODE 5.5VWM 8.5VC SOT1434" (at 118.11 110.49 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Manufacturer_Name" "Littelfuse Inc" (at 118.11 110.49 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Manufacturer_Part_Number" "SP0503BAHTG" (at 118.11 110.49 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Instructions/Notes" "" (at 118.11 110.49 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Type" "SMD" (at 118.11 110.49 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid ac3e0c3d-83f4-4c36-a699-28f1a0acd217))
-    (pin "2" (uuid bc8e7e93-7ccb-439a-818e-596475a9c466))
-    (pin "3" (uuid ac4e15ca-431c-4a25-9011-cdf439ae1e7d))
-    (pin "4" (uuid 41a96717-76ef-4a71-9ccc-4898e5816edb))
-    (instances
-      (project "a1s-mini"
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e"
-          (reference "D15") (unit 1)
-        )
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/53d69b61-aed6-4e37-bc10-846d5fa685f3"
-          (reference "D7") (unit 1)
-        )
-        (path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
-          (reference "D8") (unit 1)
-        )
-      )
-    )
-  )
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "c6d28adb-d270-46fa-91ca-086e241c3638")
+	(paper "A4")
+	(title_block
+		(title "A1S Mini Board")
+		(date "2025-03-11")
+		(rev "0.2.1")
+		(company "Martin Roger")
+	)
+	(lib_symbols
+		(symbol "DIY:1N5819HW-7-F"
+			(pin_names
+				(offset 0.762)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "D"
+				(at 11.43 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "1N5819HW-7-F"
+				(at 11.43 2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" "DIY:SOD3716X145N"
+				(at 11.43 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://www.diodes.com//assets/Datasheets/1N5819HW.pdf"
+				(at 11.43 -2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Description" "Diode Schottky 1A 40V SOD123 Diodes Inc 1N5819HW-7-F, SMT Schottky Diode, 40V 1A, 2-Pin SOD-123"
+				(at 11.43 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Height" "1.45"
+				(at 11.43 -7.62 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Manufacturer_Name" "Diodes Incorporated"
+				(at 11.43 -10.16 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Manufacturer_Part_Number" "1N5819HW-7-F"
+				(at 11.43 -12.7 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Mouser Part Number" "621-1N5819HW-F"
+				(at 11.43 -15.24 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Diodes-Incorporated/1N5819HW-7-F?qs=NQ47qNm99eDyWTEd07miYA%3D%3D"
+				(at 11.43 -17.78 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Arrow Part Number" "1N5819HW-7-F"
+				(at 11.43 -20.32 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Arrow Price/Stock" "https://www.arrow.com/en/products/1n5819hw-7-f/diodes-incorporated?utm_currency=USD&region=nac"
+				(at 11.43 -22.86 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(symbol "1N5819HW-7-F_0_0"
+				(pin passive line
+					(at 0 0 0)
+					(length 2.54)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 15.24 0 180)
+					(length 2.54)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(symbol "1N5819HW-7-F_0_1"
+				(polyline
+					(pts
+						(xy 2.54 0) (xy 5.08 0)
+					)
+					(stroke
+						(width 0.1524)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 5.08 2.54) (xy 5.08 -2.54)
+					)
+					(stroke
+						(width 0.1524)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 5.08 0) (xy 10.16 2.54) (xy 10.16 -2.54) (xy 5.08 0)
+					)
+					(stroke
+						(width 0.254)
+						(type solid)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 10.16 0) (xy 12.7 0)
+					)
+					(stroke
+						(width 0.1524)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "DIY:USB4105-GF-A"
+			(pin_names
+				(offset 1.016)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -15.24 13.97 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left bottom)
+				)
+			)
+			(property "Value" "USB4105-GF-A"
+				(at -15.24 -27.94 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left bottom)
+				)
+			)
+			(property "Footprint" "DIY:GCT_USB4105-GF-A"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "PARTREV" "B4"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "STANDARD" "Manufacturer Recommendations"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "MAXIMUM_PACKAGE_HEIGHT" "3.31 mm"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "MANUFACTURER" "GCT"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(symbol "USB4105-GF-A_0_0"
+				(rectangle
+					(start -15.24 -25.4)
+					(end 15.24 12.7)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(pin bidirectional line
+					(at -20.32 5.08 0)
+					(length 5.08)
+					(name "CC1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "A5"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at -20.32 2.54 0)
+					(length 5.08)
+					(name "DP1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "A6"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at -20.32 0 0)
+					(length 5.08)
+					(name "DN1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "A7"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at -20.32 -2.54 0)
+					(length 5.08)
+					(name "SBU1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "A8"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 20.32 10.16 180)
+					(length 5.08)
+					(name "VBUS"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "A4_B9"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 20.32 7.62 180)
+					(length 5.08)
+					(name "VBUS__1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "B4_A9"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 20.32 2.54 180)
+					(length 5.08)
+					(name "CC2"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "B5"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 20.32 0 180)
+					(length 5.08)
+					(name "DP2"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "B6"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 20.32 -2.54 180)
+					(length 5.08)
+					(name "DN2"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "B7"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 20.32 -5.08 180)
+					(length 5.08)
+					(name "SBU2"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "B8"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 20.32 -10.16 180)
+					(length 5.08)
+					(name "GND"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "A1_B12"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 20.32 -12.7 180)
+					(length 5.08)
+					(name "GND__1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "B1_A12"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 20.32 -15.24 180)
+					(length 5.08)
+					(name "SHELL_GND"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "SH1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 20.32 -17.78 180)
+					(length 5.08)
+					(name "SHELL_GND__1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "SH2"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 20.32 -20.32 180)
+					(length 5.08)
+					(name "SHELL_GND__2"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "SH3"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 20.32 -22.86 180)
+					(length 5.08)
+					(name "SHELL_GND__3"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "SH4"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Device:C_Small"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0.254)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "C"
+				(at 0.254 1.778 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "C_Small"
+				(at 0.254 -2.032 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Unpolarized capacitor, small symbol"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "capacitor cap"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "C_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "C_Small_0_1"
+				(polyline
+					(pts
+						(xy -1.524 0.508) (xy 1.524 0.508)
+					)
+					(stroke
+						(width 0.3048)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.524 -0.508) (xy 1.524 -0.508)
+					)
+					(stroke
+						(width 0.3302)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "C_Small_1_1"
+				(pin passive line
+					(at 0 2.54 270)
+					(length 2.032)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -2.54 90)
+					(length 2.032)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Device:R_Small"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0.254)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "R"
+				(at 0.762 0.508 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "R_Small"
+				(at 0.762 -1.016 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Resistor, small symbol"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "R resistor"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "R_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "R_Small_0_1"
+				(rectangle
+					(start -0.762 1.778)
+					(end 0.762 -1.778)
+					(stroke
+						(width 0.2032)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "R_Small_1_1"
+				(pin passive line
+					(at 0 2.54 270)
+					(length 0.762)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -2.54 90)
+					(length 0.762)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Power_Protection:SP0503BAHT"
+			(pin_names
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "D"
+				(at 5.715 2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "SP0503BAHT"
+				(at 5.715 0.635 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" "Package_TO_SOT_SMD:SOT-143"
+				(at 5.715 -1.27 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "http://www.littelfuse.com/~/media/files/littelfuse/technical%20resources/documents/data%20sheets/sp05xxba.pdf"
+				(at 3.175 3.175 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "TVS Diode Array, 5.5V Standoff, 3 Channels, SOT-143 package"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "usb esd protection suppression transient"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "SOT?143*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "SP0503BAHT_0_0"
+				(pin passive line
+					(at 0 -5.08 90)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(symbol "SP0503BAHT_0_1"
+				(rectangle
+					(start -4.445 2.54)
+					(end 4.445 -2.54)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(polyline
+					(pts
+						(xy -3.302 1.016) (xy -3.302 1.27) (xy -1.905 1.27) (xy -1.778 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.54 2.54) (xy -2.54 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.54 1.27) (xy -2.54 -1.27) (xy 2.54 -1.27) (xy 2.54 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.54 1.27) (xy -1.905 0) (xy -3.175 0) (xy -2.54 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 2.54) (xy 0 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 -1.27) (xy 0 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 -1.27) (xy 0 -2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 0 -1.27)
+					(radius 0.254)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.635 1.27) (xy 0.762 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.635 1.27) (xy -0.762 1.27) (xy -0.762 1.016)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.635 0) (xy -0.635 0) (xy 0 1.27) (xy 0.635 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.778 1.016) (xy 1.778 1.27) (xy 3.175 1.27) (xy 3.302 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.54 2.54) (xy 2.54 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.54 1.27) (xy 1.905 0) (xy 3.175 0) (xy 2.54 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "SP0503BAHT_1_1"
+				(pin passive line
+					(at -2.54 5.08 270)
+					(length 2.54)
+					(name "K"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 5.08 270)
+					(length 2.54)
+					(name "K"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 5.08 270)
+					(length 2.54)
+					(name "K"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+	)
+	(junction
+		(at 105.41 78.74)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "6aaba72c-4e15-492a-b759-38422b86e1eb")
+	)
+	(junction
+		(at 184.15 33.02)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "8247191d-40ef-4374-977c-41a04f55422f")
+	)
+	(junction
+		(at 113.03 68.58)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a0bee443-7205-436d-a3ed-f8a052520a9c")
+	)
+	(junction
+		(at 105.41 76.2)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "c4ab0b2f-da2f-43e0-860f-727bc8d59df5")
+	)
+	(junction
+		(at 113.03 71.12)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "cb2c447c-4eee-4f47-b6e2-bf31b7647183")
+	)
+	(no_connect
+		(at 64.77 60.96)
+		(uuid "93797f33-cf43-47ae-bde6-f8ae9a26e326")
+	)
+	(no_connect
+		(at 105.41 63.5)
+		(uuid "b51348ea-8e4f-4daf-ac4e-3e452727efbc")
+	)
+	(wire
+		(pts
+			(xy 184.15 33.02) (xy 184.15 54.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0972559a-095e-4c06-a540-a77227023ddb")
+	)
+	(wire
+		(pts
+			(xy 184.15 33.02) (xy 190.5 33.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "224f6946-6fe3-4a51-b256-3954248391ae")
+	)
+	(wire
+		(pts
+			(xy 105.41 76.2) (xy 113.03 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "27d7d893-29db-4874-98d4-bd0cf3a1d5e4")
+	)
+	(wire
+		(pts
+			(xy 62.23 53.34) (xy 64.77 53.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2e1e7486-ca05-40ac-9697-e7e377567efc")
+	)
+	(wire
+		(pts
+			(xy 118.11 115.57) (xy 118.11 119.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "303a3a4d-538c-4564-8bea-3ad60c67aab1")
+	)
+	(wire
+		(pts
+			(xy 176.53 33.02) (xy 184.15 33.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "343556aa-0a8d-4d4e-bb79-4de279e96220")
+	)
+	(wire
+		(pts
+			(xy 105.41 71.12) (xy 113.03 71.12)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "36e229df-21f4-45d2-bed6-81c36af1f34e")
+	)
+	(wire
+		(pts
+			(xy 115.57 95.25) (xy 115.57 105.41)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "379976a9-6f61-43e6-8ece-9405367ba0b5")
+	)
+	(wire
+		(pts
+			(xy 26.67 55.88) (xy 64.77 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3995c01a-b297-43fd-9e99-21231fada0bc")
+	)
+	(wire
+		(pts
+			(xy 184.15 59.69) (xy 184.15 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3a2ce033-f0b1-415d-98f9-81184faa2b03")
+	)
+	(wire
+		(pts
+			(xy 125.73 55.88) (xy 130.81 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3f747393-226e-49a0-9151-f9145f77ee8d")
+	)
+	(wire
+		(pts
+			(xy 105.41 76.2) (xy 105.41 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "48889f02-1ce9-4e0c-a05c-4e88628ea90c")
+	)
+	(wire
+		(pts
+			(xy 105.41 48.26) (xy 113.03 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4c9f746d-7e22-438c-a8a4-21bba8ba4040")
+	)
+	(wire
+		(pts
+			(xy 105.41 78.74) (xy 105.41 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "535eef5c-22f7-489e-b17b-ec9e550b9921")
+	)
+	(wire
+		(pts
+			(xy 148.59 33.02) (xy 161.29 33.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5c649e2b-a8df-4bd3-a614-caef7bfa2dfc")
+	)
+	(wire
+		(pts
+			(xy 46.99 58.42) (xy 64.77 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "651bc12f-ce86-4437-ac4f-8076a6145af2")
+	)
+	(wire
+		(pts
+			(xy 105.41 68.58) (xy 113.03 68.58)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7798539d-9e6f-43c9-a692-767f16f70b69")
+	)
+	(wire
+		(pts
+			(xy 54.61 53.34) (xy 57.15 53.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7fb9d922-82d4-42bc-9554-886d3be43bd3")
+	)
+	(wire
+		(pts
+			(xy 105.41 55.88) (xy 120.65 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "87b1680c-e3fd-46be-b970-753ab963a224")
+	)
+	(wire
+		(pts
+			(xy 120.65 100.33) (xy 120.65 105.41)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cd2be5e0-201d-4f86-ae03-71eb9585b579")
+	)
+	(wire
+		(pts
+			(xy 118.11 100.33) (xy 118.11 105.41)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d28c8bd8-4c08-43cd-aa20-435b6c5894b6")
+	)
+	(wire
+		(pts
+			(xy 105.41 50.8) (xy 113.03 50.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d74cb97a-cb51-4199-b74d-321ddb954010")
+	)
+	(wire
+		(pts
+			(xy 113.03 68.58) (xy 120.65 68.58)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "dde803ed-ab23-40b0-99e9-951c80d63b36")
+	)
+	(wire
+		(pts
+			(xy 105.41 60.96) (xy 113.03 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e4b50e0d-3228-4013-8875-1492f086d9f7")
+	)
+	(wire
+		(pts
+			(xy 105.41 58.42) (xy 113.03 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e7e9989f-8808-4448-9279-2e1c7445096f")
+	)
+	(wire
+		(pts
+			(xy 113.03 68.58) (xy 113.03 71.12)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e88b8dde-b26d-48a0-a326-107d9b11adb2")
+	)
+	(wire
+		(pts
+			(xy 105.41 73.66) (xy 105.41 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ea031cb3-d4df-4950-9344-d89c90af4d2d")
+	)
+	(hierarchical_label "VBUS"
+		(shape passive)
+		(at 113.03 48.26 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0e15c999-e7f6-48d0-a313-cfa7d96fa89c")
+	)
+	(hierarchical_label "VCC_5V"
+		(shape passive)
+		(at 190.5 33.02 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "11bedd14-58e2-487f-91b2-f0e11e3a8ccb")
+	)
+	(hierarchical_label "GND"
+		(shape passive)
+		(at 184.15 74.93 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "1e25ce1d-f386-46a7-a4bb-f61dc0c1c8b1")
+	)
+	(hierarchical_label "USB_DN"
+		(shape passive)
+		(at 113.03 60.96 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1fd56975-1a77-407d-8dc8-ef0003397f08")
+	)
+	(hierarchical_label "GND"
+		(shape passive)
+		(at 118.11 119.38 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "3866e05c-4cf6-4001-8c61-a284efdabf7d")
+	)
+	(hierarchical_label "GND"
+		(shape passive)
+		(at 120.65 68.58 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3d765f97-958b-42a4-a339-b93004db5fa6")
+	)
+	(hierarchical_label "VBUS"
+		(shape passive)
+		(at 113.03 50.8 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8892e499-4c2f-45b6-b191-ee19d7a16326")
+	)
+	(hierarchical_label "VBUS"
+		(shape passive)
+		(at 148.59 33.02 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "8ac50b67-d001-45ba-8f0b-cc3dfc842318")
+	)
+	(hierarchical_label "USB_DP"
+		(shape passive)
+		(at 113.03 58.42 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9306030f-986d-43f2-ad52-1ad29c2868dc")
+	)
+	(hierarchical_label "GND"
+		(shape passive)
+		(at 130.81 55.88 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "97cbfb93-985e-4ab8-a5a3-a276ec416739")
+	)
+	(hierarchical_label "USB_DP"
+		(shape passive)
+		(at 118.11 100.33 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b4027717-310a-4b1d-a1f1-ba1240e6b0f2")
+	)
+	(hierarchical_label "USB_DN"
+		(shape passive)
+		(at 46.99 58.42 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "bbab7eb0-0ca0-484e-a4e5-4d70a5839681")
+	)
+	(hierarchical_label "VBUS"
+		(shape passive)
+		(at 115.57 95.25 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e04bd612-7ac6-4729-9467-99ba20b81028")
+	)
+	(hierarchical_label "USB_DN"
+		(shape passive)
+		(at 120.65 100.33 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f4ced305-3556-42c4-8a72-a4166a146c37")
+	)
+	(hierarchical_label "USB_DP"
+		(shape passive)
+		(at 26.67 55.88 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f613b934-0f36-4bae-bb00-ce1a95600c31")
+	)
+	(hierarchical_label "GND"
+		(shape passive)
+		(at 54.61 53.34 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "fed237ff-ca0b-4932-b7b8-daaa26b3df6f")
+	)
+	(netclass_flag ""
+		(length 2.54)
+		(shape round)
+		(at 35.56 55.88 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "726a43bc-4562-48b5-b4bd-e302bac7fecd")
+		(property "Netclass" "10mil"
+			(at 36.1696 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(justify left)
+			)
+		)
+	)
+	(netclass_flag ""
+		(length 2.54)
+		(shape round)
+		(at 53.34 58.42 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "ceeb22bc-8a03-4cc7-8929-8cbee2ffad68")
+		(property "Netclass" "10mil"
+			(at 53.9496 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(justify left)
+			)
+		)
+	)
+	(symbol
+		(lib_id "DIY:USB4105-GF-A")
+		(at 85.09 58.42 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "0f7cd647-f895-495b-810b-45ba79af6943")
+		(property "Reference" "J5"
+			(at 85.09 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "USB4105-GF-A"
+			(at 85.09 43.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "DIY:GCT_USB4105-GF-A"
+			(at 85.09 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/5492/USB4105.pdf"
+			(at 85.09 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "CONN RCP USB2.0 TYP C 24P SMD RA"
+			(at 85.09 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "PARTREV" "B4"
+			(at 85.09 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "STANDARD" "Manufacturer Recommendations"
+			(at 85.09 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MAXIMUM_PACKAGE_HEIGHT" "3.31 mm"
+			(at 85.09 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "GCT"
+			(at 85.09 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Name" "GCT"
+			(at 85.09 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "USB4105-GF-A"
+			(at 85.09 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Instructions/Notes" ""
+			(at 85.09 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "SMD"
+			(at 85.09 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "A1_B12"
+			(uuid "b3e82f2a-4fed-4831-92de-15e24b54364d")
+		)
+		(pin "A4_B9"
+			(uuid "5672d8f5-2d47-485c-8c5c-54f348e01354")
+		)
+		(pin "A5"
+			(uuid "9022018c-6b59-4580-9b25-98085a100f89")
+		)
+		(pin "A6"
+			(uuid "76cba979-21e6-479a-a132-128734e49448")
+		)
+		(pin "A7"
+			(uuid "dc82220e-100b-402f-aeb2-2f0377e0f61c")
+		)
+		(pin "A8"
+			(uuid "8d0090c1-9f21-44ec-b189-a7126dcfbd3f")
+		)
+		(pin "B1_A12"
+			(uuid "7b1124d8-4486-4f61-be2a-1ff7c0b62147")
+		)
+		(pin "B4_A9"
+			(uuid "d4c0ba6b-40af-4dd0-89c9-ace8aabaf1be")
+		)
+		(pin "B5"
+			(uuid "19c31b57-b108-437c-af86-c0ac44d6b812")
+		)
+		(pin "B6"
+			(uuid "6d215838-669e-47e7-855b-09e4c0b89de6")
+		)
+		(pin "B7"
+			(uuid "f5cfd37a-5265-4c41-8f77-8128bf1695af")
+		)
+		(pin "B8"
+			(uuid "16b966ca-163d-4048-b82b-524c126fd77d")
+		)
+		(pin "SH1"
+			(uuid "4293b10a-1873-40b0-8de3-338b828c216d")
+		)
+		(pin "SH2"
+			(uuid "c8c530fc-7f81-4eec-997f-16f2de1011fd")
+		)
+		(pin "SH3"
+			(uuid "68722b7f-e86f-4de0-bc6e-66a3107b41c3")
+		)
+		(pin "SH4"
+			(uuid "45028350-c9c4-4cfe-a53d-b8378a816d87")
+		)
+		(instances
+			(project "a1s-mini"
+				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/53d69b61-aed6-4e37-bc10-846d5fa685f3"
+					(reference "J5")
+					(unit 1)
+				)
+				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
+					(reference "J6")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 123.19 55.88 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "44bd7630-8582-4b23-8677-87b291487fce")
+		(property "Reference" "R22"
+			(at 123.19 50.8 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "5.1K 1%"
+			(at 123.19 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 123.19 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.yageo.com/upload/media/product/products/datasheet/rchip/PYu-RC_Group_51_RoHS_L_12.pdf"
+			(at 123.19 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "RES 5.1K OHM 1% 1/10W 0603"
+			(at 123.19 55.88 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Name" "YAGEO"
+			(at 123.19 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "RC0603FR-075K1L"
+			(at 123.19 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Instructions/Notes" ""
+			(at 123.19 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "SMD"
+			(at 123.19 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "72c0fa0d-6936-4d4d-9494-4c51a0756fec")
+		)
+		(pin "2"
+			(uuid "e1a08d24-21cd-4bf3-a27f-cbd49b668c7f")
+		)
+		(instances
+			(project "a1s-mini"
+				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/53d69b61-aed6-4e37-bc10-846d5fa685f3"
+					(reference "R22")
+					(unit 1)
+				)
+				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
+					(reference "R30")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 113.03 73.66 0)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "5c0cec25-b186-4512-a7a4-4634a7162127")
+		(property "Reference" "R21"
+			(at 118.11 73.66 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "0R"
+			(at 115.57 73.66 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 113.03 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.seielect.com/catalog/sei-rmcf_rmcp.pdf"
+			(at 113.03 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "RES 0 OHM JUMPER 1/10W 0603"
+			(at 113.03 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Name" "StackPole Electronics"
+			(at 113.03 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "RMCF0603ZT0R00"
+			(at 113.03 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Instructions/Notes" ""
+			(at 113.03 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "SMD"
+			(at 113.03 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "10c9e249-f71d-4058-b7bf-024dbe739437")
+		)
+		(pin "2"
+			(uuid "b0517389-a5da-4a07-9884-5ec24e880303")
+		)
+		(instances
+			(project "a1s-mini"
+				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/53d69b61-aed6-4e37-bc10-846d5fa685f3"
+					(reference "R21")
+					(unit 1)
+				)
+				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
+					(reference "R29")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "DIY:1N5819HW-7-F")
+		(at 176.53 33.02 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "747c773e-167b-435c-aaeb-4f78d72f2bc2")
+		(property "Reference" "D10"
+			(at 168.91 25.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "1N5819HW-7-F"
+			(at 168.91 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "DIY:SOD3716X145N"
+			(at 165.1 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.diodes.com//assets/Datasheets/1N5819HW.pdf"
+			(at 165.1 30.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" "DIODE SCHOTTKY 40V 1A SOD123"
+			(at 165.1 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Height" "1.45"
+			(at 165.1 25.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Name" "Diodes Incorporated"
+			(at 165.1 22.86 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "1N5819HW-7-F"
+			(at 165.1 20.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Mouser Part Number" "621-1N5819HW-F"
+			(at 165.1 17.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Diodes-Incorporated/1N5819HW-7-F?qs=NQ47qNm99eDyWTEd07miYA%3D%3D"
+			(at 165.1 15.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Arrow Part Number" "1N5819HW-7-F"
+			(at 165.1 12.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Arrow Price/Stock" "https://www.arrow.com/en/products/1n5819hw-7-f/diodes-incorporated?utm_currency=USD&region=nac"
+			(at 165.1 10.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Instructions/Notes" ""
+			(at 176.53 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "SMD"
+			(at 176.53 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5937497f-7032-41bc-aaa4-96e45ab66b2d")
+		)
+		(pin "2"
+			(uuid "81e5f1fd-533a-4f34-afa5-eacdd1d53096")
+		)
+		(instances
+			(project "a1s-mini"
+				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/53d69b61-aed6-4e37-bc10-846d5fa685f3"
+					(reference "D10")
+					(unit 1)
+				)
+				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
+					(reference "D14")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 59.69 53.34 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "9791d902-ee39-4ec3-b200-320171eb1037")
+		(property "Reference" "R20"
+			(at 59.69 48.26 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "5.1K 1%"
+			(at 59.69 50.8 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 59.69 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.yageo.com/upload/media/product/products/datasheet/rchip/PYu-RC_Group_51_RoHS_L_12.pdf"
+			(at 59.69 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "RES 5.1K OHM 1% 1/10W 0603"
+			(at 59.69 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Name" "YAGEO"
+			(at 59.69 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "RC0603FR-075K1L"
+			(at 59.69 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Instructions/Notes" ""
+			(at 59.69 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "SMD"
+			(at 59.69 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2d9ec85c-b889-4541-bfd9-082a79841ba6")
+		)
+		(pin "2"
+			(uuid "68a7681a-8d99-4d62-a467-b51ca838237f")
+		)
+		(instances
+			(project "a1s-mini"
+				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/53d69b61-aed6-4e37-bc10-846d5fa685f3"
+					(reference "R20")
+					(unit 1)
+				)
+				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
+					(reference "R28")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C_Small")
+		(at 184.15 57.15 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f1d8cb7c-1bcc-4ef4-aa7f-5a5f6678cf0b")
+		(property "Reference" "C12"
+			(at 186.69 56.5086 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "10uF 10V"
+			(at 186.69 59.0486 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 184.15 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/43/CL10A106KP8NNNC_Spec.pdf"
+			(at 184.15 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "CAP CER 10UF 10V X5R 0603"
+			(at 184.15 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Name" "Samsung Electro-Mechanics"
+			(at 184.15 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "CL10A106KP8NNNC"
+			(at 184.15 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Instructions/Notes" ""
+			(at 184.15 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "SMD"
+			(at 184.15 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "fa1e71ef-a38c-4fdc-a824-f21262135a4a")
+		)
+		(pin "2"
+			(uuid "4071fe0f-a3ca-420f-87e7-bee1f87419b7")
+		)
+		(instances
+			(project "a1s-mini"
+				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/53d69b61-aed6-4e37-bc10-846d5fa685f3"
+					(reference "C12")
+					(unit 1)
+				)
+				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
+					(reference "C15")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Power_Protection:SP0503BAHT")
+		(at 118.11 110.49 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f741de64-30d5-46b7-8d64-9a8c73f36988")
+		(property "Reference" "D7"
+			(at 124.46 109.855 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SP0503BAHTG"
+			(at 124.46 112.395 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-143"
+			(at 123.825 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "http://www.littelfuse.com/~/media/files/littelfuse/technical%20resources/documents/data%20sheets/sp05xxba.pdf"
+			(at 121.285 107.315 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "TVS DIODE 5.5VWM 8.5VC SOT1434"
+			(at 118.11 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Name" "Littelfuse Inc"
+			(at 118.11 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "SP0503BAHTG"
+			(at 118.11 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Instructions/Notes" ""
+			(at 118.11 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Type" "SMD"
+			(at 118.11 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ac3e0c3d-83f4-4c36-a699-28f1a0acd217")
+		)
+		(pin "2"
+			(uuid "bc8e7e93-7ccb-439a-818e-596475a9c466")
+		)
+		(pin "3"
+			(uuid "ac4e15ca-431c-4a25-9011-cdf439ae1e7d")
+		)
+		(pin "4"
+			(uuid "41a96717-76ef-4a71-9ccc-4898e5816edb")
+		)
+		(instances
+			(project "a1s-mini"
+				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/53d69b61-aed6-4e37-bc10-846d5fa685f3"
+					(reference "D7")
+					(unit 1)
+				)
+				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
+					(reference "D8")
+					(unit 1)
+				)
+			)
+		)
+	)
 )
