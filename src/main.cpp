@@ -24,6 +24,12 @@ esPod espod(altSerial);
 esPod espod(Serial);
 #endif
 #else
+#ifndef CAN1_RX
+#define CAN1_RX 16
+#endif
+#ifndef CAN1_TX
+#define CAN1_TX 17
+#endif
 I2SStream i2s;
 HardwareSerial ipodSerial(1);
 BluetoothA2DPSink a2dp_sink;
@@ -366,7 +372,7 @@ void initializeSDCard()
 void initializeSerial()
 {
 #ifndef AUDIOKIT
-	ipodSerial.setPins(16, 17);
+	ipodSerial.setPins(CAN1_RX, CAN1_TX);
 	ipodSerial.setRxBufferSize(1024);
 	ipodSerial.setTxBufferSize(1024);
 	ipodSerial.begin(19200);
