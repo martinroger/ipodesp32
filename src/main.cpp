@@ -24,11 +24,14 @@ esPod espod(altSerial);
 esPod espod(Serial);
 #endif
 #else
-#ifndef CAN1_RX
-#define CAN1_RX 16
+#ifndef UART1_RX
+#define UART1_RX 16
 #endif
-#ifndef CAN1_TX
-#define CAN1_TX 17
+#ifndef UART1_TX
+#define UART1_TX 17
+#endif
+#ifndef UART1_RST
+#define UART1_RST 13
 #endif
 I2SStream i2s;
 HardwareSerial ipodSerial(1);
@@ -75,6 +78,12 @@ void playStatusHandler(byte playCommand);
 
 void setup()
 {
+	//If available, reset the UART1 transceiver
+	#ifdef UART1_RST
+	pinMode(UART1_RST, OUTPUT);
+	digitalWrite(UART1_RST, LOW);
+	#endif
+
 	esp_log_level_set("*", ESP_LOG_NONE);
 	ESP_LOGI("SETUP", "setup() start");
 
@@ -95,6 +104,9 @@ void setup()
 	if (initializeAVRCTask() != ESP_OK)
 		esp_restart();
 	initializeA2DPSink();
+	#ifdef UART1_RST //Re-enable the UART1 transceiver if available
+	digitalWrite(UART1_RST, HIGH);
+	#endif
 	initializeSerial();
 	espod.attachPlayControlHandler(playStatusHandler);
 	ESP_LOGI("SETUP", "Waiting for peer");
@@ -372,7 +384,7 @@ void initializeSDCard()
 void initializeSerial()
 {
 #ifndef AUDIOKIT
-	ipodSerial.setPins(CAN1_RX, CAN1_TX);
+	ipodSerial.setPins(UART1_RX, UART1_TX);
 	ipodSerial.setRxBufferSize(1024);
 	ipodSerial.setTxBufferSize(1024);
 	ipodSerial.begin(19200);
