@@ -69,6 +69,8 @@ This is the most basic, and most "DIY"-looking solution. It is also one of the l
 
 - A CP2104-based USB-UART interface, with one absolutely essential requirement : **the "DCD" (Device Carrier Detect) pin MUST be accessible**. My personal favourite is the very commonly found interface usually stamped "CNT-003B", which has the good taste of also being compatible with the "Sandwich" carrier board (if used). Please note : after modifying the VID and PID on the UART interface, it will NOT be usable without reprogramming in other applications.
 
+**Please note : the CP2104 is only re-programmable ONE TIME. Don't mess it up !**
+
 ![CNT-003B](/img/CNT003B.jpg)
 
 - Optionally, I have designed a cheap PCB carrier called the "Sandwich" board, which can be used for doing the right connections and keeping things tight. You can also use jumper cables and prototyping boards first !
@@ -99,7 +101,7 @@ The board is quite well made and is supported by another awesome library called 
 
 To remedy those hardware shortcomings, two options exist : 
 - Combining an LDO breakout board (5V->3V3, recommended 0.8A output and some ESD protection diodes ) such as [the ones based on the ever popular AMS1117-3V3](https://a.co/d/54oFsbZ) or even some switched break-out 3V3 power supplies, as long as their output voltage is relatively "clean", with a CP2102 or CP2104-based USB-UART breakout board **with accessible DCD pin**. A bit of soldering and/or wires is necessary, [correct connections are available on this wiki page.](https://github.com/martinroger/ipodesp32/wiki/AudioKit---floating-LDO-and-UART-interface)
-- Buying/Copying the provided "Haut-de-forme" board (Top-Hat, in French) which essentially integrates a CP2104 UART interface with an LDO in a convenient form factor that mounts quite low on top of the AudioKit board. Full instructions are available on [this wiki page.](https://github.com/martinroger/ipodesp32/wiki/AudioKit-and-Haut%E2%80%90de%E2%80%90Forme-board)
+- Buying/Copying the provided "Haut-de-forme" board (Top-Hat, in French) which essentially integrates a CP2102N UART interface with an LDO in a convenient form factor that mounts quite low on top of the AudioKit board. Full instructions are available on [this wiki page.](https://github.com/martinroger/ipodesp32/wiki/AudioKit-and-Haut%E2%80%90de%E2%80%90Forme-board)
 
 ![LDO breakout board](/img/LDOBoard.jpg)
 
@@ -109,7 +111,7 @@ _A common AMS1117 LDO breakout board_
 
 _A render of the Haut de Forme board_
 
-In any of the scenarios it will be necessary to edit the VID and PID on the UART interface in order for it to be recognized by the car. [Same instructions apply as for the more DIY solution.](https://github.com/martinroger/ipodesp32/wiki/Editing-the-CP210x-VID-and-PID)
+In any of the scenarios it will be necessary to edit the VID and PID on the UART interface in order for it to be recognized by the car. [Same instructions apply as for the more DIY solution if using a CP2102 or CP2104](https://github.com/martinroger/ipodesp32/wiki/Editing-the-CP210x-VID-and-PID), the instructions for the board based on the CP2102N are a bit different and need to be written up.
 
 To note : there is the possibility of modifying the board itself by uncovering some of the solder mask near the DCD pin of the CP2102 and trying to hand solder a bridge or an enameled wire. It is quite difficult to do as the package is a QFN2x, and issues can still persist if there are inconsistencies in the grounding or if the USB supply on the car is a bit fluctuating, as the UART chip is **not powered from the onboard LDO**. There is no easy palliative for that shortcoming, so it may work inconsistently (in my experience at least).
 
