@@ -22144,7 +22144,7 @@
 		(descr "ESP32-WROVER-E: https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf")
 		(tags "esp32 module thermal vias")
 		(property "Reference" "U1"
-			(at 9.36 -32.85 0)
+			(at 9.565 -22.815 0)
 			(layer "F.SilkS")
 			(uuid "9a0512e9-b827-42f3-8877-68e412fda312")
 			(effects
@@ -22218,27 +22218,7 @@
 		(path "/a385fbce-fb5d-4709-a332-be757543d2b2")
 		(sheetname "/")
 		(sheetfile "a1s-mini.kicad_sch")
-		(attr smd)
-		(fp_line
-			(start 0 -31.5)
-			(end 0 -24.605)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "16bae481-b30c-4ca7-84e5-563430842a18")
-		)
-		(fp_line
-			(start 0 -26.4)
-			(end 19 -26.4)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "466add2f-2aae-41cb-a02f-6ea927a76c5f")
-		)
+		(attr smd exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start 0 0)
 			(end 0 -0.355)
@@ -22260,26 +22240,6 @@
 			(uuid "7fa9edaf-f292-431c-8980-ff0d00896f01")
 		)
 		(fp_line
-			(start 19 -31.5)
-			(end 0 -31.5)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "45d6f1a1-f6e8-493a-be37-bf17160ddd57")
-		)
-		(fp_line
-			(start 19 -31.5)
-			(end 19 -24.605)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "d79117fd-f74f-4a29-b630-1c0daa6848ab")
-		)
-		(fp_line
 			(start 19 0)
 			(end 19 -0.355)
 			(stroke
@@ -22298,16 +22258,6 @@
 			)
 			(layer "Eco2.User")
 			(uuid "077ca486-48f9-484d-a11a-c7038c7494ee")
-		)
-		(fp_line
-			(start 0 -26.4)
-			(end 19 -26.4)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "Eco2.User")
-			(uuid "1a170e87-83ef-4d8c-a173-ca7d52e2fce2")
 		)
 		(fp_line
 			(start 0 0)
@@ -22378,18 +22328,6 @@
 			)
 			(layer "F.CrtYd")
 			(uuid "89cc9e33-a5e0-44f0-834b-b909a6a754dd")
-		)
-		(fp_text user "Antenna Area"
-			(at 10 -28.5 0)
-			(unlocked yes)
-			(layer "F.SilkS")
-			(uuid "58c4c43b-7bcd-4c40-81b8-b3c9656a9143")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
 		)
 		(fp_text user "${REFERENCE}"
 			(at 9.5 -15.705 0)
@@ -22764,7 +22702,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "4de13b83-a8e8-492a-bc9d-328976ac4e52")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" smd rect
 			(at 8.85 -18.45)
@@ -22773,7 +22711,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "a7721e54-417c-422e-9916-7a371a9caea5")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" smd rect
 			(at 8.85 -17.1)
@@ -22782,7 +22720,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "f90fd8fd-cf17-4644-8fee-d767a4f292ce")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" smd rect
 			(at 8.85 -15.75)
@@ -22791,7 +22729,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "1eb14050-c500-4cf3-9f46-fabf57276d9b")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" thru_hole circle
 			(at 9.525 -19.125)
@@ -22802,7 +22740,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "15cd9aa1-6fdf-4900-be62-eddbe2afeaa4")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" thru_hole circle
 			(at 9.525 -17.775)
@@ -22813,7 +22751,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "8974a3e8-2b5d-4c37-ad7f-a0c059638074")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" thru_hole circle
 			(at 9.525 -16.425)
@@ -22824,7 +22762,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "720b45af-9b29-4251-bd45-f119d6b45aaa")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" thru_hole circle
 			(at 9.525 -15.075)
@@ -22835,7 +22773,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "fac86769-bea6-4a59-9427-0bafd700fe92")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" smd rect
 			(at 10.2 -18.45)
@@ -22844,7 +22782,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "706214f4-eefb-4422-8e5a-f38aae830cec")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" smd rect
 			(at 10.2 -17.1)
@@ -22853,7 +22791,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "87f8f026-c080-48aa-946e-a6f86942d140")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" smd rect
 			(at 10.2 -15.75)
@@ -22862,7 +22800,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "363c4e9a-19d5-4694-8158-c031c51bf3a2")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" thru_hole circle
 			(at 10.875 -19.125)
@@ -22873,7 +22811,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "95cbbeef-9691-483d-a501-f383a8fc7e1f")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" thru_hole circle
 			(at 10.875 -17.775)
@@ -22884,7 +22822,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "348b789c-dff1-467e-9068-81199d6d9965")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" thru_hole circle
 			(at 10.875 -16.425)
@@ -22895,7 +22833,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "d685564d-ad46-418e-99e0-7c75e711b1b6")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" thru_hole circle
 			(at 10.875 -15.075)
@@ -22906,7 +22844,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "ddccff13-f2aa-4f3e-b976-b6660d15ab65")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" smd rect
 			(at 11.55 -18.45)
@@ -22915,7 +22853,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "270e7065-1cab-48d5-a291-28f246b12461")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" smd rect
 			(at 11.55 -17.1)
@@ -22924,7 +22862,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "720c8418-03af-46b0-ac51-c678429e88b8")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" smd rect
 			(at 11.55 -15.75)
@@ -22933,7 +22871,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "2910fd29-7079-4911-97e6-bf5248c7eba0")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" thru_hole circle
 			(at 12.225 -17.775)
@@ -22944,7 +22882,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "dec741ac-400d-4df9-ad48-099f1cacf915")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(pad "39" thru_hole circle
 			(at 12.225 -16.425)
@@ -22955,7 +22893,7 @@
 			(net 16 "GND")
 			(pinfunction "GND")
 			(pintype "power_in")
-			(uuid "2631d371-e2a0-4dfc-a067-ee330619f1ae")
+			(uuid "14469a21-706a-4540-bf59-5c0c61dca32a")
 		)
 		(zone
 			(net 0)
