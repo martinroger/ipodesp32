@@ -78,11 +78,16 @@ void playStatusHandler(byte playCommand);
 
 void setup()
 {
-	//If available, reset the UART1 transceiver
-	#ifdef UART1_RST
+// If available, reset the UART1 transceiver
+#ifdef UART1_RST
 	pinMode(UART1_RST, OUTPUT);
 	digitalWrite(UART1_RST, LOW);
-	#endif
+#endif
+
+#ifdef LED_BUILTIN
+	pinMode(LED_BUILTIN, OUTPUT);
+	digitalWrite(LED_BUILTIN, LOW);
+#endif
 
 	esp_log_level_set("*", ESP_LOG_NONE);
 	ESP_LOGI("SETUP", "setup() start");
@@ -104,9 +109,9 @@ void setup()
 	if (initializeAVRCTask() != ESP_OK)
 		esp_restart();
 	initializeA2DPSink();
-	#ifdef UART1_RST //Re-enable the UART1 transceiver if available
+#ifdef UART1_RST // Re-enable the UART1 transceiver if available
 	digitalWrite(UART1_RST, HIGH);
-	#endif
+#endif
 	initializeSerial();
 	espod.attachPlayControlHandler(playStatusHandler);
 	ESP_LOGI("SETUP", "Waiting for peer");
@@ -475,11 +480,17 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void *ptr)
 	case ESP_A2D_CONNECTION_STATE_CONNECTED:
 		ESP_LOGD("A2DP_CB", "ESP_A2D_CONNECTION_STATE_CONNECTED, espod enabled");
 		espod.disabled = false;
+#ifdef LED_BUILTIN
+		digitalWrite(LED_BUILTIN, HIGH);
+#endif
 		break;
 	case ESP_A2D_CONNECTION_STATE_DISCONNECTED:
 		ESP_LOGD("A2DP_CB", "ESP_A2D_CONNECTION_STATE_DISCONNECTED, espod disabled");
 		espod.resetState();
 		espod.disabled = true;
+#ifdef LED_BUILTIN
+		digitalWrite(LED_BUILTIN, LOW);
+#endif
 		break;
 	}
 }
