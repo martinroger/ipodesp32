@@ -1,4 +1,4 @@
-24899322957380802
+24901066931049440
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -55334,6 +55334,13 @@ Varistor
 0
 2
 2
+DIY
+ESP32-A1S
+ESP32-WROVER-E: https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf
+esp32 module thermal vias
+0
+59
+39
 DIY
 FUSC4632X85N
 MF-MSMF160
