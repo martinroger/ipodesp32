@@ -5,11 +5,18 @@
 #include "esPod.h"
 
 #pragma region A2DP Sink Configuration and Serial Initialization
+
 #ifdef AUDIOKIT
+
 #ifdef USE_SD
 #include "sdLogUpdate.h"
 bool sdLoggerEnabled = false;
 #endif
+
+#if !defined(INVERT_LED_LOGIC)
+#define INVERT_LED_LOGIC(stateBoolean) stateBoolean
+#endif
+
 #include "AudioBoard.h"
 #include "AudioTools/AudioLibs/I2SCodecStream.h"
 AudioInfo info(44100, 2, 16);
@@ -17,33 +24,58 @@ DriverPins minimalPins;
 AudioBoard minimalAudioKit(AudioDriverES8388, minimalPins);
 I2SCodecStream i2s(minimalAudioKit);
 BluetoothA2DPSink a2dp_sink(i2s);
+
 #ifdef USE_ALT_SERIAL
-HardwareSerial altSerial(1);
-esPod espod(altSerial);
-#else
-esPod espod(Serial);
+HardwareSerial ipodSerial(1);
+
+#ifndef UART1_RX
+#define UART1_RX 19
 #endif
-#else
+
+#ifndef UART1_TX
+#define UART1_TX 22
+#endif
+
+#else //Use main Serial
+HardwareSerial ipodSerial(0);
+#endif
+
+#else // Case not using the audiokit, like Sandwich Carrier Board
+#define USE_SERIAL_1
+
 #ifndef UART1_RX
 #define UART1_RX 16
 #endif
+
 #ifndef UART1_TX
 #define UART1_TX 17
 #endif
+
 #ifndef UART1_RST
 #define UART1_RST 13
 #endif
+
 I2SStream i2s;
 HardwareSerial ipodSerial(1);
 BluetoothA2DPSink a2dp_sink;
 
+/// @brief Data stream reader callback 
+/// @param data Data buffer to pass to the I2S
+/// @param length Length of the data buffer
 void read_data_stream(const uint8_t *data, uint32_t length)
 {
 	i2s.write(data, length);
 }
 
-esPod espod(ipodSerial);
+
 #endif
+esPod espod(ipodSerial);
+
+//DCD control pin to pretend there is a physical disconnect
+#if defined(ENABLE_ACTIVE_DCD) && !defined(DCD_CTRL_PIN)
+#define DCD_CTRL_PIN 5
+#endif
+
 #pragma endregion
 
 #pragma region FreeRTOS tasks defines
@@ -87,6 +119,11 @@ void setup()
 #ifdef LED_BUILTIN
 	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(LED_BUILTIN, LOW);
+#endif
+
+#ifdef ENABLE_ACTIVE_DCD
+	pinMode(DCD_CTRL_PIN, OUTPUT);
+	digitalWrite(DCD_CTRL_PIN,HIGH); //Logic is inverted
 #endif
 
 	esp_log_level_set("*", ESP_LOG_NONE);
@@ -388,23 +425,12 @@ void initializeSDCard()
 /// @brief Sets up and starts the appropriate Serial interface
 void initializeSerial()
 {
-#ifndef AUDIOKIT
+#if defined(USE_SERIAL_1) || defined(USE_ALT_SERIAL) //If Alt Serial or Serial 1 is used
 	ipodSerial.setPins(UART1_RX, UART1_TX);
+#endif
 	ipodSerial.setRxBufferSize(1024);
 	ipodSerial.setTxBufferSize(1024);
 	ipodSerial.begin(19200);
-#else
-#ifdef USE_ALT_SERIAL
-	altSerial.setPins(19, 22);
-	altSerial.setRxBufferSize(1024);
-	altSerial.setTxBufferSize(1024);
-	altSerial.begin(19200);
-#else
-	Serial.setRxBufferSize(1024);
-	Serial.setTxBufferSize(1024);
-	Serial.begin(19200);
-#endif
-#endif
 }
 
 /// @brief Configures the CODEC or DAC and starts the A2DP Sink
@@ -493,6 +519,9 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void *ptr)
 #endif
 		break;
 	}
+	#ifdef ENABLE_ACTIVE_DCD
+	digitalWrite(DCD_CTRL_PIN,espod.disabled);
+	#endif
 }
 
 /// @brief Callback for the change of playstate after connection. Aligns the
