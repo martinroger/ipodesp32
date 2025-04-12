@@ -453,7 +453,7 @@ void initializeA2DPSink()
 	i2s.begin(cfg);
 #endif
 
-	a2dp_sink.set_auto_reconnect(true);
+	a2dp_sink.set_auto_reconnect(true,10000);
 	a2dp_sink.set_on_connection_state_changed(connectionStateChanged);
 	a2dp_sink.set_on_audio_state_changed(audioStateChanged);
 	a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
@@ -507,7 +507,7 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void *ptr)
 		ESP_LOGD("A2DP_CB", "ESP_A2D_CONNECTION_STATE_CONNECTED, espod enabled");
 		espod.disabled = false;
 #ifdef LED_BUILTIN
-		digitalWrite(LED_BUILTIN, HIGH);
+		digitalWrite(LED_BUILTIN, INVERT_LED_LOGIC(HIGH));
 #endif
 		break;
 	case ESP_A2D_CONNECTION_STATE_DISCONNECTED:
@@ -515,7 +515,7 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void *ptr)
 		espod.resetState();
 		espod.disabled = true;
 #ifdef LED_BUILTIN
-		digitalWrite(LED_BUILTIN, LOW);
+		digitalWrite(LED_BUILTIN, INVERT_LED_LOGIC(LOW));
 #endif
 		break;
 	}
