@@ -641,10 +641,59 @@
       "AGND": [
         "8mil"
       ],
+      "AVDD": [
+        "15mil",
+        "8mil"
+      ],
+      "BCLK": [
+        "8mil"
+      ],
+      "DEMPH": [
+        "8mil"
+      ],
+      "DIN": [
+        "8mil"
+      ],
+      "DVDD": [
+        "15mil"
+      ],
+      "FILTER": [
+        "8mil"
+      ],
+      "FORMAT": [
+        "8mil"
+      ],
       "LOUT": [
         "8mil"
       ],
+      "MUTE": [
+        "8mil"
+      ],
+      "Net-(U5-CAPM)": [
+        "8mil"
+      ],
+      "Net-(U5-CAPP)": [
+        "8mil"
+      ],
+      "Net-(U5-LDOO)": [
+        "8mil"
+      ],
+      "Net-(U5-OUTL)": [
+        "8mil"
+      ],
+      "Net-(U5-OUTR)": [
+        "8mil"
+      ],
+      "Net-(U5-VNEG)": [
+        "8mil"
+      ],
       "ROUT": [
+        "8mil"
+      ],
+      "SCK_IN": [
+        "8mil"
+      ],
+      "WSEL": [
         "8mil"
       ]
     },
