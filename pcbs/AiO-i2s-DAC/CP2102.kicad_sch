@@ -5,9 +5,9 @@
 	(uuid "293722b5-8855-406d-af35-07e7bc93f99f")
 	(paper "A4")
 	(title_block
-		(title "A1S Mini Board")
-		(date "2025-03-30")
-		(rev "0.3.0")
+		(title "AiO-i2s-DAC")
+		(date "2025-05-18")
+		(rev "0.1.2")
 		(company "Martin Roger")
 	)
 	(lib_symbols
