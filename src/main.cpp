@@ -118,7 +118,7 @@ void setup()
 
 #ifdef LED_BUILTIN
 	pinMode(LED_BUILTIN, OUTPUT);
-	digitalWrite(LED_BUILTIN, LOW);
+	digitalWrite(LED_BUILTIN, INVERT_LED_LOGIC(LOW));
 #endif
 
 #ifdef ENABLE_ACTIVE_DCD
