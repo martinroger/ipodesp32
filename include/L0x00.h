@@ -1,3 +1,4 @@
+#define L0x00_Identify 0x01
 #define L0x00_RequestExtendedInterfaceMode 0x03
 #define L0x00_EnterExtendedInterfaceMode 0x05
 #define L0x00_ExitExtendedInterfaceMode 0x06

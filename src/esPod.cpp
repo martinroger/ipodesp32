@@ -621,6 +621,20 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     // Switch through expected commandIDs
     switch (cmdID)
     {
+    case L0x00_Identify: // Deprecated command observed on Audi by @BluCobalt
+    {
+        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x Identify with Lingo 0x%02x", cmdID, byteArray[1]);
+        switch (byteArray[1])
+        {
+        case 0x04:
+            extendedInterfaceModeActive = true; // Pre-empt ?
+            break;
+        default:
+            break;
+        }
+    }
+    break;
+
     case L0x00_RequestExtendedInterfaceMode: // Mini requests extended interface mode status
     {
         ESP_LOGD(IPOD_TAG, "CMD: 0x%02x RequestExtendedInterfaceMode", cmdID);
