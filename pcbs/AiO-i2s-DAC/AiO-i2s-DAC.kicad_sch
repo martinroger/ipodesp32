@@ -11912,7 +11912,7 @@
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom no)
-		(on_board yes)
+		(on_board no)
 		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "2b535ba9-f81a-4285-80df-da8e504005a3")
@@ -18807,7 +18807,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical"
 			(at 279.4 129.54 0)
 			(effects
 				(font
@@ -19475,7 +19475,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "PCM_Espressif:ESP32-WROVER-E"
+		(property "Footprint" "PCM_Espressif:ESP32-WROVER-E_ThermalVias"
 			(at 133.35 111.76 0)
 			(effects
 				(font
