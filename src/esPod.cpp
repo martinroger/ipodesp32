@@ -866,7 +866,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         case L0x04_RequestProtocolVersion: // Hardcoded return for L0x04
         {
             ESP_LOGI(IPOD_TAG, "CMD 0x%04x RequestProtocolVersion", cmdID);
-            L0x04_0x13_ReturnProtocolVersion();
+            L0x04_0x13_ReturnProtocolVersion(); // Potentially should use L0x00_0x10 instead ? L0x00_0x10_ReturnLingoProtocolVersion(byteArray[2]);
             L0x00_0x27_GetAccessoryInfo(0x00); // Attempting to start normal handshake 
         }
         break;
@@ -1329,6 +1329,16 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
 //|                     Lingo 0x00 subfunctions                         |
 //-----------------------------------------------------------------------
 #pragma region LINGO 0x00
+
+/// @brief Deprecated function to force the Accessory to restart Identify with L0x00_IdentifyDeviceLingoes
+void esPod::L0x00_0x00_RequestIdentify()
+{
+    ESP_LOGI(IPOD_TAG, "iPod: RequestIdentify");
+    const byte txPacket[] = {
+        0x00,
+        0x00};
+    _queuePacket(txPacket, sizeof(txPacket));
+}
 
 /// @brief General response command for Lingo 0x00
 /// @param cmdStatus Has to obey to iPodAck_xxx format as defined in L0x00.h

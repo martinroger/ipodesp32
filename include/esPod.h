@@ -121,6 +121,7 @@ public:
     void processLingo0x04(const byte *byteArray, uint32_t len);
 
     // Lingo 0x00
+    void L0x00_0x00_RequestIdentify();
     void L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID);
     void L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField);
     void L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte);
