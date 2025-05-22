@@ -637,7 +637,7 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
 
     case L0x00_RequestExtendedInterfaceMode: // Mini requests extended interface mode status
     {
-        ESP_LOGD(IPOD_TAG, "CMD: 0x%02x RequestExtendedInterfaceMode", cmdID);
+        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x RequestExtendedInterfaceMode", cmdID);
         if (extendedInterfaceModeActive)
         {
             L0x00_0x04_ReturnExtendedInterfaceMode(0x01); // Report that extended interface mode is active
@@ -867,6 +867,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         {
             ESP_LOGI(IPOD_TAG, "CMD 0x%04x RequestProtocolVersion", cmdID);
             L0x04_0x13_ReturnProtocolVersion();
+            L0x00_0x27_GetAccessoryInfo(0x00); // Attempting to start normal handshake 
         }
         break;
 
@@ -1375,7 +1376,7 @@ void esPod::L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField)
 /// @param extendedModeByte Direct value of the extendedInterfaceMode boolean
 void esPod::L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte)
 {
-    ESP_LOGD(IPOD_TAG, "Extended Interface mode: 0x%02x", extendedModeByte);
+    ESP_LOGI(IPOD_TAG, "Extended Interface mode: 0x%02x", extendedModeByte);
     const byte txPacket[] = {
         0x00,
         0x04,
