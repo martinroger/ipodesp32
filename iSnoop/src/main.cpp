@@ -38,8 +38,9 @@ void initializeSerial();
 
 void setup()
 {
-
 	initializeSerial();
+	UART1.detectPin = IPOD_DETECT;
+	UART2.detectPin = IPOD_DETECT;
 	ESP_LOGI("SETUP", "Setup finished");
 }
 
@@ -51,6 +52,7 @@ void loop()
 /// @brief Sets up and starts the appropriate Serial interface
 void initializeSerial()
 {
+	Serial.begin(115200);
 	RXUart_1.setPins(UART1_RX, UART1_TX);
 	RXUart_2.setPins(UART2_RX, UART2_TX);
 	RXUart_1.setRxBufferSize(1024);

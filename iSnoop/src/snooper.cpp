@@ -228,7 +228,7 @@ byte snooper::_checksum(const byte *byteArray, uint32_t len)
 /// @param len Length of the array to send
 void snooper::_sendPacket(const byte *byteArray, uint32_t len)
 {
-    Serial.printf("%s: ", snooperName);
+    Serial.printf("%s \t %d \t | ", snooperName, analogReadMilliVolts(detectPin));
     Serial.write(byteArray, len);
     Serial.println();
 }

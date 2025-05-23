@@ -13,6 +13,7 @@ public:
 
     // Metadata variables
     const char* snooperName;
+    uint8_t detectPin;
 
 
 private:
