@@ -172,6 +172,10 @@ void esPod::_rxTask(void *pvParameters)
                         }
                     }
                 }
+                else // We are not in the middle of a packet, but we received a byte
+                {
+                    ESP_LOGW(__func__, "Received byte 0x%02X outside of a packet, discarding", incByte);
+                }
                 // Always update the previous byte
                 prevByte = incByte;
             }
