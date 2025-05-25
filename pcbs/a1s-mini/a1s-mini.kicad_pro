@@ -658,7 +658,7 @@
       "plot": "",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "a1s-mini.step",
       "svg": "",
       "vrml": ""
     },
