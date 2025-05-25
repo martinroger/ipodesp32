@@ -131,6 +131,7 @@ public:
     void L0x00_0x0E_ReturniPodModelNum();
     void L0x00_0x10_ReturnLingoProtocolVersion(byte targetLingo);
     void L0x00_0x27_GetAccessoryInfo(byte desiredInfo);
+    void L0x00_0x25_RetiPodOptions();
 
     // Lingo 0x04
     void L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID);
