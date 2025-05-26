@@ -87,7 +87,7 @@ private:
     bool _rxIncomplete = false;
 
     // Device metadata
-    const char *_name = "ipodESP32";
+    const char *_name = ESPIPOD_NAME;
     const uint8_t _SWMajor = 0x01;
     const uint8_t _SWMinor = 0x03;
     const uint8_t _SWrevision = 0x00;

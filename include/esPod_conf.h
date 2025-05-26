@@ -6,6 +6,11 @@
 #define A2DP_SINK_NAME "espiPod"
 #endif
 
+// ESPiPod instance name
+#ifndef ESPIPOD_NAME
+#define ESPIPOD_NAME "ipodESP32"
+#endif
+
 // Serial settings
 #ifndef MAX_PACKET_SIZE
 #define MAX_PACKET_SIZE 1024
