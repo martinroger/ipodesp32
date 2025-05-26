@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "Haut de Forme")
-		(date "2025-03-11")
-		(rev "0.1.1")
+		(date "2025-05-26")
+		(rev "0.2.0")
 		(company "Martin Roger")
 	)
 	(lib_symbols
@@ -6611,7 +6611,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "CP2102.kicad_sch"
+		(property "Sheetfile" "CP2102-GM.kicad_sch"
 			(at 265.43 114.3 90)
 			(effects
 				(font
