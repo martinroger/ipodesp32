@@ -121,6 +121,7 @@ public:
     void processLingo0x04(const byte *byteArray, uint32_t len);
 
     // Lingo 0x00
+    void L0x00_0x00_RequestIdentify();
     void L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID);
     void L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField);
     void L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte);
@@ -130,6 +131,7 @@ public:
     void L0x00_0x0E_ReturniPodModelNum();
     void L0x00_0x10_ReturnLingoProtocolVersion(byte targetLingo);
     void L0x00_0x27_GetAccessoryInfo(byte desiredInfo);
+    void L0x00_0x25_RetiPodOptions();
 
     // Lingo 0x04
     void L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID);

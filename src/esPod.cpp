@@ -172,6 +172,10 @@ void esPod::_rxTask(void *pvParameters)
                         }
                     }
                 }
+                else // We are not in the middle of a packet, but we received a byte
+                {
+                    ESP_LOGD(__func__, "Received byte 0x%02X outside of a packet, discarding", incByte);
+                }
                 // Always update the previous byte
                 prevByte = incByte;
             }
@@ -450,7 +454,7 @@ void esPod::_processPacket(const byte *byteArray, uint32_t len)
         break;
 
     default:
-        ESP_LOGW(IPOD_TAG, "Unknown Lingo packet : L0x%x", rxLingoID);
+        ESP_LOGW(IPOD_TAG, "Unknown Lingo packet : L0x%02x 0x%02x", rxLingoID, byteArray[1]);
         break;
     }
 }
@@ -621,6 +625,20 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     // Switch through expected commandIDs
     switch (cmdID)
     {
+    case L0x00_Identify: // Deprecated command observed on Audi by @BluCobalt
+    {
+        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x Identify with Lingo 0x%02x", cmdID, byteArray[1]);
+        // switch (byteArray[1])
+        // {
+        // case 0x04:
+        //     extendedInterfaceModeActive = true; // Pre-empt ?
+        //     break;
+        // default:
+        //     break;
+        // }
+    }
+    break;
+
     case L0x00_RequestExtendedInterfaceMode: // Mini requests extended interface mode status
     {
         ESP_LOGD(IPOD_TAG, "CMD: 0x%02x RequestExtendedInterfaceMode", cmdID);
@@ -704,6 +722,12 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         }
     }
     break;
+
+    case L0x00_GetiPodOptions: // Mini requests iPod options
+    {
+        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x GetiPodOptions", cmdID);
+        L0x00_0x25_RetiPodOptions();
+    }
 
     case L0x00_RetAccessoryInfo: // Mini returns info after L0x00_0x27
     {
@@ -852,7 +876,8 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         case L0x04_RequestProtocolVersion: // Hardcoded return for L0x04
         {
             ESP_LOGI(IPOD_TAG, "CMD 0x%04x RequestProtocolVersion", cmdID);
-            L0x04_0x13_ReturnProtocolVersion();
+            L0x04_0x13_ReturnProtocolVersion(); // Potentially should use L0x00_0x10 instead ? L0x00_0x10_ReturnLingoProtocolVersion(byteArray[2]);
+            // L0x00_0x27_GetAccessoryInfo(0x00); // Attempting to start normal handshake 
         }
         break;
 
@@ -1315,6 +1340,16 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
 //-----------------------------------------------------------------------
 #pragma region LINGO 0x00
 
+/// @brief Deprecated function to force the Accessory to restart Identify with L0x00_IdentifyDeviceLingoes
+void esPod::L0x00_0x00_RequestIdentify()
+{
+    ESP_LOGI(IPOD_TAG, "iPod: RequestIdentify");
+    const byte txPacket[] = {
+        0x00,
+        0x00};
+    _queuePacket(txPacket, sizeof(txPacket));
+}
+
 /// @brief General response command for Lingo 0x00
 /// @param cmdStatus Has to obey to iPodAck_xxx format as defined in L0x00.h
 /// @param cmdID ID (single byte) of the Lingo 0x00 command replied to
@@ -1361,7 +1396,7 @@ void esPod::L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField)
 /// @param extendedModeByte Direct value of the extendedInterfaceMode boolean
 void esPod::L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte)
 {
-    ESP_LOGD(IPOD_TAG, "Extended Interface mode: 0x%02x", extendedModeByte);
+    ESP_LOGI(IPOD_TAG, "Extended Interface mode: 0x%02x", extendedModeByte);
     const byte txPacket[] = {
         0x00,
         0x04,
@@ -1448,6 +1483,16 @@ void esPod::L0x00_0x27_GetAccessoryInfo(byte desiredInfo)
         0x00, 0x27,
         desiredInfo};
     _queuePacket(txPacket, sizeof(txPacket));
+}
+
+void esPod::L0x00_0x25_RetiPodOptions()
+{
+    ESP_LOGI(IPOD_TAG, "Returning iPod Options");
+    byte txPacket[] = {
+        0x00, 0x25,
+        0x00};
+    _queuePacket(txPacket, sizeof(txPacket));
+
 }
 
 #pragma endregion

@@ -8,7 +8,6 @@
 #define L0x00_RequestiPodModelNum 0x0D
 #define L0x00_RequestLingoProtocolVersion 0x0F
 #define L0x00_IdentifyDeviceLingoes 0x13
-#define L0x00_GetiPodOptions 0x24
 #define L0x00_RetAccessoryInfo 0x28
 
 // Possible values for L0x00 0x02 iPodAck

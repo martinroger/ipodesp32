@@ -123,7 +123,7 @@ void setup()
 
 #ifdef ENABLE_ACTIVE_DCD
 	pinMode(DCD_CTRL_PIN, OUTPUT);
-	digitalWrite(DCD_CTRL_PIN,HIGH); //Logic is inverted
+	digitalWrite(DCD_CTRL_PIN,INVERT_DCD_LOGIC(HIGH)); //Logic is inverted
 #endif
 
 	esp_log_level_set("*", ESP_LOG_NONE);
@@ -523,7 +523,7 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void *ptr)
 		break;
 	}
 	#ifdef ENABLE_ACTIVE_DCD
-	digitalWrite(DCD_CTRL_PIN,espod.disabled);
+	digitalWrite(DCD_CTRL_PIN,INVERT_DCD_LOGIC(espod.disabled)); //Logic inversion by MACRO
 	#endif
 }
 
