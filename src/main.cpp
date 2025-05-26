@@ -425,12 +425,15 @@ void initializeSDCard()
 /// @brief Sets up and starts the appropriate Serial interface
 void initializeSerial()
 {
+#ifndef IPOD_SERIAL_BAUDRATE
+#define IPOD_SERIAL_BAUDRATE 19200
+#endif
 #if defined(USE_SERIAL_1) || defined(USE_ALT_SERIAL) //If Alt Serial or Serial 1 is used
 	ipodSerial.setPins(UART1_RX, UART1_TX);
 #endif
 	ipodSerial.setRxBufferSize(1024);
 	ipodSerial.setTxBufferSize(1024);
-	ipodSerial.begin(19200);
+	ipodSerial.begin(IPOD_SERIAL_BAUDRATE);
 }
 
 /// @brief Configures the CODEC or DAC and starts the A2DP Sink

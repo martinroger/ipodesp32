@@ -38,12 +38,13 @@
       "footprints_back",
       "footprint_references",
       "tracks",
+      "drc_errors",
       "drawing_sheet",
       "pads",
       "zones",
       "shapes"
     ],
-    "visible_layers": "00000000_00000000_0fffffff_ffffff5f",
+    "visible_layers": "00000000_00000000_0fffffff_ff7fffdf",
     "zone_display_mode": 0
   },
   "git": {

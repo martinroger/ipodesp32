@@ -6,8 +6,8 @@
 	(paper "A3")
 	(title_block
 		(title "AiO-i2s-DAC")
-		(date "2025-05-18")
-		(rev "0.1.2")
+		(date "2025-05-26")
+		(rev "0.1.4")
 		(company "Martin Roger")
 	)
 	(lib_symbols
@@ -6773,16 +6773,6 @@
 	)
 	(wire
 		(pts
-			(xy 316.23 99.06) (xy 318.77 99.06)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "90f479d0-e341-4fd5-a7db-352755492f62")
-	)
-	(wire
-		(pts
 			(xy 25.4 179.07) (xy 25.4 182.88)
 		)
 		(stroke
@@ -7730,16 +7720,6 @@
 			(type default)
 		)
 		(uuid "edb82f7b-73be-4766-9d3b-3605eb89246c")
-	)
-	(wire
-		(pts
-			(xy 316.23 101.6) (xy 318.77 101.6)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f00b3138-8cf6-496a-a91b-f8f033a015fc")
 	)
 	(wire
 		(pts
@@ -11563,71 +11543,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 316.23 101.6 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "28164665-79bb-44f2-a45a-e62eea2b82d6")
-		(property "Reference" "#PWR056"
-			(at 316.23 107.95 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 316.23 106.68 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 316.23 101.6 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 316.23 101.6 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 316.23 101.6 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "05f5fdbc-dad5-4509-b795-e9a37a31c5c0")
-		)
-		(instances
-			(project "AiO-i2s-DAC"
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e"
-					(reference "#PWR056")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Connector:TestPoint_Small")
 		(at 308.61 209.55 270)
 		(unit 1)
@@ -11912,27 +11827,26 @@
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom no)
-		(on_board no)
+		(on_board yes)
 		(dnp yes)
-		(fields_autoplaced yes)
 		(uuid "2b535ba9-f81a-4285-80df-da8e504005a3")
 		(property "Reference" "FB1"
-			(at 34.3281 132.08 90)
+			(at 34.798 134.366 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "FerriteBead_Small"
-			(at 34.3281 134.62 90)
+		(property "Value" "120R@100MHz"
+			(at 34.544 141.732 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
 			(at 34.29 136.652 90)
 			(effects
 				(font
@@ -11941,7 +11855,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://product.tdk.com/en/system/files?file=dam/doc/product/emc/emc/suppression-filter/catalog/suppression-filter_commercial_maf1608g_en.pdf"
 			(at 34.29 138.43 0)
 			(effects
 				(font
@@ -11950,8 +11864,26 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Ferrite bead, small symbol"
+		(property "Description" "FERRITE BEAD 120 OHM 0603 1LN"
 			(at 34.29 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Name" "TDK Corporation"
+			(at 34.29 138.43 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer_Part_Number" "MAF1608GAD601CT000"
+			(at 34.29 138.43 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14851,71 +14783,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:+3.3V")
-		(at 316.23 99.06 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "6b000fa7-c42e-4b05-bd31-ebae5d40436c")
-		(property "Reference" "#PWR050"
-			(at 316.23 102.87 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3.3V"
-			(at 316.23 93.98 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 316.23 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 316.23 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 316.23 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "58cfdddb-1087-4afd-9c6d-e90225c1b5bc")
-		)
-		(instances
-			(project "AiO-i2s-DAC"
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e"
-					(reference "#PWR050")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C_Small")
 		(at 377.19 154.94 180)
 		(unit 1)
@@ -17761,7 +17628,7 @@
 				)
 			)
 		)
-		(property "Value" "SolderJumper_2_Bridged"
+		(property "Value" "Ferrite bypass"
 			(at 34.29 124.46 0)
 			(effects
 				(font
@@ -17769,7 +17636,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm"
+		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
 			(at 34.29 128.27 0)
 			(effects
 				(font
@@ -19878,76 +19745,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector_Generic:Conn_01x02")
-		(at 323.85 99.06 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "efc23e17-4168-465c-97bd-cc2fb694c21f")
-		(property "Reference" "J8"
-			(at 326.39 99.0599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "Conn_01x02"
-			(at 326.39 101.5999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
-			(at 323.85 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 323.85 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 323.85 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "f2258ada-607b-4ffd-bf43-57ba2c6caa49")
-		)
-		(pin "2"
-			(uuid "a7b6522f-a651-44aa-b831-453496caa7c1")
-		)
-		(instances
-			(project "AiO-i2s-DAC"
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e"
-					(reference "J8")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:R_Small")
 		(at 391.16 156.21 0)
 		(unit 1)
@@ -20626,7 +20423,7 @@
 			(color 0 0 0 0.0000)
 		)
 		(uuid "124ee9d1-939d-44ed-a223-ddb52f42937f")
-		(property "Sheetname" "CP2102_1"
+		(property "Sheetname" "CP2102-GM"
 			(at 326.39 151.13 0)
 			(effects
 				(font
@@ -20635,7 +20432,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "CP2102.kicad_sch"
+		(property "Sheetfile" "CP2102-GM.kicad_sch"
 			(at 341.63 160.02 90)
 			(effects
 				(font
