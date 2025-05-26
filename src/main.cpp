@@ -469,12 +469,9 @@ void initializeA2DPSink()
 											   ESP_AVRC_MD_ATTR_ALBUM | ESP_AVRC_MD_ATTR_PLAYING_TIME);
 	a2dp_sink.set_avrc_rn_play_pos_callback(avrc_rn_play_pos_callback, 1);
 
-#ifdef AUDIOKIT
-	a2dp_sink.start("MiNiPoD56");
-#else
-	a2dp_sink.start("espiPod 2");
-#endif
-	ESP_LOGI("SETUP", "a2dp_sink started: %s", a2dp_sink.get_name());
+	a2dp_sink.start(A2DP_SINK_NAME);
+
+	ESP_LOGI("SETUP", "a2dp_sink started: %s", A2DP_SINK_NAME);
 	delay(5);
 }
 
