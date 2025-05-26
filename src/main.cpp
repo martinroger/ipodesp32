@@ -4,6 +4,21 @@
 #include "BluetoothA2DPSink.h"
 #include "esPod.h"
 
+// LED Logic inversion
+#ifndef INVERT_LED_LOGIC
+#define INVERT_LED_LOGIC(stateBoolean) stateBoolean
+#endif
+
+// DCD Logic inversion
+#ifndef INVERT_DCD_LOGIC
+#define INVERT_DCD_LOGIC(stateBoolean) stateBoolean
+#endif
+
+// DCD control pin to pretend there is a physical disconnect
+#if defined(ENABLE_ACTIVE_DCD) && !defined(DCD_CTRL_PIN)
+#define DCD_CTRL_PIN 5
+#endif
+
 #pragma region A2DP Sink Configuration and Serial Initialization
 
 #ifdef AUDIOKIT
@@ -11,10 +26,6 @@
 #ifdef USE_SD
 #include "sdLogUpdate.h"
 bool sdLoggerEnabled = false;
-#endif
-
-#if !defined(INVERT_LED_LOGIC)
-#define INVERT_LED_LOGIC(stateBoolean) stateBoolean
 #endif
 
 #include "AudioBoard.h"
@@ -36,7 +47,7 @@ HardwareSerial ipodSerial(1);
 #define UART1_TX 22
 #endif
 
-#else //Use main Serial
+#else // Use main Serial
 HardwareSerial ipodSerial(0);
 #endif
 
@@ -59,7 +70,7 @@ I2SStream i2s;
 HardwareSerial ipodSerial(1);
 BluetoothA2DPSink a2dp_sink;
 
-/// @brief Data stream reader callback 
+/// @brief Data stream reader callback
 /// @param data Data buffer to pass to the I2S
 /// @param length Length of the data buffer
 void read_data_stream(const uint8_t *data, uint32_t length)
@@ -67,14 +78,8 @@ void read_data_stream(const uint8_t *data, uint32_t length)
 	i2s.write(data, length);
 }
 
-
 #endif
 esPod espod(ipodSerial);
-
-//DCD control pin to pretend there is a physical disconnect
-#if defined(ENABLE_ACTIVE_DCD) && !defined(DCD_CTRL_PIN)
-#define DCD_CTRL_PIN 5
-#endif
 
 #pragma endregion
 
@@ -123,7 +128,7 @@ void setup()
 
 #ifdef ENABLE_ACTIVE_DCD
 	pinMode(DCD_CTRL_PIN, OUTPUT);
-	digitalWrite(DCD_CTRL_PIN,INVERT_DCD_LOGIC(HIGH)); //Logic is inverted
+	digitalWrite(DCD_CTRL_PIN, INVERT_DCD_LOGIC(HIGH)); // Logic is inverted
 #endif
 
 	esp_log_level_set("*", ESP_LOG_NONE);
@@ -428,7 +433,7 @@ void initializeSerial()
 #ifndef IPOD_SERIAL_BAUDRATE
 #define IPOD_SERIAL_BAUDRATE 19200
 #endif
-#if defined(USE_SERIAL_1) || defined(USE_ALT_SERIAL) //If Alt Serial or Serial 1 is used
+#if defined(USE_SERIAL_1) || defined(USE_ALT_SERIAL) // If Alt Serial or Serial 1 is used
 	ipodSerial.setPins(UART1_RX, UART1_TX);
 #endif
 	ipodSerial.setRxBufferSize(1024);
@@ -456,7 +461,7 @@ void initializeA2DPSink()
 	i2s.begin(cfg);
 #endif
 
-	a2dp_sink.set_auto_reconnect(true,10000);
+	a2dp_sink.set_auto_reconnect(true, 10000);
 	a2dp_sink.set_on_connection_state_changed(connectionStateChanged);
 	a2dp_sink.set_on_audio_state_changed(audioStateChanged);
 	a2dp_sink.set_avrc_metadata_callback(avrc_metadata_callback);
@@ -522,9 +527,9 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void *ptr)
 #endif
 		break;
 	}
-	#ifdef ENABLE_ACTIVE_DCD
-	digitalWrite(DCD_CTRL_PIN,INVERT_DCD_LOGIC(espod.disabled)); //Logic inversion by MACRO
-	#endif
+#ifdef ENABLE_ACTIVE_DCD
+	digitalWrite(DCD_CTRL_PIN, INVERT_DCD_LOGIC(espod.disabled)); // Logic inversion by MACRO
+#endif
 }
 
 /// @brief Callback for the change of playstate after connection. Aligns the
