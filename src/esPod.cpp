@@ -877,7 +877,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         {
             ESP_LOGI(IPOD_TAG, "CMD 0x%04x RequestProtocolVersion", cmdID);
             L0x04_0x13_ReturnProtocolVersion(); // Potentially should use L0x00_0x10 instead ? L0x00_0x10_ReturnLingoProtocolVersion(byteArray[2]);
-            // L0x00_0x27_GetAccessoryInfo(0x00); // Attempting to start normal handshake 
+            // L0x00_0x27_GetAccessoryInfo(0x00); // Attempting to start normal handshake
         }
         break;
 
@@ -1492,7 +1492,6 @@ void esPod::L0x00_0x25_RetiPodOptions()
         0x00, 0x25,
         0x00};
     _queuePacket(txPacket, sizeof(txPacket));
-
 }
 
 #pragma endregion

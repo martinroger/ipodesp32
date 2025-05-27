@@ -20,7 +20,7 @@
       "footprints": true,
       "graphics": true,
       "keepouts": true,
-      "lockedItems": true,
+      "lockedItems": false,
       "otherItems": true,
       "pads": true,
       "text": true,
@@ -31,18 +31,20 @@
     "visible_items": [
       "vias",
       "footprint_text",
+      "footprint_anchors",
       "ratsnest",
       "grid",
       "footprints_front",
       "footprints_back",
       "footprint_references",
       "tracks",
+      "drc_errors",
       "drawing_sheet",
       "pads",
       "zones",
       "shapes"
     ],
-    "visible_layers": "00000000_00000000_0fffffff_ffffffff",
+    "visible_layers": "00000000_00000000_0fffffff_ff7fffdf",
     "zone_display_mode": 0
   },
   "git": {

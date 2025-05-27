@@ -506,7 +506,6 @@
         "bus_width": 20,
         "clearance": 0.1524,
         "diff_pair_gap": 0.1524,
-        "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.254,
         "line_style": 0,
         "microvia_diameter": 0.6,
@@ -524,7 +523,6 @@
         "bus_width": 30,
         "clearance": 0.1524,
         "diff_pair_gap": 0.1524,
-        "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.381,
         "line_style": 0,
         "microvia_diameter": 0.6,
@@ -542,7 +540,6 @@
         "bus_width": 40,
         "clearance": 0.1524,
         "diff_pair_gap": 0.1524,
-        "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.508,
         "line_style": 0,
         "microvia_diameter": 0.6,
@@ -560,7 +557,6 @@
         "bus_width": 12,
         "clearance": 0.1524,
         "diff_pair_gap": 0.1524,
-        "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2032,
         "line_style": 0,
         "microvia_diameter": 0.6,
@@ -578,7 +574,6 @@
         "bus_width": 16,
         "clearance": 0.1524,
         "diff_pair_gap": 0.1524,
-        "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.1524,
         "line_style": 0,
         "microvia_diameter": 0.6,
@@ -594,9 +589,8 @@
       },
       {
         "bus_width": 16,
-        "clearance": 0.2,
+        "clearance": 0.1524,
         "diff_pair_gap": 0.25,
-        "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2,
         "line_style": 0,
         "microvia_diameter": 0.3,
@@ -617,6 +611,7 @@
     "net_colors": {
       "+3.3V": "rgb(194, 0, 0)",
       "+5V": "rgb(255, 153, 0)",
+      "AGND": "rgb(0, 194, 0)",
       "GND": "rgb(0, 194, 0)"
     },
     "netclass_assignments": {
@@ -625,6 +620,12 @@
       ],
       "+5V": [
         "20mil"
+      ],
+      "/CP2102-GM/D+": [
+        "10mil"
+      ],
+      "/CP2102-GM/D-": [
+        "10mil"
       ],
       "/CP2102_0/D+": [
         "10mil"
@@ -931,7 +932,7 @@
     ],
     [
       "124ee9d1-939d-44ed-a223-ddb52f42937f",
-      "CP2102_1"
+      "CP2102-GM"
     ],
     [
       "8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf",
