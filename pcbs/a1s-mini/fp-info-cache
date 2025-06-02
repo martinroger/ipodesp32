@@ -1,4 +1,4 @@
-24815870217663814
+24901073489578236
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -55229,6 +55229,328 @@ SMD SMT ceramic resonator filter filter hand-soldering
 0
 3
 3
+DIY
+74HC4067BQQ100J
+74HC4067BQ-Q100J-3
+Integrated Circuit
+0
+25
+25
+DIY
+3678
+3678-2
+Integrated Circuit
+0
+19
+19
+DIY
+Adafruit 3678
+3678-2
+Integrated Circuit
+0
+19
+19
+DIY
+CP2104_USB_Board
+
+
+0
+18
+18
+DIY
+CPDQ
+
+CPDQ5V0-HF 
+0
+2
+2
+DIY
+CPDQ-L
+
+CPDQ5V0-HF 
+0
+2
+2
+DIY
+CPDQ-M
+
+CPDQ5V0-HF 
+0
+2
+2
+DIY
+CPDUC5V0RHF
+CPDUC5V0R-HF-1
+TVS Diode (Bi-directional)
+0
+2
+2
+DIY
+CSTNE16M0VH3C000R0
+CSTNE16M0VH3C000R0
+Crystal or Oscillator
+0
+3
+3
+DIY
+DIOM7959X250N
+S5GC-13-F
+Diode
+0
+2
+2
+DIY
+DIOM7959X262N
+DO-214AB (SMC J-BEND) -2020
+TVS Diode (Uni-directional)
+0
+2
+2
+DIY
+DIONC1005X43N
+PESD0402-140
+TVS Diode (Bi-directional)
+0
+2
+2
+DIY
+DIP762W60P254L458H430Q4N
+DIP 4
+Integrated Circuit
+0
+4
+4
+DIY
+DIP794W53P254L1930H508Q16N
+N (R-PDIP-T16)
+Integrated Circuit
+0
+16
+16
+DIY
+ERZV10D220
+ERZV10D220-1
+Varistor
+0
+2
+2
+DIY
+ESP32-A1S
+ESP32-WROVER-E: https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf
+esp32 module thermal vias
+0
+59
+39
+DIY
+FUSC4632X85N
+MF-MSMF160
+Fuse
+0
+2
+2
+DIY
+G6L-1P_2
+G6L-1P_2
+Relay or Contactor
+0
+4
+4
+DIY
+GCT_USB4105-GF-A
+
+
+0
+16
+16
+DIY
+GSB1C4621DS1HR
+GSB1C4621DS1HR-1
+Connector
+0
+16
+16
+DIY
+INDC6060X450N
+SRN
+Inductor
+0
+2
+2
+DIY
+INDPM2016X100N
+0806(2016METRIC)
+Inductor
+0
+2
+2
+DIY
+INDPM4441X200N
+SRN4020_2R2
+Inductor
+0
+2
+2
+DIY
+INDPM125125X800N
+DR127
+Inductor
+0
+2
+2
+DIY
+L8050QLT1G
+L8050QLT1G-1
+Integrated Circuit
+0
+3
+3
+DIY
+LEDC1608X55N
+LTST-C191KRKT
+LED
+0
+2
+2
+DIY
+LESD5D50CT1G
+LESD5D5.0CT1G-1
+TVS Diode (Bi-directional)
+0
+2
+2
+DIY
+MP2322GQHZ
+MP2322GQH-Z-2
+Integrated Circuit
+0
+8
+8
+DIY
+MX34036UF2
+MX34036UF2-1
+Connector
+0
+38
+38
+DIY
+NodeMCU32S
+NodeMCU V1.0
+Undefined or Miscellaneous
+0
+34
+34
+DIY
+SJ3524SMTTRPI
+SJ-3524-SMT-TR-PI-2
+Connector
+0
+6
+6
+DIY
+SOD3716X145N
+1N5819HW-7-F
+Diode
+0
+2
+2
+DIY
+SODFL3617X108N
+SS24FL-1
+Schottky Diode
+0
+2
+2
+DIY
+SOIC127P600X170-8N
+SOP8 Package
+Integrated Circuit
+0
+8
+8
+DIY
+SOIC127P600X175-8N
+soic-8-ren1
+Integrated Circuit
+0
+8
+8
+DIY
+SOIC127P600X175-16N
+D (R-PDSO-G16)
+Integrated Circuit
+0
+16
+16
+DIY
+SOIC127P641X150-9N
+SOIC8
+Integrated Circuit
+0
+9
+9
+DIY
+SOIC127P1030X265-18N
+18-Lead 7.50 mm Body SOIC
+Integrated Circuit
+0
+18
+18
+DIY
+SOIC127P1030X265-24N
+CD74HC4067M96
+Integrated Circuit
+0
+24
+24
+DIY
+SOP65P490X110-8N
+8-Lead Mini Small Outline Package [MSOP] (RM-8)
+Integrated Circuit
+0
+8
+8
+DIY
+SOP65P640X120-20N
+TSSOP_20
+Integrated Circuit
+0
+20
+20
+DIY
+SOP65P780X200-28N
+28-PIN SSOP
+Integrated Circuit
+0
+28
+28
+DIY
+SOP254P978X406-4N
+SFH6156-2T
+Integrated Circuit
+0
+4
+4
+DIY
+SOT95P280X100-6N
+TSOT26_1-1
+Power Supply
+0
+6
+6
+DIY
+SOT230P700X180-4N
+SOT-223-
+Integrated Circuit
+0
+4
+4
+DIY
+TL3305BF260QG
+TL3305BF260QG-2
+Switch
+0
+4
+4
 Diode_SMD
 D_0201_0603Metric
 Diode SMD 0201 (0603 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: https://www.vishay.com/docs/20052/crcw0201e3.pdf), generated with kicad-footprint-generator
@@ -91517,6 +91839,27 @@ rotary encoder illuminated switch vertical
 0
 9
 8
+SamacSys_Parts
+BC847
+SOT 23_FF
+Transistor BJT NPN
+0
+3
+3
+SamacSys_Parts
+NE555DR
+D (R-PDSO-G8)
+Integrated Circuit
+0
+8
+8
+SamacSys_Parts
+SOT95P230X110-3N
+SOT95P230X110-3N
+MOSFET (N-Channel)
+0
+3
+3
 Sensor
 ASAIR_AM2302_P2.54mm_Lead2.75mm_TabDown
 Temperature and humidity module, http://akizukidenshi.com/download/ds/aosong/AM2302.pdf
