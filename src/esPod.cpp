@@ -192,9 +192,9 @@ void esPod::_rxTask(void *pvParameters)
                 ESP_LOGW(__func__, "No activity in %lu ms, resetting RX state", SERIAL_TIMEOUT);
                 // Reset the timestamp for next Serial timeout
                 lastActivity = millis();
-                #ifndef NO_RESET_ON_SERIAL_TIMEOUT
+#ifndef NO_RESET_ON_SERIAL_TIMEOUT
                 esPodInstance->resetState();
-                #endif
+#endif
             }
             vTaskDelay(pdMS_TO_TICKS(RX_TASK_INTERVAL_MS));
         }
@@ -718,10 +718,13 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     {
         ESP_LOGI(IPOD_TAG, "CMD: 0x%02x IdentifyDeviceLingoes : L 0x%02x - Opt 0x%02x - ID 0x%02x", cmdID, byteArray[1], byteArray[2], byteArray[3]);
         L0x00_0x02_iPodAck(iPodAck_OK, cmdID); // Acknowledge, start capabilities pingpong
-        if (!_accessoryCapabilitiesReceived)
-        {
+        // A bit spam-ish ?
         L0x00_0x27_GetAccessoryInfo(0x00); // Immediately request general capabilities
-        }
+        L0x00_0x27_GetAccessoryInfo(0x01); // Request the name
+        L0x00_0x27_GetAccessoryInfo(0x04); // Request the firmware version
+        L0x00_0x27_GetAccessoryInfo(0x05); // Request the hardware number
+        L0x00_0x27_GetAccessoryInfo(0x06); // Request the manufacturer name
+        L0x00_0x27_GetAccessoryInfo(0x07); // Request the model number
     }
     break;
 
@@ -737,58 +740,27 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         switch (byteArray[1]) // Ping-pong the next request based on the current response
         {
         case 0x00:
-            _accessoryCapabilitiesReceived = true;
-            if (!_accessoryNameReceived && !_accessoryNameRequested)
-            {
-                L0x00_0x27_GetAccessoryInfo(0x01); // Request the name
-                _accessoryNameRequested = true;
-            }
+            ESP_LOGI(IPOD_TAG, "\tAccessory Capabilities : 0x%02x", byteArray[2]);
             break;
 
         case 0x01:
-            ESP_LOGI(IPOD_TAG, "\tAccessory Capabilities : 0x%02x", byteArray[2]);
-            _accessoryNameReceived = true;
-            if (!_accessoryFirmwareReceived && !_accessoryFirmwareRequested)
-            {
-                L0x00_0x27_GetAccessoryInfo(0x04); // Request the firmware version
-                _accessoryFirmwareRequested = true;
-            }
+            ESP_LOGI(IPOD_TAG, "\tAccessory Name : %s", &byteArray[2]);
             break;
 
         case 0x04:
             ESP_LOGI(IPOD_TAG, "\tAccessory Firmware : %d.%d.%d", byteArray[2], byteArray[3], byteArray[4]);
-            _accessoryFirmwareReceived = true;
-            if (!_accessoryHardwareReceived && !_accessoryHardwareRequested)
-            {
-                L0x00_0x27_GetAccessoryInfo(0x05); // Request the hardware number
-                _accessoryHardwareRequested = true;
-            }
             break;
 
         case 0x05:
             ESP_LOGI(IPOD_TAG, "\tAccessory Hardware : %d.%d.%d", byteArray[2], byteArray[3], byteArray[4]);
-            _accessoryHardwareReceived = true;
-            if (!_accessoryManufReceived && !_accessoryManufRequested)
-            {
-                L0x00_0x27_GetAccessoryInfo(0x06); // Request the manufacturer name
-                _accessoryManufRequested = true;
-            }
             break;
 
         case 0x06:
             ESP_LOGI(IPOD_TAG, "\tAccessory Manufacturer : %s", &byteArray[2]);
-            _accessoryManufReceived = true;
-            if (!_accessoryModelReceived && !_accessoryModelRequested)
-            {
-                L0x00_0x27_GetAccessoryInfo(0x07); // Request the model number
-                _accessoryModelRequested = true;
-            }
             break;
 
         case 0x07:
             ESP_LOGI(IPOD_TAG, "\tAccessory Model : %s", &byteArray[2]);
-            _accessoryModelReceived = true; // End of the reactionchain
-            ESP_LOGI(IPOD_TAG, "Handshake complete.");
             break;
 
         default:
