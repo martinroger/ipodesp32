@@ -567,18 +567,18 @@ void esPod::resetState()
     trackListPosition = 0;
 
     // Mini metadata
-    // _accessoryCapabilitiesReceived = false;
-    // _accessoryCapabilitiesRequested = false;
-    // _accessoryFirmwareReceived = false;
-    // _accessoryFirmwareRequested = false;
-    // _accessoryHardwareReceived = false;
-    // _accessoryHardwareRequested = false;
-    // _accessoryManufReceived = false;
-    // _accessoryManufRequested = false;
-    // _accessoryModelReceived = false;
-    // _accessoryModelRequested = false;
-    // _accessoryNameReceived = false;
-    // _accessoryNameRequested = false;
+    _accessoryCapabilitiesReceived = false;
+    _accessoryCapabilitiesRequested = false;
+    _accessoryFirmwareReceived = false;
+    _accessoryFirmwareRequested = false;
+    _accessoryHardwareReceived = false;
+    _accessoryHardwareRequested = false;
+    _accessoryManufReceived = false;
+    _accessoryManufRequested = false;
+    _accessoryModelReceived = false;
+    _accessoryModelRequested = false;
+    _accessoryNameReceived = false;
+    _accessoryNameRequested = false;
 
     // Reset the queues
     aapCommand tempCmd;
@@ -643,7 +643,7 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
 
     case L0x00_RequestExtendedInterfaceMode: // Mini requests extended interface mode status
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x RequestExtendedInterfaceMode", cmdID);
+        ESP_LOGD(IPOD_TAG, "CMD: 0x%02x RequestExtendedInterfaceMode", cmdID);
         if (extendedInterfaceModeActive)
         {
             L0x00_0x04_ReturnExtendedInterfaceMode(0x01); // Report that extended interface mode is active
@@ -710,13 +710,6 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     case L0x00_RequestLingoProtocolVersion: // Mini requestsLingo Protocol Version
     {
         ESP_LOGI(IPOD_TAG, "CMD: 0x%02x RequestLingoProtocolVersion for Lingo 0x%02x", cmdID, byteArray[1]);
-        //Reject anything else than L0x00 or L0x04
-        if (byteArray[1] != 0x00 && byteArray[1] != 0x04)
-        {
-            ESP_LOGW(IPOD_TAG, "CMD: 0x%02x RequestLingoProtocolVersion for Lingo 0x%02x not supported", cmdID, byteArray[1]);
-            L0x00_0x02_iPodAck(iPodAck_BadParam, cmdID);
-            return;
-        }
         L0x00_0x10_ReturnLingoProtocolVersion(byteArray[1]);
     }
     break;
@@ -725,13 +718,10 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
     {
         ESP_LOGI(IPOD_TAG, "CMD: 0x%02x IdentifyDeviceLingoes : L 0x%02x - Opt 0x%02x - ID 0x%02x", cmdID, byteArray[1], byteArray[2], byteArray[3]);
         L0x00_0x02_iPodAck(iPodAck_OK, cmdID); // Acknowledge, start capabilities pingpong
-        // A bit spam-ish ?
+        if (!_accessoryCapabilitiesReceived)
+        {
         L0x00_0x27_GetAccessoryInfo(0x00); // Immediately request general capabilities
-        L0x00_0x27_GetAccessoryInfo(0x01); // Request the name
-        L0x00_0x27_GetAccessoryInfo(0x04); // Request the firmware version
-        L0x00_0x27_GetAccessoryInfo(0x05); // Request the hardware number
-        L0x00_0x27_GetAccessoryInfo(0x06); // Request the manufacturer name
-        L0x00_0x27_GetAccessoryInfo(0x07); // Request the model number
+        }
     }
     break;
 
@@ -747,27 +737,58 @@ void esPod::processLingo0x00(const byte *byteArray, uint32_t len)
         switch (byteArray[1]) // Ping-pong the next request based on the current response
         {
         case 0x00:
-            ESP_LOGI(IPOD_TAG, "\tAccessory Capabilities : 0x%02x", cmdID, byteArray[2]);
+            _accessoryCapabilitiesReceived = true;
+            if (!_accessoryNameReceived && !_accessoryNameRequested)
+            {
+                L0x00_0x27_GetAccessoryInfo(0x01); // Request the name
+                _accessoryNameRequested = true;
+            }
             break;
 
         case 0x01:
-            ESP_LOGI(IPOD_TAG, "\tAccessory Name : %s", cmdID, &byteArray[2]);
+            ESP_LOGI(IPOD_TAG, "\tAccessory Capabilities : 0x%02x", byteArray[2]);
+            _accessoryNameReceived = true;
+            if (!_accessoryFirmwareReceived && !_accessoryFirmwareRequested)
+            {
+                L0x00_0x27_GetAccessoryInfo(0x04); // Request the firmware version
+                _accessoryFirmwareRequested = true;
+            }
             break;
 
         case 0x04:
-            ESP_LOGI(IPOD_TAG, "\tAccessory Firmware : %d.%d.%d", cmdID, byteArray[2], byteArray[3], byteArray[4]);
+            ESP_LOGI(IPOD_TAG, "\tAccessory Firmware : %d.%d.%d", byteArray[2], byteArray[3], byteArray[4]);
+            _accessoryFirmwareReceived = true;
+            if (!_accessoryHardwareReceived && !_accessoryHardwareRequested)
+            {
+                L0x00_0x27_GetAccessoryInfo(0x05); // Request the hardware number
+                _accessoryHardwareRequested = true;
+            }
             break;
 
         case 0x05:
-            ESP_LOGI(IPOD_TAG, "\tAccessory Hardware : %d.%d.%d", cmdID, byteArray[2], byteArray[3], byteArray[4]);
+            ESP_LOGI(IPOD_TAG, "\tAccessory Hardware : %d.%d.%d", byteArray[2], byteArray[3], byteArray[4]);
+            _accessoryHardwareReceived = true;
+            if (!_accessoryManufReceived && !_accessoryManufRequested)
+            {
+                L0x00_0x27_GetAccessoryInfo(0x06); // Request the manufacturer name
+                _accessoryManufRequested = true;
+            }
             break;
 
         case 0x06:
-            ESP_LOGI(IPOD_TAG, "\tAccessory Manufacturer : %s", cmdID, &byteArray[2]);
+            ESP_LOGI(IPOD_TAG, "\tAccessory Manufacturer : %s", &byteArray[2]);
+            _accessoryManufReceived = true;
+            if (!_accessoryModelReceived && !_accessoryModelRequested)
+            {
+                L0x00_0x27_GetAccessoryInfo(0x07); // Request the model number
+                _accessoryModelRequested = true;
+            }
             break;
 
         case 0x07:
-            ESP_LOGI(IPOD_TAG, "\tAccessory Model : %s", cmdID, &byteArray[2]);
+            ESP_LOGI(IPOD_TAG, "\tAccessory Model : %s", &byteArray[2]);
+            _accessoryModelReceived = true; // End of the reactionchain
+            ESP_LOGI(IPOD_TAG, "Handshake complete.");
             break;
 
         default:
@@ -1386,7 +1407,7 @@ void esPod::L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField)
 /// @param extendedModeByte Direct value of the extendedInterfaceMode boolean
 void esPod::L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte)
 {
-    ESP_LOGI(IPOD_TAG, "Extended Interface mode: 0x%02x", extendedModeByte);
+    ESP_LOGD(IPOD_TAG, "Extended Interface mode: 0x%02x", extendedModeByte);
     const byte txPacket[] = {
         0x00,
         0x04,
@@ -1458,6 +1479,9 @@ void esPod::L0x00_0x10_ReturnLingoProtocolVersion(byte targetLingo)
         break;
     case 0x04: // For Lingo 0x04 (Extended Interface), version 1.12
         txPacket[4] = 0x0C;
+        break;
+    case 0x0A: // Lingo 0x0A, digital audio, need to return 1.0
+        txPacket[4] = 0x00;
         break;
     }
     ESP_LOGI(IPOD_TAG, "Lingo 0x%02x protocol version: 1.%d", targetLingo, txPacket[4]);

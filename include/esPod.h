@@ -94,18 +94,18 @@ private:
     const char *_serialNumber = "AB345F7HIJK";
 
     // MINI metadata
-    // bool _accessoryNameReceived = false;
-    // bool _accessoryNameRequested = false;
-    // bool _accessoryCapabilitiesReceived = false;
-    // bool _accessoryCapabilitiesRequested = false;
-    // bool _accessoryFirmwareReceived = false;
-    // bool _accessoryFirmwareRequested = false;
-    // bool _accessoryManufReceived = false;
-    // bool _accessoryManufRequested = false;
-    // bool _accessoryModelReceived = false;
-    // bool _accessoryModelRequested = false;
-    // bool _accessoryHardwareReceived = false;
-    // bool _accessoryHardwareRequested = false;
+    bool _accessoryNameReceived = false;
+    bool _accessoryNameRequested = false;
+    bool _accessoryCapabilitiesReceived = false;
+    bool _accessoryCapabilitiesRequested = false;
+    bool _accessoryFirmwareReceived = false;
+    bool _accessoryFirmwareRequested = false;
+    bool _accessoryManufReceived = false;
+    bool _accessoryManufRequested = false;
+    bool _accessoryModelReceived = false;
+    bool _accessoryModelRequested = false;
+    bool _accessoryHardwareReceived = false;
+    bool _accessoryHardwareRequested = false;
 
     // Handler functions
     playStatusHandler_t *_playStatusHandler = nullptr;
