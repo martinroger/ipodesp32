@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "AiO-i2s-DAC")
-		(date "2025-05-18")
-		(rev "0.1.2")
+		(date "2025-06-04")
+		(rev "0.1.5")
 		(company "Martin Roger")
 	)
 	(lib_symbols
@@ -1974,10 +1974,6 @@
 					(reference "R34")
 					(unit 1)
 				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "R1")
-					(unit 1)
-				)
 			)
 		)
 	)
@@ -2084,10 +2080,6 @@
 					(reference "C14")
 					(unit 1)
 				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "C11")
-					(unit 1)
-				)
 			)
 		)
 	)
@@ -2191,10 +2183,6 @@
 			(project "AiO-i2s-DAC"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
 					(reference "D11")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "D2")
 					(unit 1)
 				)
 			)
@@ -2308,10 +2296,6 @@
 					(reference "D9")
 					(unit 1)
 				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "D1")
-					(unit 1)
-				)
 			)
 			(project "ipodesp32 PL2303"
 				(path "/de58fe00-6966-4192-80ec-79956931c145"
@@ -2422,10 +2406,6 @@
 					(reference "R27")
 					(unit 1)
 				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "R19")
-					(unit 1)
-				)
 			)
 		)
 	)
@@ -2532,10 +2512,6 @@
 					(reference "C13")
 					(unit 1)
 				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "C10")
-					(unit 1)
-				)
 			)
 		)
 	)
@@ -2638,10 +2614,6 @@
 			(project "AiO-i2s-DAC"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
 					(reference "R23")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "R15")
 					(unit 1)
 				)
 			)
@@ -2750,10 +2722,6 @@
 					(reference "R35")
 					(unit 1)
 				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "R2")
-					(unit 1)
-				)
 			)
 		)
 	)
@@ -2856,10 +2824,6 @@
 			(project "AiO-i2s-DAC"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
 					(reference "R26")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "R18")
 					(unit 1)
 				)
 			)
@@ -2966,10 +2930,6 @@
 					(reference "R25")
 					(unit 1)
 				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "R17")
-					(unit 1)
-				)
 			)
 		)
 	)
@@ -3074,10 +3034,6 @@
 			(project "AiO-i2s-DAC"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
 					(reference "R24")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "R16")
 					(unit 1)
 				)
 			)
@@ -3265,10 +3221,6 @@
 			(project "AiO-i2s-DAC"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
 					(reference "U4")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "U3")
 					(unit 1)
 				)
 			)
