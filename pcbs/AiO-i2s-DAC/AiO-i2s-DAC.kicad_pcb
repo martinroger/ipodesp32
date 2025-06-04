@@ -993,7 +993,7 @@
 		(descr "TL3305BF260QG-2")
 		(tags "Switch")
 		(property "Reference" "S2"
-			(at -0.85 0 270)
+			(at -0.85 0 90)
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "a769aad1-1157-4521-b2d4-598530a53410")
@@ -1005,7 +1005,7 @@
 			)
 		)
 		(property "Value" "TL3305BF260QG"
-			(at -0.85 0 270)
+			(at -0.85 0 90)
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "f7cbd88a-bbaf-4957-aa5d-7af0afbfdc7d")
@@ -1017,7 +1017,7 @@
 			)
 		)
 		(property "Datasheet" "https://configured-product-images.s3.amazonaws.com/2D/specs/TL3305BF260QG.pdf"
-			(at 0 0 270)
+			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "de93844f-db8e-44fe-b7b0-4dc55d1c7580")
@@ -1029,7 +1029,7 @@
 			)
 		)
 		(property "Description" "TACT, 50mA, 12VDC SPST-NO, Off-(On) Surface Mount"
-			(at 0 0 270)
+			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "8eb55b81-7225-485b-8f7d-ab395e4e3343")
@@ -1385,6 +1385,17 @@
 			(uuid "03999a07-8b5c-48f2-802e-6cf7e9ea5991")
 		)
 		(embedded_fonts no)
+		(model "${PRIVATE_3DMODELS}/TL3305BF260QG.stp"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0805_2012Metric"
 		(layer "F.Cu")
@@ -19138,15 +19149,15 @@
 			(uuid "995d47eb-8fbc-47be-9e3e-52d385809e5c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Connector_Audio.3dshapes/Jack_3.5mm_CUI_SJ-3524-SMT_Horizontal.wrl"
+		(model "${PRIVATE_3DMODELS}/SJ-3524-SMT-TR-PI.stp"
 			(offset
-				(xyz 0 0 0)
+				(xyz 0 6 2.5)
 			)
 			(scale
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz 0 0 0)
+				(xyz 90 -180 -0)
 			)
 		)
 	)
@@ -22798,7 +22809,7 @@
 		(descr "TL3305BF260QG-2")
 		(tags "Switch")
 		(property "Reference" "S1"
-			(at -0.85 0 270)
+			(at -0.85 0 90)
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "514147bb-c9ee-4076-9c37-697712424b5a")
@@ -22810,7 +22821,7 @@
 			)
 		)
 		(property "Value" "TL3305BF260QG"
-			(at -0.85 0 270)
+			(at -0.85 0 90)
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "bd8076d5-81f1-42ca-ae53-b59e75726878")
@@ -22822,7 +22833,7 @@
 			)
 		)
 		(property "Datasheet" "https://configured-product-images.s3.amazonaws.com/2D/specs/TL3305BF260QG.pdf"
-			(at 0 0 270)
+			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "53c420e1-9f28-4433-8fe3-fe765a20ad0c")
@@ -22834,7 +22845,7 @@
 			)
 		)
 		(property "Description" "TACT, 50mA, 12VDC SPST-NO, Off-(On) Surface Mount"
-			(at 0 0 270)
+			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "056f3b66-913c-4d8b-a017-c32ce351e5fc")
@@ -23190,6 +23201,17 @@
 			(uuid "b7004e71-83ec-4ffd-8deb-db6dc2e9fb30")
 		)
 		(embedded_fonts no)
+		(model "${PRIVATE_3DMODELS}/TL3305BF260QG.stp"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "F.Cu")
@@ -32873,6 +32895,15 @@
 		(uuid "086f0b70-ab50-4d65-8d65-047c77c88ab0")
 	)
 	(via
+		(at 165.1 115.951)
+		(size 0.6)
+		(drill 0.3)
+		(layers "F.Cu" "B.Cu")
+		(free yes)
+		(net 30)
+		(uuid "097f06a6-e40b-431b-b53d-01c8b7c7a578")
+	)
+	(via
 		(at 152.7556 110.363)
 		(size 0.6)
 		(drill 0.3)
@@ -33134,6 +33165,15 @@
 		(uuid "1fe250a1-45af-487a-9315-d8825a977123")
 	)
 	(via
+		(at 165.1 114.4778)
+		(size 0.6)
+		(drill 0.3)
+		(layers "F.Cu" "B.Cu")
+		(free yes)
+		(net 30)
+		(uuid "20b5f800-52d5-4136-9067-6ac6cab152a0")
+	)
+	(via
 		(at 178.943 101.981)
 		(size 0.6)
 		(drill 0.3)
@@ -33177,6 +33217,15 @@
 		(free yes)
 		(net 30)
 		(uuid "2a004629-807e-4f2d-b167-f640e2ed80cf")
+	)
+	(via
+		(at 155.1432 117.4242)
+		(size 0.6)
+		(drill 0.3)
+		(layers "F.Cu" "B.Cu")
+		(free yes)
+		(net 30)
+		(uuid "2a6e06a4-1121-4b34-b7db-8bc1a5b31b71")
 	)
 	(via
 		(at 146.812 135.509)
@@ -33314,6 +33363,15 @@
 		(uuid "39b6e9dc-4fd6-43c9-ae5e-1141bb189eca")
 	)
 	(via
+		(at 162.2552 120.1674)
+		(size 0.6)
+		(drill 0.3)
+		(layers "F.Cu" "B.Cu")
+		(free yes)
+		(net 30)
+		(uuid "3a028a98-6530-45c5-89b7-dc12500e6c28")
+	)
+	(via
 		(at 184.912 91.059)
 		(size 0.6)
 		(drill 0.3)
@@ -33446,6 +33504,15 @@
 		(layers "F.Cu" "B.Cu")
 		(net 30)
 		(uuid "4a637b57-9674-493f-b2f2-eadf698cedf2")
+	)
+	(via
+		(at 150.0632 128.1938)
+		(size 0.6)
+		(drill 0.3)
+		(layers "F.Cu" "B.Cu")
+		(free yes)
+		(net 30)
+		(uuid "4ca8b38b-1ff1-456e-8ecb-953a1efec85d")
 	)
 	(via
 		(at 141.986 100.1522)
@@ -34496,6 +34563,15 @@
 		(free yes)
 		(net 30)
 		(uuid "b0df244f-7e01-43b2-8953-19fe2c6c89ad")
+	)
+	(via
+		(at 163.068 127.9906)
+		(size 0.6)
+		(drill 0.3)
+		(layers "F.Cu" "B.Cu")
+		(free yes)
+		(net 30)
+		(uuid "b1eaf11b-4320-466e-9be8-ed3e733a20fa")
 	)
 	(via
 		(at 163.195 84.582)
