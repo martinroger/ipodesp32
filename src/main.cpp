@@ -4,20 +4,28 @@
 #include "BluetoothA2DPSink.h"
 #include "esPod.h"
 
+#pragma region Board IO Macros
 // LED Logic inversion
 #ifndef INVERT_LED_LOGIC
 #define INVERT_LED_LOGIC(stateBoolean) stateBoolean
+#else
+#undef INVERT_LED_LOGIC
+#define INVERT_LED_LOGIC(stateBoolean) !stateBoolean
 #endif
 
 // DCD Logic inversion
 #ifndef INVERT_DCD_LOGIC
 #define INVERT_DCD_LOGIC(stateBoolean) stateBoolean
+#else
+#undef INVERT_DCD_LOGIC
+#define INVERT_DCD_LOGIC(stateBoolean) !stateBoolean
 #endif
 
 // DCD control pin to pretend there is a physical disconnect
 #if defined(ENABLE_ACTIVE_DCD) && !defined(DCD_CTRL_PIN)
 #define DCD_CTRL_PIN 5
 #endif
+#pragma endregion
 
 #pragma region A2DP Sink Configuration and Serial Initialization
 
