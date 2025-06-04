@@ -1,0 +1,9 @@
+### Missing 3D models - created on 2025-03-03 23:48
+### Printed by checking_3D_models plugin
+Board file: C:\Users\Martin\Documents\PlatformIO\Projects\ipodesp32\pcbs\hautDeForme\hautDeForme.kicad_pcb
+3D missing models written to:
+C:\Users\Martin\Documents\PlatformIO\Projects\ipodesp32\pcbs\hautDeForme\hautDeForme_missing3Dmodels.txt
+-------
+-------
+NUM of 3D missing models:0
+checked extensions ['.stp', '.step', '.stpZ']
