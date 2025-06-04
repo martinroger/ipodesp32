@@ -9,8 +9,8 @@
 	(paper "A4")
 	(title_block
 		(title "Simple carrier board (CP2104)")
-		(date "2025-03-19")
-		(rev "0.1.6")
+		(date "2025-06-02")
+		(rev "0.1.7")
 		(company "Martin Roger")
 	)
 	(layers
