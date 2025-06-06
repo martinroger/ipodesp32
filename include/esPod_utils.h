@@ -1,6 +1,16 @@
 #pragma once
 #include "Arduino.h"
 
+// Possible values for L0x00 0x02 iPodAck
+#define iPodAck_OK 0x00
+#define iPodAck_CmdFailed 0x02
+#define iPodAck_BadParam 0x04
+#define iPodAck_UnknownID 0x05
+#define iPodAck_CmdPending 0x06
+#define iPodAck_TimedOut 0x0F
+#define iPodAck_CmdUnavail 0x10
+#define iPodAck_LingoBusy 0x14
+
 #pragma region ENUMS
 
 enum PB_STATUS : byte
@@ -65,3 +75,51 @@ struct TimerCallbackMessage
     byte cmdID;       // Command ID to be acked
     byte targetLingo; // Targeted Lingo
 };
+
+#pragma region Local utilities
+// ESP32 is Little-Endian, iPod is Big-Endian
+template <typename T>
+T swap_endian(T u)
+{
+    static_assert(CHAR_BIT == 8, "CHAR_BIT != 8");
+
+    union
+    {
+        T u;
+        unsigned char u8[sizeof(T)];
+    } source, dest;
+
+    source.u = u;
+
+    for (size_t k = 0; k < sizeof(T); k++)
+        dest.u8[k] = source.u8[sizeof(T) - k - 1];
+
+    return dest.u;
+}
+
+/// @brief (Re)starts a timer and changes the interval on the fly.
+/// @param timer Timer handle to (re)start.
+/// @param time_ms New interval in milliseconds. No verification is done if this is 0! Defaults to TRACK_CHANGE_TIMEOUT.
+void startTimer(TimerHandle_t timer, unsigned long time_ms = TRACK_CHANGE_TIMEOUT)
+{
+    // If the timer is already active, it needs to be stopped without a callback call first
+    if (xTimerIsTimerActive(timer) == pdTRUE)
+    {
+        xTimerStop(timer, 0);
+    }
+    // Change the period and start the timer
+    xTimerChangePeriod(timer, pdMS_TO_TICKS(time_ms), 0);
+    xTimerStart(timer, 0);
+}
+
+/// @brief Stops a running timer. No status is returned if it was already stopped.
+/// @param timer Handle to the Timer that needs to be stopped.
+void stopTimer(TimerHandle_t timer)
+{
+    // If the timer is already active, it needs to be stop without a callback call first
+    if (xTimerIsTimerActive(timer) == pdTRUE)
+    {
+        xTimerStop(timer, 0);
+    }
+}
+#pragma endregion

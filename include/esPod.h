@@ -11,6 +11,8 @@
 
 class esPod
 {
+    friend class L0x04;
+
 public:
     typedef void playStatusHandler_t(byte playControlCommand);
 
