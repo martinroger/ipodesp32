@@ -1,6 +1,6 @@
 #pragma once
 #include "Arduino.h"
-#include "esPod.h"
+class esPod;
 
 #define L0x00_Identify 0x01
 #define L0x00_RequestExtendedInterfaceMode 0x03
@@ -15,7 +15,7 @@
 #define L0x00_GetiPodOptions 0x24
 #define L0x00_RetAccessoryInfo 0x28
 
-namespace L0x00
+class L0x00
 {
     
-} // namespace L0x00
+};

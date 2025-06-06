@@ -1,6 +1,6 @@
 #pragma once
 #include "Arduino.h"
-#include "esPod.h"
+class esPod;
 
 #define L0x04_GetIndexedPlayingTrackInfo 0x0C
 #define L0x04_RequestProtocolVersion 0x12
@@ -26,25 +26,25 @@
 class L0x04
 {
 public:
-    void processLingo(esPod *esp, const byte *byteArray, uint32_t len);
+    static void processLingo(esPod *esp, const byte *byteArray, uint32_t len);
 
     // Lingo 0x04 Handlers
-    void _0x01_iPodAck(esPod *esp, byte cmdStatus, byte cmdID);
-    void _0x01_iPodAck(esPod *esp, byte cmdStatus, byte cmdID, uint32_t numField);
-    void _0x0D_ReturnIndexedPlayingTrackInfo(esPod *esp, byte trackInfoType, char *trackInfoChars);
-    void _0x0D_ReturnIndexedPlayingTrackInfo(esPod *esp, uint32_t trackDuration_ms);
-    void _0x0D_ReturnIndexedPlayingTrackInfo(esPod *esp, byte trackInfoType, uint16_t releaseYear);
-    void _0x13_ReturnProtocolVersion(esPod *esp);
-    void _0x19_ReturnNumberCategorizedDBRecords(esPod *esp, uint32_t categoryDBRecords);
-    void _0x1B_ReturnCategorizedDatabaseRecord(esPod *esp, uint32_t index, char *recordString);
-    void _0x1D_ReturnPlayStatus(esPod *esp, uint32_t position, uint32_t duration, byte playStatus);
-    void _0x1F_ReturnCurrentPlayingTrackIndex(esPod *esp, uint32_t trackIndex);
-    void _0x21_ReturnIndexedPlayingTrackTitle(esPod *esp, char *trackTitle);
-    void _0x23_ReturnIndexedPlayingTrackArtistName(esPod *esp, char *trackArtistName);
-    void _0x25_ReturnIndexedPlayingTrackAlbumName(esPod *esp, char *trackAlbumName);
-    void _0x27_PlayStatusNotification(esPod *esp, byte notification, uint32_t numField);
-    void _0x27_PlayStatusNotification(esPod *esp, byte notification);
-    void _0x2D_ReturnShuffle(esPod *esp, byte shuffleStatus);
-    void _0x30_ReturnRepeat(esPod *esp, byte repeatStatus);
-    void _0x36_ReturnNumPlayingTracks(esPod *esp, uint32_t numPlayingTracks);
+    static void _0x01_iPodAck(esPod *esp, byte cmdStatus, byte cmdID);
+    static void _0x01_iPodAck(esPod *esp, byte cmdStatus, byte cmdID, uint32_t numField);
+    static void _0x0D_ReturnIndexedPlayingTrackInfo(esPod *esp, byte trackInfoType, char *trackInfoChars);
+    static void _0x0D_ReturnIndexedPlayingTrackInfo(esPod *esp, uint32_t trackDuration_ms);
+    static void _0x0D_ReturnIndexedPlayingTrackInfo(esPod *esp, byte trackInfoType, uint16_t releaseYear);
+    static void _0x13_ReturnProtocolVersion(esPod *esp);
+    static void _0x19_ReturnNumberCategorizedDBRecords(esPod *esp, uint32_t categoryDBRecords);
+    static void _0x1B_ReturnCategorizedDatabaseRecord(esPod *esp, uint32_t index, char *recordString);
+    static void _0x1D_ReturnPlayStatus(esPod *esp, uint32_t position, uint32_t duration, byte playStatus);
+    static void _0x1F_ReturnCurrentPlayingTrackIndex(esPod *esp, uint32_t trackIndex);
+    static void _0x21_ReturnIndexedPlayingTrackTitle(esPod *esp, char *trackTitle);
+    static void _0x23_ReturnIndexedPlayingTrackArtistName(esPod *esp, char *trackArtistName);
+    static void _0x25_ReturnIndexedPlayingTrackAlbumName(esPod *esp, char *trackAlbumName);
+    static void _0x27_PlayStatusNotification(esPod *esp, byte notification, uint32_t numField);
+    static void _0x27_PlayStatusNotification(esPod *esp, byte notification);
+    static void _0x2D_ReturnShuffle(esPod *esp, byte shuffleStatus);
+    static void _0x30_ReturnRepeat(esPod *esp, byte repeatStatus);
+    static void _0x36_ReturnNumPlayingTracks(esPod *esp, uint32_t numPlayingTracks);
 };

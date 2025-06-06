@@ -100,7 +100,7 @@ T swap_endian(T u)
 /// @brief (Re)starts a timer and changes the interval on the fly.
 /// @param timer Timer handle to (re)start.
 /// @param time_ms New interval in milliseconds. No verification is done if this is 0! Defaults to TRACK_CHANGE_TIMEOUT.
-void startTimer(TimerHandle_t timer, unsigned long time_ms = TRACK_CHANGE_TIMEOUT)
+inline void startTimer(TimerHandle_t timer, unsigned long time_ms = TRACK_CHANGE_TIMEOUT)
 {
     // If the timer is already active, it needs to be stopped without a callback call first
     if (xTimerIsTimerActive(timer) == pdTRUE)
@@ -114,7 +114,7 @@ void startTimer(TimerHandle_t timer, unsigned long time_ms = TRACK_CHANGE_TIMEOU
 
 /// @brief Stops a running timer. No status is returned if it was already stopped.
 /// @param timer Handle to the Timer that needs to be stopped.
-void stopTimer(TimerHandle_t timer)
+inline void stopTimer(TimerHandle_t timer)
 {
     // If the timer is already active, it needs to be stop without a callback call first
     if (xTimerIsTimerActive(timer) == pdTRUE)

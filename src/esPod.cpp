@@ -452,7 +452,7 @@ void esPod::_processPacket(const byte *byteArray, uint32_t len)
 
     case 0x04: // Extended Interface Lingo
         ESP_LOGD(IPOD_TAG, "Lingo 0x04 Packet in processor,payload length: %d", subPayloadLen);
-        processLingo0x04(subPayload, subPayloadLen);
+        L0x04::processLingo(this,subPayload, subPayloadLen);
         break;
 
     default:
