@@ -17,13 +17,30 @@
 enum IPOD_ACK_CODE : byte
 {
     iPodAck_OK = 0x00,
+    iPodAck_UnknownDBCat = 0x01,
     iPodAck_CmdFailed = 0x02,
+    iPodAck_OutOfResources = 0x03,
     iPodAck_BadParam = 0x04,
     iPodAck_UnknownID = 0x05,
     iPodAck_CmdPending = 0x06,
+    iPodAck_NotAuthenticated = 0x07,
+    iPodAck_BadAuthVersion = 0x08,
+    iPodAck_AccPowerModeReqFailed = 0x09,
+    iPodAck_CertificateInvalid = 0x0A,
+    iPodAck_CertPermissionsInvalid = 0x0B,
+    iPodAck_FileInUse = 0x0C,
+    iPodAck_FileHndlInvalid = 0x0D,
+    iPodAck_DirNotEmpty = 0x0E,
     iPodAck_TimedOut = 0x0F,
     iPodAck_CmdUnavail = 0x10,
-    iPodAck_LingoBusy = 0x14
+    iPodAck_DetectFloat_BadResistor = 0x11,
+    iPodAck_SelNotGenius = 0x12,
+    iPodAck_MultiDataSection_OK = 0x13,
+    iPodAck_LingoBusy = 0x14,
+    iPodAck_MaxConnections = 0x15,
+    iPodAck_HIDAlreadyInUse = 0x16,
+    iPodAck_DroppedData = 0x17,
+    iPodAck_OutModeError = 0x18
 };
 
 enum PB_STATUS : byte

@@ -310,6 +310,17 @@ void L0x00::_0x10_ReturnLingoProtocolVersion(esPod *esp, byte targetLingo)
     esp->_queuePacket(txPacket, sizeof(txPacket));
 }
 
+/// @brief Return iPod Options. In this case not much.
+/// @param esp Pointer to the esPod instance
+void L0x00::_0x25_RetiPodOptions(esPod *esp)
+{
+    ESP_LOGI(IPOD_TAG, "Returning iPod Options");
+    byte txPacket[] = {
+        0x00, 0x25,
+        0x00};
+    esp->_queuePacket(txPacket, sizeof(txPacket));
+}
+
 /// @brief Query the accessory Info (model number, manufacturer, firmware version ...) using the target Info category hex
 /// @param esp Pointer to the esPod instance
 /// @param desiredInfo Hex code for the type of information that is desired
@@ -322,13 +333,3 @@ void L0x00::_0x27_GetAccessoryInfo(esPod *esp, byte desiredInfo)
     esp->_queuePacket(txPacket, sizeof(txPacket));
 }
 
-/// @brief Return iPod Options. In this case not much.
-/// @param esp Pointer to the esPod instance
-void L0x00::_0x25_RetiPodOptions(esPod *esp)
-{
-    ESP_LOGI(IPOD_TAG, "Returning iPod Options");
-    byte txPacket[] = {
-        0x00, 0x25,
-        0x00};
-    esp->_queuePacket(txPacket, sizeof(txPacket));
-}
