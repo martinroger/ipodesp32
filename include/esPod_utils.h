@@ -1,17 +1,30 @@
 #pragma once
 #include "Arduino.h"
+#include "esPod_conf.h"
 
-// Possible values for L0x00 0x02 iPodAck
-#define iPodAck_OK 0x00
-#define iPodAck_CmdFailed 0x02
-#define iPodAck_BadParam 0x04
-#define iPodAck_UnknownID 0x05
-#define iPodAck_CmdPending 0x06
-#define iPodAck_TimedOut 0x0F
-#define iPodAck_CmdUnavail 0x10
-#define iPodAck_LingoBusy 0x14
+// // Possible values for L0x00 0x02 iPodAck
+// #define iPodAck_OK 0x00
+// #define iPodAck_CmdFailed 0x02
+// #define iPodAck_BadParam 0x04
+// #define iPodAck_UnknownID 0x05
+// #define iPodAck_CmdPending 0x06
+// #define iPodAck_TimedOut 0x0F
+// #define iPodAck_CmdUnavail 0x10
+// #define iPodAck_LingoBusy 0x14
 
 #pragma region ENUMS
+
+enum IPOD_ACK_CODE : byte
+{
+    iPodAck_OK = 0x00,
+    iPodAck_CmdFailed = 0x02,
+    iPodAck_BadParam = 0x04,
+    iPodAck_UnknownID = 0x05,
+    iPodAck_CmdPending = 0x06,
+    iPodAck_TimedOut = 0x0F,
+    iPodAck_CmdUnavail = 0x10,
+    iPodAck_LingoBusy = 0x14
+};
 
 enum PB_STATUS : byte
 {

@@ -1,5 +1,6 @@
 #pragma once
 #include "Arduino.h"
+#include "esPod_utils.h"
 class esPod;
 
 #define L0x04_GetIndexedPlayingTrackInfo 0x0C
@@ -29,8 +30,8 @@ public:
     static void processLingo(esPod *esp, const byte *byteArray, uint32_t len);
 
     // Lingo 0x04 Handlers
-    static void _0x01_iPodAck(esPod *esp, byte cmdStatus, byte cmdID);
-    static void _0x01_iPodAck(esPod *esp, byte cmdStatus, byte cmdID, uint32_t numField);
+    static void _0x01_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID);
+    static void _0x01_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID, uint32_t numField);
     static void _0x0D_ReturnIndexedPlayingTrackInfo(esPod *esp, byte trackInfoType, char *trackInfoChars);
     static void _0x0D_ReturnIndexedPlayingTrackInfo(esPod *esp, uint32_t trackDuration_ms);
     static void _0x0D_ReturnIndexedPlayingTrackInfo(esPod *esp, byte trackInfoType, uint16_t releaseYear);

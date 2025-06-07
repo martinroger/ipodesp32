@@ -539,14 +539,14 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 /// @param esp Pointer to the esPod instance
 /// @param cmdStatus Has to obey to iPodAck_xxx format as defined in L0x00.h
 /// @param cmdID last two ID bytes of the Lingo 0x04 command replied to
-void L0x04::_0x01_iPodAck(esPod *esp, byte cmdStatus, byte cmdID)
+void L0x04::_0x01_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID)
 {
-    ESP_LOGI(IPOD_TAG, "Ack 0x%02x to command 0x%04x", cmdStatus, cmdID);
+    ESP_LOGI(IPOD_TAG, "Ack 0x%02x to command 0x%04x", ackCode, cmdID);
     // Queue the ack packet
     const byte txPacket[] = {
         0x04,
         0x00, 0x01,
-        cmdStatus,
+        ackCode,
         0x00, cmdID};
     // Stop the timer if the same command is acknowledged before the elapsed time
     if (cmdID == esp->_pendingCmdId_0x04) // If the pending command is the one being acknowledged
@@ -564,13 +564,13 @@ void L0x04::_0x01_iPodAck(esPod *esp, byte cmdStatus, byte cmdID)
 /// @param cmdStatus Unprotected, but should only be iPodAck_CmdPending
 /// @param cmdID Single end-byte ID of the command being acknowledged with Pending
 /// @param numField Pending delay in milliseconds
-void L0x04::_0x01_iPodAck(esPod *esp, byte cmdStatus, byte cmdID, uint32_t numField)
+void L0x04::_0x01_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID, uint32_t numField)
 {
-    ESP_LOGI(IPOD_TAG, "Ack 0x%02x to command 0x%04x Numfield: %d", cmdStatus, cmdID, numField);
+    ESP_LOGI(IPOD_TAG, "Ack 0x%02x to command 0x%04x Numfield: %d", ackCode, cmdID, numField);
     const byte txPacket[20] = {
         0x04,
         0x00, 0x01,
-        cmdStatus,
+        ackCode,
         cmdID};
     *((uint32_t *)&txPacket[5]) = swap_endian<uint32_t>(numField);
     esp->_queuePacket(txPacket, 5 + 4);
