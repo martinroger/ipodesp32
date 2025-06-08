@@ -24,25 +24,26 @@ class esPod;
 #define L0x03_CreateGeniusPlaylist 0x21
 #define L0x03_IsGeniusAvailableForTrack 0x22
 
-
 class L0x03
 {
 
 public:
     static void processLingo(esPod *esp, const byte *byteArray, uint32_t len);
-    static void _0x00_iPodAck(esPod *esp,IPOD_ACK_CODE ackCode, byte cmdID);
+    static void _0x00_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID);
+    static void _0x00_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID, uint32_t numField);
     static void _0x02_RetCurrentEQProfileIndex(esPod *esp);
     static void _0x05_RetNumEQProfiles(esPod *esp);
     static void _0x07_RetIndexedEQProfileName(esPod *esp);
     static void _0x09_RemoteEventNotification(esPod *esp);
-    static void _0x0B_RetRemoteEventStatus(esPod *esp);
+    static void _0x0B_RetRemoteEventStatus(esPod *esp, uint32_t remEventStatus);
     static void _0x0D_RetiPodStateInfo(esPod *esp);
-    static void _0x10_RetPlayStatus(esPod *esp);
-    static void _0x13_RetIndexedPlayingTrackInfo(esPod *esp);
-    static void _0x15_RetNumPlayingTracks(esPod *esp);
+    static void _0x10_RetPlayStatus(esPod *esp, byte playState, uint32_t trackIndex, uint32_t trackTotMs, uint32_t trackPosMs);
+    static void _0x13_RetIndexedPlayingTrackInfo(esPod *esp, byte trackInfoType, char *trackInfoChars);
+    static void _0x13_RetIndexedPlayingTrackInfo(esPod *esp, uint32_t trackDuration_ms);
+    static void _0x15_RetNumPlayingTracks(esPod *esp, uint32_t numPlayingTracks);
     static void _0x17_RetArtworkFormats(esPod *esp);
     static void _0x19_RetTrackArtworkData(esPod *esp);
-    static void _0x1B_RetPowerBatteryState(esPod *esp);
-    static void _0x1D_RetSoundCheckState(esPod *esp);
+    static void _0x1B_RetPowerBatteryState(esPod *esp, byte powerBatteryState);
+    static void _0x1D_RetSoundCheckState(esPod *esp, byte soundCheckState);
     static void _0x20_RetTrackArtworkTimes(esPod *esp);
 };

@@ -391,7 +391,14 @@ static void processAVRCTask(void *pvParameters)
 							 "0x%x\n\tPending duration: %d",
 							 espod.trackChangeAckPending, millis() - espod.trackChangeTimestamp);
 					// espod.L0x04_0x01_iPodAck(iPodAck_OK, espod.trackChangeAckPending);
-					L0x04::_0x01_iPodAck(&espod,iPodAck_OK,espod.trackChangeAckPending);
+					if (espod.trackChangeAckPending == 0x11)
+					{
+						L0x03::_0x00_iPodAck(&espod, iPodAck_OK, espod.trackChangeAckPending);
+					}
+					else
+					{
+						L0x04::_0x01_iPodAck(&espod, iPodAck_OK, espod.trackChangeAckPending);
+					}
 					espod.trackChangeAckPending = 0x00;
 					ESP_LOGD("AVRC_CB", "trackChangeAckPending reset to 0x00");
 				}
@@ -404,7 +411,7 @@ static void processAVRCTask(void *pvParameters)
 				if (espod.playStatusNotificationState == NOTIF_ON)
 				{
 					// espod.L0x04_0x27_PlayStatusNotification(0x01, espod.currentTrackIndex);
-					L0x04::_0x27_PlayStatusNotification(&espod,0x01,espod.currentTrackIndex);
+					L0x04::_0x27_PlayStatusNotification(&espod, 0x01, espod.currentTrackIndex);
 				}
 			}
 
@@ -574,7 +581,7 @@ void avrc_rn_play_pos_callback(uint32_t play_pos)
 	if (espod.playStatusNotificationState == NOTIF_ON && espod.trackChangeAckPending == 0x00)
 	{
 		// espod.L0x04_0x27_PlayStatusNotification(0x04, play_pos);
-		L0x04::_0x27_PlayStatusNotification(&espod,0x04,play_pos);
+		L0x04::_0x27_PlayStatusNotification(&espod, 0x04, play_pos);
 	}
 }
 

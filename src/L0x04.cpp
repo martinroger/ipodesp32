@@ -531,6 +531,13 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
             }
         }
         break;
+
+        default:
+        {
+            ESP_LOGW(IPOD_TAG, "CMD 0x%04x not recognized.", cmdID);
+            L0x04::_0x01_iPodAck(esp, iPodAck_CmdFailed, cmdID);
+        }
+        break;
         }
     }
 }

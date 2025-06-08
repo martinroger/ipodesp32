@@ -332,4 +332,3 @@ void L0x00::_0x27_GetAccessoryInfo(esPod *esp, byte desiredInfo)
         desiredInfo};
     esp->_queuePacket(txPacket, sizeof(txPacket));
 }
-

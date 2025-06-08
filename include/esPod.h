@@ -1,6 +1,7 @@
 #pragma once
 #include "Arduino.h"
 #include "L0x00.h"
+#include "L0x03.h"
 #include "L0x04.h"
 #include "esPod_conf.h"
 #include "esPod_utils.h"
@@ -11,8 +12,10 @@
 
 class esPod
 {
-    friend class L0x04;
     friend class L0x00;
+    friend class L0x03;
+    friend class L0x04;
+    
 public:
     typedef void playStatusHandler_t(byte playControlCommand);
 
@@ -68,12 +71,15 @@ private:
 
     // FreeRTOS timers for delayed acks
     TimerHandle_t _pendingTimer_0x00;
+    TimerHandle_t _pendingTimer_0x03;
     TimerHandle_t _pendingTimer_0x04;
 
     // Callbacks for each timer
     static void _pendingTimerCallback_0x00(TimerHandle_t xTimer);
+    static void _pendingTimerCallback_0x03(TimerHandle_t xTimer);
     static void _pendingTimerCallback_0x04(TimerHandle_t xTimer);
     byte _pendingCmdId_0x00;
+    byte _pendingCmdId_0x03;
     byte _pendingCmdId_0x04;
 
     // Serial to the listening device
