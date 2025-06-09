@@ -58,9 +58,9 @@ public:
     // static void _0x2B_RetTrackArtworkTimes(esPod *esp);
     static void _0x2D_ReturnShuffle(esPod *esp, byte shuffleStatus);
     static void _0x30_ReturnRepeat(esPod *esp, byte repeatStatus);
-    // static void _0x34_ReturnMonoDisplayImageLimits(esPod *esp);
+    static void _0x34_ReturnMonoDisplayImageLimits(esPod *esp, uint16_t maxImageW, uint16_t maxImageH, byte dispPixelFmt);
     static void _0x36_ReturnNumPlayingTracks(esPod *esp, uint32_t numPlayingTracks);
-    // static void _0x3A_ReturnColorDisplayImageLimits(esPod *esp);
+    static void _0x3A_ReturnColorDisplayImageLimits(esPod *esp, uint16_t maxImageW, uint16_t maxImageH, byte dispPixelFmt);
     // static void _0x3D_RetDBiTunesInfo(esPod *esp);
     // static void _0x3F_RetUIDTrackInfo(esPod *esp);
     // static void _0x41_RetDBTrackInfo(esPod *esp);

@@ -12,6 +12,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
     // Initialising handlers to understand what is happening in some parts of the switch. They cannot be initialised in the switch-case scope
     byte category;
     uint32_t startIndex, counts, tempTrackIndex;
+    char noCat[25] = "--";
 
     if (!esp->extendedInterfaceModeActive)
     { // Complain if not in extended interface mode
@@ -155,13 +156,13 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
             case DB_CAT_AUDIOBOOK:
                 for (uint32_t i = startIndex; i < startIndex + counts; i++)
                 {
-                    L0x04::_0x1B_ReturnCategorizedDatabaseRecord(esp, i, "No audiobooks");
+                    L0x04::_0x1B_ReturnCategorizedDatabaseRecord(esp, i, noCat);
                 }
                 break;
             case DB_CAT_PODCAST:
                 for (uint32_t i = startIndex; i < startIndex + counts; i++)
                 {
-                    L0x04::_0x1B_ReturnCategorizedDatabaseRecord(esp, i, "No podcasts");
+                    L0x04::_0x1B_ReturnCategorizedDatabaseRecord(esp, i, noCat);
                 }
                 break;
             default:
@@ -466,6 +467,13 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
         }
         break;
 
+        case L0x04_GetMonoDisplayImageLimits:
+        {
+            ESP_LOGI(IPOD_TAG, "CMD 0x0%04x GetMonoDisplayImageLimits", cmdID);
+            L0x04::_0x34_ReturnMonoDisplayImageLimits(esp, 0, 0, 0x01); // Not sure this is OK
+        }
+        break;
+
         case L0x04_GetNumPlayingTracks: // Systematically return TOTAL_NUM_TRACKS
         {
             ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetNumPlayingTracks", cmdID);
@@ -541,6 +549,20 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
                 if (esp->_playStatusHandler)
                     esp->_playStatusHandler(A2DP_NEXT); // Fire the metadata trigger indirectly
             }
+        }
+        break;
+
+        case L0x04_SelectSortDBRecord: // Used for browsing ?
+        {
+            ESP_LOGI(IPOD_TAG, "CMD 0x%04x SelectSortDBRecord (deprecated)", cmdID);
+            L0x04::_0x01_iPodAck(esp, iPodAck_OK, cmdID);
+        }
+        break;
+
+        case L0x04_GetColorDisplayImageLimits:
+        {
+            ESP_LOGI(IPOD_TAG, "CMD 0x0%04x GetColorDisplayImageLimits", cmdID);
+            L0x04::_0x3A_ReturnColorDisplayImageLimits(esp, 0, 0, 0x01); // Not sure this is OK
         }
         break;
 
@@ -821,6 +843,25 @@ void L0x04::_0x30_ReturnRepeat(esPod *esp, byte currentRepeatStatus)
     esp->_queuePacket(txPacket, sizeof(txPacket));
 }
 
+/// @brief
+/// @param esp Pointer to the esPod instance
+/// @param maxImageW
+/// @param maxImageH
+/// @param dispPixelFmt
+void L0x04::_0x34_ReturnMonoDisplayImageLimits(esPod *esp, uint16_t maxImageW, uint16_t maxImageH, byte dispPixelFmt)
+{
+    ESP_LOGI(IPOD_TAG, "Return monochrome image limits : %d x %d x %d", maxImageW, maxImageH, dispPixelFmt);
+    byte txPacket[] = {
+        0x04,
+        0x00, 0x34,
+        0x00, 0x00,
+        0x00, 0x00,
+        dispPixelFmt};
+    *((uint16_t *)&txPacket[3]) = swap_endian<uint16_t>(maxImageW);
+    *((uint16_t *)&txPacket[5]) = swap_endian<uint16_t>(maxImageH);
+    esp->_queuePacket(txPacket, sizeof(txPacket));
+}
+
 /// @brief Returns the number of playing tracks in the current selection (here it is all the tracks)
 /// @param esp Pointer to the esPod instance
 /// @param numPlayingTracks Number of playing tracks to return
@@ -832,5 +873,24 @@ void L0x04::_0x36_ReturnNumPlayingTracks(esPod *esp, uint32_t numPlayingTracks)
         0x00, 0x36,
         0x00, 0x00, 0x00, 0x00};
     *((uint32_t *)&txPacket[3]) = swap_endian<uint32_t>(numPlayingTracks);
+    esp->_queuePacket(txPacket, sizeof(txPacket));
+}
+
+/// @brief
+/// @param esp Pointer to the esPod instance
+/// @param maxImageW
+/// @param maxImageH
+/// @param dispPixelFmt
+void L0x04::_0x3A_ReturnColorDisplayImageLimits(esPod *esp, uint16_t maxImageW, uint16_t maxImageH, byte dispPixelFmt)
+{
+    ESP_LOGI(IPOD_TAG, "Return color image limits : %d x %d x %d", maxImageW, maxImageH, dispPixelFmt);
+    byte txPacket[] = {
+        0x04,
+        0x00, 0x3A,
+        0x00, 0x00,
+        0x00, 0x00,
+        dispPixelFmt};
+    *((uint16_t *)&txPacket[3]) = swap_endian<uint16_t>(maxImageW);
+    *((uint16_t *)&txPacket[5]) = swap_endian<uint16_t>(maxImageH);
     esp->_queuePacket(txPacket, sizeof(txPacket));
 }

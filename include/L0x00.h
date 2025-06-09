@@ -38,7 +38,7 @@ public:
     // static void _0x1B_RetiPodAuthenticationInfo(esPod *esp);
     // static void _0x1E_RetiPodAuthenticationSignature(esPod *esp);
     // static void _0x23_NotifyiPodStateChange(esPod *esp, byte stateChg);
-    static void _0x25_RetiPodOptions(esPod *esp);
+    static void _0x25_RetiPodOptions(esPod *esp, uint64_t optBitField);
     static void _0x27_GetAccessoryInfo(esPod *esp, byte desiredInfo);
     // static void _0x2A_RetiPodPreferences(esPod *esp);
     // static void _0x36_RetUIMode(esPod *esp);

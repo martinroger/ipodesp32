@@ -9,6 +9,7 @@
 void L0x00::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 {
     byte cmdID = byteArray[0];
+    uint64_t iPodOptions = 0;
     // Switch through expected commandIDs
     switch (cmdID)
     {
@@ -116,7 +117,8 @@ void L0x00::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
     case L0x00_GetiPodOptions: // Mini requests iPod options
     {
         ESP_LOGI(IPOD_TAG, "CMD: 0x%02x GetiPodOptions", cmdID);
-        L0x00::_0x25_RetiPodOptions(esp);
+        // There might be some trickery triggered there with further options enquiries per Lingo
+        L0x00::_0x25_RetiPodOptions(esp, iPodOptions);
     }
 
     case L0x00_RetAccessoryInfo: // Mini returns info after L0x00::_0x27
@@ -312,12 +314,13 @@ void L0x00::_0x10_ReturnLingoProtocolVersion(esPod *esp, byte targetLingo)
 
 /// @brief Return iPod Options. In this case not much.
 /// @param esp Pointer to the esPod instance
-void L0x00::_0x25_RetiPodOptions(esPod *esp)
+void L0x00::_0x25_RetiPodOptions(esPod *esp, uint64_t optBitField)
 {
     ESP_LOGI(IPOD_TAG, "Returning iPod Options");
     byte txPacket[] = {
         0x00, 0x25,
-        0x00};
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    *((uint64_t *)&txPacket[2]) = swap_endian<uint64_t>(optBitField); // Hehhhh not sure about that one
     esp->_queuePacket(txPacket, sizeof(txPacket));
 }
 

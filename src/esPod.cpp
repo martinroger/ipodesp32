@@ -189,10 +189,10 @@ void esPod::_rxTask(void *pvParameters)
             }
             if (millis() - lastActivity > SERIAL_TIMEOUT) // If we haven't received any byte in 30s, reset the RX state
             {
-                ESP_LOGW(__func__, "No activity in %lu ms, resetting RX state", SERIAL_TIMEOUT);
                 // Reset the timestamp for next Serial timeout
                 lastActivity = millis();
 #ifndef NO_RESET_ON_SERIAL_TIMEOUT
+                ESP_LOGW(__func__, "No activity in %lu ms, resetting RX state", SERIAL_TIMEOUT);
                 esPodInstance->resetState();
 #endif
             }
@@ -595,18 +595,18 @@ void esPod::resetState()
     trackListPosition = 0;
 
     // Mini metadata
-    _accessoryCapabilitiesReceived = false;
-    _accessoryCapabilitiesRequested = false;
-    _accessoryFirmwareReceived = false;
-    _accessoryFirmwareRequested = false;
-    _accessoryHardwareReceived = false;
-    _accessoryHardwareRequested = false;
-    _accessoryManufReceived = false;
-    _accessoryManufRequested = false;
-    _accessoryModelReceived = false;
-    _accessoryModelRequested = false;
-    _accessoryNameReceived = false;
-    _accessoryNameRequested = false;
+    // _accessoryCapabilitiesReceived = false;
+    // _accessoryCapabilitiesRequested = false;
+    // _accessoryFirmwareReceived = false;
+    // _accessoryFirmwareRequested = false;
+    // _accessoryHardwareReceived = false;
+    // _accessoryHardwareRequested = false;
+    // _accessoryManufReceived = false;
+    // _accessoryManufRequested = false;
+    // _accessoryModelReceived = false;
+    // _accessoryModelRequested = false;
+    // _accessoryNameReceived = false;
+    // _accessoryNameRequested = false;
 
     // Reset the queues
     aapCommand tempCmd;
