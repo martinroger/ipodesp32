@@ -21,8 +21,11 @@ class esPod;
 #define L0x04_SetShuffle 0x2E
 #define L0x04_GetRepeat 0x2F
 #define L0x04_SetRepeat 0x31
+#define L0x04_GetMonoDisplayImageLimits 0x33
 #define L0x04_GetNumPlayingTracks 0x35
 #define L0x04_SetCurrentPlayingTrack 0x37
+#define L0x04_SelectSortDBRecord 0x38
+#define L0x04_GetColorDisplayImageLimits 0x39
 
 class L0x04
 {

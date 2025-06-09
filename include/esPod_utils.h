@@ -73,7 +73,9 @@ enum DB_CATEGORY : byte
     DB_CAT_ALBUM = 0x03,
     DB_CAT_GENRE = 0x04,
     DB_CAT_TRACK = 0x05,
-    DB_CAT_COMPOSER = 0x06
+    DB_CAT_COMPOSER = 0x06,
+    DB_CAT_AUDIOBOOK = 0x07,
+    DB_CAT_PODCAST = 0x08
 }; // Just a small selection
 
 enum A2DP_PB_CMD : byte

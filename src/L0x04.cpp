@@ -152,6 +152,18 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
                     L0x04::_0x1B_ReturnCategorizedDatabaseRecord(esp, i, esp->composer);
                 }
                 break;
+            case DB_CAT_AUDIOBOOK:
+                for (uint32_t i = startIndex; i < startIndex + counts; i++)
+                {
+                    L0x04::_0x1B_ReturnCategorizedDatabaseRecord(esp, i, "No audiobooks");
+                }
+                break;
+            case DB_CAT_PODCAST:
+                for (uint32_t i = startIndex; i < startIndex + counts; i++)
+                {
+                    L0x04::_0x1B_ReturnCategorizedDatabaseRecord(esp, i, "No podcasts");
+                }
+                break;
             default:
                 ESP_LOGW(IPOD_TAG, "CMD 0x%04x RetrieveCategorizedDatabaseRecords category: 0x%02x not recognised", cmdID, category);
                 L0x04::_0x01_iPodAck(esp, iPodAck_BadParam, cmdID);
