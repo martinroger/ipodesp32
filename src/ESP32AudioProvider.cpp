@@ -203,6 +203,10 @@ void ESP32AudioProvider::connectionStateChanged(esp_a2d_connection_state_t state
             ESP_LOGI("ESP32AudioProvider", "A2DP Connection State Changed: %d", state);
             break;
     }
+    // Notify registered callback if present
+    if (s_instance && s_instance->_connStateCb) {
+        s_instance->_connStateCb(state, s_instance->_connStateCbContext);
+    }
     // Add further handling if needed (e.g., notify listeners, reset metadata, etc.)
 }
 

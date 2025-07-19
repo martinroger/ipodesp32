@@ -1,12 +1,11 @@
 #pragma once
-#include <cstdint>
 #include <esp_err.h>
-
-#include "esPod_utils.h"
 
 class BluetoothAudioProvider
 {
 public:
+    using ConnectionStateCallback = void(*)(esp_a2d_connection_state_t state, void* context);
+
     virtual ~BluetoothAudioProvider() = default;
     virtual bool is_connected() = 0;
     virtual bool is_playing() = 0;
@@ -32,5 +31,14 @@ public:
     {
         return ESP_OK;
     }
-};
 
+    // Register a callback for connection state changes
+    void setConnectionStateCallback(ConnectionStateCallback cb, void* context) {
+        _connStateCb = cb;
+        _connStateCbContext = context;
+    }
+
+protected:
+    ConnectionStateCallback _connStateCb = nullptr;
+    void* _connStateCbContext = nullptr;
+};

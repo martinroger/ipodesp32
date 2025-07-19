@@ -56,4 +56,3 @@ public:
     bool previous() override;
     bool seek(long position) override;
 };
-

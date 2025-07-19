@@ -508,6 +508,9 @@ esPod::esPod(Stream &targetSerial, BluetoothAudioProvider &audioProvider)
     {
         ESP_LOGE(IPOD_TAG, "Could not create tasks, queues not created");
     }
+
+    // Register the callback so the provider can control esPod's enabled/disabled state
+    _audioProvider.setConnectionStateCallback(connectionStateChanged, this);
 }
 
 /// @brief Destructor for the esPod class. Normally not used.
@@ -605,6 +608,34 @@ void esPod::resetState()
     stopTimer(_pendingTimer_0x04);
     _pendingCmdId_0x00 = 0x00;
     _pendingCmdId_0x04 = 0x00;
+}
+
+/// @brief Callback for the Bluetooth Audio Provider to enable or disable the esPod
+void esPod::connectionStateChanged(esp_a2d_connection_state_t state, void *context)
+{
+    auto *espod = static_cast<esPod *>(context);
+    switch (state)
+    {
+    case ESP_A2D_CONNECTION_STATE_CONNECTED:
+        ESP_LOGD("A2DP_CB", "ESP_A2D_CONNECTION_STATE_CONNECTED, espod enabled");
+        espod->disabled = false;
+#ifdef LED_BUILTIN
+        digitalWrite(LED_BUILTIN, INVERT_LED_LOGIC(HIGH));
+#endif
+        break;
+    case ESP_A2D_CONNECTION_STATE_DISCONNECTED:
+        ESP_LOGD("A2DP_CB", "ESP_A2D_CONNECTION_STATE_DISCONNECTED, espod disabled");
+        espod->resetState();
+        espod->disabled = true;
+#ifdef LED_BUILTIN
+        digitalWrite(LED_BUILTIN, INVERT_LED_LOGIC(LOW));
+#endif
+        break;
+    default: ;
+    }
+#ifdef ENABLE_ACTIVE_DCD
+    digitalWrite(DCD_CTRL_PIN, INVERT_DCD_LOGIC(espod.disabled)); // Logic inversion by MACRO
+#endif
 }
 #pragma endregion
 

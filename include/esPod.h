@@ -1,4 +1,6 @@
 #pragma once
+#include <esp_a2dp_api.h>
+
 #include "Arduino.h"
 #include "BluetoothAudioProvider.h"
 #include "L0x00.h"
@@ -153,4 +155,7 @@ public:
     void L0x04_0x2D_ReturnShuffle(byte shuffleStatus);
     void L0x04_0x30_ReturnRepeat(byte repeatStatus);
     void L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks);
+
+    // Static handler for Bluetooth connection state changes
+    static void connectionStateChanged(esp_a2d_connection_state_t state, void* context);
 };
