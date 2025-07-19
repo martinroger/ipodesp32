@@ -1,5 +1,6 @@
 #pragma once
 #include "Arduino.h"
+#include "BluetoothAudioProvider.h"
 #include "L0x00.h"
 #include "L0x04.h"
 #include "esPod_conf.h"
@@ -77,6 +78,9 @@ private:
     // Serial to the listening device
     Stream &_targetSerial;
 
+    // Audio setup
+    BluetoothAudioProvider &_audioProvider;
+
     // Packet utilities
     static byte _checksum(const byte *byteArray, uint32_t len);
     void _sendPacket(const byte *byteArray, uint32_t len);
@@ -107,14 +111,11 @@ private:
     bool _accessoryHardwareReceived = false;
     bool _accessoryHardwareRequested = false;
 
-    // Handler functions
-    playStatusHandler_t *_playStatusHandler = nullptr;
 
 public:
-    esPod(Stream &targetSerial);
+    esPod(Stream &targetSerial, BluetoothAudioProvider &audioProvider);
     ~esPod();
     void resetState();
-    void attachPlayControlHandler(playStatusHandler_t playHandler);
 
     // Processors
     void processLingo0x00(const byte *byteArray, uint32_t len);

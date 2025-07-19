@@ -468,8 +468,9 @@ void esPod::_processPacket(const byte *byteArray, uint32_t len)
 #pragma region Constructor, destructor, reset and external PB Contoller attach
 /// @brief Constructor for the esPod class
 /// @param targetSerial (Serial) stream on which the esPod will be communicating
-esPod::esPod(Stream &targetSerial)
-    : _targetSerial(targetSerial)
+/// @param audioProvider
+esPod::esPod(Stream &targetSerial, BluetoothAudioProvider &audioProvider)
+    : _targetSerial(targetSerial), _audioProvider(audioProvider)
 {
     // Create queues with pointer structures to byte arrays
     _cmdQueue = xQueueCreate(CMD_QUEUE_SIZE, sizeof(aapCommand));
@@ -604,12 +605,6 @@ void esPod::resetState()
     stopTimer(_pendingTimer_0x04);
     _pendingCmdId_0x00 = 0x00;
     _pendingCmdId_0x04 = 0x00;
-}
-
-void esPod::attachPlayControlHandler(playStatusHandler_t playHandler)
-{
-    _playStatusHandler = playHandler;
-    ESP_LOGD(IPOD_TAG, "PlayControlHandler attached.");
 }
 #pragma endregion
 
@@ -808,18 +803,12 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         case L0x04_GetIndexedPlayingTrackInfo:
         {
             tempTrackIndex = swap_endian<uint32_t>(*((uint32_t *)&byteArray[3]));
-            switch (byteArray[2]) // Switch on the type of track info requested (careful with overloads)
+            switch (byteArray[2])
             {
-            case 0x00: // General track Capabilities and Information
+            case 0x00: // General track Capabilities and Information (duration)
                 ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Duration", cmdID, byteArray[2], tempTrackIndex, prevTrackIndex);
-                if (tempTrackIndex == prevTrackIndex)
-                {
-                    L0x04_0x0D_ReturnIndexedPlayingTrackInfo((uint32_t)prevTrackDuration);
-                }
-                else
-                {
-                    L0x04_0x0D_ReturnIndexedPlayingTrackInfo((uint32_t)trackDuration);
-                }
+                // Use provider for duration
+                L0x04_0x0D_ReturnIndexedPlayingTrackInfo(_audioProvider.get_playing_song_total_time());
                 break;
             case 0x02: // Track Release Date (fictional)
                 ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Release date", cmdID, byteArray[2], tempTrackIndex, prevTrackIndex);
@@ -827,22 +816,18 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 break;
             case 0x01: // Track Title
                 ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Title", cmdID, byteArray[2], tempTrackIndex, prevTrackIndex);
-                if (tempTrackIndex == prevTrackIndex)
-                {
-                    L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2], prevTrackTitle);
-                }
-                else
-                {
-                    L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2], trackTitle);
-                }
+                // Use provider for title
+                L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2], (char*)_audioProvider.get_playing_song_title());
                 break;
             case 0x05: // Track Genre
                 ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Genre", cmdID, byteArray[2], tempTrackIndex, prevTrackIndex);
-                L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2], trackGenre);
+                // Use provider for genre
+                L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2], (char*)_audioProvider.get_playing_song_genre());
                 break;
             case 0x06: // Track Composer
                 ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Composer", cmdID, byteArray[2], tempTrackIndex, prevTrackIndex);
-                L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2], composer);
+                // Use provider for composer
+                L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byteArray[2], (char*)_audioProvider.get_playing_song_artist());
                 break;
             default: // In case the request is beyond the track capabilities
                 ESP_LOGW(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Type not recognised!", cmdID, byteArray[2], tempTrackIndex, prevTrackIndex);
@@ -945,7 +930,12 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         case L0x04_GetPlayStatus: // Returns the current playStatus and the position/duration of the current track
         {
             ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetPlayStatus", cmdID);
-            L0x04_0x1D_ReturnPlayStatus(playPosition, trackDuration, playStatus);
+            // Use provider for play position, duration, and play status
+            L0x04_0x1D_ReturnPlayStatus(
+                _audioProvider.get_playing_song_elapsed_time(),
+                _audioProvider.get_playing_song_total_time(),
+                _audioProvider.is_playing() ? PB_STATE_PLAYING : PB_STATE_PAUSED
+            );
         }
         break;
 
@@ -960,45 +950,24 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
         {
             tempTrackIndex = swap_endian<uint32_t>(*((uint32_t *)&byteArray[2]));
             ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackTitle for index %d (previous %d)", cmdID, tempTrackIndex, prevTrackIndex);
-            if (tempTrackIndex == prevTrackIndex)
-            {
-                L0x04_0x21_ReturnIndexedPlayingTrackTitle(prevTrackTitle);
-            }
-            else
-            {
-                L0x04_0x21_ReturnIndexedPlayingTrackTitle(trackTitle);
-            }
+            // Use provider for title
+            L0x04_0x21_ReturnIndexedPlayingTrackTitle((char*)_audioProvider.get_playing_song_title());
         }
         break;
-
         case L0x04_GetIndexedPlayingTrackArtistName:
         {
             tempTrackIndex = swap_endian<uint32_t>(*((uint32_t *)&byteArray[2]));
-
             ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackArtistName for index %d (previous %d)", cmdID, tempTrackIndex, prevTrackIndex);
-            if (tempTrackIndex == prevTrackIndex)
-            {
-                L0x04_0x23_ReturnIndexedPlayingTrackArtistName(prevArtistName);
-            }
-            else
-            {
-                L0x04_0x23_ReturnIndexedPlayingTrackArtistName(artistName);
-            }
+            // Use provider for artist
+            L0x04_0x23_ReturnIndexedPlayingTrackArtistName((char*)_audioProvider.get_playing_song_artist());
         }
         break;
-
         case L0x04_GetIndexedPlayingTrackAlbumName:
         {
             tempTrackIndex = swap_endian<uint32_t>(*((uint32_t *)&byteArray[2]));
             ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackAlbumName for index %d (previous %d)", cmdID, tempTrackIndex, prevTrackIndex);
-            if (tempTrackIndex == prevTrackIndex)
-            {
-                L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(prevAlbumName);
-            }
-            else
-            {
-                L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(albumName);
-            }
+            // Use provider for album
+            L0x04_0x25_ReturnIndexedPlayingTrackAlbumName((char*)_audioProvider.get_playing_song_album());
         }
         break;
 
@@ -1017,10 +986,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             if (playStatus != PB_STATE_PLAYING)
             {
                 playStatus = PB_STATE_PLAYING; // Playing status forced
-                if (_playStatusHandler)
-                {
-                    _playStatusHandler(A2DP_PLAY); // Send play to the a2dp
-                }
+                _audioProvider.play();
             }
             if (tempTrackIndex == trackList[(trackListPosition + TOTAL_NUM_TRACKS - 1) % TOTAL_NUM_TRACKS]) // Desired trackIndex is the left entry
             {
@@ -1042,8 +1008,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 L0x04_0x01_iPodAck(iPodAck_CmdPending, cmdID, TRACK_CHANGE_TIMEOUT);
 
                 // Fire the A2DP when ready
-                if (_playStatusHandler)
-                    _playStatusHandler(A2DP_PREV); // Fire the metadata trigger indirectly
+                _audioProvider.previous();
             }
             else if (tempTrackIndex == currentTrackIndex) // Somehow reselecting the current track
             {
@@ -1051,8 +1016,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 L0x04_0x01_iPodAck(iPodAck_OK, cmdID);
 
                 // Fire the A2DP when ready
-                if (_playStatusHandler)
-                    _playStatusHandler(A2DP_PREV); // Fire the metadata trigger indirectly
+                _audioProvider.previous(); // Fire the metadata trigger indirectly
             }
             else // If it is not the previous or the current track, it automatically becomes a next track
             {
@@ -1075,8 +1039,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 L0x04_0x01_iPodAck(iPodAck_CmdPending, cmdID, TRACK_CHANGE_TIMEOUT);
 
                 // Fire the A2DP when ready
-                if (_playStatusHandler)
-                    _playStatusHandler(A2DP_NEXT); // Fire the metadata trigger indirectly
+                _audioProvider.next(); // Fire the metadata trigger indirectly
             }
         }
         break;
@@ -1091,14 +1054,12 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 if (playStatus == PB_STATE_PLAYING)
                 {
                     playStatus = PB_STATE_PAUSED; // Toggle to paused if playing
-                    if (_playStatusHandler)
-                        _playStatusHandler(A2DP_PAUSE);
+                    _audioProvider.pause();
                 }
                 else
                 {
                     playStatus = PB_STATE_PLAYING; // Switch to playing in any other case
-                    if (_playStatusHandler)
-                        _playStatusHandler(A2DP_PLAY);
+                    _audioProvider.play();
                 }
                 L0x04_0x01_iPodAck(iPodAck_OK, cmdID);
             }
@@ -1106,8 +1067,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             case PB_CMD_STOP: // Stop
             {
                 playStatus = PB_STATE_STOPPED;
-                if (_playStatusHandler)
-                    _playStatusHandler(A2DP_STOP);
+                _audioProvider.stop();
                 L0x04_0x01_iPodAck(iPodAck_OK, cmdID);
             }
             break;
@@ -1131,8 +1091,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 L0x04_0x01_iPodAck(iPodAck_CmdPending, cmdID, TRACK_CHANGE_TIMEOUT);
 
                 // Fire the A2DP when ready
-                if (_playStatusHandler)
-                    _playStatusHandler(A2DP_NEXT); // Fire the metadata trigger indirectly
+                _audioProvider.next(); // Fire the metadata trigger indirectly
             }
             break;
             case PB_CMD_PREVIOUS_TRACK: // Prev track
@@ -1141,8 +1100,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 L0x04_0x01_iPodAck(iPodAck_OK, cmdID);
 
                 // Fire the A2DP when ready
-                if (_playStatusHandler)
-                    _playStatusHandler(A2DP_PREV); // Fire the metadata trigger indirectly
+                _audioProvider.previous(); // Fire the metadata trigger indirectly
             }
             break;
             case PB_CMD_NEXT: // Next track
@@ -1165,8 +1123,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 L0x04_0x01_iPodAck(iPodAck_CmdPending, cmdID, TRACK_CHANGE_TIMEOUT);
 
                 // Fire the A2DP when ready
-                if (_playStatusHandler)
-                    _playStatusHandler(A2DP_NEXT); // Fire the metadata trigger indirectly
+                _audioProvider.next(); // Fire the metadata trigger indirectly
             }
             break;
             case PB_CMD_PREV: // Prev track
@@ -1175,8 +1132,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 L0x04_0x01_iPodAck(iPodAck_OK, cmdID);
 
                 // Fire the A2DP when ready
-                if (_playStatusHandler)
-                    _playStatusHandler(A2DP_PREV); // Fire the metadata trigger indirectly
+                _audioProvider.previous(); // Fire the metadata trigger indirectly
             }
             break;
             case PB_CMD_PLAY: // Play... do we need to have an ack pending ?
@@ -1188,16 +1144,14 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 trackChangeTimestamp = millis();
                 L0x04_0x01_iPodAck(iPodAck_CmdPending, cmdID, TRACK_CHANGE_TIMEOUT);
 
-                if (_playStatusHandler)
-                    _playStatusHandler(A2DP_PLAY);
+                _audioProvider.play();
             }
             break;
             case PB_CMD_PAUSE: // Pause
             {
                 playStatus = PB_STATE_PAUSED;
                 L0x04_0x01_iPodAck(iPodAck_OK, cmdID);
-                if (_playStatusHandler)
-                    _playStatusHandler(A2DP_PAUSE);
+                _audioProvider.pause();
             }
             break;
             }
@@ -1250,10 +1204,8 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
             if (playStatus != PB_STATE_PLAYING)
             {
                 playStatus = PB_STATE_PLAYING; // Playing status forced
-                if (_playStatusHandler)
-                {
-                    _playStatusHandler(A2DP_PLAY); // Send play to the a2dp
-                }
+                _audioProvider.play(); // Send play to the a2dp
+
             }
             if (tempTrackIndex == trackList[(trackListPosition + TOTAL_NUM_TRACKS - 1) % TOTAL_NUM_TRACKS]) // Desired trackIndex is the left entry
             {
@@ -1275,8 +1227,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 L0x04_0x01_iPodAck(iPodAck_CmdPending, cmdID, TRACK_CHANGE_TIMEOUT);
 
                 // Fire the A2DP when ready
-                if (_playStatusHandler)
-                    _playStatusHandler(A2DP_PREV); // Fire the metadata trigger indirectly
+                _audioProvider.previous(); // Fire the metadata trigger indirectly
             }
             else if (tempTrackIndex == currentTrackIndex) // Somehow reselecting the current track
             {
@@ -1284,8 +1235,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 L0x04_0x01_iPodAck(iPodAck_OK, cmdID);
 
                 // Fire the A2DP when ready
-                if (_playStatusHandler)
-                    _playStatusHandler(A2DP_PREV); // Fire the metadata trigger indirectly
+                _audioProvider.previous(); // Fire the metadata trigger indirectly
             }
             else // If it is not the previous or the current track, it automatically becomes a next track
             {
@@ -1308,8 +1258,7 @@ void esPod::processLingo0x04(const byte *byteArray, uint32_t len)
                 L0x04_0x01_iPodAck(iPodAck_CmdPending, cmdID, TRACK_CHANGE_TIMEOUT);
 
                 // Fire the A2DP when ready
-                if (_playStatusHandler)
-                    _playStatusHandler(A2DP_NEXT); // Fire the metadata trigger indirectly
+                _audioProvider.next(); // Fire the metadata trigger indirectly
             }
         }
         break;
