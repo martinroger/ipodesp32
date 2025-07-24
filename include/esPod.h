@@ -12,6 +12,14 @@
 #define IPOD_TAG "esPod"
 #endif
 
+// LED Logic inversion
+#ifndef INVERT_LED_LOGIC
+#define INVERT_LED_LOGIC(stateBoolean) stateBoolean
+#else
+#undef INVERT_LED_LOGIC
+#define INVERT_LED_LOGIC(stateBoolean) !stateBoolean
+#endif
+
 class esPod
 {
 public:

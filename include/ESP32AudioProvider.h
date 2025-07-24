@@ -1,8 +1,10 @@
 #pragma once
+#include <Arduino.h>
 #include <esp_a2dp_api.h>
 #include "AudioTools.h"
 #include "BluetoothA2DP.h"
 #include "BluetoothAudioProvider.h"
+#include "esPod_utils.h"
 
 #include <mutex>
 
