@@ -1962,6 +1962,14 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C21190"
+			(at 203.2 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "9f17ff54-c95b-4b5e-82dd-1a0efaed1aee")
 		)
@@ -2072,6 +2080,14 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 139.7 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "5bf1dc07-cf5c-4c93-a098-7ee549c2a261")
 		)
@@ -2179,6 +2195,14 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "LCSC" "C2286"
+			(at 195.58 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "1"
@@ -2296,6 +2320,14 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C2286"
+			(at 195.58 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "2dd7cff5-50e9-4f9d-bec5-bba1dc461219")
 		)
@@ -2410,6 +2442,14 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C21189"
+			(at 185.42 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "4e7cc21d-7bd2-49dc-afea-a1f8ae0cbb0a")
 		)
@@ -2520,6 +2560,14 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C19702"
+			(at 139.7 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "7165bac4-7258-441f-88dc-80d228a9e3e0")
 		)
@@ -2626,6 +2674,14 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "LCSC" "C2960862"
+			(at 107.95 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "1"
@@ -2738,6 +2794,14 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C21190"
+			(at 203.2 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "4f1fb615-1bb3-4e24-9858-d53eeb2da0e2")
 		)
@@ -2846,6 +2910,14 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C21189"
+			(at 185.42 72.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "614a3bf8-bb61-4ac1-b9a0-d0b0a827df30")
 		)
@@ -2952,6 +3024,14 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "LCSC" "C22975"
+			(at 127 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "1"
@@ -3064,6 +3144,14 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C2933225"
+			(at 113.03 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "f409cfb9-e6f3-458d-811e-51f58efc41fe")
 		)
@@ -3102,7 +3190,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "CP2102N"
+		(property "Value" "CP2102-GM"
 			(at 155.6259 137.16 0)
 			(effects
 				(font
@@ -3120,7 +3208,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.silabs.com/documents/public/data-sheets/cp2102n-datasheet.pdf"
+		(property "Datasheet" "https://www.silabs.com/documents/public/data-sheets/CP2102-9.pdf"
 			(at 154.94 120.65 0)
 			(effects
 				(font
@@ -3147,7 +3235,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer_Part_Number" "CP2102N-A02-GQFN28R"
+		(property "Manufacturer_Part_Number" "CP2102-GM"
 			(at 153.67 101.6 0)
 			(effects
 				(font
@@ -3172,6 +3260,14 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "LCSC" "C6568"
+			(at 153.67 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "1"

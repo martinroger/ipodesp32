@@ -140,7 +140,7 @@
         "min_track_width": 0.1524,
         "min_via_annular_width": 0.1,
         "min_via_diameter": 0.6,
-        "solder_mask_to_copper_clearance": 0.0,
+        "solder_mask_to_copper_clearance": 0.005,
         "use_height_for_length_calcs": true
       },
       "teardrop_options": [
@@ -774,6 +774,12 @@
           "show": true
         },
         {
+          "group_by": false,
+          "label": "LCSC",
+          "name": "LCSC",
+          "show": true
+        },
+        {
           "group_by": true,
           "label": "DNP",
           "name": "${DNP}",
@@ -796,12 +802,6 @@
           "label": "Datasheet",
           "name": "Datasheet",
           "show": true
-        },
-        {
-          "group_by": false,
-          "label": "Arrow Price/Stock",
-          "name": "Arrow Price/Stock",
-          "show": false
         },
         {
           "group_by": false,
@@ -829,18 +829,6 @@
         },
         {
           "group_by": false,
-          "label": "Mouser Part Number",
-          "name": "Mouser Part Number",
-          "show": false
-        },
-        {
-          "group_by": false,
-          "label": "Mouser Price/Stock",
-          "name": "Mouser Price/Stock",
-          "show": false
-        },
-        {
-          "group_by": false,
           "label": "PARTREV",
           "name": "PARTREV",
           "show": false
@@ -859,12 +847,6 @@
         },
         {
           "group_by": false,
-          "label": "Arrow Part Number",
-          "name": "Arrow Part Number",
-          "show": false
-        },
-        {
-          "group_by": false,
           "label": "#",
           "name": "${ITEM_NUMBER}",
           "show": false
@@ -872,10 +854,10 @@
       ],
       "filter_string": "",
       "group_symbols": true,
-      "include_excluded_from_bom": true,
+      "include_excluded_from_bom": false,
       "name": "",
       "sort_asc": true,
-      "sort_field": "Reference"
+      "sort_field": "LCSC"
     },
     "connection_grid_size": 50.0,
     "drawing": {
