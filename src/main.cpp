@@ -88,6 +88,7 @@ void read_data_stream(const uint8_t *data, uint32_t length)
 
 #endif
 esPod espod(ipodSerial);
+bool pendingPlayReq = false; // Might use this to make sure play requests are not ignored.
 
 #pragma endregion
 
@@ -490,6 +491,9 @@ void initializeA2DPSink()
 
 	ESP_LOGI("SETUP", "a2dp_sink started: %s", A2DP_SINK_NAME);
 	delay(5);
+
+	// Meant to pre-fetch playing status
+	a2dp_sink.play();
 }
 
 /// @brief Initializes the AVRC metadata queue, and attempts to start the
