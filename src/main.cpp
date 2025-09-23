@@ -492,8 +492,7 @@ void initializeA2DPSink()
 	ESP_LOGI("SETUP", "a2dp_sink started: %s", A2DP_SINK_NAME);
 	delay(5);
 
-	// Meant to pre-fetch playing status
-	a2dp_sink.play();
+
 }
 
 /// @brief Initializes the AVRC metadata queue, and attempts to start the
@@ -532,6 +531,9 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void *ptr)
 	case ESP_A2D_CONNECTION_STATE_CONNECTED:
 		ESP_LOGD("A2DP_CB", "ESP_A2D_CONNECTION_STATE_CONNECTED, espod enabled");
 		espod.disabled = false;
+		// Meant to pre-fetch playing status
+		ESP_LOGI("A2DP_CB", "Attempting to send play request.");
+		a2dp_sink.play();
 #ifdef LED_BUILTIN
 		digitalWrite(LED_BUILTIN, INVERT_LED_LOGIC(HIGH));
 #endif
@@ -568,10 +570,10 @@ void audioStateChanged(esp_a2d_audio_state_t state, void *ptr)
 		ESP_LOGD("A2DP_CB", "ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND, espod.playStatus "
 							"= PB_STATE_PAUSED");
 		break;
-	case ESP_A2D_AUDIO_STATE_STOPPED:
-		espod.playStatus = PB_STATE_STOPPED;
-		ESP_LOGD("A2DP_CB", "ESP_A2D_AUDIO_STATE_STOPPED, espod.playStatus = PB_STATE_STOPPED");
-		break;
+	// case ESP_A2D_AUDIO_STATE_STOPPED:
+	// 	espod.playStatus = PB_STATE_STOPPED;
+	// 	ESP_LOGD("A2DP_CB", "ESP_A2D_AUDIO_STATE_STOPPED, espod.playStatus = PB_STATE_STOPPED");
+	// 	break;
 	}
 }
 
