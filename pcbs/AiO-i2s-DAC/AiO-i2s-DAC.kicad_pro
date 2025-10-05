@@ -475,8 +475,12 @@
     }
   },
   "libraries": {
-    "pinned_footprint_libs": [],
-    "pinned_symbol_libs": []
+    "pinned_footprint_libs": [
+      "DIY"
+    ],
+    "pinned_symbol_libs": [
+      "DIY"
+    ]
   },
   "meta": {
     "filename": "AiO-i2s-DAC.kicad_pro",
@@ -708,7 +712,7 @@
       "plot": "",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "AiO-i2s-DAC.step",
       "svg": "",
       "vrml": ""
     },
