@@ -2,7 +2,7 @@
 
 # iPodESP32 : an iPod emulator for 2nd gen Minis
 
-*A picture here would be nice.*
+![AiO DAC board prototype](/img/AiODAC.jpg)
 
 ## Summary (TL;DR)
 
