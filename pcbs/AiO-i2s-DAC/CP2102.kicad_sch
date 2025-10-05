@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "AiO-i2s-DAC")
-		(date "2025-06-04")
-		(rev "0.1.5")
+		(date "2025-10-05")
+		(rev "0.1.7")
 		(company "Martin Roger")
 	)
 	(lib_symbols
@@ -1113,12 +1113,20 @@
 		(uuid "eb42414b-3dd7-4e25-9e07-b790e4d10840")
 	)
 	(no_connect
+		(at 166.37 104.14)
+		(uuid "24d4c1c4-6431-4bf5-bb55-edb369639e55")
+	)
+	(no_connect
 		(at 166.37 116.84)
 		(uuid "5052a0ff-c838-481d-ac9b-37784db30f71")
 	)
 	(no_connect
 		(at 166.37 119.38)
 		(uuid "5da342c3-f3d5-4578-a03f-cd42904996fa")
+	)
+	(no_connect
+		(at 166.37 106.68)
+		(uuid "602c6148-59f0-4854-a561-0cb1f7c81386")
 	)
 	(no_connect
 		(at 166.37 99.06)
@@ -1284,16 +1292,6 @@
 	)
 	(wire
 		(pts
-			(xy 175.26 104.14) (xy 166.37 104.14)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "40b23f46-773a-4ef9-857a-6e08ed26fc12")
-	)
-	(wire
-		(pts
 			(xy 137.16 88.9) (xy 140.97 88.9)
 		)
 		(stroke
@@ -1311,26 +1309,6 @@
 			(type default)
 		)
 		(uuid "422ed1d7-60fd-4ec5-8b38-96997c6af4a7")
-	)
-	(wire
-		(pts
-			(xy 175.26 110.49) (xy 175.26 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "42cbdca4-2161-4a1e-8560-a633c53e38ad")
-	)
-	(wire
-		(pts
-			(xy 175.26 100.33) (xy 175.26 104.14)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "45e6d27a-bf5f-4a77-ab34-ed4c5a9f1b7b")
 	)
 	(wire
 		(pts
@@ -1511,16 +1489,6 @@
 			(type default)
 		)
 		(uuid "ad6d0bac-9053-4fdb-9dfa-86e9b47b07fb")
-	)
-	(wire
-		(pts
-			(xy 175.26 106.68) (xy 166.37 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "bd94d2d9-7bc8-45c1-aa40-1f5d68398c72")
 	)
 	(wire
 		(pts
@@ -1706,6 +1674,17 @@
 		)
 		(uuid "3b20d31f-aaf7-4e5c-a123-c1586c0764f3")
 	)
+	(hierarchical_label "RXD"
+		(shape input)
+		(at 175.26 110.49 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "69cb83e8-250e-4bb6-ab11-1f7ba799d530")
+	)
 	(hierarchical_label "CTS"
 		(shape input)
 		(at 170.18 81.28 0)
@@ -1826,6 +1805,17 @@
 			(justify left)
 		)
 		(uuid "d7539cb1-e238-4db1-bf94-4ab461c7ec5c")
+	)
+	(hierarchical_label "TXD"
+		(shape output)
+		(at 175.26 100.33 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "db27eeb4-40b5-4c74-a133-722c4157ca7e")
 	)
 	(hierarchical_label "DSR"
 		(shape input)

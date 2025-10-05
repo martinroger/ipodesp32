@@ -6,8 +6,8 @@
 	(paper "A3")
 	(title_block
 		(title "AiO-i2s-DAC")
-		(date "2025-09-02")
-		(rev "0.1.6")
+		(date "2025-10-05")
+		(rev "0.1.7")
 		(company "Martin Roger")
 	)
 	(lib_symbols
@@ -11948,7 +11948,7 @@
 		(at 34.29 138.43 270)
 		(unit 1)
 		(exclude_from_sim yes)
-		(in_bom no)
+		(in_bom yes)
 		(on_board yes)
 		(dnp yes)
 		(uuid "2b535ba9-f81a-4285-80df-da8e504005a3")
@@ -12013,12 +12013,13 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C2661571"
 			(at 34.29 138.43 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(property "LCSC alt" ""
@@ -12027,6 +12028,7 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
 		(pin "2"
