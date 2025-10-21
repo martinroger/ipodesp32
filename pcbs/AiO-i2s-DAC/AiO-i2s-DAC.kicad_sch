@@ -21459,8 +21459,8 @@
 			(color 0 0 0 0.0000)
 		)
 		(uuid "124ee9d1-939d-44ed-a223-ddb52f42937f")
-		(property "Sheetname" "CP2102-GM"
-			(at 326.39 151.13 0)
+		(property "Sheetname" "CP2104-F03-GM"
+			(at 321.31 151.638 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21468,7 +21468,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "CP2102-GM.kicad_sch"
+		(property "Sheetfile" "CP2104-F03-GM.kicad_sch"
 			(at 341.63 160.02 90)
 			(effects
 				(font
