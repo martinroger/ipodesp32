@@ -8,3 +8,4 @@ Support Docs/iPod Accessory Protocol Interface Specification _ R38 Manualzz.pdf
 *.bkp
 .DS_Store
 /pcbs/*/*-backups
+/pcbs/AiO-i2s-DAC/production/backups
