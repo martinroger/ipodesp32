@@ -6,8 +6,8 @@
 	(paper "A3")
 	(title_block
 		(title "AiO-i2s-DAC")
-		(date "2025-10-05")
-		(rev "0.1.7")
+		(date "2025-10-22")
+		(rev "0.2.0")
 		(company "Martin Roger")
 	)
 	(lib_symbols

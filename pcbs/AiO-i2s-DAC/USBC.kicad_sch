@@ -5,9 +5,9 @@
 	(uuid "c6d28adb-d270-46fa-91ca-086e241c3638")
 	(paper "A4")
 	(title_block
-		(title "AiO-i2s-DAC")
-		(date "2025-10-05")
-		(rev "0.1.7")
+		(title "USB Interface")
+		(date "2025-10-22")
+		(rev "0.2.0")
 		(company "Martin Roger")
 	)
 	(lib_symbols
