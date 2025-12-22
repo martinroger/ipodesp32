@@ -88,6 +88,7 @@ void read_data_stream(const uint8_t *data, uint32_t length)
 
 #endif
 esPod espod(ipodSerial);
+bool pendingPlayReq = false; // Might use this to make sure play requests are not ignored.
 
 #pragma endregion
 
@@ -390,7 +391,15 @@ static void processAVRCTask(void *pvParameters)
 							 "Artist+Album+Title+Duration +++ ACK Pending "
 							 "0x%x\n\tPending duration: %d",
 							 espod.trackChangeAckPending, millis() - espod.trackChangeTimestamp);
-					espod.L0x04_0x01_iPodAck(iPodAck_OK, espod.trackChangeAckPending);
+					// espod.L0x04_0x01_iPodAck(iPodAck_OK, espod.trackChangeAckPending);
+					if (espod.trackChangeAckPending == 0x11)
+					{
+						L0x03::_0x00_iPodAck(&espod, iPodAck_OK, espod.trackChangeAckPending);
+					}
+					else
+					{
+						L0x04::_0x01_iPodAck(&espod, iPodAck_OK, espod.trackChangeAckPending);
+					}
 					espod.trackChangeAckPending = 0x00;
 					ESP_LOGD("AVRC_CB", "trackChangeAckPending reset to 0x00");
 				}
@@ -402,7 +411,8 @@ static void processAVRCTask(void *pvParameters)
 				// Inform the car
 				if (espod.playStatusNotificationState == NOTIF_ON)
 				{
-					espod.L0x04_0x27_PlayStatusNotification(0x01, espod.currentTrackIndex);
+					// espod.L0x04_0x27_PlayStatusNotification(0x01, espod.currentTrackIndex);
+					L0x04::_0x27_PlayStatusNotification(&espod, 0x01, espod.currentTrackIndex);
 				}
 			}
 
@@ -481,6 +491,8 @@ void initializeA2DPSink()
 
 	ESP_LOGI("SETUP", "a2dp_sink started: %s", A2DP_SINK_NAME);
 	delay(5);
+
+
 }
 
 /// @brief Initializes the AVRC metadata queue, and attempts to start the
@@ -519,6 +531,9 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void *ptr)
 	case ESP_A2D_CONNECTION_STATE_CONNECTED:
 		ESP_LOGD("A2DP_CB", "ESP_A2D_CONNECTION_STATE_CONNECTED, espod enabled");
 		espod.disabled = false;
+		// Meant to pre-fetch playing status
+		ESP_LOGI("A2DP_CB", "Attempting to send play request.");
+		a2dp_sink.play();
 #ifdef LED_BUILTIN
 		digitalWrite(LED_BUILTIN, INVERT_LED_LOGIC(HIGH));
 #endif
@@ -555,10 +570,10 @@ void audioStateChanged(esp_a2d_audio_state_t state, void *ptr)
 		ESP_LOGD("A2DP_CB", "ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND, espod.playStatus "
 							"= PB_STATE_PAUSED");
 		break;
-	case ESP_A2D_AUDIO_STATE_STOPPED:
-		espod.playStatus = PB_STATE_STOPPED;
-		ESP_LOGD("A2DP_CB", "ESP_A2D_AUDIO_STATE_STOPPED, espod.playStatus = PB_STATE_STOPPED");
-		break;
+	// case ESP_A2D_AUDIO_STATE_STOPPED:
+	// 	espod.playStatus = PB_STATE_STOPPED;
+	// 	ESP_LOGD("A2DP_CB", "ESP_A2D_AUDIO_STATE_STOPPED, espod.playStatus = PB_STATE_STOPPED");
+	// 	break;
 	}
 }
 
@@ -571,7 +586,8 @@ void avrc_rn_play_pos_callback(uint32_t play_pos)
 	ESP_LOGV("AVRC_CB", "PlayPosition called");
 	if (espod.playStatusNotificationState == NOTIF_ON && espod.trackChangeAckPending == 0x00)
 	{
-		espod.L0x04_0x27_PlayStatusNotification(0x04, play_pos);
+		// espod.L0x04_0x27_PlayStatusNotification(0x04, play_pos);
+		L0x04::_0x27_PlayStatusNotification(&espod, 0x04, play_pos);
 	}
 }
 

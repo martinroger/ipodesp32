@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "A1S Mini Board")
-		(date "2025-03-30")
-		(rev "0.3.0")
+		(date "2025-10-05")
+		(rev "0.3.2")
 		(company "Martin Roger")
 	)
 	(lib_symbols
@@ -1133,6 +1133,10 @@
 		(uuid "70d61a34-c5a8-4b19-96d1-c59e5a7696ae")
 	)
 	(no_connect
+		(at 166.37 106.68)
+		(uuid "76faeb95-1300-41dc-bfe0-2986056ffe8f")
+	)
+	(no_connect
 		(at 166.37 127)
 		(uuid "79e135dc-8a8c-4340-99d6-7b01b60df598")
 	)
@@ -1151,6 +1155,10 @@
 	(no_connect
 		(at 166.37 114.3)
 		(uuid "e226ed6a-dd28-4733-a6ad-5a368ce67351")
+	)
+	(no_connect
+		(at 166.37 104.14)
+		(uuid "fa23cc35-dc64-4dfe-9b38-4b3ae98f4102")
 	)
 	(wire
 		(pts
@@ -1284,16 +1292,6 @@
 	)
 	(wire
 		(pts
-			(xy 175.26 104.14) (xy 166.37 104.14)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "40b23f46-773a-4ef9-857a-6e08ed26fc12")
-	)
-	(wire
-		(pts
 			(xy 137.16 88.9) (xy 140.97 88.9)
 		)
 		(stroke
@@ -1311,26 +1309,6 @@
 			(type default)
 		)
 		(uuid "422ed1d7-60fd-4ec5-8b38-96997c6af4a7")
-	)
-	(wire
-		(pts
-			(xy 175.26 110.49) (xy 175.26 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "42cbdca4-2161-4a1e-8560-a633c53e38ad")
-	)
-	(wire
-		(pts
-			(xy 175.26 100.33) (xy 175.26 104.14)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "45e6d27a-bf5f-4a77-ab34-ed4c5a9f1b7b")
 	)
 	(wire
 		(pts
@@ -1514,16 +1492,6 @@
 	)
 	(wire
 		(pts
-			(xy 175.26 106.68) (xy 166.37 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "bd94d2d9-7bc8-45c1-aa40-1f5d68398c72")
-	)
-	(wire
-		(pts
 			(xy 213.36 110.49) (xy 213.36 100.33)
 		)
 		(stroke
@@ -1673,6 +1641,17 @@
 		)
 		(uuid "07fc846b-21a8-4183-bde6-b61975238cac")
 	)
+	(hierarchical_label "RXD"
+		(shape input)
+		(at 175.26 110.49 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "0b3c8ea9-a504-4a4e-96c9-61af24cc2ead")
+	)
 	(hierarchical_label "DTR"
 		(shape bidirectional)
 		(at 170.18 86.36 0)
@@ -1771,6 +1750,17 @@
 			(justify right)
 		)
 		(uuid "ab28a0de-87c2-4223-b3dc-d83530dc689f")
+	)
+	(hierarchical_label "TXD"
+		(shape output)
+		(at 175.26 100.33 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "b746d256-2e76-49f2-847d-2b036a797d9a")
 	)
 	(hierarchical_label "DCD"
 		(shape input)
@@ -1970,10 +1960,6 @@
 		)
 		(instances
 			(project "a1s-mini"
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
-					(reference "R34")
-					(unit 1)
-				)
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
 					(reference "R1")
 					(unit 1)
@@ -2080,10 +2066,6 @@
 		)
 		(instances
 			(project "a1s-mini"
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
-					(reference "C14")
-					(unit 1)
-				)
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
 					(reference "C11")
 					(unit 1)
@@ -2189,10 +2171,6 @@
 		)
 		(instances
 			(project "a1s-mini"
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
-					(reference "D11")
-					(unit 1)
-				)
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
 					(reference "D2")
 					(unit 1)
@@ -2304,10 +2282,6 @@
 		)
 		(instances
 			(project "a1s-mini"
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
-					(reference "D9")
-					(unit 1)
-				)
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
 					(reference "D1")
 					(unit 1)
@@ -2418,10 +2392,6 @@
 		)
 		(instances
 			(project "a1s-mini"
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
-					(reference "R27")
-					(unit 1)
-				)
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
 					(reference "R19")
 					(unit 1)
@@ -2528,10 +2498,6 @@
 		)
 		(instances
 			(project "a1s-mini"
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
-					(reference "C13")
-					(unit 1)
-				)
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
 					(reference "C10")
 					(unit 1)
@@ -2636,10 +2602,6 @@
 		)
 		(instances
 			(project "a1s-mini"
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
-					(reference "R23")
-					(unit 1)
-				)
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
 					(reference "R15")
 					(unit 1)
@@ -2746,10 +2708,6 @@
 		)
 		(instances
 			(project "a1s-mini"
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
-					(reference "R35")
-					(unit 1)
-				)
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
 					(reference "R2")
 					(unit 1)
@@ -2854,10 +2812,6 @@
 		)
 		(instances
 			(project "a1s-mini"
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
-					(reference "R26")
-					(unit 1)
-				)
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
 					(reference "R18")
 					(unit 1)
@@ -2962,10 +2916,6 @@
 		)
 		(instances
 			(project "a1s-mini"
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
-					(reference "R25")
-					(unit 1)
-				)
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
 					(reference "R17")
 					(unit 1)
@@ -3072,10 +3022,6 @@
 		)
 		(instances
 			(project "a1s-mini"
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
-					(reference "R24")
-					(unit 1)
-				)
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
 					(reference "R16")
 					(unit 1)
@@ -3102,7 +3048,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "CP2102N"
+		(property "Value" "CP2102-GM"
 			(at 155.6259 137.16 0)
 			(effects
 				(font
@@ -3120,7 +3066,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.silabs.com/documents/public/data-sheets/cp2102n-datasheet.pdf"
+		(property "Datasheet" "https://www.silabs.com/documents/public/data-sheets/CP2102-9.pdf"
 			(at 154.94 120.65 0)
 			(effects
 				(font
@@ -3147,7 +3093,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer_Part_Number" "CP2102N-A02-GQFN28R"
+		(property "Manufacturer_Part_Number" "CP2102-GM"
 			(at 153.67 101.6 0)
 			(effects
 				(font
@@ -3263,10 +3209,6 @@
 		)
 		(instances
 			(project "a1s-mini"
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
-					(reference "U4")
-					(unit 1)
-				)
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
 					(reference "U3")
 					(unit 1)

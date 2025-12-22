@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "AiO-i2s-DAC")
-		(date "2025-05-18")
-		(rev "0.1.2")
+		(date "2025-10-05")
+		(rev "0.1.7")
 		(company "Martin Roger")
 	)
 	(lib_symbols
@@ -1962,6 +1962,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C21190"
+			(at 203.2 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C22548"
+			(at 203.2 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "9f17ff54-c95b-4b5e-82dd-1a0efaed1aee")
 		)
@@ -1972,10 +1990,6 @@
 			(project "AiO-i2s-DAC"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
 					(reference "R34")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "R1")
 					(unit 1)
 				)
 			)
@@ -2072,6 +2086,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 139.7 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C1591"
+			(at 139.7 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "5bf1dc07-cf5c-4c93-a098-7ee549c2a261")
 		)
@@ -2082,10 +2114,6 @@
 			(project "AiO-i2s-DAC"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
 					(reference "C14")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "C11")
 					(unit 1)
 				)
 			)
@@ -2181,6 +2209,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C2286"
+			(at 195.58 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C125093"
+			(at 195.58 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "f6e8fa92-d790-48ab-a01a-3eeb3e0305a5")
 		)
@@ -2191,10 +2237,6 @@
 			(project "AiO-i2s-DAC"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
 					(reference "D11")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "D2")
 					(unit 1)
 				)
 			)
@@ -2296,6 +2338,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C2286"
+			(at 195.58 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C125093"
+			(at 195.58 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "2dd7cff5-50e9-4f9d-bec5-bba1dc461219")
 		)
@@ -2306,10 +2366,6 @@
 			(project "AiO-i2s-DAC"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
 					(reference "D9")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "D1")
 					(unit 1)
 				)
 			)
@@ -2410,6 +2466,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C21189"
+			(at 185.42 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C21189"
+			(at 185.42 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "4e7cc21d-7bd2-49dc-afea-a1f8ae0cbb0a")
 		)
@@ -2420,10 +2494,6 @@
 			(project "AiO-i2s-DAC"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
 					(reference "R27")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "R19")
 					(unit 1)
 				)
 			)
@@ -2520,6 +2590,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C19702"
+			(at 139.7 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C6119842"
+			(at 139.7 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "7165bac4-7258-441f-88dc-80d228a9e3e0")
 		)
@@ -2530,10 +2618,6 @@
 			(project "AiO-i2s-DAC"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
 					(reference "C13")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "C10")
 					(unit 1)
 				)
 			)
@@ -2628,6 +2712,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C6397988"
+			(at 107.95 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C2960862"
+			(at 107.95 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "64171eef-7bb4-43c7-b954-9804b996401d")
 		)
@@ -2638,10 +2740,6 @@
 			(project "AiO-i2s-DAC"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
 					(reference "R23")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "R15")
 					(unit 1)
 				)
 			)
@@ -2738,6 +2836,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C21190"
+			(at 203.2 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C22548"
+			(at 203.2 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "4f1fb615-1bb3-4e24-9858-d53eeb2da0e2")
 		)
@@ -2748,10 +2864,6 @@
 			(project "AiO-i2s-DAC"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
 					(reference "R35")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "R2")
 					(unit 1)
 				)
 			)
@@ -2846,6 +2958,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C21189"
+			(at 185.42 72.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C21189"
+			(at 185.42 72.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "614a3bf8-bb61-4ac1-b9a0-d0b0a827df30")
 		)
@@ -2856,10 +2986,6 @@
 			(project "AiO-i2s-DAC"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
 					(reference "R26")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "R18")
 					(unit 1)
 				)
 			)
@@ -2954,6 +3080,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C22975"
+			(at 127 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C237750"
+			(at 127 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "e55f9986-25ba-448d-bf16-394eacec3bb6")
 		)
@@ -2964,10 +3108,6 @@
 			(project "AiO-i2s-DAC"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
 					(reference "R25")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "R17")
 					(unit 1)
 				)
 			)
@@ -3064,6 +3204,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C403243"
+			(at 113.03 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C2933225"
+			(at 113.03 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "f409cfb9-e6f3-458d-811e-51f58efc41fe")
 		)
@@ -3074,10 +3232,6 @@
 			(project "AiO-i2s-DAC"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
 					(reference "R24")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "R16")
 					(unit 1)
 				)
 			)
@@ -3166,6 +3320,24 @@
 			)
 		)
 		(property "Type" "SMD"
+			(at 153.67 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C6568"
+			(at 153.67 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C6568"
 			(at 153.67 101.6 0)
 			(effects
 				(font
@@ -3265,10 +3437,6 @@
 			(project "AiO-i2s-DAC"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/124ee9d1-939d-44ed-a223-ddb52f42937f"
 					(reference "U4")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/82540054-4b5d-493e-806c-5bb240b603f8"
-					(reference "U3")
 					(unit 1)
 				)
 			)

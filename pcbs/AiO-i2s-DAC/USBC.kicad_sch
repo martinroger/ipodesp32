@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "AiO-i2s-DAC")
-		(date "2025-05-18")
-		(rev "0.1.2")
+		(date "2025-10-05")
+		(rev "0.1.7")
 		(company "Martin Roger")
 	)
 	(lib_symbols
@@ -1879,6 +1879,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C3020560"
+			(at 85.09 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C3020560"
+			(at 85.09 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "A1_B12"
 			(uuid "b3e82f2a-4fed-4831-92de-15e24b54364d")
 		)
@@ -2029,6 +2047,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C23186"
+			(at 123.19 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C23186"
+			(at 123.19 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "72c0fa0d-6936-4d4d-9494-4c51a0756fec")
 		)
@@ -2129,6 +2165,24 @@
 			)
 		)
 		(property "Type" "SMD"
+			(at 113.03 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C21189"
+			(at 113.03 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C21189"
 			(at 113.03 73.66 0)
 			(effects
 				(font
@@ -2242,46 +2296,6 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser Part Number" "621-1N5819HW-F"
-			(at 165.1 17.78 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Mouser Price/Stock" "https://www.mouser.co.uk/ProductDetail/Diodes-Incorporated/1N5819HW-7-F?qs=NQ47qNm99eDyWTEd07miYA%3D%3D"
-			(at 165.1 15.24 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Arrow Part Number" "1N5819HW-7-F"
-			(at 165.1 12.7 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Arrow Price/Stock" "https://www.arrow.com/en/products/1n5819hw-7-f/diodes-incorporated?utm_currency=USD&region=nac"
-			(at 165.1 10.16 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
 		(property "Instructions/Notes" ""
 			(at 176.53 33.02 0)
 			(effects
@@ -2292,6 +2306,24 @@
 			)
 		)
 		(property "Type" "SMD"
+			(at 176.53 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C82544"
+			(at 176.53 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C82544"
 			(at 176.53 33.02 0)
 			(effects
 				(font
@@ -2400,6 +2432,24 @@
 			)
 		)
 		(property "Type" "SMD"
+			(at 59.69 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C23186"
+			(at 59.69 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C23186"
 			(at 59.69 53.34 0)
 			(effects
 				(font
@@ -2518,6 +2568,24 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C19702"
+			(at 184.15 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C6119842"
+			(at 184.15 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "fa1e71ef-a38c-4fdc-a824-f21262135a4a")
 		)
@@ -2621,6 +2689,24 @@
 			)
 		)
 		(property "Type" "SMD"
+			(at 118.11 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C41364459"
+			(at 118.11 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC alt" "C7074"
 			(at 118.11 110.49 0)
 			(effects
 				(font
