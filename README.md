@@ -4,6 +4,11 @@
 
 ![AiO DAC board prototype](/img/AiODAC.jpg)
 
+## CAVEAT
+> [!WARNING]
+> At the time of this commit, it has become apparent that the all CP2102 chips are not born equal. The hack consisting of spoofing a PL2303HX by overwriting the PID and VID on a CP2102 **only works on older versions**. I haven't yet managed to get it to work on CP2102N or CP2102-GM transceivers. Additionally, I haven't managed to get this hack to work on CP2104 or FTDI232R transceivers. For the time being, I would recommend holding off from ordering boards based on the designs in PCB unless you are certain you can source pre-2018 CP2102 chips.
+> Work is happening on finding a solution, as the PL2303TA that would be the ideal candidate is hard to find in stock too.
+
 ## Summary (TL;DR)
 
 Second generation Minis (R56, R57, R58...) did not come with Bluetooth music streaming unless the Visual Boost or Mini Connected navigation option was selected (which wasn't hugely popular). 
@@ -18,7 +23,7 @@ Aside from a [Mini with a compatible radio head unit](https://github.com/martinr
 - For the [full-DIY build](https://github.com/martinroger/ipodesp32/wiki/DIY-DAC%E2%80%90based-solution-(UDA1334A)) :
   - An ESP32 (not S3!) that has Bluetooth Classic or EDR support
   - A DAC (UDA1334 or PCM5102) breakout board
-  - A CP2102 or CP2104 breakout board with exposed DCD pin (no CP2102N)
+  - A CP2102 ~~or CP2104~~ breakout board with exposed DCD pin (no CP2102N or CP2102GM)
   - Jumper wires
   - Possibly some smaller hardware (resistors, capacitors) and a soldering iron
 

@@ -1,6 +1,4 @@
 {
-    // See http://go.microsoft.com/fwlink/?LinkId=827846
-    // for the documentation about the extensions.json format
     "recommendations": [
         "cschlosser.doxdocgen",
         "dqisme.sync-scroll",
@@ -9,6 +7,7 @@
         "mhutchie.git-graph",
         "ms-vscode.vscode-serial-monitor",
         "oderwat.indent-rainbow",
+        "pioarduino.pioarduino-ide",
         "platformio.platformio-ide"
     ],
     "unwantedRecommendations": [
