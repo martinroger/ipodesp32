@@ -8,6 +8,8 @@
 > [!WARNING]
 > At the time of this commit, it has become apparent that the all CP2102 chips are not born equal. The hack consisting of spoofing a PL2303HX by overwriting the PID and VID on a CP2102 **only works on older versions**. I haven't yet managed to get it to work on CP2102N or CP2102-GM transceivers. Additionally, I haven't managed to get this hack to work on CP2104 or FTDI232R transceivers. For the time being, I would recommend holding off from ordering boards based on the designs in PCB unless you are certain you can source pre-2018 CP2102 chips.
 > Work is happening on finding a solution, as the PL2303TA that would be the ideal candidate is hard to find in stock too.
+> 
+> **I may have found a practical solution by getting an ESP32S3 to spoof being a PL2303HX. Release v1.0.0 will introduce that solution !**
 
 ## Summary (TL;DR)
 
