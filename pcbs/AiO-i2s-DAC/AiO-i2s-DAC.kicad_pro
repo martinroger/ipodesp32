@@ -643,6 +643,12 @@
       "/CP2102_1/D-": [
         "10mil"
       ],
+      "/usb_dn": [
+        "10mil"
+      ],
+      "/usb_dp": [
+        "10mil"
+      ],
       "AGND": [
         "8mil"
       ],
@@ -668,10 +674,19 @@
       "FORMAT": [
         "8mil"
       ],
+      "HP_DETECT": [
+        "8mil"
+      ],
       "LOUT": [
         "8mil"
       ],
       "MUTE": [
+        "8mil"
+      ],
+      "Net-(JP4-A)": [
+        "8mil"
+      ],
+      "Net-(JP4-B)": [
         "8mil"
       ],
       "Net-(U5-CAPM)": [
