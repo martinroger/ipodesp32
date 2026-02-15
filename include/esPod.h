@@ -101,22 +101,14 @@ private:
     const uint8_t _SWrevision = 0x00;
     const char *_serialNumber = "AB345F7HIJK";
 
-    // MINI metadata
-    // bool _accessoryNameReceived = false;
-    // bool _accessoryNameRequested = false;
-    // bool _accessoryCapabilitiesReceived = false;
-    // bool _accessoryCapabilitiesRequested = false;
-    // bool _accessoryFirmwareReceived = false;
-    // bool _accessoryFirmwareRequested = false;
-    // bool _accessoryManufReceived = false;
-    // bool _accessoryManufRequested = false;
-    // bool _accessoryModelReceived = false;
-    // bool _accessoryModelRequested = false;
-    // bool _accessoryHardwareReceived = false;
-    // bool _accessoryHardwareRequested = false;
-
     // Handler functions
     playStatusHandler_t *_playStatusHandler = nullptr;
+
+    // Boolean flags for track change management
+    bool _albumNameUpdated = false;
+    bool _artistNameUpdated = false;
+    bool _trackTitleUpdated = false;
+    bool _trackDurationUpdated = false;
 
 public:
     esPod(Stream &targetSerial);
@@ -124,40 +116,12 @@ public:
     void resetState();
     void attachPlayControlHandler(playStatusHandler_t playHandler);
 
-    // // Processors
-    // void processLingo0x00(const byte *byteArray, uint32_t len);
-    // void processLingo0x04(const byte *byteArray, uint32_t len);
-
-    // // Lingo 0x00
-    // void L0x00_0x00_RequestIdentify();
-    // void L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID);
-    // void L0x00_0x02_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField);
-    // void L0x00_0x04_ReturnExtendedInterfaceMode(byte extendedModeByte);
-    // void L0x00_0x08_ReturniPodName();
-    // void L0x00_0x0A_ReturniPodSoftwareVersion();
-    // void L0x00_0x0C_ReturniPodSerialNum();
-    // void L0x00_0x0E_ReturniPodModelNum();
-    // void L0x00_0x10_ReturnLingoProtocolVersion(byte targetLingo);
-    // void L0x00_0x27_GetAccessoryInfo(byte desiredInfo);
-    // void L0x00_0x25_RetiPodOptions();
-
-    // // Lingo 0x04
-    // void L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID);
-    // void L0x04_0x01_iPodAck(byte cmdStatus, byte cmdID, uint32_t numField);
-    // void L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, char *trackInfoChars);
-    // void L0x04_0x0D_ReturnIndexedPlayingTrackInfo(uint32_t trackDuration_ms);
-    // void L0x04_0x0D_ReturnIndexedPlayingTrackInfo(byte trackInfoType, uint16_t releaseYear);
-    // void L0x04_0x13_ReturnProtocolVersion();
-    // void L0x04_0x19_ReturnNumberCategorizedDBRecords(uint32_t categoryDBRecords);
-    // void L0x04_0x1B_ReturnCategorizedDatabaseRecord(uint32_t index, char *recordString);
-    // void L0x04_0x1D_ReturnPlayStatus(uint32_t position, uint32_t duration, byte playStatus);
-    // void L0x04_0x1F_ReturnCurrentPlayingTrackIndex(uint32_t trackIndex);
-    // void L0x04_0x21_ReturnIndexedPlayingTrackTitle(char *trackTitle);
-    // void L0x04_0x23_ReturnIndexedPlayingTrackArtistName(char *trackArtistName);
-    // void L0x04_0x25_ReturnIndexedPlayingTrackAlbumName(char *trackAlbumName);
-    // void L0x04_0x27_PlayStatusNotification(byte notification, uint32_t numField);
-    // void L0x04_0x27_PlayStatusNotification(byte notification);
-    // void L0x04_0x2D_ReturnShuffle(byte shuffleStatus);
-    // void L0x04_0x30_ReturnRepeat(byte repeatStatus);
-    // void L0x04_0x36_ReturnNumPlayingTracks(uint32_t numPlayingTracks);
+    // Wrappers for A2DP and AVRC integration
+    void play();
+    void pause();
+    void updatePlayPosition(uint32_t position);
+    void updateAlbumName(const char *albumName);
+    void updateArtistName(const char *artistName);
+    void updateTrackTitle(const char *trackTitle);
+    void updateTrackDuration(uint32_t trackDuration);
 };

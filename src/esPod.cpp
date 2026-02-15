@@ -580,6 +580,12 @@ void esPod::resetState()
     prevTrackDuration = 1;
     playPosition = 0;
 
+    // Flags for track change management
+    _albumNameUpdated = false;
+    _artistNameUpdated = false;
+    _trackTitleUpdated = false;
+    _trackDurationUpdated = false;
+
     // Playback Engine
     playStatus = PB_STATE_PAUSED;
     playStatusNotificationState = NOTIF_OFF;
@@ -593,20 +599,6 @@ void esPod::resetState()
     for (uint16_t i = 0; i < TOTAL_NUM_TRACKS; i++)
         trackList[i] = 0;
     trackListPosition = 0;
-
-    // Mini metadata
-    // _accessoryCapabilitiesReceived = false;
-    // _accessoryCapabilitiesRequested = false;
-    // _accessoryFirmwareReceived = false;
-    // _accessoryFirmwareRequested = false;
-    // _accessoryHardwareReceived = false;
-    // _accessoryHardwareRequested = false;
-    // _accessoryManufReceived = false;
-    // _accessoryManufRequested = false;
-    // _accessoryModelReceived = false;
-    // _accessoryModelRequested = false;
-    // _accessoryNameReceived = false;
-    // _accessoryNameRequested = false;
 
     // Reset the queues
     aapCommand tempCmd;
@@ -641,6 +633,35 @@ void esPod::attachPlayControlHandler(playStatusHandler_t playHandler)
     _playStatusHandler = playHandler;
     ESP_LOGD(IPOD_TAG, "PlayControlHandler attached.");
 }
+
+void esPod::play()
+{
+}
+
+void esPod::pause()
+{
+}
+
+void esPod::updatePlayPosition(uint32_t position)
+{
+}
+
+void esPod::updateAlbumName(const char *albumName)
+{
+}
+
+void esPod::updateArtistName(const char *artistName)
+{
+}
+
+void esPod::updateTrackTitle(const char *trackTitle)
+{
+}
+
+void esPod::updateTrackDuration(uint32_t trackDuration)
+{
+}
+
 #pragma endregion
 
 //-----------------------------------------------------------------------
