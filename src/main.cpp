@@ -4,6 +4,12 @@
 #include "BluetoothA2DPSink.h"
 #include "esPod.h"
 
+// A2DP instance name
+#ifndef A2DP_SINK_NAME
+#define A2DP_SINK_NAME "espiPod"
+#endif
+
+
 #pragma region Board IO Macros
 // LED Logic inversion
 #ifndef INVERT_LED_LOGIC
@@ -197,15 +203,15 @@ static void processAVRCTask(void *pvParameters)
 {
 	avrcMetadata incMetadata; // Incoming metadata (pointer to payload)
 	// Metadata buffers
-	char incAlbumName[255] = "incAlbum";
-	char incArtistName[255] = "incArtist";
-	char incTrackTitle[255] = "incTitle";
-	uint32_t incTrackDuration = 0;
+	// char incAlbumName[255] = "incAlbum";
+	// char incArtistName[255] = "incArtist";
+	// char incTrackTitle[255] = "incTitle";
+	// uint32_t incTrackDuration = 0;
 
-	bool albumNameUpdated = false;
-	bool artistNameUpdated = false;
-	bool trackTitleUpdated = false;
-	bool trackDurationUpdated = false;
+	// bool albumNameUpdated = false;
+	// bool artistNameUpdated = false;
+	// bool trackTitleUpdated = false;
+	// bool trackDurationUpdated = false;
 
 #ifdef STACK_HIGH_WATERMARK_LOG
 	UBaseType_t uxHighWaterMark;

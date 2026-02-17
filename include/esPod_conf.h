@@ -1,11 +1,6 @@
 #pragma once
 #include "Arduino.h"
 
-// A2DP instance name
-#ifndef A2DP_SINK_NAME
-#define A2DP_SINK_NAME "espiPod"
-#endif
-
 // ESPiPod instance name
 #ifndef ESPIPOD_NAME
 #define ESPIPOD_NAME "ipodESP32"
