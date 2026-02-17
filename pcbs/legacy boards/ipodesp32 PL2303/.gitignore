@@ -23,3 +23,7 @@ _autosave-*
 # Exported BOM files
 *.xml
 *.csv
+/*-backups
+
+# Production files
+/production/*
