@@ -15,7 +15,7 @@ void L0x00::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
     {
     case L0x00_Identify: // Deprecated command observed on Audi by @BluCobalt
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x Identify with Lingo 0x%02x", cmdID, byteArray[1]);
+        ESP_LOGI(__func__, "CMD: 0x%02x Identify with Lingo 0x%02x", cmdID, byteArray[1]);
         // switch (byteArray[1])
         // {
         // case 0x04:
@@ -29,7 +29,7 @@ void L0x00::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
     case L0x00_RequestExtendedInterfaceMode: // Mini requests extended interface mode status
     {
-        ESP_LOGD(IPOD_TAG, "CMD: 0x%02x RequestExtendedInterfaceMode", cmdID);
+        ESP_LOGD(__func__, "CMD: 0x%02x RequestExtendedInterfaceMode", cmdID);
         if (esp->extendedInterfaceModeActive)
         {
             L0x00::_0x04_ReturnExtendedInterfaceMode(esp, 0x01); // Report that extended interface mode is active
@@ -43,7 +43,7 @@ void L0x00::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
     case L0x00_EnterExtendedInterfaceMode: // Mini forces extended interface mode
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x EnterExtendedInterfaceMode", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x EnterExtendedInterfaceMode", cmdID);
         esp->extendedInterfaceModeActive = true;
         L0x00::_0x02_iPodAck(esp, iPodAck_OK, cmdID);
     }
@@ -51,7 +51,7 @@ void L0x00::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
     case L0x00_ExitExtendedInterfaceMode: // Mini exits extended interface mode
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x ExitExtendedInterfaceMode", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x ExitExtendedInterfaceMode", cmdID);
         if (esp->extendedInterfaceModeActive)
         {
             L0x00::_0x02_iPodAck(esp, iPodAck_OK, cmdID);
@@ -67,42 +67,42 @@ void L0x00::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
     case L0x00_RequestiPodName: // Mini requests ipod name
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x RequestiPodName", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x RequestiPodName", cmdID);
         L0x00::_0x08_ReturniPodName(esp);
     }
     break;
 
     case L0x00_RequestiPodSoftwareVersion: // Mini requests ipod software version
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x RequestiPodSoftwareVersion", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x RequestiPodSoftwareVersion", cmdID);
         L0x00::_0x0A_ReturniPodSoftwareVersion(esp);
     }
     break;
 
     case L0x00_RequestiPodSerialNum: // Mini requests ipod Serial Num
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x RequestiPodSerialNum", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x RequestiPodSerialNum", cmdID);
         L0x00::_0x0C_ReturniPodSerialNum(esp);
     }
     break;
 
     case L0x00_RequestiPodModelNum: // Mini requests ipod Model Num
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x RequestiPodModelNum", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x RequestiPodModelNum", cmdID);
         L0x00::_0x0E_ReturniPodModelNum(esp);
     }
     break;
 
     case L0x00_RequestLingoProtocolVersion: // Mini requestsLingo Protocol Version
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x RequestLingoProtocolVersion for Lingo 0x%02x", cmdID, byteArray[1]);
+        ESP_LOGI(__func__, "CMD: 0x%02x RequestLingoProtocolVersion for Lingo 0x%02x", cmdID, byteArray[1]);
         L0x00::_0x10_ReturnLingoProtocolVersion(esp, byteArray[1]);
     }
     break;
 
     case L0x00_IdentifyDeviceLingoes: // Mini identifies its lingoes, used as an ice-breaker
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x IdentifyDeviceLingoes : L 0x%02x - Opt 0x%02x - ID 0x%02x", cmdID, byteArray[1], byteArray[2], byteArray[3]);
+        ESP_LOGI(__func__, "CMD: 0x%02x IdentifyDeviceLingoes : L 0x%02x - Opt 0x%02x - ID 0x%02x", cmdID, byteArray[1], byteArray[2], byteArray[3]);
         L0x00::_0x02_iPodAck(esp, iPodAck_OK, cmdID); // Acknowledge, start capabilities pingpong
         // A bit spam-ish ?
         L0x00::_0x27_GetAccessoryInfo(esp, 0x00); // Immediately request general capabilities
@@ -116,38 +116,38 @@ void L0x00::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
     case L0x00_GetiPodOptions: // Mini requests iPod options
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x GetiPodOptions", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x GetiPodOptions", cmdID);
         // There might be some trickery triggered there with further options enquiries per Lingo
         L0x00::_0x25_RetiPodOptions(esp, iPodOptions);
     }
 
     case L0x00_RetAccessoryInfo: // Mini returns info after L0x00::_0x27
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x RetAccessoryInfo: 0x%02x", cmdID, byteArray[1]);
+        ESP_LOGI(__func__, "CMD: 0x%02x RetAccessoryInfo: 0x%02x", cmdID, byteArray[1]);
         switch (byteArray[1]) // Ping-pong the next request based on the current response
         {
         case 0x00:
-            ESP_LOGI(IPOD_TAG, "\tAccessory Capabilities : 0x%02x", byteArray[2]);
+            ESP_LOGI(__func__, "\tAccessory Capabilities : 0x%02x", byteArray[2]);
             break;
 
         case 0x01:
-            ESP_LOGI(IPOD_TAG, "\tAccessory Name : %s", &byteArray[2]);
+            ESP_LOGI(__func__, "\tAccessory Name : %s", &byteArray[2]);
             break;
 
         case 0x04:
-            ESP_LOGI(IPOD_TAG, "\tAccessory Firmware : %d.%d.%d", byteArray[2], byteArray[3], byteArray[4]);
+            ESP_LOGI(__func__, "\tAccessory Firmware : %d.%d.%d", byteArray[2], byteArray[3], byteArray[4]);
             break;
 
         case 0x05:
-            ESP_LOGI(IPOD_TAG, "\tAccessory Hardware : %d.%d.%d", byteArray[2], byteArray[3], byteArray[4]);
+            ESP_LOGI(__func__, "\tAccessory Hardware : %d.%d.%d", byteArray[2], byteArray[3], byteArray[4]);
             break;
 
         case 0x06:
-            ESP_LOGI(IPOD_TAG, "\tAccessory Manufacturer : %s", &byteArray[2]);
+            ESP_LOGI(__func__, "\tAccessory Manufacturer : %s", &byteArray[2]);
             break;
 
         case 0x07:
-            ESP_LOGI(IPOD_TAG, "\tAccessory Model : %s", &byteArray[2]);
+            ESP_LOGI(__func__, "\tAccessory Model : %s", &byteArray[2]);
             break;
 
         default:
@@ -159,7 +159,7 @@ void L0x00::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
     default: // In case the command is not known
     {
-        ESP_LOGW(IPOD_TAG, "CMD 0x%02x not recognized.", cmdID);
+        ESP_LOGW(__func__, "CMD 0x%02x not recognized.", cmdID);
         L0x00::_0x02_iPodAck(esp, iPodAck_CmdFailed, cmdID);
     }
     break;
@@ -170,7 +170,7 @@ void L0x00::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 /// @param esp Pointer to the esPod instance
 void L0x00::_0x00_RequestIdentify(esPod *esp)
 {
-    ESP_LOGI(IPOD_TAG, "iPod: RequestIdentify");
+    ESP_LOGI(__func__, "iPod: RequestIdentify");
     const byte txPacket[] = {
         0x00,
         0x00};
@@ -183,7 +183,7 @@ void L0x00::_0x00_RequestIdentify(esPod *esp)
 /// @param cmdID ID (single byte) of the Lingo 0x00 command replied to
 void L0x00::_0x02_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID)
 {
-    ESP_LOGI(IPOD_TAG, "Ack 0x%02x to command 0x%02x", ackCode, cmdID);
+    ESP_LOGI(__func__, "Ack 0x%02x to command 0x%02x", ackCode, cmdID);
     // Queue the packet
     const byte txPacket[] = {
         0x00,
@@ -208,7 +208,7 @@ void L0x00::_0x02_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID)
 /// @param numField Pending delay in milliseconds
 void L0x00::_0x02_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID, uint32_t numField)
 {
-    ESP_LOGI(IPOD_TAG, "Ack 0x%02x to command 0x%02x Numfield: %d", ackCode, cmdID, numField);
+    ESP_LOGI(__func__, "Ack 0x%02x to command 0x%02x Numfield: %d", ackCode, cmdID, numField);
     const byte txPacket[20] = {
         0x00,
         0x02,
@@ -226,7 +226,7 @@ void L0x00::_0x02_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID, uint32_
 /// @param extendedModeByte Direct value of the extendedInterfaceMode boolean
 void L0x00::_0x04_ReturnExtendedInterfaceMode(esPod *esp, byte extendedModeByte)
 {
-    ESP_LOGD(IPOD_TAG, "Extended Interface mode: 0x%02x", extendedModeByte);
+    ESP_LOGD(__func__, "Extended Interface mode: 0x%02x", extendedModeByte);
     const byte txPacket[] = {
         0x00,
         0x04,
@@ -238,7 +238,7 @@ void L0x00::_0x04_ReturnExtendedInterfaceMode(esPod *esp, byte extendedModeByte)
 /// @param esp Pointer to the esPod instance
 void L0x00::_0x08_ReturniPodName(esPod *esp)
 {
-    ESP_LOGI(IPOD_TAG, "Name: %s", esp->_name);
+    ESP_LOGI(__func__, "Name: %s", esp->_name);
     byte txPacket[255] = {// Prealloc to len = FF
                           0x00,
                           0x08};
@@ -250,7 +250,7 @@ void L0x00::_0x08_ReturniPodName(esPod *esp)
 /// @param esp Pointer to the esPod instance
 void L0x00::_0x0A_ReturniPodSoftwareVersion(esPod *esp)
 {
-    ESP_LOGI(IPOD_TAG, "SW version: %d.%d.%d", esp->_SWMajor, esp->_SWMinor, esp->_SWrevision);
+    ESP_LOGI(__func__, "SW version: %d.%d.%d", esp->_SWMajor, esp->_SWMinor, esp->_SWrevision);
     byte txPacket[] = {
         0x00,
         0x0A,
@@ -264,7 +264,7 @@ void L0x00::_0x0A_ReturniPodSoftwareVersion(esPod *esp)
 /// @param esp Pointer to the esPod instance
 void L0x00::_0x0C_ReturniPodSerialNum(esPod *esp)
 {
-    ESP_LOGI(IPOD_TAG, "Serial number: %s", esp->_serialNumber);
+    ESP_LOGI(__func__, "Serial number: %s", esp->_serialNumber);
     byte txPacket[255] = {// Prealloc to len = FF
                           0x00,
                           0x0C};
@@ -276,7 +276,7 @@ void L0x00::_0x0C_ReturniPodSerialNum(esPod *esp)
 /// @param esp Pointer to the esPod instance
 void L0x00::_0x0E_ReturniPodModelNum(esPod *esp)
 {
-    ESP_LOGI(IPOD_TAG, "Model number : PA146FD 720901");
+    ESP_LOGI(__func__, "Model number : PA146FD 720901");
     byte txPacket[] = {
         0x00,
         0x0E,
@@ -308,7 +308,7 @@ void L0x00::_0x10_ReturnLingoProtocolVersion(esPod *esp, byte targetLingo)
         txPacket[4] = 0x00;
         break;
     }
-    ESP_LOGI(IPOD_TAG, "Lingo 0x%02x protocol version: 1.%d", targetLingo, txPacket[4]);
+    ESP_LOGI(__func__, "Lingo 0x%02x protocol version: 1.%d", targetLingo, txPacket[4]);
     esp->_queuePacket(txPacket, sizeof(txPacket));
 }
 
@@ -316,7 +316,7 @@ void L0x00::_0x10_ReturnLingoProtocolVersion(esPod *esp, byte targetLingo)
 /// @param esp Pointer to the esPod instance
 void L0x00::_0x25_RetiPodOptions(esPod *esp, uint64_t optBitField)
 {
-    ESP_LOGI(IPOD_TAG, "Returning iPod Options");
+    ESP_LOGI(__func__, "Returning iPod Options");
     byte txPacket[] = {
         0x00, 0x25,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -329,7 +329,7 @@ void L0x00::_0x25_RetiPodOptions(esPod *esp, uint64_t optBitField)
 /// @param desiredInfo Hex code for the type of information that is desired
 void L0x00::_0x27_GetAccessoryInfo(esPod *esp, byte desiredInfo)
 {
-    ESP_LOGI(IPOD_TAG, "Req'd info type: 0x%02x", desiredInfo);
+    ESP_LOGI(__func__, "Req'd info type: 0x%02x", desiredInfo);
     byte txPacket[] = {
         0x00, 0x27,
         desiredInfo};

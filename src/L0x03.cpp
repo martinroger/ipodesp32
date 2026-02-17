@@ -11,7 +11,7 @@ void L0x03::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
     {
     case L0x03_GetCurrentEQProfileIndex:
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x GetCurrentEQProfileIndex", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x GetCurrentEQProfileIndex", cmdID);
         L0x03::_0x02_RetCurrentEQProfileIndex(esp);
     }
     break;
@@ -19,28 +19,28 @@ void L0x03::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
     case L0x03_SetCurrentEQProfileIndex:
     {
         currentEQProfileIndex = swap_endian<uint32_t>(*((uint32_t *)&byteArray[1]));
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x SetCurrentEQProfileIndex 0x%02x", cmdID, currentEQProfileIndex);
+        ESP_LOGI(__func__, "CMD: 0x%02x SetCurrentEQProfileIndex 0x%02x", cmdID, currentEQProfileIndex);
         L0x03::_0x00_iPodAck(esp, iPodAck_OK, cmdID);
     }
     break;
 
     case L0x03_GetNumEQProfiles:
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x GetNumEQProfiles", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x GetNumEQProfiles", cmdID);
         L0x03::_0x05_RetNumEQProfiles(esp);
     }
     break;
 
     case L0x03_GetIndexedEQProfileName:
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x GetIndexedEQProfileName", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x GetIndexedEQProfileName", cmdID);
         L0x03::_0x07_RetIndexedEQProfileName(esp);
     }
     break;
 
     case L0x03_SetRemoteEventNotification:
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x SetRemoteEventNotification", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x SetRemoteEventNotification", cmdID);
         L0x03::_0x00_iPodAck(esp, iPodAck_OK, cmdID);
         // Not really implemented, should not be used
         L0x03::_0x09_RemoteEventNotification(esp);
@@ -49,7 +49,7 @@ void L0x03::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
     case L0x03_GetRemoteEventStatus:
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x GetRemoteEventStatus", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x GetRemoteEventStatus", cmdID);
         // Not implemented
         L0x03::_0x0B_RetRemoteEventStatus(esp, 0);
     }
@@ -57,7 +57,7 @@ void L0x03::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
     case L0x03_GetiPodStateInfo:
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x GetiPodStateInfo", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x GetiPodStateInfo", cmdID);
         // Not implemented
         L0x03::_0x0D_RetiPodStateInfo(esp);
     }
@@ -65,7 +65,7 @@ void L0x03::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
     case L0x03_SetiPodStateInfo:
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x SetiPodStateInfo", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x SetiPodStateInfo", cmdID);
         // Not implemented
         L0x03::_0x00_iPodAck(esp, iPodAck_OK, cmdID);
     }
@@ -73,7 +73,7 @@ void L0x03::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
     case L0x03_GetPlayStatus:
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x GetPlayStatus", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x GetPlayStatus", cmdID);
         L0x03::_0x10_RetPlayStatus(esp, esp->playStatus, esp->currentTrackIndex, esp->trackDuration, esp->playPosition);
     }
     break;
@@ -81,7 +81,7 @@ void L0x03::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
     case L0x03_SetCurrentPlayingTrack:
     {
         tempTrackIndex = swap_endian<uint32_t>(*((uint32_t *)&byteArray[1]));
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x SetCurrentPlayingTrack index %d", cmdID, tempTrackIndex);
+        ESP_LOGI(__func__, "CMD: 0x%02x SetCurrentPlayingTrack index %d", cmdID, tempTrackIndex);
         if (esp->playStatus != PB_STATE_PLAYING)
         {
             esp->playStatus = PB_STATE_PLAYING; // Playing status forced
@@ -106,7 +106,7 @@ void L0x03::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
             // Engage the pending ACK for expected metadata
             esp->trackChangeAckPending = cmdID;
             esp->trackChangeTimestamp = millis();
-            ESP_LOGD(IPOD_TAG, "Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> PREV ", esp->prevTrackIndex, esp->currentTrackIndex, esp->trackListPosition, (esp->trackChangeAckPending > 0x00), esp->trackChangeTimestamp);
+            ESP_LOGD(__func__, "Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> PREV ", esp->prevTrackIndex, esp->currentTrackIndex, esp->trackListPosition, (esp->trackChangeAckPending > 0x00), esp->trackChangeTimestamp);
             L0x03::_0x00_iPodAck(esp, iPodAck_CmdPending, cmdID, TRACK_CHANGE_TIMEOUT);
 
             // Fire the A2DP when ready
@@ -115,7 +115,7 @@ void L0x03::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
         }
         else if (tempTrackIndex == esp->currentTrackIndex) // Somehow reselecting the current track
         {
-            ESP_LOGD(IPOD_TAG, "Selected same track as current: %d", tempTrackIndex);
+            ESP_LOGD(__func__, "Selected same track as current: %d", tempTrackIndex);
             L0x03::_0x00_iPodAck(esp, iPodAck_OK, cmdID);
 
             // Fire the A2DP when ready
@@ -139,7 +139,7 @@ void L0x03::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
             // Engage the pending ACK for expected metadata
             esp->trackChangeAckPending = cmdID;
             esp->trackChangeTimestamp = millis();
-            ESP_LOGD(IPOD_TAG, "Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> NEXT ", esp->prevTrackIndex, esp->currentTrackIndex, esp->trackListPosition, (esp->trackChangeAckPending > 0x00), esp->trackChangeTimestamp);
+            ESP_LOGD(__func__, "Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> NEXT ", esp->prevTrackIndex, esp->currentTrackIndex, esp->trackListPosition, (esp->trackChangeAckPending > 0x00), esp->trackChangeTimestamp);
             L0x03::_0x00_iPodAck(esp, iPodAck_CmdPending, cmdID, TRACK_CHANGE_TIMEOUT);
 
             // Fire the A2DP when ready
@@ -155,7 +155,7 @@ void L0x03::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
         switch (byteArray[1]) // Switch on the type of track info requested (careful with overloads)
         {
         case 0x00: // General track Capabilities and Information
-            ESP_LOGI(IPOD_TAG, "CMD 0x%02x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Duration", cmdID, byteArray[1], tempTrackIndex, esp->prevTrackIndex);
+            ESP_LOGI(__func__, "CMD 0x%02x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Duration", cmdID, byteArray[1], tempTrackIndex, esp->prevTrackIndex);
             if (tempTrackIndex == esp->prevTrackIndex)
             {
                 L0x03::_0x13_RetIndexedPlayingTrackInfo(esp, (uint32_t)esp->prevTrackDuration);
@@ -167,7 +167,7 @@ void L0x03::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
             break;
 
         case 0x02: // Artist Name
-            ESP_LOGI(IPOD_TAG, "CMD 0x%02x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Artist", cmdID, byteArray[1], tempTrackIndex, esp->prevTrackIndex);
+            ESP_LOGI(__func__, "CMD 0x%02x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Artist", cmdID, byteArray[1], tempTrackIndex, esp->prevTrackIndex);
             if (tempTrackIndex == esp->prevTrackIndex)
             {
                 L0x03::_0x13_RetIndexedPlayingTrackInfo(esp, byteArray[1], esp->prevArtistName);
@@ -179,7 +179,7 @@ void L0x03::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
             break;
 
         case 0x03: // Album Name
-            ESP_LOGI(IPOD_TAG, "CMD 0x%02x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Album", cmdID, byteArray[1], tempTrackIndex, esp->prevTrackIndex);
+            ESP_LOGI(__func__, "CMD 0x%02x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Album", cmdID, byteArray[1], tempTrackIndex, esp->prevTrackIndex);
             if (tempTrackIndex == esp->prevTrackIndex)
             {
                 L0x03::_0x13_RetIndexedPlayingTrackInfo(esp, byteArray[1], esp->prevAlbumName);
@@ -191,11 +191,11 @@ void L0x03::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
             break;
 
         case 0x04: // Track Genre
-            ESP_LOGI(IPOD_TAG, "CMD 0x%02x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Genre", cmdID, byteArray[1], tempTrackIndex, esp->prevTrackIndex);
+            ESP_LOGI(__func__, "CMD 0x%02x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Genre", cmdID, byteArray[1], tempTrackIndex, esp->prevTrackIndex);
             L0x03::_0x13_RetIndexedPlayingTrackInfo(esp, byteArray[1], esp->trackGenre);
             break;
         case 0x05: // Track Title
-            ESP_LOGI(IPOD_TAG, "CMD 0x%02x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Title", cmdID, byteArray[1], tempTrackIndex, esp->prevTrackIndex);
+            ESP_LOGI(__func__, "CMD 0x%02x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Title", cmdID, byteArray[1], tempTrackIndex, esp->prevTrackIndex);
             if (tempTrackIndex == esp->prevTrackIndex)
             {
                 L0x03::_0x13_RetIndexedPlayingTrackInfo(esp, byteArray[1], esp->prevTrackTitle);
@@ -206,11 +206,11 @@ void L0x03::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
             }
             break;
         case 0x06: // Track Composer
-            ESP_LOGI(IPOD_TAG, "CMD 0x%042 GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Composer", cmdID, byteArray[1], tempTrackIndex, esp->prevTrackIndex);
+            ESP_LOGI(__func__, "CMD 0x%042 GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Composer", cmdID, byteArray[1], tempTrackIndex, esp->prevTrackIndex);
             L0x03::_0x13_RetIndexedPlayingTrackInfo(esp, byteArray[1], esp->composer);
             break;
         default: // In case the request is beyond the track capabilities
-            ESP_LOGW(IPOD_TAG, "CMD 0x%02x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Type not recognised!", cmdID, byteArray[1], tempTrackIndex, esp->prevTrackIndex);
+            ESP_LOGW(__func__, "CMD 0x%02x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Type not recognised!", cmdID, byteArray[1], tempTrackIndex, esp->prevTrackIndex);
             L0x03::_0x00_iPodAck(esp, iPodAck_BadParam, cmdID);
             break;
         }
@@ -219,70 +219,70 @@ void L0x03::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
     case L0x03_GetNumPlayingTracks:
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x GetNumPlayingTracks", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x GetNumPlayingTracks", cmdID);
         L0x03::_0x15_RetNumPlayingTracks(esp, TOTAL_NUM_TRACKS);
     }
     break;
 
     case L0x03_GetArtworkFormats:
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x GetArtworkFormats", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x GetArtworkFormats", cmdID);
         L0x03::_0x17_RetArtworkFormats(esp);
     }
     break;
 
     case L0x03_GetTrackArtworkData:
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x GetTrackArtworkData", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x GetTrackArtworkData", cmdID);
         L0x03::_0x19_RetTrackArtworkData(esp);
     }
     break;
 
     case L0x03_GetPowerBatteryState:
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x GetPowerBatteryState", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x GetPowerBatteryState", cmdID);
         L0x03::_0x1B_RetPowerBatteryState(esp, 0x05);
     }
     break;
 
     case L0x03_GetSoundCheckState:
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x GetSoundCheckState", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x GetSoundCheckState", cmdID);
         L0x03::_0x1D_RetSoundCheckState(esp, 0x00);
     }
     break;
 
     case L0x03_SetSoundCheckState:
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x SetSoundCheckState", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x SetSoundCheckState", cmdID);
         L0x03::_0x00_iPodAck(esp, iPodAck_OK, cmdID);
     }
     break;
 
     case L0x03_GetTrackArtworkTimes:
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x GetTrackArtworkTimes", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x GetTrackArtworkTimes", cmdID);
         L0x03::_0x20_RetTrackArtworkTimes(esp);
     }
     break;
 
     case L0x03_CreateGeniusPlaylist:
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x CreateGeniusPlaylist", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x CreateGeniusPlaylist", cmdID);
         L0x03::_0x00_iPodAck(esp, iPodAck_SelNotGenius, cmdID);
     }
     break;
 
     case L0x03_IsGeniusAvailableForTrack:
     {
-        ESP_LOGI(IPOD_TAG, "CMD: 0x%02x IsGeniusAvailableForTrack", cmdID);
+        ESP_LOGI(__func__, "CMD: 0x%02x IsGeniusAvailableForTrack", cmdID);
         L0x03::_0x00_iPodAck(esp, iPodAck_SelNotGenius, cmdID);
     }
     break;
 
     default:
     {
-        ESP_LOGW(IPOD_TAG, "CMD 0x%02x not recognized.", cmdID);
+        ESP_LOGW(__func__, "CMD 0x%02x not recognized.", cmdID);
         L0x03::_0x00_iPodAck(esp, iPodAck_CmdFailed, cmdID);
     }
     break;
@@ -291,7 +291,7 @@ void L0x03::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
 void L0x03::_0x00_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID)
 {
-    ESP_LOGI(IPOD_TAG, "Ack 0x%02x to command 0x%02x", ackCode, cmdID);
+    ESP_LOGI(__func__, "Ack 0x%02x to command 0x%02x", ackCode, cmdID);
 
     const byte txPacket[] = {
         0x03,
@@ -311,7 +311,7 @@ void L0x03::_0x00_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID)
 
 void L0x03::_0x00_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID, uint32_t numField)
 {
-    ESP_LOGI(IPOD_TAG, "Ack 0x%02x to command 0x%02x Numfield: %d", ackCode, cmdID, numField);
+    ESP_LOGI(__func__, "Ack 0x%02x to command 0x%02x Numfield: %d", ackCode, cmdID, numField);
     const byte txPacket[8] = {
         0x03,
         0x00,
@@ -326,7 +326,7 @@ void L0x03::_0x00_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID, uint32_
 
 void L0x03::_0x02_RetCurrentEQProfileIndex(esPod *esp)
 {
-    ESP_LOGI(IPOD_TAG, "Return EQ Profile Index 0x00 0x00 0x00 0x00");
+    ESP_LOGI(__func__, "Return EQ Profile Index 0x00 0x00 0x00 0x00");
 
     const byte txPacket[] = {
         0x03,
@@ -337,7 +337,7 @@ void L0x03::_0x02_RetCurrentEQProfileIndex(esPod *esp)
 
 void L0x03::_0x05_RetNumEQProfiles(esPod *esp)
 {
-    ESP_LOGI(IPOD_TAG, "Return Num Profiles : 1");
+    ESP_LOGI(__func__, "Return Num Profiles : 1");
 
     const byte txPacket[] = {
         0x03,
@@ -350,7 +350,7 @@ void L0x03::_0x05_RetNumEQProfiles(esPod *esp)
 void L0x03::_0x07_RetIndexedEQProfileName(esPod *esp)
 {
     const char *EQProfileName = "Base EQ";
-    ESP_LOGI(IPOD_TAG, "Return EQ name : %s", EQProfileName);
+    ESP_LOGI(__func__, "Return EQ name : %s", EQProfileName);
     byte txPacket[255] = {
         0x03,
         0x07};
@@ -360,22 +360,22 @@ void L0x03::_0x07_RetIndexedEQProfileName(esPod *esp)
 
 void L0x03::_0x09_RemoteEventNotification(esPod *esp)
 {
-    ESP_LOGW(IPOD_TAG, "RemoteEventNotificiation not implemented");
+    ESP_LOGW(__func__, "RemoteEventNotificiation not implemented");
 }
 
 void L0x03::_0x0B_RetRemoteEventStatus(esPod *esp, uint32_t remEventStatus)
 {
-    ESP_LOGW(IPOD_TAG, "RetRemoveEventStatus not implemented");
+    ESP_LOGW(__func__, "RetRemoveEventStatus not implemented");
 }
 
 void L0x03::_0x0D_RetiPodStateInfo(esPod *esp)
 {
-    ESP_LOGW(IPOD_TAG, "RetiPodStateInfo not implemented");
+    ESP_LOGW(__func__, "RetiPodStateInfo not implemented");
 }
 
 void L0x03::_0x10_RetPlayStatus(esPod *esp, byte playState, uint32_t trackIndex, uint32_t trackTotMs, uint32_t trackPosMs)
 {
-    ESP_LOGI(IPOD_TAG, "Play status 0x%02x of index %d at pos. %d / %d ms", playState, trackIndex, trackPosMs, trackTotMs);
+    ESP_LOGI(__func__, "Play status 0x%02x of index %d at pos. %d / %d ms", playState, trackIndex, trackPosMs, trackTotMs);
     byte txPacket[] = {
         0x03,
         0x10,
@@ -391,7 +391,7 @@ void L0x03::_0x10_RetPlayStatus(esPod *esp, byte playState, uint32_t trackIndex,
 
 void L0x03::_0x13_RetIndexedPlayingTrackInfo(esPod *esp, byte trackInfoType, char *trackInfoChars)
 {
-    ESP_LOGI(IPOD_TAG, "Req'd track info type: 0x%02x", trackInfoType);
+    ESP_LOGI(__func__, "Req'd track info type: 0x%02x", trackInfoType);
     byte txPacket[255] = {
         0x03,
         0x13,
@@ -402,7 +402,7 @@ void L0x03::_0x13_RetIndexedPlayingTrackInfo(esPod *esp, byte trackInfoType, cha
 
 void L0x03::_0x13_RetIndexedPlayingTrackInfo(esPod *esp, uint32_t trackDuration_ms)
 {
-    ESP_LOGI(IPOD_TAG, "Track duration: %d", trackDuration_ms);
+    ESP_LOGI(__func__, "Track duration: %d", trackDuration_ms);
     byte txPacket[13] = {
         0x03,
         0x13,
@@ -417,7 +417,7 @@ void L0x03::_0x13_RetIndexedPlayingTrackInfo(esPod *esp, uint32_t trackDuration_
 
 void L0x03::_0x15_RetNumPlayingTracks(esPod *esp, uint32_t numPlayingTracks)
 {
-    ESP_LOGI(IPOD_TAG, "Playing tracks: %d", numPlayingTracks);
+    ESP_LOGI(__func__, "Playing tracks: %d", numPlayingTracks);
     byte txPacket[] = {
         0x03,
         0x15,
@@ -428,17 +428,17 @@ void L0x03::_0x15_RetNumPlayingTracks(esPod *esp, uint32_t numPlayingTracks)
 
 void L0x03::_0x17_RetArtworkFormats(esPod *esp)
 {
-    ESP_LOGW(IPOD_TAG, "RetArtworkFormats not implemented");
+    ESP_LOGW(__func__, "RetArtworkFormats not implemented");
 }
 
 void L0x03::_0x19_RetTrackArtworkData(esPod *esp)
 {
-    ESP_LOGW(IPOD_TAG, "RetTrackArtworkData not implemented");
+    ESP_LOGW(__func__, "RetTrackArtworkData not implemented");
 }
 
 void L0x03::_0x1B_RetPowerBatteryState(esPod *esp, byte powerBatteryState)
 {
-    ESP_LOGI(IPOD_TAG, "RetPowerBatteryState 0x%02x", powerBatteryState);
+    ESP_LOGI(__func__, "RetPowerBatteryState 0x%02x", powerBatteryState);
     /*
     0x00 -> Internal battery power, low power
     0x01 -> Internal battery power
@@ -472,7 +472,7 @@ void L0x03::_0x1B_RetPowerBatteryState(esPod *esp, byte powerBatteryState)
 void L0x03::_0x1D_RetSoundCheckState(esPod *esp, byte soundCheckState)
 {
     // Might need to introduce and internal variable for the sound check state here
-    ESP_LOGI(IPOD_TAG, "RetSoundCheckState  0x%02x", soundCheckState);
+    ESP_LOGI(__func__, "RetSoundCheckState  0x%02x", soundCheckState);
     byte txPacket[] = {
         0x03,
         0x1D,
@@ -482,5 +482,5 @@ void L0x03::_0x1D_RetSoundCheckState(esPod *esp, byte soundCheckState)
 
 void L0x03::_0x20_RetTrackArtworkTimes(esPod *esp)
 {
-    ESP_LOGW(IPOD_TAG, "RetTrackArtworkTimes not implemented");
+    ESP_LOGW(__func__, "RetTrackArtworkTimes not implemented");
 }

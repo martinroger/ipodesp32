@@ -201,6 +201,7 @@ static void processAVRCTask(void *pvParameters)
 	char incArtistName[255] = "incArtist";
 	char incTrackTitle[255] = "incTitle";
 	uint32_t incTrackDuration = 0;
+
 	bool albumNameUpdated = false;
 	bool artistNameUpdated = false;
 	bool trackTitleUpdated = false;
@@ -231,6 +232,8 @@ static void processAVRCTask(void *pvParameters)
 			switch (incMetadata.id)
 			{
 			case ESP_AVRC_MD_ATTR_ALBUM:
+
+				// espod.updateAlbumName((char *)incMetadata.payload);
 				strcpy(incAlbumName,
 					   (char *)incMetadata.payload); // Buffer the incoming album string
 				if (espod.trackChangeAckPending > 0x00)
@@ -264,6 +267,7 @@ static void processAVRCTask(void *pvParameters)
 				break;
 
 			case ESP_AVRC_MD_ATTR_ARTIST:
+				// espod.updateArtistName((char *)incMetadata.payload);
 				strcpy(incArtistName,
 					   (char *)incMetadata.payload); // Buffer the incoming artist string
 				if (espod.trackChangeAckPending > 0x00)
@@ -295,12 +299,14 @@ static void processAVRCTask(void *pvParameters)
 						ESP_LOGD("AVRC_CB", "Artist rxed, NO ACK pending, already updated to %s", espod.artistName);
 					}
 				}
+
 				break;
 
 			case ESP_AVRC_MD_ATTR_TITLE: // Title change triggers the NEXT track
-										 // assumption if unexpected. It is too
-										 // intensive to try to do NEXT/PREV
-										 // guesswork
+				// assumption if unexpected. It is too
+				// intensive to try to do NEXT/PREV
+				// guesswork
+				// espod.updateTrackTitle((char *)incMetadata.payload);
 				strcpy(incTrackTitle,
 					   (char *)incMetadata.payload); // Buffer the incoming track title
 				if (espod.trackChangeAckPending > 0x00)
@@ -344,6 +350,7 @@ static void processAVRCTask(void *pvParameters)
 				break;
 
 			case ESP_AVRC_MD_ATTR_PLAYING_TIME:
+				// espod.updateTrackDuration(String((char *)incMetadata.payload).toInt());
 				incTrackDuration = String((char *)incMetadata.payload).toInt();
 				if (espod.trackChangeAckPending > 0x00)
 				{ // There is a pending metadata update
@@ -380,6 +387,7 @@ static void processAVRCTask(void *pvParameters)
 			}
 
 			// Check if it is time to send a notification
+			// Implicitely called in the ones above.
 			if (albumNameUpdated && artistNameUpdated && trackTitleUpdated && trackDurationUpdated)
 			{
 				// If all fields have received at least one update and the
@@ -491,8 +499,6 @@ void initializeA2DPSink()
 
 	ESP_LOGI("SETUP", "a2dp_sink started: %s", A2DP_SINK_NAME);
 	delay(5);
-
-
 }
 
 /// @brief Initializes the AVRC metadata queue, and attempts to start the
@@ -562,18 +568,14 @@ void audioStateChanged(esp_a2d_audio_state_t state, void *ptr)
 	switch (state)
 	{
 	case ESP_A2D_AUDIO_STATE_STARTED:
-		espod.playStatus = PB_STATE_PLAYING;
-		ESP_LOGD("A2DP_CB", "ESP_A2D_AUDIO_STATE_STARTED, espod.playStatus = PB_STATE_PLAYING");
+		espod.play();
 		break;
 	case ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND:
-		espod.playStatus = PB_STATE_PAUSED;
-		ESP_LOGD("A2DP_CB", "ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND, espod.playStatus "
-							"= PB_STATE_PAUSED");
+		espod.pause();
 		break;
-	// case ESP_A2D_AUDIO_STATE_STOPPED:
-	// 	espod.playStatus = PB_STATE_STOPPED;
-	// 	ESP_LOGD("A2DP_CB", "ESP_A2D_AUDIO_STATE_STOPPED, espod.playStatus = PB_STATE_STOPPED");
-	// 	break;
+		// case ESP_A2D_AUDIO_STATE_STOPPED:
+		//  espod.stop();
+		// 	break;
 	}
 }
 
@@ -582,13 +584,14 @@ void audioStateChanged(esp_a2d_audio_state_t state, void *ptr)
 /// @param play_pos Playing Position in ms
 void avrc_rn_play_pos_callback(uint32_t play_pos)
 {
-	espod.playPosition = play_pos;
+	espod.updatePlayPosition(play_pos);
+	// espod.playPosition = play_pos;
 	ESP_LOGV("AVRC_CB", "PlayPosition called");
-	if (espod.playStatusNotificationState == NOTIF_ON && espod.trackChangeAckPending == 0x00)
-	{
-		// espod.L0x04_0x27_PlayStatusNotification(0x04, play_pos);
-		L0x04::_0x27_PlayStatusNotification(&espod, 0x04, play_pos);
-	}
+	// if (espod.playStatusNotificationState == NOTIF_ON && espod.trackChangeAckPending == 0x00)
+	// {
+	// 	// espod.L0x04_0x27_PlayStatusNotification(0x04, play_pos);
+	// 	L0x04::_0x27_PlayStatusNotification(&espod, 0x04, play_pos);
+	// }
 }
 
 /// @brief Catch callback for the AVRC metadata. There can be duplicates !

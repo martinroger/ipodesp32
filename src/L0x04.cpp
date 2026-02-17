@@ -16,7 +16,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
     if (!esp->extendedInterfaceModeActive)
     { // Complain if not in extended interface mode
-        ESP_LOGW(IPOD_TAG, "CMD 0x%04x not executed : Not in extendedInterfaceMode!", cmdID);
+        ESP_LOGW(__func__, "CMD 0x%04x not executed : Not in extendedInterfaceMode!", cmdID);
         L0x04::_0x01_iPodAck(esp, iPodAck_BadParam, cmdID);
     }
     // Good to go if in Extended Interface mode
@@ -30,7 +30,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
             switch (byteArray[2]) // Switch on the type of track info requested (careful with overloads)
             {
             case 0x00: // General track Capabilities and Information
-                ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Duration", cmdID, byteArray[2], tempTrackIndex, esp->prevTrackIndex);
+                ESP_LOGI(__func__, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Duration", cmdID, byteArray[2], tempTrackIndex, esp->prevTrackIndex);
                 if (tempTrackIndex == esp->prevTrackIndex)
                 {
                     L0x04::_0x0D_ReturnIndexedPlayingTrackInfo(esp, (uint32_t)esp->prevTrackDuration);
@@ -41,11 +41,11 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
                 }
                 break;
             case 0x02: // Track Release Date (fictional)
-                ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Release date", cmdID, byteArray[2], tempTrackIndex, esp->prevTrackIndex);
+                ESP_LOGI(__func__, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Release date", cmdID, byteArray[2], tempTrackIndex, esp->prevTrackIndex);
                 L0x04::_0x0D_ReturnIndexedPlayingTrackInfo(esp, byteArray[2], (uint16_t)2001);
                 break;
             case 0x01: // Track Title
-                ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Title", cmdID, byteArray[2], tempTrackIndex, esp->prevTrackIndex);
+                ESP_LOGI(__func__, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Title", cmdID, byteArray[2], tempTrackIndex, esp->prevTrackIndex);
                 if (tempTrackIndex == esp->prevTrackIndex)
                 {
                     L0x04::_0x0D_ReturnIndexedPlayingTrackInfo(esp, byteArray[2], esp->prevTrackTitle);
@@ -56,15 +56,15 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
                 }
                 break;
             case 0x05: // Track Genre
-                ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Genre", cmdID, byteArray[2], tempTrackIndex, esp->prevTrackIndex);
+                ESP_LOGI(__func__, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Genre", cmdID, byteArray[2], tempTrackIndex, esp->prevTrackIndex);
                 L0x04::_0x0D_ReturnIndexedPlayingTrackInfo(esp, byteArray[2], esp->trackGenre);
                 break;
             case 0x06: // Track Composer
-                ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Composer", cmdID, byteArray[2], tempTrackIndex, esp->prevTrackIndex);
+                ESP_LOGI(__func__, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Composer", cmdID, byteArray[2], tempTrackIndex, esp->prevTrackIndex);
                 L0x04::_0x0D_ReturnIndexedPlayingTrackInfo(esp, byteArray[2], esp->composer);
                 break;
             default: // In case the request is beyond the track capabilities
-                ESP_LOGW(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Type not recognised!", cmdID, byteArray[2], tempTrackIndex, esp->prevTrackIndex);
+                ESP_LOGW(__func__, "CMD 0x%04x GetIndexedPlayingTrackInfo 0x%02x for index %d (previous %d) : Type not recognised!", cmdID, byteArray[2], tempTrackIndex, esp->prevTrackIndex);
                 L0x04::_0x01_iPodAck(esp, iPodAck_BadParam, cmdID);
                 break;
             }
@@ -73,7 +73,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
         case L0x04_RequestProtocolVersion: // Hardcoded return for L0x04
         {
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x RequestProtocolVersion", cmdID);
+            ESP_LOGI(__func__, "CMD 0x%04x RequestProtocolVersion", cmdID);
             L0x04::_0x13_ReturnProtocolVersion(esp); // Potentially should use L0x00_0x10 instead ? L0x00_0x10_ReturnLingoProtocolVersion(byteArray[2]);
             // L0x00_0x27_GetAccessoryInfo(0x00); // Attempting to start normal handshake
         }
@@ -81,14 +81,14 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
         case L0x04_ResetDBSelection: // Not sure what to do here. Reset Current Track Index ?
         {
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x ResetDBSelection", cmdID);
+            ESP_LOGI(__func__, "CMD 0x%04x ResetDBSelection", cmdID);
             L0x04::_0x01_iPodAck(esp, iPodAck_OK, cmdID);
         }
         break;
 
         case L0x04_SelectDBRecord: // Used for browsing ?
         {
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x SelectDBRecord", cmdID);
+            ESP_LOGI(__func__, "CMD 0x%04x SelectDBRecord", cmdID);
             L0x04::_0x01_iPodAck(esp, iPodAck_OK, cmdID);
         }
         break;
@@ -96,7 +96,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
         case L0x04_GetNumberCategorizedDBRecords: // Mini requests the number of records for a specific DB_CAT
         {
             category = byteArray[2];
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetNumberCategorizedDBRecords category: 0x%02x", cmdID, category);
+            ESP_LOGI(__func__, "CMD 0x%04x GetNumberCategorizedDBRecords category: 0x%02x", cmdID, category);
             if (category == DB_CAT_TRACK)
             {
                 L0x04::_0x19_ReturnNumberCategorizedDBRecords(esp, esp->totalNumberTracks); // Say there are fixed, large amount of tracks
@@ -114,7 +114,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
             startIndex = swap_endian<uint32_t>(*(uint32_t *)&byteArray[3]);
             counts = swap_endian<uint32_t>(*(uint32_t *)&byteArray[7]);
 
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x RetrieveCategorizedDatabaseRecords category: 0x%02x from %d for %d counts", cmdID, category, startIndex, counts);
+            ESP_LOGI(__func__, "CMD 0x%04x RetrieveCategorizedDatabaseRecords category: 0x%02x from %d for %d counts", cmdID, category, startIndex, counts);
             switch (category)
             {
             case DB_CAT_PLAYLIST:
@@ -166,7 +166,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
                 }
                 break;
             default:
-                ESP_LOGW(IPOD_TAG, "CMD 0x%04x RetrieveCategorizedDatabaseRecords category: 0x%02x not recognised", cmdID, category);
+                ESP_LOGW(__func__, "CMD 0x%04x RetrieveCategorizedDatabaseRecords category: 0x%02x not recognised", cmdID, category);
                 L0x04::_0x01_iPodAck(esp, iPodAck_BadParam, cmdID);
                 break;
             }
@@ -175,14 +175,14 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
         case L0x04_GetPlayStatus: // Returns the current esp->playStatus and the position/duration of the current track
         {
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetPlayStatus", cmdID);
+            ESP_LOGI(__func__, "CMD 0x%04x GetPlayStatus", cmdID);
             L0x04::_0x1D_ReturnPlayStatus(esp, esp->playPosition, esp->trackDuration, esp->playStatus);
         }
         break;
 
         case L0x04_GetCurrentPlayingTrackIndex: // Get the uint32 index of the currently playing song
         {
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetCurrentPlayingTrackIndex", cmdID);
+            ESP_LOGI(__func__, "CMD 0x%04x GetCurrentPlayingTrackIndex", cmdID);
             L0x04::_0x1F_ReturnCurrentPlayingTrackIndex(esp, esp->currentTrackIndex);
         }
         break;
@@ -190,7 +190,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
         case L0x04_GetIndexedPlayingTrackTitle:
         {
             tempTrackIndex = swap_endian<uint32_t>(*((uint32_t *)&byteArray[2]));
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackTitle for index %d (previous %d)", cmdID, tempTrackIndex, esp->prevTrackIndex);
+            ESP_LOGI(__func__, "CMD 0x%04x GetIndexedPlayingTrackTitle for index %d (previous %d)", cmdID, tempTrackIndex, esp->prevTrackIndex);
             if (tempTrackIndex == esp->prevTrackIndex)
             {
                 L0x04::_0x21_ReturnIndexedPlayingTrackTitle(esp, esp->prevTrackTitle);
@@ -206,7 +206,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
         {
             tempTrackIndex = swap_endian<uint32_t>(*((uint32_t *)&byteArray[2]));
 
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackArtistName for index %d (previous %d)", cmdID, tempTrackIndex, esp->prevTrackIndex);
+            ESP_LOGI(__func__, "CMD 0x%04x GetIndexedPlayingTrackArtistName for index %d (previous %d)", cmdID, tempTrackIndex, esp->prevTrackIndex);
             if (tempTrackIndex == esp->prevTrackIndex)
             {
                 L0x04::_0x23_ReturnIndexedPlayingTrackArtistName(esp, esp->prevArtistName);
@@ -221,7 +221,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
         case L0x04_GetIndexedPlayingTrackAlbumName:
         {
             tempTrackIndex = swap_endian<uint32_t>(*((uint32_t *)&byteArray[2]));
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetIndexedPlayingTrackAlbumName for index %d (previous %d)", cmdID, tempTrackIndex, esp->prevTrackIndex);
+            ESP_LOGI(__func__, "CMD 0x%04x GetIndexedPlayingTrackAlbumName for index %d (previous %d)", cmdID, tempTrackIndex, esp->prevTrackIndex);
             if (tempTrackIndex == esp->prevTrackIndex)
             {
                 L0x04::_0x25_ReturnIndexedPlayingTrackAlbumName(esp, esp->prevAlbumName);
@@ -236,7 +236,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
         case L0x04_SetPlayStatusChangeNotification: // Turns on basic notifications
         {
             esp->playStatusNotificationState = byteArray[2];
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x SetPlayStatusChangeNotification 0x%02x", cmdID, esp->playStatusNotificationState);
+            ESP_LOGI(__func__, "CMD 0x%04x SetPlayStatusChangeNotification 0x%02x", cmdID, esp->playStatusNotificationState);
             L0x04::_0x01_iPodAck(esp, iPodAck_OK, cmdID);
         }
         break;
@@ -244,7 +244,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
         case L0x04_PlayCurrentSelection: // Used to play a specific index, usually for "next" commands, but may be used to actually jump anywhere
         {
             tempTrackIndex = swap_endian<uint32_t>(*((uint32_t *)&byteArray[2]));
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x PlayCurrentSelection index %d", cmdID, tempTrackIndex);
+            ESP_LOGI(__func__, "CMD 0x%04x PlayCurrentSelection index %d", cmdID, tempTrackIndex);
             if (esp->playStatus != PB_STATE_PLAYING)
             {
                 esp->playStatus = PB_STATE_PLAYING; // Playing status forced
@@ -269,7 +269,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
                 // Engage the pending ACK for expected metadata
                 esp->trackChangeAckPending = cmdID;
                 esp->trackChangeTimestamp = millis();
-                ESP_LOGD(IPOD_TAG, "Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> PREV ", esp->prevTrackIndex, esp->currentTrackIndex, esp->trackListPosition, (esp->trackChangeAckPending > 0x00), esp->trackChangeTimestamp);
+                ESP_LOGD(__func__, "Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> PREV ", esp->prevTrackIndex, esp->currentTrackIndex, esp->trackListPosition, (esp->trackChangeAckPending > 0x00), esp->trackChangeTimestamp);
                 L0x04::_0x01_iPodAck(esp, iPodAck_CmdPending, cmdID, TRACK_CHANGE_TIMEOUT);
 
                 // Fire the A2DP when ready
@@ -278,7 +278,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
             }
             else if (tempTrackIndex == esp->currentTrackIndex) // Somehow reselecting the current track
             {
-                ESP_LOGD(IPOD_TAG, "Selected same track as current: %d", tempTrackIndex);
+                ESP_LOGD(__func__, "Selected same track as current: %d", tempTrackIndex);
                 L0x04::_0x01_iPodAck(esp, iPodAck_OK, cmdID);
 
                 // Fire the A2DP when ready
@@ -302,7 +302,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
                 // Engage the pending ACK for expected metadata
                 esp->trackChangeAckPending = cmdID;
                 esp->trackChangeTimestamp = millis();
-                ESP_LOGD(IPOD_TAG, "Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> NEXT ", esp->prevTrackIndex, esp->currentTrackIndex, esp->trackListPosition, (esp->trackChangeAckPending > 0x00), esp->trackChangeTimestamp);
+                ESP_LOGD(__func__, "Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> NEXT ", esp->prevTrackIndex, esp->currentTrackIndex, esp->trackListPosition, (esp->trackChangeAckPending > 0x00), esp->trackChangeTimestamp);
                 L0x04::_0x01_iPodAck(esp, iPodAck_CmdPending, cmdID, TRACK_CHANGE_TIMEOUT);
 
                 // Fire the A2DP when ready
@@ -314,7 +314,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
         case L0x04_PlayControl: // Basic play control. Used for Prev, pause and play
         {
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x PlayControl req: 0x%02x vs esp->playStatus: 0x%02x", cmdID, byteArray[2], esp->playStatus);
+            ESP_LOGI(__func__, "CMD 0x%04x PlayControl req: 0x%02x vs esp->playStatus: 0x%02x", cmdID, byteArray[2], esp->playStatus);
             switch (byteArray[2]) // PlayControl byte
             {
             case PB_CMD_TOGGLE: // Just Toggle or start playing
@@ -358,7 +358,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
                 // Engage the pending ACK for expected metadata
                 esp->trackChangeAckPending = cmdID;
                 esp->trackChangeTimestamp = millis();
-                ESP_LOGD(IPOD_TAG, "Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> EXPLICIT NEXT TRACK", esp->prevTrackIndex, esp->currentTrackIndex, esp->trackListPosition, (esp->trackChangeAckPending > 0x00), esp->trackChangeTimestamp);
+                ESP_LOGD(__func__, "Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> EXPLICIT NEXT TRACK", esp->prevTrackIndex, esp->currentTrackIndex, esp->trackListPosition, (esp->trackChangeAckPending > 0x00), esp->trackChangeTimestamp);
                 L0x04::_0x01_iPodAck(esp, iPodAck_CmdPending, cmdID, TRACK_CHANGE_TIMEOUT);
 
                 // Fire the A2DP when ready
@@ -368,7 +368,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
             break;
             case PB_CMD_PREVIOUS_TRACK: // Prev track
             {
-                ESP_LOGD(IPOD_TAG, "Current index %d Tracklist pos. %d --> EXPLICIT SINGLE PREV TRACK", esp->currentTrackIndex, esp->trackListPosition);
+                ESP_LOGD(__func__, "Current index %d Tracklist pos. %d --> EXPLICIT SINGLE PREV TRACK", esp->currentTrackIndex, esp->trackListPosition);
                 L0x04::_0x01_iPodAck(esp, iPodAck_OK, cmdID);
 
                 // Fire the A2DP when ready
@@ -392,7 +392,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
                 // Engage the pending ACK for expected metadata
                 esp->trackChangeAckPending = cmdID;
                 esp->trackChangeTimestamp = millis();
-                ESP_LOGD(IPOD_TAG, "Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> EXPLICIT NEXT", esp->prevTrackIndex, esp->currentTrackIndex, esp->trackListPosition, (esp->trackChangeAckPending > 0x00), esp->trackChangeTimestamp);
+                ESP_LOGD(__func__, "Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> EXPLICIT NEXT", esp->prevTrackIndex, esp->currentTrackIndex, esp->trackListPosition, (esp->trackChangeAckPending > 0x00), esp->trackChangeTimestamp);
                 L0x04::_0x01_iPodAck(esp, iPodAck_CmdPending, cmdID, TRACK_CHANGE_TIMEOUT);
 
                 // Fire the A2DP when ready
@@ -402,7 +402,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
             break;
             case PB_CMD_PREV: // Prev track
             {
-                ESP_LOGD(IPOD_TAG, "Current index %d Tracklist pos. %d --> EXPLICIT SINGLE PREV", esp->currentTrackIndex, esp->trackListPosition);
+                ESP_LOGD(__func__, "Current index %d Tracklist pos. %d --> EXPLICIT SINGLE PREV", esp->currentTrackIndex, esp->trackListPosition);
                 L0x04::_0x01_iPodAck(esp, iPodAck_OK, cmdID);
 
                 // Fire the A2DP when ready
@@ -439,14 +439,14 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
         case L0x04_GetShuffle: // Get Shuffle state from the PB Engine
         {
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetShuffle", cmdID);
+            ESP_LOGI(__func__, "CMD 0x%04x GetShuffle", cmdID);
             L0x04::_0x2D_ReturnShuffle(esp, esp->shuffleStatus);
         }
         break;
 
         case L0x04_SetShuffle: // Set Shuffle state
         {
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x SetShuffle req: 0x%02x vs shuffleStatus: 0x%02x", cmdID, byteArray[2], esp->shuffleStatus);
+            ESP_LOGI(__func__, "CMD 0x%04x SetShuffle req: 0x%02x vs shuffleStatus: 0x%02x", cmdID, byteArray[2], esp->shuffleStatus);
             esp->shuffleStatus = byteArray[2];
             L0x04::_0x01_iPodAck(esp, iPodAck_OK, cmdID);
         }
@@ -454,14 +454,14 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
         case L0x04_GetRepeat: // Get Repeat state
         {
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetRepeat", cmdID);
+            ESP_LOGI(__func__, "CMD 0x%04x GetRepeat", cmdID);
             L0x04::_0x30_ReturnRepeat(esp, esp->repeatStatus);
         }
         break;
 
         case L0x04_SetRepeat: // Set Repeat state
         {
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x SetRepeat req: 0x%02x vs repeatStatus: 0x%02x", cmdID, byteArray[2], esp->repeatStatus);
+            ESP_LOGI(__func__, "CMD 0x%04x SetRepeat req: 0x%02x vs repeatStatus: 0x%02x", cmdID, byteArray[2], esp->repeatStatus);
             esp->repeatStatus = byteArray[2];
             L0x04::_0x01_iPodAck(esp, iPodAck_OK, cmdID);
         }
@@ -469,14 +469,14 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
         case L0x04_GetMonoDisplayImageLimits:
         {
-            ESP_LOGI(IPOD_TAG, "CMD 0x0%04x GetMonoDisplayImageLimits", cmdID);
+            ESP_LOGI(__func__, "CMD 0x0%04x GetMonoDisplayImageLimits", cmdID);
             L0x04::_0x34_ReturnMonoDisplayImageLimits(esp, 0, 0, 0x01); // Not sure this is OK
         }
         break;
 
         case L0x04_GetNumPlayingTracks: // Systematically return TOTAL_NUM_TRACKS
         {
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x GetNumPlayingTracks", cmdID);
+            ESP_LOGI(__func__, "CMD 0x%04x GetNumPlayingTracks", cmdID);
             L0x04::_0x36_ReturnNumPlayingTracks(esp, esp->totalNumberTracks);
         }
         break;
@@ -484,7 +484,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
         case L0x04_SetCurrentPlayingTrack: // Basically identical to PlayCurrentSelection
         {
             tempTrackIndex = swap_endian<uint32_t>(*((uint32_t *)&byteArray[2]));
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x SetCurrentPlayingTrack index %d", cmdID, tempTrackIndex);
+            ESP_LOGI(__func__, "CMD 0x%04x SetCurrentPlayingTrack index %d", cmdID, tempTrackIndex);
             if (esp->playStatus != PB_STATE_PLAYING)
             {
                 esp->playStatus = PB_STATE_PLAYING; // Playing status forced
@@ -509,7 +509,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
                 // Engage the pending ACK for expected metadata
                 esp->trackChangeAckPending = cmdID;
                 esp->trackChangeTimestamp = millis();
-                ESP_LOGD(IPOD_TAG, "Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> PREV ", esp->prevTrackIndex, esp->currentTrackIndex, esp->trackListPosition, (esp->trackChangeAckPending > 0x00), esp->trackChangeTimestamp);
+                ESP_LOGD(__func__, "Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> PREV ", esp->prevTrackIndex, esp->currentTrackIndex, esp->trackListPosition, (esp->trackChangeAckPending > 0x00), esp->trackChangeTimestamp);
                 L0x04::_0x01_iPodAck(esp, iPodAck_CmdPending, cmdID, TRACK_CHANGE_TIMEOUT);
 
                 // Fire the A2DP when ready
@@ -518,7 +518,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
             }
             else if (tempTrackIndex == esp->currentTrackIndex) // Somehow reselecting the current track
             {
-                ESP_LOGD(IPOD_TAG, "Selected same track as current: %d", tempTrackIndex);
+                ESP_LOGD(__func__, "Selected same track as current: %d", tempTrackIndex);
                 L0x04::_0x01_iPodAck(esp, iPodAck_OK, cmdID);
 
                 // Fire the A2DP when ready
@@ -542,7 +542,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
                 // Engage the pending ACK for expected metadata
                 esp->trackChangeAckPending = cmdID;
                 esp->trackChangeTimestamp = millis();
-                ESP_LOGD(IPOD_TAG, "Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> NEXT ", esp->prevTrackIndex, esp->currentTrackIndex, esp->trackListPosition, (esp->trackChangeAckPending > 0x00), esp->trackChangeTimestamp);
+                ESP_LOGD(__func__, "Prev. index %d New index %d Tracklist pos. %d Pending Meta %d Timestamp: %d --> NEXT ", esp->prevTrackIndex, esp->currentTrackIndex, esp->trackListPosition, (esp->trackChangeAckPending > 0x00), esp->trackChangeTimestamp);
                 L0x04::_0x01_iPodAck(esp, iPodAck_CmdPending, cmdID, TRACK_CHANGE_TIMEOUT);
 
                 // Fire the A2DP when ready
@@ -554,21 +554,21 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 
         case L0x04_SelectSortDBRecord: // Used for browsing ?
         {
-            ESP_LOGI(IPOD_TAG, "CMD 0x%04x SelectSortDBRecord (deprecated)", cmdID);
+            ESP_LOGI(__func__, "CMD 0x%04x SelectSortDBRecord (deprecated)", cmdID);
             L0x04::_0x01_iPodAck(esp, iPodAck_OK, cmdID);
         }
         break;
 
         case L0x04_GetColorDisplayImageLimits:
         {
-            ESP_LOGI(IPOD_TAG, "CMD 0x0%04x GetColorDisplayImageLimits", cmdID);
+            ESP_LOGI(__func__, "CMD 0x0%04x GetColorDisplayImageLimits", cmdID);
             L0x04::_0x3A_ReturnColorDisplayImageLimits(esp, 0, 0, 0x01); // Not sure this is OK
         }
         break;
 
         default:
         {
-            ESP_LOGW(IPOD_TAG, "CMD 0x%04x not recognized.", cmdID);
+            ESP_LOGW(__func__, "CMD 0x%04x not recognized.", cmdID);
             L0x04::_0x01_iPodAck(esp, iPodAck_CmdFailed, cmdID);
         }
         break;
@@ -582,7 +582,7 @@ void L0x04::processLingo(esPod *esp, const byte *byteArray, uint32_t len)
 /// @param cmdID last two ID bytes of the Lingo 0x04 command replied to
 void L0x04::_0x01_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID)
 {
-    ESP_LOGI(IPOD_TAG, "Ack 0x%02x to command 0x%04x", ackCode, cmdID);
+    ESP_LOGI(__func__, "Ack 0x%02x to command 0x%04x", ackCode, cmdID);
     // Queue the ack packet
     const byte txPacket[] = {
         0x04,
@@ -607,7 +607,7 @@ void L0x04::_0x01_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID)
 /// @param numField Pending delay in milliseconds
 void L0x04::_0x01_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID, uint32_t numField)
 {
-    ESP_LOGI(IPOD_TAG, "Ack 0x%02x to command 0x%04x Numfield: %d", ackCode, cmdID, numField);
+    ESP_LOGI(__func__, "Ack 0x%02x to command 0x%04x Numfield: %d", ackCode, cmdID, numField);
     const byte txPacket[20] = {
         0x04,
         0x00, 0x01,
@@ -626,7 +626,7 @@ void L0x04::_0x01_iPodAck(esPod *esp, IPOD_ACK_CODE ackCode, byte cmdID, uint32_
 /// @param trackInfoChars Character array to pass and package in the tail of the message
 void L0x04::_0x0D_ReturnIndexedPlayingTrackInfo(esPod *esp, byte trackInfoType, char *trackInfoChars)
 {
-    ESP_LOGI(IPOD_TAG, "Req'd track info type: 0x%02x", trackInfoType);
+    ESP_LOGI(__func__, "Req'd track info type: 0x%02x", trackInfoType);
     byte txPacket[255] = {
         0x04,
         0x00, 0x0D,
@@ -640,7 +640,7 @@ void L0x04::_0x0D_ReturnIndexedPlayingTrackInfo(esPod *esp, byte trackInfoType, 
 /// @param trackDuration_ms trackduration in ms
 void L0x04::_0x0D_ReturnIndexedPlayingTrackInfo(esPod *esp, uint32_t trackDuration_ms)
 {
-    ESP_LOGI(IPOD_TAG, "Track duration: %d", trackDuration_ms);
+    ESP_LOGI(__func__, "Track duration: %d", trackDuration_ms);
     byte txPacket[14] = {
         0x04,
         0x00, 0x0D,
@@ -659,7 +659,7 @@ void L0x04::_0x0D_ReturnIndexedPlayingTrackInfo(esPod *esp, uint32_t trackDurati
 /// @param releaseYear Fictional release year of the song
 void L0x04::_0x0D_ReturnIndexedPlayingTrackInfo(esPod *esp, byte trackInfoType, uint16_t releaseYear)
 {
-    ESP_LOGI(IPOD_TAG, "Track info: 0x%02x Release Year: %d", trackInfoType, releaseYear);
+    ESP_LOGI(__func__, "Track info: 0x%02x Release Year: %d", trackInfoType, releaseYear);
     byte txPacket[12] = {
         0x04,
         0x00, 0x0D,
@@ -676,7 +676,7 @@ void L0x04::_0x0D_ReturnIndexedPlayingTrackInfo(esPod *esp, byte trackInfoType, 
 /// @param esp Pointer to the esPod instance
 void L0x04::_0x13_ReturnProtocolVersion(esPod *esp)
 {
-    ESP_LOGI(IPOD_TAG, "Lingo protocol version 1.12");
+    ESP_LOGI(__func__, "Lingo protocol version 1.12");
     byte txPacket[] = {
         0x04,
         0x00, 0x13,
@@ -690,7 +690,7 @@ void L0x04::_0x13_ReturnProtocolVersion(esPod *esp)
 /// @param categoryDBRecords The number of records to return
 void L0x04::_0x19_ReturnNumberCategorizedDBRecords(esPod *esp, uint32_t categoryDBRecords)
 {
-    ESP_LOGI(IPOD_TAG, "Category DB Records: %d", categoryDBRecords);
+    ESP_LOGI(__func__, "Category DB Records: %d", categoryDBRecords);
     byte txPacket[7] = {
         0x04,
         0x00, 0x19,
@@ -705,7 +705,7 @@ void L0x04::_0x19_ReturnNumberCategorizedDBRecords(esPod *esp, uint32_t category
 /// @param recordString Metadata to include in the return
 void L0x04::_0x1B_ReturnCategorizedDatabaseRecord(esPod *esp, uint32_t index, char *recordString)
 {
-    ESP_LOGI(IPOD_TAG, "Database record at index %d : %s", index, recordString);
+    ESP_LOGI(__func__, "Database record at index %d : %s", index, recordString);
     byte txPacket[255] = {
         0x04,
         0x00, 0x1B,
@@ -723,7 +723,7 @@ void L0x04::_0x1B_ReturnCategorizedDatabaseRecord(esPod *esp, uint32_t index, ch
 /// @param playStatusArg Playback status (0x00 Stopped, 0x01 Playing, 0x02 Paused, 0xFF Error)
 void L0x04::_0x1D_ReturnPlayStatus(esPod *esp, uint32_t position, uint32_t duration, byte playStatusArg)
 {
-    ESP_LOGI(IPOD_TAG, "Play status 0x%02x at pos. %d / %d ms", playStatusArg, position, duration);
+    ESP_LOGI(__func__, "Play status 0x%02x at pos. %d / %d ms", playStatusArg, position, duration);
     byte txPacket[] = {
         0x04,
         0x00, 0x1D,
@@ -740,7 +740,7 @@ void L0x04::_0x1D_ReturnPlayStatus(esPod *esp, uint32_t position, uint32_t durat
 /// @param trackIndex The trackIndex to return. This is different from the position in the tracklist when Shuffle is ON
 void L0x04::_0x1F_ReturnCurrentPlayingTrackIndex(esPod *esp, uint32_t trackIndex)
 {
-    ESP_LOGI(IPOD_TAG, "Track index: %d", trackIndex);
+    ESP_LOGI(__func__, "Track index: %d", trackIndex);
     byte txPacket[] = {
         0x04,
         0x00, 0x1F,
@@ -754,7 +754,7 @@ void L0x04::_0x1F_ReturnCurrentPlayingTrackIndex(esPod *esp, uint32_t trackIndex
 /// @param trackTitle Character array to return
 void L0x04::_0x21_ReturnIndexedPlayingTrackTitle(esPod *esp, char *trackTitle)
 {
-    ESP_LOGI(IPOD_TAG, "Track title: %s", trackTitle);
+    ESP_LOGI(__func__, "Track title: %s", trackTitle);
     byte txPacket[255] = {
         0x04,
         0x00, 0x21};
@@ -767,7 +767,7 @@ void L0x04::_0x21_ReturnIndexedPlayingTrackTitle(esPod *esp, char *trackTitle)
 /// @param trackArtistName Character array to return
 void L0x04::_0x23_ReturnIndexedPlayingTrackArtistName(esPod *esp, char *trackArtistName)
 {
-    ESP_LOGI(IPOD_TAG, "Track artist: %s", trackArtistName);
+    ESP_LOGI(__func__, "Track artist: %s", trackArtistName);
     byte txPacket[255] = {
         0x04,
         0x00, 0x23};
@@ -780,7 +780,7 @@ void L0x04::_0x23_ReturnIndexedPlayingTrackArtistName(esPod *esp, char *trackArt
 /// @param trackAlbumName Character array to return
 void L0x04::_0x25_ReturnIndexedPlayingTrackAlbumName(esPod *esp, char *trackAlbumName)
 {
-    ESP_LOGI(IPOD_TAG, "Track album: %s", trackAlbumName);
+    ESP_LOGI(__func__, "Track album: %s", trackAlbumName);
     byte txPacket[255] = {
         0x04,
         0x00, 0x25};
@@ -794,7 +794,7 @@ void L0x04::_0x25_ReturnIndexedPlayingTrackAlbumName(esPod *esp, char *trackAlbu
 /// @param numField For 0x01 this is the new Track index, for 0x04 this is the current Track offset in ms
 void L0x04::_0x27_PlayStatusNotification(esPod *esp, byte notification, uint32_t numField)
 {
-    ESP_LOGI(IPOD_TAG, "Play status 0x%02x Numfield: %d", notification, numField);
+    ESP_LOGI(__func__, "Play status 0x%02x Numfield: %d", notification, numField);
     byte txPacket[] = {
         0x04,
         0x00, 0x27,
@@ -809,7 +809,7 @@ void L0x04::_0x27_PlayStatusNotification(esPod *esp, byte notification, uint32_t
 /// @param notification Can only be 0x00
 void L0x04::_0x27_PlayStatusNotification(esPod *esp, byte notification)
 {
-    ESP_LOGI(IPOD_TAG, "Play status 0x%02x STOPPED", notification);
+    ESP_LOGI(__func__, "Play status 0x%02x STOPPED", notification);
     byte txPacket[] = {
         0x04,
         0x00, 0x27,
@@ -822,7 +822,7 @@ void L0x04::_0x27_PlayStatusNotification(esPod *esp, byte notification)
 /// @param currentShuffleStatus 0x00 No Shuffle, 0x01 Tracks, 0x02 Albums
 void L0x04::_0x2D_ReturnShuffle(esPod *esp, byte currentShuffleStatus)
 {
-    ESP_LOGI(IPOD_TAG, "Shuffle status: 0x%02x", currentShuffleStatus);
+    ESP_LOGI(__func__, "Shuffle status: 0x%02x", currentShuffleStatus);
     byte txPacket[] = {
         0x04,
         0x00, 0x2D,
@@ -835,7 +835,7 @@ void L0x04::_0x2D_ReturnShuffle(esPod *esp, byte currentShuffleStatus)
 /// @param currentRepeatStatus 0x00 No Repeat, 0x01 One Track, 0x02 All tracks
 void L0x04::_0x30_ReturnRepeat(esPod *esp, byte currentRepeatStatus)
 {
-    ESP_LOGI(IPOD_TAG, "Repeat status: 0x%02x", currentRepeatStatus);
+    ESP_LOGI(__func__, "Repeat status: 0x%02x", currentRepeatStatus);
     byte txPacket[] = {
         0x04,
         0x00, 0x30,
@@ -850,7 +850,7 @@ void L0x04::_0x30_ReturnRepeat(esPod *esp, byte currentRepeatStatus)
 /// @param dispPixelFmt
 void L0x04::_0x34_ReturnMonoDisplayImageLimits(esPod *esp, uint16_t maxImageW, uint16_t maxImageH, byte dispPixelFmt)
 {
-    ESP_LOGI(IPOD_TAG, "Return monochrome image limits : %d x %d x %d", maxImageW, maxImageH, dispPixelFmt);
+    ESP_LOGI(__func__, "Return monochrome image limits : %d x %d x %d", maxImageW, maxImageH, dispPixelFmt);
     byte txPacket[] = {
         0x04,
         0x00, 0x34,
@@ -867,7 +867,7 @@ void L0x04::_0x34_ReturnMonoDisplayImageLimits(esPod *esp, uint16_t maxImageW, u
 /// @param numPlayingTracks Number of playing tracks to return
 void L0x04::_0x36_ReturnNumPlayingTracks(esPod *esp, uint32_t numPlayingTracks)
 {
-    ESP_LOGI(IPOD_TAG, "Playing tracks: %d", numPlayingTracks);
+    ESP_LOGI(__func__, "Playing tracks: %d", numPlayingTracks);
     byte txPacket[] = {
         0x04,
         0x00, 0x36,
@@ -883,7 +883,7 @@ void L0x04::_0x36_ReturnNumPlayingTracks(esPod *esp, uint32_t numPlayingTracks)
 /// @param dispPixelFmt
 void L0x04::_0x3A_ReturnColorDisplayImageLimits(esPod *esp, uint16_t maxImageW, uint16_t maxImageH, byte dispPixelFmt)
 {
-    ESP_LOGI(IPOD_TAG, "Return color image limits : %d x %d x %d", maxImageW, maxImageH, dispPixelFmt);
+    ESP_LOGI(__func__, "Return color image limits : %d x %d x %d", maxImageW, maxImageH, dispPixelFmt);
     byte txPacket[] = {
         0x04,
         0x00, 0x3A,
