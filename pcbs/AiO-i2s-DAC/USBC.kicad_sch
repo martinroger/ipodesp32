@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "AiO-i2s-DAC")
-		(date "2025-10-05")
-		(rev "0.1.7")
+		(date "2026-02-19")
+		(rev "0.2.0")
 		(company "Martin Roger")
 	)
 	(lib_symbols
@@ -1220,46 +1220,46 @@
 		)
 	)
 	(junction
-		(at 105.41 78.74)
+		(at 147.32 107.95)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "6aaba72c-4e15-492a-b759-38422b86e1eb")
 	)
 	(junction
-		(at 184.15 33.02)
+		(at 226.06 62.23)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "8247191d-40ef-4374-977c-41a04f55422f")
 	)
 	(junction
-		(at 113.03 68.58)
+		(at 154.94 97.79)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "a0bee443-7205-436d-a3ed-f8a052520a9c")
 	)
 	(junction
-		(at 105.41 76.2)
+		(at 147.32 105.41)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "c4ab0b2f-da2f-43e0-860f-727bc8d59df5")
 	)
 	(junction
-		(at 113.03 71.12)
+		(at 154.94 100.33)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "cb2c447c-4eee-4f47-b6e2-bf31b7647183")
 	)
 	(no_connect
-		(at 64.77 60.96)
+		(at 106.68 90.17)
 		(uuid "93797f33-cf43-47ae-bde6-f8ae9a26e326")
 	)
 	(no_connect
-		(at 105.41 63.5)
+		(at 147.32 92.71)
 		(uuid "b51348ea-8e4f-4daf-ac4e-3e452727efbc")
 	)
 	(wire
 		(pts
-			(xy 184.15 33.02) (xy 184.15 54.61)
+			(xy 226.06 62.23) (xy 226.06 83.82)
 		)
 		(stroke
 			(width 0)
@@ -1269,7 +1269,7 @@
 	)
 	(wire
 		(pts
-			(xy 184.15 33.02) (xy 190.5 33.02)
+			(xy 226.06 62.23) (xy 232.41 62.23)
 		)
 		(stroke
 			(width 0)
@@ -1279,7 +1279,7 @@
 	)
 	(wire
 		(pts
-			(xy 105.41 76.2) (xy 113.03 76.2)
+			(xy 147.32 105.41) (xy 154.94 105.41)
 		)
 		(stroke
 			(width 0)
@@ -1289,7 +1289,7 @@
 	)
 	(wire
 		(pts
-			(xy 62.23 53.34) (xy 64.77 53.34)
+			(xy 104.14 82.55) (xy 106.68 82.55)
 		)
 		(stroke
 			(width 0)
@@ -1299,7 +1299,7 @@
 	)
 	(wire
 		(pts
-			(xy 118.11 115.57) (xy 118.11 119.38)
+			(xy 160.02 144.78) (xy 160.02 148.59)
 		)
 		(stroke
 			(width 0)
@@ -1309,7 +1309,7 @@
 	)
 	(wire
 		(pts
-			(xy 176.53 33.02) (xy 184.15 33.02)
+			(xy 218.44 62.23) (xy 226.06 62.23)
 		)
 		(stroke
 			(width 0)
@@ -1319,7 +1319,7 @@
 	)
 	(wire
 		(pts
-			(xy 105.41 71.12) (xy 113.03 71.12)
+			(xy 147.32 100.33) (xy 154.94 100.33)
 		)
 		(stroke
 			(width 0)
@@ -1329,7 +1329,7 @@
 	)
 	(wire
 		(pts
-			(xy 115.57 95.25) (xy 115.57 105.41)
+			(xy 157.48 124.46) (xy 157.48 134.62)
 		)
 		(stroke
 			(width 0)
@@ -1339,7 +1339,7 @@
 	)
 	(wire
 		(pts
-			(xy 26.67 55.88) (xy 64.77 55.88)
+			(xy 68.58 85.09) (xy 106.68 85.09)
 		)
 		(stroke
 			(width 0)
@@ -1349,7 +1349,7 @@
 	)
 	(wire
 		(pts
-			(xy 184.15 59.69) (xy 184.15 74.93)
+			(xy 226.06 88.9) (xy 226.06 104.14)
 		)
 		(stroke
 			(width 0)
@@ -1359,7 +1359,7 @@
 	)
 	(wire
 		(pts
-			(xy 125.73 55.88) (xy 130.81 55.88)
+			(xy 167.64 85.09) (xy 172.72 85.09)
 		)
 		(stroke
 			(width 0)
@@ -1369,7 +1369,7 @@
 	)
 	(wire
 		(pts
-			(xy 105.41 76.2) (xy 105.41 78.74)
+			(xy 147.32 105.41) (xy 147.32 107.95)
 		)
 		(stroke
 			(width 0)
@@ -1379,7 +1379,7 @@
 	)
 	(wire
 		(pts
-			(xy 105.41 48.26) (xy 113.03 48.26)
+			(xy 147.32 77.47) (xy 154.94 77.47)
 		)
 		(stroke
 			(width 0)
@@ -1389,7 +1389,7 @@
 	)
 	(wire
 		(pts
-			(xy 105.41 78.74) (xy 105.41 81.28)
+			(xy 147.32 107.95) (xy 147.32 110.49)
 		)
 		(stroke
 			(width 0)
@@ -1399,7 +1399,7 @@
 	)
 	(wire
 		(pts
-			(xy 148.59 33.02) (xy 161.29 33.02)
+			(xy 190.5 62.23) (xy 203.2 62.23)
 		)
 		(stroke
 			(width 0)
@@ -1409,7 +1409,7 @@
 	)
 	(wire
 		(pts
-			(xy 46.99 58.42) (xy 64.77 58.42)
+			(xy 88.9 87.63) (xy 106.68 87.63)
 		)
 		(stroke
 			(width 0)
@@ -1419,7 +1419,7 @@
 	)
 	(wire
 		(pts
-			(xy 105.41 68.58) (xy 113.03 68.58)
+			(xy 147.32 97.79) (xy 154.94 97.79)
 		)
 		(stroke
 			(width 0)
@@ -1429,7 +1429,7 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 53.34) (xy 57.15 53.34)
+			(xy 96.52 82.55) (xy 99.06 82.55)
 		)
 		(stroke
 			(width 0)
@@ -1439,7 +1439,7 @@
 	)
 	(wire
 		(pts
-			(xy 105.41 55.88) (xy 120.65 55.88)
+			(xy 147.32 85.09) (xy 162.56 85.09)
 		)
 		(stroke
 			(width 0)
@@ -1449,7 +1449,7 @@
 	)
 	(wire
 		(pts
-			(xy 120.65 100.33) (xy 120.65 105.41)
+			(xy 162.56 129.54) (xy 162.56 134.62)
 		)
 		(stroke
 			(width 0)
@@ -1459,7 +1459,7 @@
 	)
 	(wire
 		(pts
-			(xy 118.11 100.33) (xy 118.11 105.41)
+			(xy 160.02 129.54) (xy 160.02 134.62)
 		)
 		(stroke
 			(width 0)
@@ -1469,7 +1469,7 @@
 	)
 	(wire
 		(pts
-			(xy 105.41 50.8) (xy 113.03 50.8)
+			(xy 147.32 80.01) (xy 154.94 80.01)
 		)
 		(stroke
 			(width 0)
@@ -1479,7 +1479,7 @@
 	)
 	(wire
 		(pts
-			(xy 113.03 68.58) (xy 120.65 68.58)
+			(xy 154.94 97.79) (xy 162.56 97.79)
 		)
 		(stroke
 			(width 0)
@@ -1489,7 +1489,7 @@
 	)
 	(wire
 		(pts
-			(xy 105.41 60.96) (xy 113.03 60.96)
+			(xy 147.32 90.17) (xy 154.94 90.17)
 		)
 		(stroke
 			(width 0)
@@ -1499,7 +1499,7 @@
 	)
 	(wire
 		(pts
-			(xy 105.41 58.42) (xy 113.03 58.42)
+			(xy 147.32 87.63) (xy 154.94 87.63)
 		)
 		(stroke
 			(width 0)
@@ -1509,7 +1509,7 @@
 	)
 	(wire
 		(pts
-			(xy 113.03 68.58) (xy 113.03 71.12)
+			(xy 154.94 97.79) (xy 154.94 100.33)
 		)
 		(stroke
 			(width 0)
@@ -1519,7 +1519,7 @@
 	)
 	(wire
 		(pts
-			(xy 105.41 73.66) (xy 105.41 76.2)
+			(xy 147.32 102.87) (xy 147.32 105.41)
 		)
 		(stroke
 			(width 0)
@@ -1529,7 +1529,7 @@
 	)
 	(hierarchical_label "VBUS"
 		(shape passive)
-		(at 113.03 48.26 0)
+		(at 154.94 77.47 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1540,7 +1540,7 @@
 	)
 	(hierarchical_label "VCC_5V"
 		(shape passive)
-		(at 190.5 33.02 0)
+		(at 232.41 62.23 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1551,7 +1551,7 @@
 	)
 	(hierarchical_label "GND"
 		(shape passive)
-		(at 184.15 74.93 270)
+		(at 226.06 104.14 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1560,9 +1560,9 @@
 		)
 		(uuid "1e25ce1d-f386-46a7-a4bb-f61dc0c1c8b1")
 	)
-	(hierarchical_label "USB_DN"
+	(hierarchical_label "DN"
 		(shape passive)
-		(at 113.03 60.96 0)
+		(at 154.94 90.17 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1573,7 +1573,7 @@
 	)
 	(hierarchical_label "GND"
 		(shape passive)
-		(at 118.11 119.38 270)
+		(at 160.02 148.59 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1584,7 +1584,7 @@
 	)
 	(hierarchical_label "GND"
 		(shape passive)
-		(at 120.65 68.58 0)
+		(at 162.56 97.79 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1595,7 +1595,7 @@
 	)
 	(hierarchical_label "VBUS"
 		(shape passive)
-		(at 113.03 50.8 0)
+		(at 154.94 80.01 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1606,7 +1606,7 @@
 	)
 	(hierarchical_label "VBUS"
 		(shape passive)
-		(at 148.59 33.02 180)
+		(at 190.5 62.23 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1615,9 +1615,9 @@
 		)
 		(uuid "8ac50b67-d001-45ba-8f0b-cc3dfc842318")
 	)
-	(hierarchical_label "USB_DP"
+	(hierarchical_label "DP"
 		(shape passive)
-		(at 113.03 58.42 0)
+		(at 154.94 87.63 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1628,7 +1628,7 @@
 	)
 	(hierarchical_label "GND"
 		(shape passive)
-		(at 130.81 55.88 0)
+		(at 172.72 85.09 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1637,9 +1637,9 @@
 		)
 		(uuid "97cbfb93-985e-4ab8-a5a3-a276ec416739")
 	)
-	(hierarchical_label "USB_DP"
+	(hierarchical_label "DP"
 		(shape passive)
-		(at 118.11 100.33 90)
+		(at 160.02 129.54 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1648,9 +1648,9 @@
 		)
 		(uuid "b4027717-310a-4b1d-a1f1-ba1240e6b0f2")
 	)
-	(hierarchical_label "USB_DN"
+	(hierarchical_label "DN"
 		(shape passive)
-		(at 46.99 58.42 180)
+		(at 88.9 87.63 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1661,7 +1661,7 @@
 	)
 	(hierarchical_label "VBUS"
 		(shape passive)
-		(at 115.57 95.25 90)
+		(at 157.48 124.46 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1670,9 +1670,9 @@
 		)
 		(uuid "e04bd612-7ac6-4729-9467-99ba20b81028")
 	)
-	(hierarchical_label "USB_DN"
+	(hierarchical_label "DN"
 		(shape passive)
-		(at 120.65 100.33 90)
+		(at 162.56 129.54 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1681,9 +1681,9 @@
 		)
 		(uuid "f4ced305-3556-42c4-8a72-a4166a146c37")
 	)
-	(hierarchical_label "USB_DP"
+	(hierarchical_label "DP"
 		(shape passive)
-		(at 26.67 55.88 180)
+		(at 68.58 85.09 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1694,7 +1694,7 @@
 	)
 	(hierarchical_label "GND"
 		(shape passive)
-		(at 54.61 53.34 180)
+		(at 96.52 82.55 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1706,17 +1706,17 @@
 	(netclass_flag ""
 		(length 2.54)
 		(shape round)
-		(at 35.56 55.88 0)
+		(at 91.44 87.63 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify left bottom)
+			(justify right bottom)
 		)
-		(uuid "726a43bc-4562-48b5-b4bd-e302bac7fecd")
-		(property "Netclass" "10mil"
-			(at 36.1696 53.34 0)
+		(uuid "3f38d5ed-deea-4cbc-a051-2e82228e6ebd")
+		(property "Netclass" "12mil_diff"
+			(at 92.0496 90.17 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1729,17 +1729,17 @@
 	(netclass_flag ""
 		(length 2.54)
 		(shape round)
-		(at 53.34 58.42 180)
+		(at 77.47 85.09 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right bottom)
+			(justify left bottom)
 		)
-		(uuid "ceeb22bc-8a03-4cc7-8929-8cbee2ffad68")
-		(property "Netclass" "10mil"
-			(at 53.9496 60.96 0)
+		(uuid "726a43bc-4562-48b5-b4bd-e302bac7fecd")
+		(property "Netclass" "12mil_diff"
+			(at 78.0796 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1751,7 +1751,7 @@
 	)
 	(symbol
 		(lib_id "DIY:USB4105-GF-A")
-		(at 85.09 58.42 0)
+		(at 127 87.63 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1760,7 +1760,7 @@
 		(fields_autoplaced yes)
 		(uuid "0f7cd647-f895-495b-810b-45ba79af6943")
 		(property "Reference" "J5"
-			(at 85.09 40.64 0)
+			(at 127 69.85 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1768,7 +1768,7 @@
 			)
 		)
 		(property "Value" "USB4105-GF-A"
-			(at 85.09 43.18 0)
+			(at 127 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1776,7 +1776,7 @@
 			)
 		)
 		(property "Footprint" "DIY:GCT_USB4105-GF-A"
-			(at 85.09 58.42 0)
+			(at 127 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1786,7 +1786,7 @@
 			)
 		)
 		(property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/5492/USB4105.pdf"
-			(at 85.09 58.42 0)
+			(at 127 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1795,7 +1795,7 @@
 			)
 		)
 		(property "Description" "CONN RCP USB2.0 TYP C 24P SMD RA"
-			(at 85.09 58.42 0)
+			(at 127 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1804,7 +1804,7 @@
 			)
 		)
 		(property "PARTREV" "B4"
-			(at 85.09 58.42 0)
+			(at 127 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1814,7 +1814,7 @@
 			)
 		)
 		(property "STANDARD" "Manufacturer Recommendations"
-			(at 85.09 58.42 0)
+			(at 127 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1824,7 +1824,7 @@
 			)
 		)
 		(property "MAXIMUM_PACKAGE_HEIGHT" "3.31 mm"
-			(at 85.09 58.42 0)
+			(at 127 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1834,7 +1834,7 @@
 			)
 		)
 		(property "MANUFACTURER" "GCT"
-			(at 85.09 58.42 0)
+			(at 127 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1844,7 +1844,7 @@
 			)
 		)
 		(property "Manufacturer_Name" "GCT"
-			(at 85.09 58.42 0)
+			(at 127 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1853,7 +1853,7 @@
 			)
 		)
 		(property "Manufacturer_Part_Number" "USB4105-GF-A"
-			(at 85.09 58.42 0)
+			(at 127 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1862,7 +1862,7 @@
 			)
 		)
 		(property "Instructions/Notes" ""
-			(at 85.09 58.42 0)
+			(at 127 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1871,7 +1871,7 @@
 			)
 		)
 		(property "Type" "SMD"
-			(at 85.09 58.42 0)
+			(at 127 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1880,7 +1880,7 @@
 			)
 		)
 		(property "LCSC" "C3020560"
-			(at 85.09 58.42 0)
+			(at 127 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1889,7 +1889,7 @@
 			)
 		)
 		(property "LCSC alt" "C3020560"
-			(at 85.09 58.42 0)
+			(at 127 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1951,16 +1951,12 @@
 					(reference "J5")
 					(unit 1)
 				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
-					(reference "J6")
-					(unit 1)
-				)
 			)
 		)
 	)
 	(symbol
 		(lib_id "Device:R_Small")
-		(at 123.19 55.88 90)
+		(at 165.1 85.09 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1969,7 +1965,7 @@
 		(fields_autoplaced yes)
 		(uuid "44bd7630-8582-4b23-8677-87b291487fce")
 		(property "Reference" "R22"
-			(at 123.19 50.8 90)
+			(at 165.1 80.01 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1977,7 +1973,7 @@
 			)
 		)
 		(property "Value" "5.1K 1%"
-			(at 123.19 53.34 90)
+			(at 165.1 82.55 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1985,7 +1981,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 123.19 55.88 0)
+			(at 165.1 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1994,7 +1990,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.yageo.com/upload/media/product/products/datasheet/rchip/PYu-RC_Group_51_RoHS_L_12.pdf"
-			(at 123.19 55.88 0)
+			(at 165.1 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2003,7 +1999,7 @@
 			)
 		)
 		(property "Description" "RES 5.1K OHM 1% 1/10W 0603"
-			(at 123.19 55.88 90)
+			(at 165.1 85.09 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2012,7 +2008,7 @@
 			)
 		)
 		(property "Manufacturer_Name" "YAGEO"
-			(at 123.19 55.88 0)
+			(at 165.1 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2021,7 +2017,7 @@
 			)
 		)
 		(property "Manufacturer_Part_Number" "RC0603FR-075K1L"
-			(at 123.19 55.88 0)
+			(at 165.1 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2030,7 +2026,7 @@
 			)
 		)
 		(property "Instructions/Notes" ""
-			(at 123.19 55.88 0)
+			(at 165.1 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2039,7 +2035,7 @@
 			)
 		)
 		(property "Type" "SMD"
-			(at 123.19 55.88 0)
+			(at 165.1 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2048,7 +2044,7 @@
 			)
 		)
 		(property "LCSC" "C23186"
-			(at 123.19 55.88 0)
+			(at 165.1 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2057,7 +2053,7 @@
 			)
 		)
 		(property "LCSC alt" "C23186"
-			(at 123.19 55.88 0)
+			(at 165.1 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2077,16 +2073,12 @@
 					(reference "R22")
 					(unit 1)
 				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
-					(reference "R30")
-					(unit 1)
-				)
 			)
 		)
 	)
 	(symbol
 		(lib_id "Device:R_Small")
-		(at 113.03 73.66 0)
+		(at 154.94 102.87 0)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2095,7 +2087,7 @@
 		(dnp no)
 		(uuid "5c0cec25-b186-4512-a7a4-4634a7162127")
 		(property "Reference" "R21"
-			(at 118.11 73.66 90)
+			(at 160.02 102.87 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2103,7 +2095,7 @@
 			)
 		)
 		(property "Value" "0R"
-			(at 115.57 73.66 90)
+			(at 157.48 102.87 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2111,7 +2103,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 113.03 73.66 0)
+			(at 154.94 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2120,7 +2112,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.seielect.com/catalog/sei-rmcf_rmcp.pdf"
-			(at 113.03 73.66 0)
+			(at 154.94 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2129,7 +2121,7 @@
 			)
 		)
 		(property "Description" "RES 0 OHM JUMPER 1/10W 0603"
-			(at 113.03 73.66 0)
+			(at 154.94 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2138,7 +2130,7 @@
 			)
 		)
 		(property "Manufacturer_Name" "StackPole Electronics"
-			(at 113.03 73.66 0)
+			(at 154.94 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2147,7 +2139,7 @@
 			)
 		)
 		(property "Manufacturer_Part_Number" "RMCF0603ZT0R00"
-			(at 113.03 73.66 0)
+			(at 154.94 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2156,7 +2148,7 @@
 			)
 		)
 		(property "Instructions/Notes" ""
-			(at 113.03 73.66 0)
+			(at 154.94 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2165,7 +2157,7 @@
 			)
 		)
 		(property "Type" "SMD"
-			(at 113.03 73.66 0)
+			(at 154.94 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2174,7 +2166,7 @@
 			)
 		)
 		(property "LCSC" "C21189"
-			(at 113.03 73.66 0)
+			(at 154.94 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2183,7 +2175,7 @@
 			)
 		)
 		(property "LCSC alt" "C21189"
-			(at 113.03 73.66 0)
+			(at 154.94 102.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2203,16 +2195,12 @@
 					(reference "R21")
 					(unit 1)
 				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
-					(reference "R29")
-					(unit 1)
-				)
 			)
 		)
 	)
 	(symbol
 		(lib_id "DIY:1N5819HW-7-F")
-		(at 176.53 33.02 180)
+		(at 218.44 62.23 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2221,7 +2209,7 @@
 		(fields_autoplaced yes)
 		(uuid "747c773e-167b-435c-aaeb-4f78d72f2bc2")
 		(property "Reference" "D10"
-			(at 168.91 25.4 0)
+			(at 210.82 54.61 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2229,7 +2217,7 @@
 			)
 		)
 		(property "Value" "1N5819HW-7-F"
-			(at 168.91 27.94 0)
+			(at 210.82 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2237,7 +2225,7 @@
 			)
 		)
 		(property "Footprint" "DIY:SOD3716X145N"
-			(at 165.1 33.02 0)
+			(at 207.01 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2247,7 +2235,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.diodes.com//assets/Datasheets/1N5819HW.pdf"
-			(at 165.1 30.48 0)
+			(at 207.01 59.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2257,7 +2245,7 @@
 			)
 		)
 		(property "Description" "DIODE SCHOTTKY 40V 1A SOD123"
-			(at 165.1 27.94 0)
+			(at 207.01 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2267,7 +2255,7 @@
 			)
 		)
 		(property "Height" "1.45"
-			(at 165.1 25.4 0)
+			(at 207.01 54.61 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2277,7 +2265,7 @@
 			)
 		)
 		(property "Manufacturer_Name" "Diodes Incorporated"
-			(at 165.1 22.86 0)
+			(at 207.01 52.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2287,7 +2275,7 @@
 			)
 		)
 		(property "Manufacturer_Part_Number" "1N5819HW-7-F"
-			(at 165.1 20.32 0)
+			(at 207.01 49.53 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2297,7 +2285,7 @@
 			)
 		)
 		(property "Instructions/Notes" ""
-			(at 176.53 33.02 0)
+			(at 218.44 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2306,7 +2294,7 @@
 			)
 		)
 		(property "Type" "SMD"
-			(at 176.53 33.02 0)
+			(at 218.44 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2315,7 +2303,7 @@
 			)
 		)
 		(property "LCSC" "C82544"
-			(at 176.53 33.02 0)
+			(at 218.44 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2324,7 +2312,7 @@
 			)
 		)
 		(property "LCSC alt" "C82544"
-			(at 176.53 33.02 0)
+			(at 218.44 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2344,16 +2332,12 @@
 					(reference "D10")
 					(unit 1)
 				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
-					(reference "D14")
-					(unit 1)
-				)
 			)
 		)
 	)
 	(symbol
 		(lib_id "Device:R_Small")
-		(at 59.69 53.34 90)
+		(at 101.6 82.55 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2362,7 +2346,7 @@
 		(fields_autoplaced yes)
 		(uuid "9791d902-ee39-4ec3-b200-320171eb1037")
 		(property "Reference" "R20"
-			(at 59.69 48.26 90)
+			(at 101.6 77.47 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2370,7 +2354,7 @@
 			)
 		)
 		(property "Value" "5.1K 1%"
-			(at 59.69 50.8 90)
+			(at 101.6 80.01 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2378,7 +2362,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 59.69 53.34 0)
+			(at 101.6 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2387,7 +2371,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.yageo.com/upload/media/product/products/datasheet/rchip/PYu-RC_Group_51_RoHS_L_12.pdf"
-			(at 59.69 53.34 0)
+			(at 101.6 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2396,7 +2380,7 @@
 			)
 		)
 		(property "Description" "RES 5.1K OHM 1% 1/10W 0603"
-			(at 59.69 53.34 90)
+			(at 101.6 82.55 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2405,7 +2389,7 @@
 			)
 		)
 		(property "Manufacturer_Name" "YAGEO"
-			(at 59.69 53.34 0)
+			(at 101.6 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2414,7 +2398,7 @@
 			)
 		)
 		(property "Manufacturer_Part_Number" "RC0603FR-075K1L"
-			(at 59.69 53.34 0)
+			(at 101.6 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2423,7 +2407,7 @@
 			)
 		)
 		(property "Instructions/Notes" ""
-			(at 59.69 53.34 0)
+			(at 101.6 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2432,7 +2416,7 @@
 			)
 		)
 		(property "Type" "SMD"
-			(at 59.69 53.34 0)
+			(at 101.6 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2441,7 +2425,7 @@
 			)
 		)
 		(property "LCSC" "C23186"
-			(at 59.69 53.34 0)
+			(at 101.6 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2450,7 +2434,7 @@
 			)
 		)
 		(property "LCSC alt" "C23186"
-			(at 59.69 53.34 0)
+			(at 101.6 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2470,16 +2454,12 @@
 					(reference "R20")
 					(unit 1)
 				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
-					(reference "R28")
-					(unit 1)
-				)
 			)
 		)
 	)
 	(symbol
 		(lib_id "Device:C_Small")
-		(at 184.15 57.15 180)
+		(at 226.06 86.36 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2488,7 +2468,7 @@
 		(fields_autoplaced yes)
 		(uuid "f1d8cb7c-1bcc-4ef4-aa7f-5a5f6678cf0b")
 		(property "Reference" "C12"
-			(at 186.69 56.5086 0)
+			(at 228.6 85.7186 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2497,7 +2477,7 @@
 			)
 		)
 		(property "Value" "10uF 10V"
-			(at 186.69 59.0486 0)
+			(at 228.6 88.2586 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2506,7 +2486,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 184.15 57.15 0)
+			(at 226.06 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2515,7 +2495,7 @@
 			)
 		)
 		(property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/43/CL10A106KP8NNNC_Spec.pdf"
-			(at 184.15 57.15 0)
+			(at 226.06 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2524,7 +2504,7 @@
 			)
 		)
 		(property "Description" "CAP CER 10UF 10V X5R 0603"
-			(at 184.15 57.15 0)
+			(at 226.06 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2533,7 +2513,7 @@
 			)
 		)
 		(property "Manufacturer_Name" "Samsung Electro-Mechanics"
-			(at 184.15 57.15 0)
+			(at 226.06 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2542,7 +2522,7 @@
 			)
 		)
 		(property "Manufacturer_Part_Number" "CL10A106KP8NNNC"
-			(at 184.15 57.15 0)
+			(at 226.06 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2551,7 +2531,7 @@
 			)
 		)
 		(property "Instructions/Notes" ""
-			(at 184.15 57.15 0)
+			(at 226.06 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2560,7 +2540,7 @@
 			)
 		)
 		(property "Type" "SMD"
-			(at 184.15 57.15 0)
+			(at 226.06 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2569,7 +2549,7 @@
 			)
 		)
 		(property "LCSC" "C19702"
-			(at 184.15 57.15 0)
+			(at 226.06 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2578,7 +2558,7 @@
 			)
 		)
 		(property "LCSC alt" "C6119842"
-			(at 184.15 57.15 0)
+			(at 226.06 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2598,16 +2578,12 @@
 					(reference "C12")
 					(unit 1)
 				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
-					(reference "C15")
-					(unit 1)
-				)
 			)
 		)
 	)
 	(symbol
 		(lib_id "Power_Protection:SP0503BAHT")
-		(at 118.11 110.49 0)
+		(at 160.02 139.7 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2616,7 +2592,7 @@
 		(fields_autoplaced yes)
 		(uuid "f741de64-30d5-46b7-8d64-9a8c73f36988")
 		(property "Reference" "D7"
-			(at 124.46 109.855 0)
+			(at 166.37 139.065 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2625,7 +2601,7 @@
 			)
 		)
 		(property "Value" "SP0503BAHTG"
-			(at 124.46 112.395 0)
+			(at 166.37 141.605 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2634,7 +2610,7 @@
 			)
 		)
 		(property "Footprint" "Package_TO_SOT_SMD:SOT-143"
-			(at 123.825 111.76 0)
+			(at 165.735 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2644,7 +2620,7 @@
 			)
 		)
 		(property "Datasheet" "http://www.littelfuse.com/~/media/files/littelfuse/technical%20resources/documents/data%20sheets/sp05xxba.pdf"
-			(at 121.285 107.315 0)
+			(at 163.195 136.525 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2653,7 +2629,7 @@
 			)
 		)
 		(property "Description" "TVS DIODE 5.5VWM 8.5VC SOT1434"
-			(at 118.11 110.49 0)
+			(at 160.02 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2662,7 +2638,7 @@
 			)
 		)
 		(property "Manufacturer_Name" "Littelfuse Inc"
-			(at 118.11 110.49 0)
+			(at 160.02 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2671,7 +2647,7 @@
 			)
 		)
 		(property "Manufacturer_Part_Number" "SP0503BAHTG"
-			(at 118.11 110.49 0)
+			(at 160.02 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2680,7 +2656,7 @@
 			)
 		)
 		(property "Instructions/Notes" ""
-			(at 118.11 110.49 0)
+			(at 160.02 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2689,7 +2665,7 @@
 			)
 		)
 		(property "Type" "SMD"
-			(at 118.11 110.49 0)
+			(at 160.02 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2698,7 +2674,7 @@
 			)
 		)
 		(property "LCSC" "C41364459"
-			(at 118.11 110.49 0)
+			(at 160.02 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2707,7 +2683,7 @@
 			)
 		)
 		(property "LCSC alt" "C7074"
-			(at 118.11 110.49 0)
+			(at 160.02 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2731,10 +2707,6 @@
 			(project "a1s-mini"
 				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/53d69b61-aed6-4e37-bc10-846d5fa685f3"
 					(reference "D7")
-					(unit 1)
-				)
-				(path "/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e/8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf"
-					(reference "D8")
 					(unit 1)
 				)
 			)

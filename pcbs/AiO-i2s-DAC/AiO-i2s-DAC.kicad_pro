@@ -58,7 +58,12 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        [
+          "courtyards_overlap|167919920|117100000|a4231953-bbaf-4040-945e-3d0cb577229d|f2442aba-8fbe-4959-a232-6dfa574af2fa",
+          ""
+        ]
+      ],
       "meta": {
         "filename": "board_design_settings.json",
         "version": 2
@@ -189,7 +194,8 @@
       ],
       "track_widths": [
         0.0,
-        0.2032
+        0.2032,
+        0.508
       ],
       "tuning_pattern_settings": {
         "diff_pair_defaults": {
@@ -221,6 +227,14 @@
         {
           "diameter": 0.0,
           "drill": 0.0
+        },
+        {
+          "diameter": 0.6,
+          "drill": 0.3
+        },
+        {
+          "diameter": 0.8,
+          "drill": 0.4
         }
       ],
       "zones_allow_external_fillets": true
@@ -244,14 +258,6 @@
     "erc_exclusions": [
       [
         "multiple_net_names|787400|1587500|71a8943d-9622-496d-bf75-5870485818e4|91de1928-2050-4150-a0d0-b46d85c5e64d|/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e|/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e|/473bba75-08f8-4c6c-a9b2-aa3e95e63a5e",
-        ""
-      ],
-      [
-        "power_pin_not_driven|1371600|342900|822a92da-dbc1-4b70-b8d7-2fc7037aff58|00000000-0000-0000-0000-000000000000|||",
-        ""
-      ],
-      [
-        "power_pin_not_driven|292100|685800|be82d6dc-b54e-4945-b52b-61dc7835b998|00000000-0000-0000-0000-000000000000|||",
         ""
       ]
     ],
@@ -460,7 +466,7 @@
       "pin_not_connected": "error",
       "pin_not_driven": "error",
       "pin_to_pin": "error",
-      "power_pin_not_driven": "warning",
+      "power_pin_not_driven": "ignore",
       "same_local_global_label": "warning",
       "similar_label_and_power": "warning",
       "similar_labels": "warning",
@@ -515,10 +521,27 @@
         "microvia_diameter": 0.6,
         "microvia_drill": 0.3,
         "name": "10mil",
-        "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 0,
+        "pcb_color": "rgb(0, 0, 194)",
+        "priority": 1,
         "schematic_color": "rgb(0, 0, 194)",
         "track_width": 0.254,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 10
+      },
+      {
+        "bus_width": 20,
+        "clearance": 0.1524,
+        "diff_pair_gap": 0.1524,
+        "diff_pair_width": 0.3048,
+        "line_style": 0,
+        "microvia_diameter": 0.6,
+        "microvia_drill": 0.3,
+        "name": "12mil_diff",
+        "pcb_color": "rgb(194, 194, 0)",
+        "priority": 0,
+        "schematic_color": "rgb(194, 194, 0)",
+        "track_width": 0.3048,
         "via_diameter": 0.6,
         "via_drill": 0.3,
         "wire_width": 10
@@ -532,8 +555,8 @@
         "microvia_diameter": 0.6,
         "microvia_drill": 0.3,
         "name": "15mil",
-        "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 1,
+        "pcb_color": "rgb(0, 132, 132)",
+        "priority": 2,
         "schematic_color": "rgb(0, 132, 132)",
         "track_width": 0.381,
         "via_diameter": 0.8,
@@ -549,8 +572,8 @@
         "microvia_diameter": 0.6,
         "microvia_drill": 0.3,
         "name": "20mil",
-        "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 2,
+        "pcb_color": "rgb(194, 0, 0)",
+        "priority": 3,
         "schematic_color": "rgb(194, 0, 0)",
         "track_width": 0.508,
         "via_diameter": 0.8,
@@ -566,8 +589,8 @@
         "microvia_diameter": 0.6,
         "microvia_drill": 0.3,
         "name": "30mil",
-        "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 3,
+        "pcb_color": "rgb(255, 0, 255)",
+        "priority": 4,
         "schematic_color": "rgb(255, 0, 255)",
         "track_width": 0.762,
         "via_diameter": 0.8,
@@ -583,8 +606,8 @@
         "microvia_diameter": 0.6,
         "microvia_drill": 0.3,
         "name": "6mil",
-        "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 4,
+        "pcb_color": "rgb(221, 133, 0)",
+        "priority": 5,
         "schematic_color": "rgb(221, 133, 0)",
         "track_width": 0.1524,
         "via_diameter": 0.6,
@@ -601,7 +624,7 @@
         "microvia_drill": 0.1,
         "name": "8mil",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 5,
+        "priority": 6,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.2,
         "via_diameter": 0.6,
@@ -642,6 +665,18 @@
       ],
       "/CP2102_1/D-": [
         "10mil"
+      ],
+      "/USBD+": [
+        "12mil_diff"
+      ],
+      "/USBD-": [
+        "12mil_diff"
+      ],
+      "/USB_DN": [
+        "12mil_diff"
+      ],
+      "/USB_DP": [
+        "12mil_diff"
       ],
       "/usb_dn": [
         "10mil"
@@ -714,6 +749,9 @@
         "8mil"
       ],
       "WSEL": [
+        "8mil"
+      ],
+      "~{HP_DETECT}": [
         "8mil"
       ]
     },
@@ -916,7 +954,7 @@
           "group_by": true,
           "label": "Footprint",
           "name": "Footprint",
-          "show": false
+          "show": true
         },
         {
           "group_by": false,
@@ -937,22 +975,22 @@
           "show": true
         },
         {
-          "group_by": false,
+          "group_by": true,
           "label": "DNP",
           "name": "${DNP}",
-          "show": false
+          "show": true
         },
         {
-          "group_by": false,
+          "group_by": true,
           "label": "Exclude from BOM",
           "name": "${EXCLUDE_FROM_BOM}",
-          "show": false
+          "show": true
         },
         {
-          "group_by": false,
+          "group_by": true,
           "label": "Exclude from Board",
           "name": "${EXCLUDE_FROM_BOARD}",
-          "show": false
+          "show": true
         },
         {
           "group_by": false,
@@ -1020,7 +1058,7 @@
       "include_excluded_from_bom": false,
       "name": "",
       "sort_asc": true,
-      "sort_field": "Reference"
+      "sort_field": "LCSC"
     },
     "connection_grid_size": 50.0,
     "drawing": {
@@ -1068,20 +1106,8 @@
       "Root"
     ],
     [
-      "82540054-4b5d-493e-806c-5bb240b603f8",
-      "CP2102_0"
-    ],
-    [
       "53d69b61-aed6-4e37-bc10-846d5fa685f3",
-      "USB C 0"
-    ],
-    [
-      "124ee9d1-939d-44ed-a223-ddb52f42937f",
-      "CP2102-GM"
-    ],
-    [
-      "8323e6d2-76cd-4fc3-8c0e-fe203cb9f4bf",
-      "USB C 1"
+      "USB C"
     ]
   ],
   "text_variables": {}

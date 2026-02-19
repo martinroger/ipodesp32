@@ -1,4 +1,4 @@
-24897611854050729
+24908779557068654
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -70175,6 +70175,27 @@ ESP32-C5-DevKitC-1
 32
 32
 PCM_Espressif
+ESP32-C5-MINI-1
+ESP32-C5-MINI-1: Module that supports 2.4 and 5 GHz dual-band Wi-Fi 6 (802.11ax), Bluetooth® 5 (LE), Zigbee, and Thread (802.15.4) Built around ESP32-C5 series of SoCs, 32-bit RISC-V single-core microprocessor Flash up to 4 MB 22 GPIOs, rich set of peripherals.
+esp32-c5
+0
+73
+65
+PCM_Espressif
+ESP32-C5-WROOM-1
+ESP32-C5-WROOM-1: Module that supports 2.4 and 5 GHz dual-band Wi-Fi 6 (802.11ax), Bluetooth ® 5 (LE), Zigbee, and Thread (802.15.4) Built around ESP32-C5 series of SoCs, 32-bit RISC-V single-core microprocessor Flash up to 32 MB Up to 22 GPIOs, rich set of peripherals
+esp32-c5
+0
+37
+29
+PCM_Espressif
+ESP32-C5-WROOM-1U
+ESP32-C5-WROOM-1U: Module that supports 2.4 and 5 GHz dual-band Wi-Fi 6 (802.11ax), Bluetooth ® 5 (LE), Zigbee, and Thread (802.15.4) Built around ESP32-C5 series of SoCs, 32-bit RISC-V single-core microprocessor Flash up to 32 MB Up to 22 GPIOs, rich set of peripherals
+esp32-c5
+0
+40
+32
+PCM_Espressif
 ESP32-C6-DevKitC-1
 ESP32-C6 general-purpose development board, based on ESP32-2-WROOM-1,It has all the ESP32-C6 pins exposed and is easy to connect and use.
 ESP32-C6
@@ -70427,12 +70448,33 @@ esp32 module thermal vias
 59
 39
 PCM_Espressif
+ESP8684-WROOM-02C
+ESP8684-WROOM-02C:
+ESP32-C3-WROOM-02 or ESP8684-WROOM-02C
+0
+20
+19
+PCM_Espressif
+ESP8684-WROOM-02UC
+ESP8684-WROOM-02UC:
+ESP32-C2-WROOM-02 or ESP8684-WROOM-02UC
+0
+20
+19
+PCM_Espressif
 ESP8685-WROOM-06
 ESP32-WROOM-06: https://www.espressif.com/sites/default/files/documentation/esp8685-wroom-06_datasheet_en.pdf
 esp32 module
 0
 31
 22
+PCM_Espressif
+ESP8685-Wroom-05
+
+
+0
+22
+13
 PCM_Espressif
 QFN-32-1EP_4x4mm_P0.4mm_EP2.9x2.9mm
 QFN, 32 Pin (http://ww1.microchip.com/downloads/en/DeviceDoc/atmel-8153-8-and-16-bit-avr-microcontroller-xmega-e-atxmega8e5-atxmega16e5-atxmega32e5_datasheet.pdf#page=70), generated with kicad-footprint-generator ipc_noLead_generator.py
