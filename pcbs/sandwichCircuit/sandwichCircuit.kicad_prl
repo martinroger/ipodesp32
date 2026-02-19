@@ -1,6 +1,6 @@
 {
   "board": {
-    "active_layer": 17,
+    "active_layer": 7,
     "active_layer_preset": "",
     "auto_track_width": true,
     "hidden_netclasses": [],
@@ -20,7 +20,7 @@
       "footprints": true,
       "graphics": true,
       "keepouts": true,
-      "lockedItems": false,
+      "lockedItems": true,
       "otherItems": true,
       "pads": true,
       "text": true,
@@ -37,6 +37,7 @@
       "footprints_front",
       "footprints_back",
       "footprint_values",
+      "footprint_references",
       "tracks",
       "drawing_sheet",
       "bitmaps",
@@ -91,7 +92,7 @@
       91,
       71,
       91,
-      91
+      0
     ],
     "custom_group_rules": [],
     "expanded_rows": [],
