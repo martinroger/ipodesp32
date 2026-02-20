@@ -29,9 +29,10 @@ jobs:
             ~/.platformio/packages
             ~/.platformio/platforms
             .pio/libdeps
-          # The hashFiles function ensures the cache resets if your config changes
-          key: ${{ runner.os }}-pio-${{ hashFiles('**/platformio.ini') }}
+            .pio/build
+          key: ${{ runner.os }}-pio-${{ hashFiles('**/platformio.ini') }}-${{ github.sha }}
           restore-keys: |
+            ${{ runner.os }}-pio-${{ hashFiles('**/platformio.ini') }}-
             ${{ runner.os }}-pio-
 
       - uses: actions/setup-python@v5
