@@ -5,7 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-    types: [opened, edited, synchronize, review_requested, closed]
+    types: [opened, synchronize, reopened]
   push:
     branches: [main]
 
