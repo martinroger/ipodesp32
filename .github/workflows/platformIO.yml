@@ -2,33 +2,46 @@ name: PlatformIO CI
 
 on:
   release:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
-    types: [opened,edited,synchronize,review_requested,closed]
+    branches: [main]
+    types: [opened, synchronize, reopened]
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Define only the environments you want to build here
+        environment: [SBC_NodeMCU32S, a1sMini,AiO-DAC] 
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/cache@v4
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cache/pip
             ~/.platformio/.cache
-          key: ${{ runner.os }}-pio
+            ~/.platformio/packages
+            ~/.platformio/platforms
+            .pio/libdeps
+            .pio/build
+          key: ${{ runner.os }}-pio-${{ hashFiles('**/platformio.ini') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-pio-${{ hashFiles('**/platformio.ini') }}-
+            ${{ runner.os }}-pio-
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
 
-      - name: Build PlatformIO Project
-        run: pio run
+      - name: Build Specific Environments
+        # This uses the environment defined in the matrix above
+        run: pio run -e ${{ matrix.environment }}

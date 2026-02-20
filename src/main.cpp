@@ -108,9 +108,9 @@ bool pendingPlayReq = false; // Might use this to make sure play requests are no
 #ifndef PROCESS_AVRC_TASK_PRIORITY
 #define PROCESS_AVRC_TASK_PRIORITY 6
 #endif
-#ifndef AVRC_INTERVAL_MS
-#define AVRC_INTERVAL_MS 5
-#endif
+// #ifndef AVRC_INTERVAL_MS
+// #define AVRC_INTERVAL_MS 5
+// #endif
 #pragma endregion
 
 #pragma region Helper Functions declaration
@@ -231,8 +231,8 @@ static void processAVRCTask(void *pvParameters)
 					 PROCESS_AVRC_TASK_STACK_SIZE - minHightWaterMark);
 		}
 #endif
-		// Check incoming metadata in queue
-		if (xQueueReceive(avrcMetadataQueue, &incMetadata, 0) == pdTRUE)
+		// Check incoming metadata in queue, block indefinitely if there is nothing
+		if (xQueueReceive(avrcMetadataQueue, &incMetadata, portMAX_DELAY) == pdTRUE)
 		{
 			// Start processing
 			switch (incMetadata.id)
@@ -259,7 +259,7 @@ static void processAVRCTask(void *pvParameters)
 			delete[] incMetadata.payload;
 			incMetadata.payload = nullptr;
 		}
-		vTaskDelay(pdMS_TO_TICKS(AVRC_INTERVAL_MS));
+		// vTaskDelay(pdMS_TO_TICKS(AVRC_INTERVAL_MS));
 	}
 }
 #pragma endregion
