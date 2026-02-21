@@ -342,6 +342,16 @@ void avrc_metadata_callback(uint8_t id, const uint8_t *text)
 	avrcMetadata incMetadata;
 	incMetadata.id = id;
 	incMetadata.payload = new uint8_t[255];
+	if (text == NULL)
+	{
+		ESP_LOGW(__func__,"Received empty pointer for ID %d",id);
+		return;
+	}
+	if((id != ESP_AVRC_MD_ATTR_PLAYING_TIME) && (text[0] == '\0'))
+	{
+		ESP_LOGW(__func__,"Empty string received for ID %d",id);
+		return;
+	}
 	memcpy(incMetadata.payload, text, 255);
 	if (xQueueSend(avrcMetadataQueue, &incMetadata, 0) != pdTRUE)
 	{
