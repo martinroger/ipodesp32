@@ -180,30 +180,33 @@ static void processAVRCTask(void *pvParameters)
 		// Check incoming metadata in queue, block indefinitely if there is nothing
 		if (xQueueReceive(avrcMetadataQueue, &incMetadata, portMAX_DELAY) == pdTRUE)
 		{
-			// Start processing
-			switch (incMetadata.id)
+			if (incMetadata.payload != nullptr)
 			{
-			case ESP_AVRC_MD_ATTR_ALBUM:
+				// Start processing
+				switch (incMetadata.id)
+				{
+				case ESP_AVRC_MD_ATTR_ALBUM:
 
-				espod.updateAlbumName((char *)incMetadata.payload);
-				break;
+					espod.updateAlbumName((char *)incMetadata.payload);
+					break;
 
-			case ESP_AVRC_MD_ATTR_ARTIST:
-				espod.updateArtistName((char *)incMetadata.payload);
-				break;
+				case ESP_AVRC_MD_ATTR_ARTIST:
+					espod.updateArtistName((char *)incMetadata.payload);
+					break;
 
-			case ESP_AVRC_MD_ATTR_TITLE: // Title change triggers the NEXT track if unexpected
-				espod.updateTrackTitle((char *)incMetadata.payload);
-				break;
+				case ESP_AVRC_MD_ATTR_TITLE: // Title change triggers the NEXT track if unexpected
+					espod.updateTrackTitle((char *)incMetadata.payload);
+					break;
 
-			case ESP_AVRC_MD_ATTR_PLAYING_TIME:
-				espod.updateTrackDuration(String((char *)incMetadata.payload).toInt());
-				break;
+				case ESP_AVRC_MD_ATTR_PLAYING_TIME:
+					espod.updateTrackDuration(atoi((char *)incMetadata.payload));
+					break;
+				}
+
+				// End Processing, deallocate memory
+				free(incMetadata.payload);
+				incMetadata.payload = nullptr;
 			}
-
-			// End Processing, deallocate memory
-			delete[] incMetadata.payload;
-			incMetadata.payload = nullptr;
 		}
 	}
 }
@@ -339,25 +342,32 @@ void avrc_rn_play_pos_callback(uint32_t play_pos)
 /// text
 void avrc_metadata_callback(uint8_t id, const uint8_t *text)
 {
-	avrcMetadata incMetadata;
-	incMetadata.id = id;
-	incMetadata.payload = new uint8_t[255];
+	// Guard checks
 	if (text == NULL)
 	{
-		ESP_LOGW(__func__,"Received empty pointer for ID %d",id);
+		ESP_LOGW(__func__, "Received empty pointer for ID %d", id);
 		return;
 	}
-	if((id != ESP_AVRC_MD_ATTR_PLAYING_TIME) && (text[0] == '\0'))
+	if ((id != ESP_AVRC_MD_ATTR_PLAYING_TIME) && (text[0] == '\0'))
 	{
-		ESP_LOGW(__func__,"Empty string received for ID %d",id);
+		ESP_LOGW(__func__, "Empty string received for ID %d", id);
 		return;
 	}
-	memcpy(incMetadata.payload, text, 255);
+
+	avrcMetadata incMetadata;
+	incMetadata.id = id;
+	incMetadata.payload = (uint8_t *)strdup((const char *)text);
+
+	if (incMetadata.payload == nullptr)
+	{
+		ESP_LOGE(__func__, "Memory allocation failed for metadata");
+		return;
+	}
+
 	if (xQueueSend(avrcMetadataQueue, &incMetadata, 0) != pdTRUE)
 	{
 		ESP_LOGW(__func__, "Metadata queue full, discarding metadata");
-		delete[] incMetadata.payload;
-		incMetadata.payload = nullptr;
+		free(incMetadata.payload);
 	}
 }
 
