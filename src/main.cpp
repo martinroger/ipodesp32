@@ -43,6 +43,15 @@
 #ifndef A2DP_SINK_NAME
 #define A2DP_SINK_NAME "espiPod"
 #endif
+#ifndef WS_PIN
+#define WS_PIN 25
+#endif
+#ifndef DIN_PIN
+#define DIN_PIN 26
+#endif
+#ifndef BCLK_PIN
+#define BCLK_PIN 27
+#endif
 
 #ifdef AUDIOKIT // Using the AiThink A1S AudioKit chip
 #include "AudioBoard.h"
@@ -55,15 +64,6 @@ BluetoothA2DPSink a2dp_sink(i2s);
 #else // Case not using the audiokit, like Sandwich Carrier Board
 I2SStream i2s;
 BluetoothA2DPSink a2dp_sink;
-#ifndef WS_PIN
-#define WS_PIN 25
-#endif
-#ifndef DIN_PIN
-#define DIN_PIN 26
-#endif
-#ifndef BCLK_PIN
-#define BCLK_PIN 27
-#endif
 #endif
 
 /// @brief Data stream reader callback
@@ -220,7 +220,7 @@ void initializeA2DPSink()
 #ifdef AUDIOKIT
 	minimalPins.addI2C(PinFunction::CODEC, 32, 33);
 	minimalPins.addI2S(PinFunction::CODEC, 0, BCLK_PIN, WS_PIN, DIN_PIN, 35);
-	a2dp_sink.set_stream_reader(read_data_stream, false); // Might need commenting out
+	// a2dp_sink.set_stream_reader(read_data_stream, false); // Might need commenting out
 	auto cfg = i2s.defaultConfig();
 	cfg.copyFrom(info);
 	i2s.begin(cfg);
