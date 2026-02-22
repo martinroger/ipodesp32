@@ -1,14 +1,7 @@
 #include <Arduino.h>
-
 #include "AudioTools.h"
 #include "BluetoothA2DPSink.h"
 #include "esPod.h"
-
-// A2DP instance name
-#ifndef A2DP_SINK_NAME
-#define A2DP_SINK_NAME "espiPod"
-#endif
-
 
 #pragma region Board IO Macros
 // LED Logic inversion
@@ -33,72 +26,7 @@
 #endif
 #pragma endregion
 
-#pragma region A2DP Sink Configuration and Serial Initialization
-
-#ifdef AUDIOKIT
-
-#ifdef USE_SD
-#include "sdLogUpdate.h"
-bool sdLoggerEnabled = false;
-#endif
-
-#include "AudioBoard.h"
-#include "AudioTools/AudioLibs/I2SCodecStream.h"
-AudioInfo info(44100, 2, 16);
-DriverPins minimalPins;
-AudioBoard minimalAudioKit(AudioDriverES8388, minimalPins);
-I2SCodecStream i2s(minimalAudioKit);
-BluetoothA2DPSink a2dp_sink(i2s);
-
-#ifdef USE_ALT_SERIAL
-HardwareSerial ipodSerial(1);
-
-#ifndef UART1_RX
-#define UART1_RX 19
-#endif
-
-#ifndef UART1_TX
-#define UART1_TX 22
-#endif
-
-#else // Use main Serial
-HardwareSerial ipodSerial(0);
-#endif
-
-#else // Case not using the audiokit, like Sandwich Carrier Board
-#define USE_SERIAL_1
-
-#ifndef UART1_RX
-#define UART1_RX 16
-#endif
-
-#ifndef UART1_TX
-#define UART1_TX 17
-#endif
-
-#ifndef UART1_RST
-#define UART1_RST 13
-#endif
-
-I2SStream i2s;
-HardwareSerial ipodSerial(1);
-BluetoothA2DPSink a2dp_sink;
-
-/// @brief Data stream reader callback
-/// @param data Data buffer to pass to the I2S
-/// @param length Length of the data buffer
-void read_data_stream(const uint8_t *data, uint32_t length)
-{
-	i2s.write(data, length);
-}
-
-#endif
-esPod espod(ipodSerial);
-bool pendingPlayReq = false; // Might use this to make sure play requests are not ignored.
-
-#pragma endregion
-
-#pragma region FreeRTOS tasks defines
+#pragma region AVRC-related FreeRTOS tasks defines
 #ifndef AVRC_QUEUE_SIZE
 #define AVRC_QUEUE_SIZE 32
 #endif
@@ -108,14 +36,47 @@ bool pendingPlayReq = false; // Might use this to make sure play requests are no
 #ifndef PROCESS_AVRC_TASK_PRIORITY
 #define PROCESS_AVRC_TASK_PRIORITY 6
 #endif
-// #ifndef AVRC_INTERVAL_MS
-// #define AVRC_INTERVAL_MS 5
-// #endif
+#pragma endregion
+
+#pragma region A2DP Sink Configuration
+// A2DP instance name
+#ifndef A2DP_SINK_NAME
+#define A2DP_SINK_NAME "espiPod"
+#endif
+
+#ifdef AUDIOKIT // Using the AiThink A1S AudioKit chip
+#include "AudioBoard.h"
+#include "AudioTools/AudioLibs/I2SCodecStream.h"
+AudioInfo info(44100, 2, 16);
+DriverPins minimalPins;
+AudioBoard minimalAudioKit(AudioDriverES8388, minimalPins);
+I2SCodecStream i2s(minimalAudioKit);
+BluetoothA2DPSink a2dp_sink(i2s);
+#else // Case not using the audiokit, like Sandwich Carrier Board
+I2SStream i2s;
+BluetoothA2DPSink a2dp_sink;
+#ifndef WS_PIN
+#define WS_PIN 25
+#endif
+#ifndef DIN_PIN
+#define DIN_PIN 26
+#endif
+#ifndef BCLK_PIN
+#define BCLK_PIN 26
+#endif
+#endif
+
+/// @brief Data stream reader callback
+/// @param data Data buffer to pass to the I2S
+/// @param length Length of the data buffer
+void read_data_stream(const uint8_t *data, uint32_t length)
+{
+	i2s.write(data, length);
+}
+
 #pragma endregion
 
 #pragma region Helper Functions declaration
-void initializeSDCard();
-void initializeSerial();
 void initializeA2DPSink();
 esp_err_t initializeAVRCTask();
 #pragma endregion
@@ -125,16 +86,17 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void *ptr);
 void audioStateChanged(esp_a2d_audio_state_t state, void *ptr);
 void avrc_rn_play_pos_callback(uint32_t play_pos);
 void avrc_metadata_callback(uint8_t id, const uint8_t *text);
-void playStatusHandler(byte playCommand);
+void playStatusHandler(PB_COMMAND playCommand);
 #pragma endregion
+
+// Declare the principal object... multiple syntaxes are available
+// Autobaud syntax example
+// esPod espod(1,UART1_RX,UART1_TX,0);
+esPod espod(1, UART1_RX, UART1_TX, 19200);
+bool pendingPlayReq = false; // Might use this to make sure play requests are not ignored.
 
 void setup()
 {
-// If available, reset the UART1 transceiver
-#ifdef UART1_RST
-	pinMode(UART1_RST, OUTPUT);
-	digitalWrite(UART1_RST, LOW);
-#endif
 
 #ifdef LED_BUILTIN
 	pinMode(LED_BUILTIN, OUTPUT);
@@ -146,43 +108,37 @@ void setup()
 	digitalWrite(DCD_CTRL_PIN, INVERT_DCD_LOGIC(HIGH)); // Logic is inverted
 #endif
 
-	esp_log_level_set("*", ESP_LOG_NONE);
-	ESP_LOGI("SETUP", "setup() start");
-
-	initializeSDCard();
+	ESP_LOGI(__func__, "setup() start");
 
 	// Inform of possible errors that led to a reset
 	ESP_LOGI("RESET", "Reset reason: %d", esp_reset_reason());
-	delay(5);
 
 	// Publish build information
 	ESP_LOGI("BUILD_INFO", "env:%s\t date: %s\t time: %s", PIOENV, __DATE__, __TIME__);
-	delay(5);
 	ESP_LOGI("VERSION", "%s", VERSION_STRING);
-	delay(5);
 	ESP_LOGI("BRANCH", "%s", VERSION_BRANCH);
-	delay(5);
 
+	// Start AVRC Notifications handler
 	if (initializeAVRCTask() != ESP_OK)
 		esp_restart();
+
+	// Start the A2DP Sink
 	initializeA2DPSink();
-#ifdef UART1_RST // Re-enable the UART1 transceiver if available
-	digitalWrite(UART1_RST, HIGH);
-#endif
-	initializeSerial();
+
 	espod.attachPlayControlHandler(playStatusHandler);
-	ESP_LOGI("SETUP", "Waiting for peer");
+	ESP_LOGI(__func__, "Waiting for peer");
 	while (a2dp_sink.get_connection_state() != ESP_A2D_CONNECTION_STATE_CONNECTED)
 	{
 		delay(10);
 	}
 	delay(50);
-	ESP_LOGI("SETUP", "Peer connected: %s", a2dp_sink.get_peer_name());
-	ESP_LOGI("SETUP", "Setup finished");
+	ESP_LOGI(__func__, "Peer connected: %s", a2dp_sink.get_peer_name());
+	ESP_LOGI(__func__, "Setup finished");
 }
 
 void loop()
 {
+	vTaskDelay(1); // Purely out of precaution
 }
 
 #pragma region AVRC Task and Queue declaration/definition
@@ -202,16 +158,6 @@ TaskHandle_t processAVRCTaskHandle;
 static void processAVRCTask(void *pvParameters)
 {
 	avrcMetadata incMetadata; // Incoming metadata (pointer to payload)
-	// Metadata buffers
-	// char incAlbumName[255] = "incAlbum";
-	// char incArtistName[255] = "incArtist";
-	// char incTrackTitle[255] = "incTitle";
-	// uint32_t incTrackDuration = 0;
-
-	// bool albumNameUpdated = false;
-	// bool artistNameUpdated = false;
-	// bool trackTitleUpdated = false;
-	// bool trackDurationUpdated = false;
 
 #ifdef STACK_HIGH_WATERMARK_LOG
 	UBaseType_t uxHighWaterMark;
@@ -234,69 +180,39 @@ static void processAVRCTask(void *pvParameters)
 		// Check incoming metadata in queue, block indefinitely if there is nothing
 		if (xQueueReceive(avrcMetadataQueue, &incMetadata, portMAX_DELAY) == pdTRUE)
 		{
-			// Start processing
-			switch (incMetadata.id)
+			if (incMetadata.payload != nullptr)
 			{
-			case ESP_AVRC_MD_ATTR_ALBUM:
+				// Start processing
+				switch (incMetadata.id)
+				{
+				case ESP_AVRC_MD_ATTR_ALBUM:
 
-				espod.updateAlbumName((char *)incMetadata.payload);
-				break;
+					espod.updateAlbumName((char *)incMetadata.payload);
+					break;
 
-			case ESP_AVRC_MD_ATTR_ARTIST:
-				espod.updateArtistName((char *)incMetadata.payload);
-				break;
+				case ESP_AVRC_MD_ATTR_ARTIST:
+					espod.updateArtistName((char *)incMetadata.payload);
+					break;
 
-			case ESP_AVRC_MD_ATTR_TITLE: // Title change triggers the NEXT track if unexpected
-				espod.updateTrackTitle((char *)incMetadata.payload);
-				break;
+				case ESP_AVRC_MD_ATTR_TITLE: // Title change triggers the NEXT track if unexpected
+					espod.updateTrackTitle((char *)incMetadata.payload);
+					break;
 
-			case ESP_AVRC_MD_ATTR_PLAYING_TIME:
-				espod.updateTrackDuration(String((char *)incMetadata.payload).toInt());
-				break;
+				case ESP_AVRC_MD_ATTR_PLAYING_TIME:
+					espod.updateTrackDuration(atoi((char *)incMetadata.payload));
+					break;
+				}
+
+				// End Processing, deallocate memory
+				free(incMetadata.payload);
+				incMetadata.payload = nullptr;
 			}
-
-			// End Processing, deallocate memory
-			delete[] incMetadata.payload;
-			incMetadata.payload = nullptr;
 		}
-		// vTaskDelay(pdMS_TO_TICKS(AVRC_INTERVAL_MS));
 	}
 }
 #pragma endregion
 
 #pragma region Helper Function Definitions
-/// @brief Attempts to initialize the SD card if present and enabled
-void initializeSDCard()
-{
-#ifdef USE_SD
-	if (digitalRead(SD_DETECT) == LOW)
-	{
-		if (initSD())
-		{
-#ifdef LOG_TO_SD
-			sdLoggerEnabled = initSDLogger();
-			if (sdLoggerEnabled)
-				esp_log_level_set("*", ESP_LOG_INFO);
-#endif
-			updateFromFS(SD_MMC);
-		}
-	}
-#endif
-}
-
-/// @brief Sets up and starts the appropriate Serial interface
-void initializeSerial()
-{
-#ifndef IPOD_SERIAL_BAUDRATE
-#define IPOD_SERIAL_BAUDRATE 19200
-#endif
-#if defined(USE_SERIAL_1) || defined(USE_ALT_SERIAL) // If Alt Serial or Serial 1 is used
-	ipodSerial.setPins(UART1_RX, UART1_TX);
-#endif
-	ipodSerial.setRxBufferSize(1024);
-	ipodSerial.setTxBufferSize(1024);
-	ipodSerial.begin(IPOD_SERIAL_BAUDRATE);
-}
 
 /// @brief Configures the CODEC or DAC and starts the A2DP Sink
 void initializeA2DPSink()
@@ -304,15 +220,16 @@ void initializeA2DPSink()
 #ifdef AUDIOKIT
 	minimalPins.addI2C(PinFunction::CODEC, 32, 33);
 	minimalPins.addI2S(PinFunction::CODEC, 0, 27, 25, 26, 35);
+	a2dp_sink.set_stream_reader(read_data_stream, false); // Might need commenting out
 	auto cfg = i2s.defaultConfig();
 	cfg.copyFrom(info);
 	i2s.begin(cfg);
 #else
 	a2dp_sink.set_stream_reader(read_data_stream, false);
 	auto cfg = i2s.defaultConfig(TX_MODE);
-	cfg.pin_ws = 25;   // Default is 15
-	cfg.pin_data = 26; // Default is 22
-	cfg.pin_bck = 27;  // Default is 14
+	cfg.pin_ws = WS_PIN;
+	cfg.pin_data = DIN_PIN;
+	cfg.pin_bck = BCLK_PIN;
 	cfg.sample_rate = 44100;
 	cfg.i2s_format = I2S_LSB_FORMAT;
 	i2s.begin(cfg);
@@ -328,7 +245,7 @@ void initializeA2DPSink()
 
 	a2dp_sink.start(A2DP_SINK_NAME);
 
-	ESP_LOGI("SETUP", "a2dp_sink started: %s", A2DP_SINK_NAME);
+	ESP_LOGI(__func__, "a2dp_sink started: %s", A2DP_SINK_NAME);
 	delay(5);
 }
 
@@ -340,7 +257,7 @@ esp_err_t initializeAVRCTask()
 	avrcMetadataQueue = xQueueCreate(AVRC_QUEUE_SIZE, sizeof(avrcMetadata));
 	if (avrcMetadataQueue == nullptr)
 	{
-		ESP_LOGE("SETUP", "Failed to create metadata queue");
+		ESP_LOGE(__func__, "Failed to create metadata queue");
 		return ESP_FAIL;
 	}
 
@@ -348,7 +265,7 @@ esp_err_t initializeAVRCTask()
 							PROCESS_AVRC_TASK_PRIORITY, &processAVRCTaskHandle, ARDUINO_RUNNING_CORE);
 	if (processAVRCTaskHandle == nullptr)
 	{
-		ESP_LOGE("SETUP", "Failed to create processAVRCTask");
+		ESP_LOGE(__func__, "Failed to create processAVRCTask");
 		return ESP_FAIL;
 	}
 
@@ -366,17 +283,17 @@ void connectionStateChanged(esp_a2d_connection_state_t state, void *ptr)
 	switch (state)
 	{
 	case ESP_A2D_CONNECTION_STATE_CONNECTED:
-		ESP_LOGD("A2DP_CB", "ESP_A2D_CONNECTION_STATE_CONNECTED, espod enabled");
+		ESP_LOGD(__func__, "ESP_A2D_CONNECTION_STATE_CONNECTED, espod enabled");
 		espod.disabled = false;
 		// Meant to pre-fetch playing status
-		ESP_LOGI("A2DP_CB", "Attempting to send play request.");
+		ESP_LOGI(__func__, "Attempting to send play request.");
 		a2dp_sink.play();
 #ifdef LED_BUILTIN
 		digitalWrite(LED_BUILTIN, INVERT_LED_LOGIC(HIGH));
 #endif
 		break;
 	case ESP_A2D_CONNECTION_STATE_DISCONNECTED:
-		ESP_LOGD("A2DP_CB", "ESP_A2D_CONNECTION_STATE_DISCONNECTED, espod disabled");
+		ESP_LOGD(__func__, "ESP_A2D_CONNECTION_STATE_DISCONNECTED, espod disabled");
 		espod.resetState();
 		espod.disabled = true;
 #ifdef LED_BUILTIN
@@ -399,10 +316,10 @@ void audioStateChanged(esp_a2d_audio_state_t state, void *ptr)
 	switch (state)
 	{
 	case ESP_A2D_AUDIO_STATE_STARTED:
-		espod.play();
+		espod.play(true);
 		break;
 	case ESP_A2D_AUDIO_STATE_REMOTE_SUSPEND:
-		espod.pause();
+		espod.pause(true);
 		break;
 		// case ESP_A2D_AUDIO_STATE_STOPPED:
 		//  espod.stop();
@@ -416,13 +333,7 @@ void audioStateChanged(esp_a2d_audio_state_t state, void *ptr)
 void avrc_rn_play_pos_callback(uint32_t play_pos)
 {
 	espod.updatePlayPosition(play_pos);
-	// espod.playPosition = play_pos;
-	ESP_LOGV("AVRC_CB", "PlayPosition called");
-	// if (espod.playStatusNotificationState == NOTIF_ON && espod.trackChangeAckPending == 0x00)
-	// {
-	// 	// espod.L0x04_0x27_PlayStatusNotification(0x04, play_pos);
-	// 	L0x04::_0x27_PlayStatusNotification(&espod, 0x04, play_pos);
-	// }
+	ESP_LOGV(__func__, "PlayPosition called");
 }
 
 /// @brief Catch callback for the AVRC metadata. There can be duplicates !
@@ -431,49 +342,69 @@ void avrc_rn_play_pos_callback(uint32_t play_pos)
 /// text
 void avrc_metadata_callback(uint8_t id, const uint8_t *text)
 {
+	// Guard checks
+	if (text == NULL)
+	{
+		ESP_LOGW(__func__, "Received empty pointer for ID %d", id);
+		return;
+	}
+	if ((id != ESP_AVRC_MD_ATTR_PLAYING_TIME) && (text[0] == '\0'))
+	{
+		ESP_LOGW(__func__, "Empty string received for ID %d", id);
+		return;
+	}
+
 	avrcMetadata incMetadata;
 	incMetadata.id = id;
-	incMetadata.payload = new uint8_t[255];
-	memcpy(incMetadata.payload, text, 255);
+	incMetadata.payload = (uint8_t *)strdup((const char *)text);
+
+	if (incMetadata.payload == nullptr)
+	{
+		ESP_LOGE(__func__, "Memory allocation failed for metadata");
+		return;
+	}
+
 	if (xQueueSend(avrcMetadataQueue, &incMetadata, 0) != pdTRUE)
 	{
-		ESP_LOGW("AVRC_CB", "Metadata queue full, discarding metadata");
-		delete[] incMetadata.payload;
-		incMetadata.payload = nullptr;
+		ESP_LOGW(__func__, "Metadata queue full, discarding metadata");
+		free(incMetadata.payload);
 	}
 }
 
 /// @brief Callback function that passes intended playback operations from the
 /// esPod to the A2DP player (i.e. the phone)
-/// @param playCommand A2DP_xx command instruction. It does not match the
-/// PB_CMD_xx codes !!!
-void playStatusHandler(byte playCommand)
+/// @param playCommand
+void playStatusHandler(PB_COMMAND playCommand)
 {
 	switch (playCommand)
 	{
-	case A2DP_STOP:
+	case PB_CMD_STOP:
 		a2dp_sink.stop();
-		ESP_LOGD("A2DP_CB", "A2DP_STOP");
+		ESP_LOGD(__func__, "A2DP_STOP");
 		break;
-	case A2DP_PLAY:
+	case PB_CMD_PLAY:
 		a2dp_sink.play();
-		ESP_LOGD("A2DP_CB", "A2DP_PLAY");
+		ESP_LOGD(__func__, "A2DP_PLAY");
 		break;
-	case A2DP_PAUSE:
+	case PB_CMD_PAUSE:
 		a2dp_sink.pause();
-		ESP_LOGD("A2DP_CB", "A2DP_PAUSE");
+		ESP_LOGD(__func__, "A2DP_PAUSE");
 		break;
-	case A2DP_REWIND:
+	case PB_CMD_PREVIOUS_TRACK:
 		a2dp_sink.previous();
-		ESP_LOGD("A2DP_CB", "A2DP_REWIND");
+		ESP_LOGD(__func__, "A2DP_REWIND");
 		break;
-	case A2DP_NEXT:
+	case PB_CMD_NEXT_TRACK:
 		a2dp_sink.next();
-		ESP_LOGD("A2DP_CB", "A2DP_NEXT");
+		ESP_LOGD(__func__, "A2DP_NEXT");
 		break;
-	case A2DP_PREV:
+	case PB_CMD_NEXT:
+		a2dp_sink.next();
+		ESP_LOGD(__func__, "A2DP_NEXT");
+		break;
+	case PB_CMD_PREV:
 		a2dp_sink.previous();
-		ESP_LOGD("A2DP_CB", "A2DP_PREV");
+		ESP_LOGD(__func__, "A2DP_PREV");
 		break;
 	}
 }
