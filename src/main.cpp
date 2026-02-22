@@ -62,7 +62,7 @@ BluetoothA2DPSink a2dp_sink;
 #define DIN_PIN 26
 #endif
 #ifndef BCLK_PIN
-#define BCLK_PIN 26
+#define BCLK_PIN 27
 #endif
 #endif
 
@@ -219,7 +219,7 @@ void initializeA2DPSink()
 {
 #ifdef AUDIOKIT
 	minimalPins.addI2C(PinFunction::CODEC, 32, 33);
-	minimalPins.addI2S(PinFunction::CODEC, 0, 27, 25, 26, 35);
+	minimalPins.addI2S(PinFunction::CODEC, 0, BCLK_PIN, WS_PIN, DIN_PIN, 35);
 	a2dp_sink.set_stream_reader(read_data_stream, false); // Might need commenting out
 	auto cfg = i2s.defaultConfig();
 	cfg.copyFrom(info);
