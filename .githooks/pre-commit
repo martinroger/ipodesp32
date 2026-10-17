@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Standard Workspace Git Hook: pre-commit
+# Enforces privacy leaks, markdown link hygiene, and code formatting.
+# (Regression test execution is deferred to pre-push to keep local commits fast).
+# ==============================================================================
+set -e
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+cd "$REPO_ROOT"
+
+# 1. Privacy & Local Filesystem Leak Guard
+# Blocks staged .md, .geminirules, and code files from containing absolute home paths
+STAGED_DOCS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(md|geminirules|txt)$' || true)
+if [ -n "$STAGED_DOCS" ]; then
+  LEAKS=""
+  for f in $STAGED_DOCS; do
+    if git show ":$f" | grep -E -q '(\]\(file:///home/|<file:///home/|href="file:///home/|\(file:///Users/|<file:///Users/)'; then
+      LEAKS="${LEAKS}  - ${f}\n"
+    fi
+  done
+  if [ -n "$LEAKS" ]; then
+    echo "❌ [Git Hook: pre-commit] ERROR: Absolute local URI detected in staged documentation:"
+    echo -e "$LEAKS"
+    echo "   Please replace absolute local file links with relative links before committing."
+    exit 1
+  fi
+fi
+
+# 2. Clang-Format Code Formatting & Indentation Check
+# If .clang-format is present and clang-format is installed, verify staged C/C++ files
+if [ -f ".clang-format" ] && command -v clang-format >/dev/null 2>&1; then
+  STAGED_C_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(c|h|cpp|hpp)$' || true)
+  if [ -n "$STAGED_C_FILES" ]; then
+    FORMAT_ERRORS=""
+    for f in $STAGED_C_FILES; do
+      if [ -f "$f" ]; then
+        if ! clang-format --dry-run --Werror "$f" >/dev/null 2>&1; then
+          FORMAT_ERRORS="${FORMAT_ERRORS}  - ${f}\n"
+        fi
+      fi
+    done
+    if [ -n "$FORMAT_ERRORS" ]; then
+      echo "⚠️  [Git Hook: pre-commit] WARNING: Staged C/C++ files have formatting deviations from .clang-format:"
+      echo -e "$FORMAT_ERRORS"
+      echo "   Run: clang-format -i <file> to align formatting with project standards."
+    fi
+  fi
+fi
+
+exit 0

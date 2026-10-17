@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Standard Workspace Git Hook: pre-push
+# Runs umbrella regression tests before allowing push to remote.
+# ==============================================================================
+set -e
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+cd "$REPO_ROOT"
+
+TEST_RUNNER=""
+if [ -f "./tests/run_tests.sh" ]; then
+  TEST_RUNNER="./tests/run_tests.sh"
+elif [ -f "./scripts/run_host_tests.sh" ]; then
+  TEST_RUNNER="./scripts/run_host_tests.sh"
+elif [ -f "./run_tests.sh" ]; then
+  TEST_RUNNER="./run_tests.sh"
+elif [ -f "./test/run_tests.sh" ]; then
+  TEST_RUNNER="./test/run_tests.sh"
+fi
+
+if [ -n "$TEST_RUNNER" ]; then
+  echo "================================================================"
+  echo " [Git Hook: pre-push] Running pre-push regression verification..."
+  echo "   Executing: ${TEST_RUNNER}"
+  echo "================================================================"
+  
+  if ! "$TEST_RUNNER"; then
+    echo ""
+    echo "❌ [Git Hook: pre-push] Regression tests failed!"
+    echo "   Push aborted. Fix broken tests before pushing to remote."
+    exit 1
+  fi
+  echo "✔ [Git Hook: pre-push] All regression tests passed."
+fi
+
+exit 0
